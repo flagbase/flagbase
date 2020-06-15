@@ -1,0 +1,25 @@
+{
+  "name": "flagbase",
+  "version": "0.0.0",
+  "description": "Interoperable Client-Side Feature Flag SDK",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/es/index.js",
+  "type": "module",
+  "files": [
+    "dist/"
+  ],
+  "prepublish": "npm run build",
+  "scripts": {
+    "build": "npm run build:cjs && npm run build:es && npm run build:umd",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:es": "tsc -p tsconfig.es.json",
+    "build:umd": "tsc -p tsconfig.umd.json",
+    "test": "jest"
+  },
+  "author": "Flagbase",
+  "license": "Mozilla Public License 2.0",
+  "devDependencies": {
+    "typescript": "^3.9.5"
+  },
+  "dependencies": {}
+}
