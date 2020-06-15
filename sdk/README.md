@@ -1,4 +1,4 @@
-# Flagbase SDKs
+# SDKs
 ## Javascript
 Work in progress.
 

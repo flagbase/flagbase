@@ -1,1 +1,1 @@
-# Flagbase CLI
+# CLI
