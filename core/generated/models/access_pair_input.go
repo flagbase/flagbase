@@ -10,12 +10,12 @@ import (
 	"github.com/go-openapi/swag"
 )
 
-// AccessKeySecretPair AccessKeySecretPair
+// AccessPairInput AccessPairInput
 //
 // An access secret-key pair.
 //
-// swagger:model AccessKeySecretPair
-type AccessKeySecretPair struct {
+// swagger:model AccessPairInput
+type AccessPairInput struct {
 
 	// The access key.
 	Key string `json:"key,omitempty"`
@@ -24,13 +24,13 @@ type AccessKeySecretPair struct {
 	Secret string `json:"secret,omitempty"`
 }
 
-// Validate validates this access key secret pair
-func (m *AccessKeySecretPair) Validate(formats strfmt.Registry) error {
+// Validate validates this access pair input
+func (m *AccessPairInput) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *AccessKeySecretPair) MarshalBinary() ([]byte, error) {
+func (m *AccessPairInput) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -38,8 +38,8 @@ func (m *AccessKeySecretPair) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AccessKeySecretPair) UnmarshalBinary(b []byte) error {
-	var res AccessKeySecretPair
+func (m *AccessPairInput) UnmarshalBinary(b []byte) error {
+	var res AccessPairInput
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

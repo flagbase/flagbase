@@ -49,4 +49,7 @@ DELETE DOMAIN resource_name;
 DELETE DOMAIN resource_description;
 DELETE DOMAIN resource_tags;
 
+-- ------| Extensions |------ --
+DELETE EXTENSION "pgcrypto";
+
 END;

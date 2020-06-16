@@ -1,5 +1,6 @@
 BEGIN;
 -- begin transaction --
+CREATE EXTENSION "pgcrypto";
 
 
 -- ------| Common Types and Domains |------ --
@@ -8,7 +9,7 @@ CREATE DOMAIN resource_key as VARCHAR(30) NOT NULL
   CHECK (length(value) >= 4);
 CREATE DOMAIN resource_name as VARCHAR(30);
 CREATE DOMAIN resource_description as TEXT;
-CREATE DOMAIN resource_tags as VARCHAR(30)[];
+CREATE DOMAIN resource_tags as VARCHAR(30)[] NOT NULL DEFAULT '{}'::VARCHAR(30)[];
 
 
 -- ------| WORKSPACE |------ --
@@ -56,19 +57,19 @@ CREATE TABLE environment (
 
 -- ------| ACCESS |------ --
 CREATE TYPE access_type AS ENUM (
-  'ROOT',   -- superuser (all workspaces)
-  'ADMIN',  -- superuser (per workspace)
-  'USER',   -- read + write
-  'SERVICE' -- read
+  'root',   -- superuser (all workspaces)
+  'admin',  -- superuser (per workspace)
+  'user',   -- read + write
+  'service' -- read
 );
 
 CREATE TABLE access (
   id BIGSERIAL NOT NULL PRIMARY KEY,
   -- attributes
-  key resource_key,
-  secret TEXT,
-  type access_type DEFAULT 'SERVICE',
-  expires_at BIGINT,
+  key UUID NOT NULL DEFAULT gen_random_uuid(),
+  encrypted_secret TEXT,
+  type access_type NOT NULL DEFAULT 'service',
+  expires_at BIGINT NOT NULL DEFAULT 9223372036854775807,
   name resource_name,
   description resource_description,
   tags resource_tags
@@ -160,15 +161,11 @@ CREATE TABLE segment (
 );
 
 CREATE TYPE segment_rule_condition AS ENUM (
-  'EQUAL',
-  'NOT_EQUAL',
-  'GREATER_THAN',
-  'GREATER_THAN_OR_EQUAL',
-  'LESS_THAN',
-  'LESS_THAN_OR_EQUAL',
-  'CONTAINS',
-  'NOT_CONTAINS',
-  'REGEX'
+  'equal',
+  'greater_than',
+  'greater_than_or_equal',
+  'contains',
+  'regex'
 );
 
 CREATE TABLE segment_rule (
@@ -177,6 +174,7 @@ CREATE TABLE segment_rule (
   key resource_key,
   trait_key VARCHAR(40),
   condition segment_rule_condition,
+  negate BOOLEAN DEFAULT FALSE,
   trait_value VARCHAR(40),
   -- references
   segment_id BIGINT REFERENCES segment (id),
@@ -212,8 +210,8 @@ CREATE TABLE identity (
 --  off  ->  use fallback_variation
 --
 CREATE TYPE targeting_state AS ENUM (
-  'ON',
-  'OFF'
+  'on',
+  'off'
 );
 CREATE TABLE targeting (
   id BIGSERIAL NOT NULL PRIMARY KEY,
@@ -231,12 +229,12 @@ CREATE TABLE targeting (
 -- <condition> (identity_id || segment_id) ==> <variation_id>
 --
 CREATE TYPE targeting_rule_type AS ENUM (
-  'IDENTITY',
-  'SEGMENT'
+  'identity',
+  'segment'
 );
 CREATE TYPE targeting_rule_condition AS ENUM (
-  'INCLUDE',
-  'EXCLUDE'
+  'include',
+  'exclude'
 );
 CREATE TABLE targeting_rule (
   id BIGSERIAL NOT NULL PRIMARY KEY,

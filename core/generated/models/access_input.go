@@ -14,12 +14,10 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Access Access
+// AccessInput AccessInput
 //
-// Access is used to represent the relationship between the API user and the service. Access objects are attached to the resources, which are used to authorise users.
-//
-// swagger:model Access
-type Access struct {
+// swagger:model AccessInput
+type AccessInput struct {
 
 	// description
 	Description ResourceDescription `json:"description,omitempty"`
@@ -27,15 +25,8 @@ type Access struct {
 	// Unix time stating when this access expires.
 	ExpiresAt int64 `json:"expiresAt,omitempty"`
 
-	// Generated access key (make sure you save this key)
-	// Required: true
-	Key *string `json:"key"`
-
 	// name
 	Name ResouceName `json:"name,omitempty"`
-
-	// Generated secret (make sure you save this secert).
-	Secret string `json:"secret,omitempty"`
 
 	// tags
 	Tags ResourceTags `json:"tags,omitempty"`
@@ -46,15 +37,11 @@ type Access struct {
 	Type *string `json:"type"`
 }
 
-// Validate validates this access
-func (m *Access) Validate(formats strfmt.Registry) error {
+// Validate validates this access input
+func (m *AccessInput) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -76,7 +63,7 @@ func (m *Access) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Access) validateDescription(formats strfmt.Registry) error {
+func (m *AccessInput) validateDescription(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Description) { // not required
 		return nil
@@ -92,16 +79,7 @@ func (m *Access) validateDescription(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Access) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Access) validateName(formats strfmt.Registry) error {
+func (m *AccessInput) validateName(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Name) { // not required
 		return nil
@@ -117,7 +95,7 @@ func (m *Access) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Access) validateTags(formats strfmt.Registry) error {
+func (m *AccessInput) validateTags(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Tags) { // not required
 		return nil
@@ -133,7 +111,7 @@ func (m *Access) validateTags(formats strfmt.Registry) error {
 	return nil
 }
 
-var accessTypeTypePropEnum []interface{}
+var accessInputTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -141,31 +119,31 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		accessTypeTypePropEnum = append(accessTypeTypePropEnum, v)
+		accessInputTypeTypePropEnum = append(accessInputTypeTypePropEnum, v)
 	}
 }
 
 const (
 
-	// AccessTypeRoot captures enum value "root"
-	AccessTypeRoot string = "root"
+	// AccessInputTypeRoot captures enum value "root"
+	AccessInputTypeRoot string = "root"
 
-	// AccessTypeUser captures enum value "user"
-	AccessTypeUser string = "user"
+	// AccessInputTypeUser captures enum value "user"
+	AccessInputTypeUser string = "user"
 
-	// AccessTypeService captures enum value "service"
-	AccessTypeService string = "service"
+	// AccessInputTypeService captures enum value "service"
+	AccessInputTypeService string = "service"
 )
 
 // prop value enum
-func (m *Access) validateTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, accessTypeTypePropEnum); err != nil {
+func (m *AccessInput) validateTypeEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, accessInputTypeTypePropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *Access) validateType(formats strfmt.Registry) error {
+func (m *AccessInput) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
@@ -180,7 +158,7 @@ func (m *Access) validateType(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *Access) MarshalBinary() ([]byte, error) {
+func (m *AccessInput) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -188,8 +166,8 @@ func (m *Access) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Access) UnmarshalBinary(b []byte) error {
-	var res Access
+func (m *AccessInput) UnmarshalBinary(b []byte) error {
+	var res AccessInput
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -295,16 +295,8 @@ paths:
             properties:
               data:
                 $ref: '#/definitions/Environment'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: get-environment
@@ -329,20 +321,8 @@ paths:
             properties:
               data:
                 $ref: '#/definitions/Environment'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/Environment'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       tags:
@@ -360,16 +340,8 @@ paths:
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       tags:
@@ -396,16 +368,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Flag'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: list-flags
@@ -531,28 +495,17 @@ paths:
         '201':
           description: Created
           schema:
-            allOf:
-              - type: object
-                properties:
-                  data:
-                    $ref: '#/definitions/Access'
-              - $ref: '#/definitions/SuccessResponse'
-        '400':
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-          examples: {}
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/Access'
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       tags:
         - access
-      description: Create a new access key-secret pair.
+      description: ' '
       parameters:
         - in: body
           name: body
@@ -619,8 +572,8 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/SuccessResponse'
-        '403':
-          description: Forbidden
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       tags:
@@ -655,16 +608,8 @@ paths:
             properties:
               data:
                 $ref: '#/definitions/Auditlog'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: list-auditlog
@@ -898,16 +843,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Access'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: list-environment-access
@@ -996,16 +933,8 @@ paths:
                 type: array
                 items:
                   $ref: '#/definitions/Environment'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: list-environments
@@ -1070,16 +999,8 @@ paths:
             properties:
               data:
                 $ref: '#/definitions/Flag'
-        '401':
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
       operationId: get-flag
@@ -2119,11 +2040,13 @@ definitions:
         description: Generated secret (make sure you save this secert).
       type:
         type: string
+        description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
         enum:
           - root
           - user
           - service
-        description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
+      name:
+        $ref: '#/definitions/ResouceName'
       description:
         $ref: '#/definitions/ResourceDescription'
       tags:
@@ -2147,6 +2070,9 @@ definitions:
           - user
           - service
         description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
+        default: service
+      name:
+        $ref: '#/definitions/ResouceName'
       description:
         $ref: '#/definitions/ResourceDescription'
       tags:
@@ -2288,22 +2214,13 @@ definitions:
   ErrorResponse:
     title: ErrorResponse
     type: object
-    description: Standard error response object
+    description: Error response is an array of error objects
     x-examples: {}
     properties:
       errors:
         type: array
         items:
-          type: object
-          properties:
-            code:
-              type: string
-            message:
-              type: string
-              description: Reason for error.
-          required:
-            - code
-            - message
+          $ref: '#/definitions/Error'
     required:
       - errors
   AccessPairInput:
@@ -2355,6 +2272,15 @@ definitions:
         example: equal
       traitValue:
         type: string
+  Error:
+    title: Error
+    type: object
+    properties:
+      code:
+        type: string
+      'message ':
+        type: string
+    description: 'Standard error response object, used inside an error response'
 produces:
   - application/json
 schemes:

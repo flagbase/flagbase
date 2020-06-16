@@ -16,14 +16,14 @@ import (
 
 // ErrorResponse ErrorResponse
 //
-// Standard error response object
+// Error response is an array of error objects
 //
 // swagger:model ErrorResponse
 type ErrorResponse struct {
 
 	// errors
 	// Required: true
-	Errors []*ErrorResponseErrorsItems0 `json:"errors"`
+	Errors []*Error `json:"errors"`
 }
 
 // Validate validates this error response
@@ -76,74 +76,6 @@ func (m *ErrorResponse) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *ErrorResponse) UnmarshalBinary(b []byte) error {
 	var res ErrorResponse
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*m = res
-	return nil
-}
-
-// ErrorResponseErrorsItems0 error response errors items0
-//
-// swagger:model ErrorResponseErrorsItems0
-type ErrorResponseErrorsItems0 struct {
-
-	// code
-	// Required: true
-	Code *string `json:"code"`
-
-	// Reason for error.
-	// Required: true
-	Message *string `json:"message"`
-}
-
-// Validate validates this error response errors items0
-func (m *ErrorResponseErrorsItems0) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validateCode(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateMessage(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ErrorResponseErrorsItems0) validateCode(formats strfmt.Registry) error {
-
-	if err := validate.Required("code", "body", m.Code); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ErrorResponseErrorsItems0) validateMessage(formats strfmt.Registry) error {
-
-	if err := validate.Required("message", "body", m.Message); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (m *ErrorResponseErrorsItems0) MarshalBinary() ([]byte, error) {
-	if m == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(m)
-}
-
-// UnmarshalBinary interface implementation
-func (m *ErrorResponseErrorsItems0) UnmarshalBinary(b []byte) error {
-	var res ErrorResponseErrorsItems0
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

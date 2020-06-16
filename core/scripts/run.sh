@@ -79,6 +79,7 @@ function db_init() {
   psql -h $DB_HOST -p $DB_PORT -c "CREATE ROLE $DB_USER WITH LOGIN ENCRYPTED PASSWORD '$DB_PASSWORD';"
   psql -h $DB_HOST -p $DB_PORT -c "CREATE DATABASE $DB_NAME;"
   psql -h $DB_HOST -p $DB_PORT -c "GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;"
+  psql -h $DB_HOST -p $DB_PORT -c "ALTER USER $DB_USER WITH SUPERUSER;"
 }
 
 function db_drop() {
