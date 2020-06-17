@@ -563,7 +563,7 @@ paths:
       description: List all projects in the workspace associated with this access key-secret pair.
       tags:
         - projects
-  /access/sign:
+  /auth:
     post:
       summary: Sign access
       operationId: sign-access
@@ -595,6 +595,7 @@ paths:
               - key
               - secret
           description: Access key-secret pair.
+    parameters: []
   /auditlog:
     get:
       summary: List audit logs
@@ -2043,10 +2044,9 @@ definitions:
         description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
         enum:
           - root
+          - admin
           - user
           - service
-      name:
-        $ref: '#/definitions/ResouceName'
       description:
         $ref: '#/definitions/ResourceDescription'
       tags:
@@ -2055,18 +2055,18 @@ definitions:
         type: integer
         description: Unix time stating when this access expires.
         format: int64
-    required:
-      - key
-      - type
+      name:
+        $ref: '#/definitions/ResouceName'
   AccessInput:
     title: AccessInput
     type: object
-    description: ''
+    description: Input params for creating or updating access
     properties:
       type:
         type: string
         enum:
           - root
+          - admin
           - user
           - service
         description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
@@ -2081,8 +2081,6 @@ definitions:
         type: integer
         description: Unix time stating when this access expires.
         format: int64
-    required:
-      - type
   Auditlog:
     title: Auditlog
     type: object

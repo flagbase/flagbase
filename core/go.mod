@@ -3,11 +3,14 @@ module core
 go 1.14
 
 require (
+	github.com/casbin/casbin-pg-adapter v0.1.5
+	github.com/casbin/casbin/v2 v2.7.1
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.8
+	github.com/go-pg/pg/v9 v9.1.0
 	github.com/google/uuid v1.1.1
 	github.com/jackc/pgtype v1.3.0
 	github.com/jackc/pgx v3.6.2+incompatible

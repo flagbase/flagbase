@@ -32,9 +32,8 @@ type AccessInput struct {
 	Tags ResourceTags `json:"tags,omitempty"`
 
 	// Access key type describes the level of permissions you get for a particular resource (root > user > service).
-	// Required: true
-	// Enum: [root user service]
-	Type *string `json:"type"`
+	// Enum: [root admin user service]
+	Type *string `json:"type,omitempty"`
 }
 
 // Validate validates this access input
@@ -115,7 +114,7 @@ var accessInputTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["root","user","service"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["root","admin","user","service"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -127,6 +126,9 @@ const (
 
 	// AccessInputTypeRoot captures enum value "root"
 	AccessInputTypeRoot string = "root"
+
+	// AccessInputTypeAdmin captures enum value "admin"
+	AccessInputTypeAdmin string = "admin"
 
 	// AccessInputTypeUser captures enum value "user"
 	AccessInputTypeUser string = "user"
@@ -145,8 +147,8 @@ func (m *AccessInput) validateTypeEnum(path, location string, value string) erro
 
 func (m *AccessInput) validateType(formats strfmt.Registry) error {
 
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
+	if swag.IsZero(m.Type) { // not required
+		return nil
 	}
 
 	// value enum

@@ -6,15 +6,12 @@ import (
 	"core/internal/codes"
 	"core/internal/crypto"
 	"core/internal/db"
-	"core/internal/rand"
-	"core/internal/time"
 
-	"github.com/google/uuid"
 	"github.com/lib/pq"
 )
 
 // CreateAccess create a new access key-secret pair.
-func CreateAccess(i models.AccessInput) (
+func CreateAccess(i models.Access) (
 	*models.SuccessResponse,
 	*models.ErrorResponse,
 ) {
@@ -22,8 +19,7 @@ func CreateAccess(i models.AccessInput) (
 	var e models.ErrorResponse
 	var a models.Access
 
-	key := uuid.New().String() // generate a key
-	a.Secret = rand.String(30) // generate a secret
+	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(a.Secret)
 	if err != nil {
 		e.Errors = append(
@@ -35,17 +31,6 @@ func CreateAccess(i models.AccessInput) (
 		)
 	}
 
-	// default values
-	if i.ExpiresAt == 0 {
-		i.ExpiresAt = time.MaxUnixTime
-	}
-	if i.Type == nil {
-		*i.Type = models.AccessInputTypeService
-	}
-	if i.Tags == nil {
-		i.Tags = []string{}
-	}
-
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO access
     (key, encrypted_secret, type, expires_at, name, description, tags)
@@ -53,7 +38,7 @@ func CreateAccess(i models.AccessInput) (
     ($1, $2, $3, $4, $5, $6, $7)
   RETURNING
     key, type, expires_at, name, description, tags;`,
-		key,
+		i.Key,
 		encryptedSecret,
 		i.Type,
 		i.ExpiresAt,
@@ -72,11 +57,14 @@ func CreateAccess(i models.AccessInput) (
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
-				Code:    codes.InvalidInput,
+				Code:    codes.InputError,
 				Message: err.Error(),
 			},
 		)
 	}
+
+	// display unencrypted secret one time upon creation
+	a.Secret = i.Secret
 
 	return &models.SuccessResponse{Data: a}, &e
 }

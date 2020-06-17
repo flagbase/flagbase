@@ -14,7 +14,7 @@ CREATE DOMAIN resource_tags as VARCHAR(30)[] NOT NULL DEFAULT '{}'::VARCHAR(30)[
 
 -- ------| WORKSPACE |------ --
 CREATE TABLE workspace (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
@@ -26,9 +26,9 @@ CREATE TABLE workspace (
 
 -- ------| PROJECT |------ --
 CREATE TABLE project (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- references
-  workspace_id BIGINT REFERENCES workspace (id),
+  workspace_id UUID REFERENCES workspace (id),
   -- attributes
   key resource_key,
   name resource_name,
@@ -42,14 +42,14 @@ CREATE TABLE project (
 
 -- ------| ENVIRONMENT |------ --
 CREATE TABLE environment (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
   description resource_description,
   tags resource_tags,
   -- references
-  project_id BIGINT REFERENCES project (id),
+  project_id UUID REFERENCES project (id),
   -- contraints
   CONSTRAINT environment_key UNIQUE(key, project_id)
 );
@@ -64,9 +64,9 @@ CREATE TYPE access_type AS ENUM (
 );
 
 CREATE TABLE access (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
-  key UUID NOT NULL DEFAULT gen_random_uuid(),
+  key TEXT,
   encrypted_secret TEXT,
   type access_type NOT NULL DEFAULT 'service',
   expires_at BIGINT NOT NULL DEFAULT 9223372036854775807,
@@ -75,72 +75,30 @@ CREATE TABLE access (
   tags resource_tags
 );
 
-CREATE TABLE workspace_access (
-  access_id BIGINT REFERENCES access (id),
-  workspace_id BIGINT REFERENCES workspace (id)
-);
-
-CREATE TABLE project_access (
-  access_id BIGINT REFERENCES access (id),
-  project_id BIGINT REFERENCES workspace (id)
-);
-
-CREATE TABLE environment_access (
-  access_id BIGINT REFERENCES access (id),
-  environment_id BIGINT REFERENCES workspace (id)
-);
-
--- verify access keys are only used one time on one resource
-CREATE FUNCTION access_verification() RETURNS TRIGGER AS $$
-BEGIN
-    IF coalesce((select count(access_id) from workspace_access where access_id = NEW.access_id), 0) +
-       coalesce((select count(access_id) from project_access where access_id = NEW.access_id), 0) +
-       coalesce((select count(access_id) from environment_access where access_id = NEW.access_id), 0) >= 1 THEN
-      RAISE EXCEPTION 'Access is already in use. Please create a new one or delete it from where it is being used.';
-    END IF;
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-CREATE TRIGGER workspace_access_trigger
-  BEFORE INSERT OR UPDATE
-  ON workspace_access
-  FOR EACH ROW EXECUTE PROCEDURE access_verification();
-END;
-CREATE TRIGGER project_access_trigger
-  BEFORE INSERT OR UPDATE
-  ON project_access
-  FOR EACH ROW EXECUTE PROCEDURE access_verification();
-END;
-CREATE TRIGGER environment_access_trigger
-  BEFORE INSERT OR UPDATE
-  ON environment_access
-  FOR EACH ROW EXECUTE PROCEDURE access_verification();
-END;
-
 
 -- ------| FLAG |------ --
 CREATE TABLE flag (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
   description resource_description,
   tags resource_tags,
   -- references
-  project_id BIGINT REFERENCES project (id),
+  project_id UUID REFERENCES project (id),
   -- contraints
   CONSTRAINT flag_key UNIQUE(key, project_id)
 );
 
 CREATE TABLE variation (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
   description resource_description,
   tags resource_tags,
   -- references
-  flag_id BIGINT REFERENCES flag (id),
+  flag_id UUID REFERENCES flag (id),
   -- contraints
   CONSTRAINT variation_key UNIQUE(key, flag_id)
 );
@@ -148,14 +106,14 @@ CREATE TABLE variation (
 
 -- ------| SEGMENT |------ --
 CREATE TABLE segment (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
   description resource_description,
   tags resource_tags,
   -- references
-  project_id BIGINT REFERENCES project (id),
+  project_id UUID REFERENCES project (id),
   -- contraints
   CONSTRAINT segment_key UNIQUE(key, project_id)
 );
@@ -169,7 +127,7 @@ CREATE TYPE segment_rule_condition AS ENUM (
 );
 
 CREATE TABLE segment_rule (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   trait_key VARCHAR(40),
@@ -177,7 +135,7 @@ CREATE TABLE segment_rule (
   negate BOOLEAN DEFAULT FALSE,
   trait_value VARCHAR(40),
   -- references
-  segment_id BIGINT REFERENCES segment (id),
+  segment_id UUID REFERENCES segment (id),
   -- contraints
   CONSTRAINT segment_rule_key UNIQUE(key, segment_id)
 );
@@ -188,12 +146,12 @@ CREATE DOMAIN identity_resource_key as VARCHAR(50) NOT NULL
   CHECK (value ~* '^[a-zA-Z0-9]*$');
 
 CREATE TABLE identity (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key identity_resource_key,
   traits JSONB,
   -- references
-  environment_id BIGINT REFERENCES environment (id),
+  environment_id UUID REFERENCES environment (id),
   -- contraints
   CONSTRAINT identity_key UNIQUE(key, environment_id)
 );
@@ -214,13 +172,13 @@ CREATE TYPE targeting_state AS ENUM (
   'off'
 );
 CREATE TABLE targeting (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   state targeting_state,
   -- references
-  fallback_variation_id BIGINT REFERENCES variation (id),
-  flag_id BIGINT REFERENCES flag (id),
-  environment_id BIGINT REFERENCES environment (id)
+  fallback_variation_id UUID REFERENCES variation (id),
+  flag_id UUID REFERENCES flag (id),
+  environment_id UUID REFERENCES environment (id)
 );
 
 -- --------------------------
@@ -237,16 +195,16 @@ CREATE TYPE targeting_rule_condition AS ENUM (
   'exclude'
 );
 CREATE TABLE targeting_rule (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
+  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   type targeting_rule_type,
   condition targeting_rule_condition,
   -- references
-  identity_id BIGINT REFERENCES identity (id),
-  segment_id BIGINT REFERENCES segment (id),
-  variation_id BIGINT REFERENCES variation (id),
-  targeting_id BIGINT REFERENCES targeting (id),
+  identity_id UUID REFERENCES identity (id),
+  segment_id UUID REFERENCES segment (id),
+  variation_id UUID REFERENCES variation (id),
+  targeting_id UUID REFERENCES targeting (id),
   -- contraints
   CONSTRAINT targeting_rule_key UNIQUE(key, targeting_id)
 );
@@ -256,8 +214,8 @@ CREATE TABLE targeting_percentage (
   -- attributes
   percentage INT,
   -- references
-  variation_id BIGINT REFERENCES variation (id),
-  targeting_id BIGINT REFERENCES targeting (id)
+  variation_id UUID REFERENCES variation (id),
+  targeting_id UUID REFERENCES targeting (id)
 );
 
 -- verify targeting percentage doesn't exceed 100
@@ -282,9 +240,9 @@ END;
 CREATE TABLE evaluation (
   time BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW()) PRIMARY KEY,
   -- references
-  variation_id BIGINT REFERENCES variation (id),
-  targeting_id BIGINT REFERENCES targeting (id),
-  identity_id BIGINT REFERENCES identity (id)
+  variation_id UUID REFERENCES variation (id),
+  targeting_id UUID REFERENCES targeting (id),
+  identity_id UUID REFERENCES identity (id)
 );
 
 

@@ -28,8 +28,7 @@ type Access struct {
 	ExpiresAt int64 `json:"expiresAt,omitempty"`
 
 	// Generated access key (make sure you save this key)
-	// Required: true
-	Key *string `json:"key"`
+	Key string `json:"key,omitempty"`
 
 	// name
 	Name ResouceName `json:"name,omitempty"`
@@ -41,9 +40,8 @@ type Access struct {
 	Tags ResourceTags `json:"tags,omitempty"`
 
 	// Access key type describes the level of permissions you get for a particular resource (root > user > service).
-	// Required: true
-	// Enum: [root user service]
-	Type *string `json:"type"`
+	// Enum: [root admin user service]
+	Type string `json:"type,omitempty"`
 }
 
 // Validate validates this access
@@ -51,10 +49,6 @@ func (m *Access) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,15 +80,6 @@ func (m *Access) validateDescription(formats strfmt.Registry) error {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("description")
 		}
-		return err
-	}
-
-	return nil
-}
-
-func (m *Access) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
 		return err
 	}
 
@@ -137,7 +122,7 @@ var accessTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["root","user","service"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["root","admin","user","service"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -149,6 +134,9 @@ const (
 
 	// AccessTypeRoot captures enum value "root"
 	AccessTypeRoot string = "root"
+
+	// AccessTypeAdmin captures enum value "admin"
+	AccessTypeAdmin string = "admin"
 
 	// AccessTypeUser captures enum value "user"
 	AccessTypeUser string = "user"
@@ -167,12 +155,12 @@ func (m *Access) validateTypeEnum(path, location string, value string) error {
 
 func (m *Access) validateType(formats strfmt.Registry) error {
 
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
+	if swag.IsZero(m.Type) { // not required
+		return nil
 	}
 
 	// value enum
-	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
 	}
 

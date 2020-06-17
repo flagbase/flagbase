@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"core/internal/db"
+	"core/internal/enforce"
 	"core/internal/http"
 
 	"github.com/sirupsen/logrus"
@@ -17,7 +18,11 @@ import (
 func Exec() {
 	host := flag.String("host", "localhost", "Server Host Address")
 	httpPort := flag.String("httpPort", "5051", "HTTP Server Port Number")
-	dbURL := flag.String("dbURL", "postgres://flagbase:BjrvWmjQ3dykPu@127.0.0.1:5432/flagbase", "Postgres Connection URL")
+	dbURL := flag.String(
+		"dbURL",
+		"postgres://flagbase:BjrvWmjQ3dykPu@127.0.0.1:5432/flagbase?sslmode=disable",
+		"Postgres Connection URL",
+	)
 	debug := flag.Bool("debug", false, "Enable logging to stdout")
 	flag.Parse()
 
@@ -36,10 +41,15 @@ func Exec() {
 	ctx := context.Background()
 
 	if err := db.NewPool(ctx, *dbURL, *debug); err != nil {
-		logrus.Error("Unable to connect to db: ", err)
+		logrus.Error("Unable to connect to db - ", err.Error())
 		os.Exit(1)
 	}
 	defer db.Pool.Close()
+
+	if err := enforce.NewEnforcer(*dbURL); err != nil {
+		logrus.Error("Unable to start enforcer - ", err.Error())
+		os.Exit(1)
+	}
 
 	http.NewHTTPServer(*host, *httpPort, *debug)
 }

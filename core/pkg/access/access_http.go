@@ -2,6 +2,8 @@ package access
 
 import (
 	"core/generated/models"
+	"core/internal/rand"
+	"core/internal/time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,8 +15,21 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func createAccessHandler(ctx *gin.Context) {
-	var i models.AccessInput
+	var i models.Access
 	ctx.BindJSON(&i)
+
+	// default values
+	i.Key = rand.String(20)    // generate a key
+	i.Secret = rand.String(30) // generate a secret
+	if i.ExpiresAt == 0 {
+		i.ExpiresAt = time.MaxUnixTime
+	}
+	if i.Type == "" {
+		i.Type = models.AccessInputTypeService
+	}
+	if i.Tags == nil {
+		i.Tags = []string{}
+	}
 
 	data, err := CreateAccess(i)
 	if err.Errors != nil {
