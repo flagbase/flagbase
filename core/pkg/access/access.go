@@ -8,18 +8,32 @@ import (
 	"core/internal/db"
 	"core/internal/enforce"
 
+	"core/pkg/auth"
+
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 )
 
 // CreateAccess create a new access key-secret pair.
-func CreateAccess(i models.Access) (
+func CreateAccess(atk string, i models.Access) (
 	*models.SuccessResponse,
 	*models.ErrorResponse,
 ) {
 	ctx := context.Background()
 	var e models.ErrorResponse
 	var a models.Access
+
+	parentAccessID, authError := auth.Enforce(atk, "access", i.Key, i.Type)
+	if authError.Errors != nil {
+		e.Errors = append(
+			e.Errors,
+			&models.Error{
+				Code:    constants.AuthError,
+				Message: "forbidden operation",
+			},
+		)
+		return nil, &e
+	}
 
 	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(i.Secret)
@@ -69,8 +83,10 @@ func CreateAccess(i models.Access) (
 		)
 	}
 
-	// TODO remove this after implementing auth middleware
-	parentAccessID := accessID
+	// overide parent access id to self if using RuntimeToken
+	if parentAccessID == constants.RuntimeToken {
+		parentAccessID = accessID
+	}
 
 	// Create new enforcer policy
 	enforce.Enforcer.AddPolicy(parentAccessID, accessID, a.Type)

@@ -98,7 +98,7 @@ func createRootAccess(rootKey string, rootSecret string) error {
 		ExpiresAt:   constants.MaxUnixTime,
 	}
 
-	_, err := access.CreateAccess(a)
+	_, err := access.CreateAccess(constants.RuntimeToken, a)
 	if err.Errors != nil {
 		return errors.New("unable to create root access")
 	}

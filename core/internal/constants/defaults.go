@@ -1,5 +1,9 @@
 package constants
 
+import (
+	"core/internal/rand"
+)
+
 var (
 	// DefaultDbURL the default postgres database connection string
 	DefaultDbURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
@@ -14,4 +18,7 @@ var (
 	// MaxUnixTime The maxiumum unix time
 	// TODO: come up with better method in year 2038
 	MaxUnixTime int64 = 9223372036854775807
+	// RuntimeToken is a randomly generated token
+	// used for generating root user
+	RuntimeToken string = rand.String(64)
 )

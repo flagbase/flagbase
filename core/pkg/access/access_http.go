@@ -31,7 +31,7 @@ func createAccessHandler(ctx *gin.Context) {
 		i.Tags = []string{}
 	}
 
-	data, err := CreateAccess(i)
+	data, err := CreateAccess("sometoken", i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return

@@ -14,14 +14,20 @@ func Enforce(
 	resourceType string,
 	resourceKey string,
 	accessType string,
-) *models.ErrorResponse {
+) (string, *models.ErrorResponse) {
 	var e models.ErrorResponse
 
-	sub := getAccessIdFromToken(accessToken)
-	obj := getResourceId(resourceType, resourceKey)
+	// skip auth if using runtime token
+	// used when creating genesis access
+	if accessToken == constants.RuntimeToken {
+		return accessToken, &e
+	}
+
+	sub := getAccessIDFromToken(accessToken)
+	obj := getResourceID(resourceType, resourceKey)
 	act := accessType
 
-	ok, err := enforce.Enforcer(sub, obj, act)
+	ok, err := enforce.Enforcer.Enforce(sub, obj, act)
 	if err != nil {
 		logrus.Error(err.Error())
 		e.Errors = append(
@@ -49,5 +55,12 @@ func Enforce(
 		)
 	}
 
-	return e
+	return sub, &e
+}
+
+func getAccessIDFromToken(accessToken string) string {
+	return "test"
+}
+func getResourceID(resourceType string, resourceKey string) string {
+	return "test"
 }
