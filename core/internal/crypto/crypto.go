@@ -13,3 +13,11 @@ func Encrypt(s string) (string, error) {
 
 	return string(encrypted), nil
 }
+
+// Compare compare hashed and original secret
+func Compare(h string, s string) error {
+	return bcrypt.CompareHashAndPassword(
+		[]byte(h),
+		[]byte(s),
+	)
+}

@@ -13,7 +13,6 @@ import (
 
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateAccess create a new access key-secret pair.
@@ -125,7 +124,7 @@ func GenAccessToken(i models.AccessPairInput) (
 		)
 	}
 
-	if err := bcrypt.CompareHashAndPassword([]byte(encryptedSecret), []byte(i.Secret)); err != nil {
+	if err := crypto.Compare(encryptedSecret, i.Secret); err != nil {
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
