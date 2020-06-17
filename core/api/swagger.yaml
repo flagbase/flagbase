@@ -563,15 +563,18 @@ paths:
       description: List all projects in the workspace associated with this access key-secret pair.
       tags:
         - projects
-  /auth:
+  /access/token:
     post:
-      summary: Sign access
-      operationId: sign-access
+      summary: Generate Access token
+      operationId: gen-access-token
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/SuccessResponse'
+            type: object
+            properties:
+              data:
+                $ref: '#/definitions/AccessToken'
         '500':
           description: Internal Server Error
           schema:
@@ -2279,6 +2282,13 @@ definitions:
       'message ':
         type: string
     description: 'Standard error response object, used inside an error response'
+  AccessToken:
+    title: AccessToken
+    type: object
+    description: Access token
+    properties:
+      token:
+        type: string
 produces:
   - application/json
 schemes:

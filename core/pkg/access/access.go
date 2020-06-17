@@ -19,7 +19,6 @@ func CreateAccess(atk string, i models.Access) (
 	*models.SuccessResponse,
 	*models.ErrorResponse,
 ) {
-	ctx := context.Background()
 	var e models.ErrorResponse
 	var a models.Access
 
@@ -49,7 +48,7 @@ func CreateAccess(atk string, i models.Access) (
 	}
 
 	var accessID string
-	row := db.Pool.QueryRow(ctx, `
+	row := db.Pool.QueryRow(context.Background(), `
   INSERT INTO access
     (key, encrypted_secret, type, expires_at, name, description, tags)
   VALUES
@@ -95,4 +94,30 @@ func CreateAccess(atk string, i models.Access) (
 	a.Secret = i.Secret
 
 	return &models.SuccessResponse{Data: a}, &e
+}
+
+// GenAccessToken generate an access token via an access pair
+func GenAccessToken(i models.AccessPairInput) (
+	*models.SuccessResponse,
+	*models.ErrorResponse,
+) {
+	var e models.ErrorResponse
+
+	// row := db.Pool.QueryRow(ctx, `
+	// SELECT
+	//   key, name
+	// FROM
+	//   access
+	// WHERE
+	//   key = $1
+	// `, key)
+	// if err := row.Scan(&i.Key, &w.Name); err == pgx.ErrNoRows {
+	// 	logrus.Error(err)
+	// 	return nil, errors.New("Cannot find workspace")
+	// } else if err != nil {
+	// 	logrus.Error(err)
+	// 	return nil, err
+	// }
+
+	return &models.SuccessResponse{Data: nil}, &e
 }

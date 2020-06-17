@@ -12,6 +12,7 @@ import (
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("access")
 	routes.POST("", createAccessHandler)
+	routes.POST("/token", genAccessTokenHandler)
 }
 
 func createAccessHandler(ctx *gin.Context) {
@@ -31,7 +32,21 @@ func createAccessHandler(ctx *gin.Context) {
 		i.Tags = []string{}
 	}
 
+	// TODO retreive token from context
 	data, err := CreateAccess("sometoken", i)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
+		return
+	}
+
+	ctx.JSON(200, data)
+}
+
+func genAccessTokenHandler(ctx *gin.Context) {
+	var i models.AccessPairInput
+	ctx.BindJSON(&i)
+
+	data, err := GenAccessToken(i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return

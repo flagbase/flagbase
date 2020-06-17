@@ -16,6 +16,8 @@ import (
 
 // AccessInput AccessInput
 //
+// Input params for creating or updating access
+//
 // swagger:model AccessInput
 type AccessInput struct {
 
