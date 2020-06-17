@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"core/generated/models"
+	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/enforce"
-	"core/internal/time"
 	"core/pkg/access"
 	"errors"
 	"os"
@@ -32,23 +32,23 @@ var InitCommand cli.Command = cli.Command{
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: DefaultDbURL,
+			Value: constants.DefaultDbURL,
 		},
 		&cli.StringFlag{
 			Name:  "root-key",
 			Usage: "Default root access key",
-			Value: DefaultRootKey,
+			Value: constants.DefaultRootKey,
 		},
 		&cli.StringFlag{
 			Name:  "root-secret",
 			Usage: "Default root access secret",
-			Value: DefaultRootSecret,
+			Value: constants.DefaultRootSecret,
 		},
 		&cli.BoolFlag{
 			Name:    "verbose",
 			Aliases: []string{"v"},
 			Usage:   "Enable logging to stdout",
-			Value:   DefaultVerbose,
+			Value:   constants.DefaultVerbose,
 		},
 	},
 	Action: func(ctx *cli.Context) error {
@@ -95,7 +95,7 @@ func createRootAccess(rootKey string, rootSecret string) error {
 		Description: "Default root user",
 		Type:        "root",
 		Tags:        []string{},
-		ExpiresAt:   time.MaxUnixTime,
+		ExpiresAt:   constants.MaxUnixTime,
 	}
 
 	_, err := access.CreateAccess(a)

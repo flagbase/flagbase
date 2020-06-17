@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/enforce"
 	"core/internal/http"
@@ -43,13 +44,13 @@ var StartCommand cli.Command = cli.Command{
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: DefaultDbURL,
+			Value: constants.DefaultDbURL,
 		},
 		&cli.BoolFlag{
 			Name:    "verbose",
 			Aliases: []string{"v"},
 			Usage:   "Enable logging to stdout",
-			Value:   DefaultVerbose,
+			Value:   constants.DefaultVerbose,
 		},
 	},
 	Action: func(ctx *cli.Context) error {

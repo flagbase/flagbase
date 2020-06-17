@@ -2,6 +2,7 @@ package auth
 
 import (
 	"core/generated/models"
+	"core/internal/constants"
 	"core/internal/enforce"
 
 	"github.com/sirupsen/logrus"
@@ -26,7 +27,7 @@ func Enforce(
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
-				Code:    codes.AuthError,
+				Code:    constants.AuthError,
 				Message: err.Error(),
 			},
 		)
@@ -42,7 +43,7 @@ func Enforce(
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
-				Code:    codes.AuthError,
+				Code:    constants.AuthError,
 				Message: "Access denied - insufficient permissions resource action.",
 			},
 		)

@@ -1,4 +1,4 @@
-package codes
+package constants
 
 const (
 	// AuthError suggests an authorization error

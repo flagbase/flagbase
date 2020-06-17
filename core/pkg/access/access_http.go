@@ -2,8 +2,8 @@ package access
 
 import (
 	"core/generated/models"
+	"core/internal/constants"
 	"core/internal/rand"
-	"core/internal/time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -22,7 +22,7 @@ func createAccessHandler(ctx *gin.Context) {
 	i.Key = rand.String(20)    // generate a key
 	i.Secret = rand.String(30) // generate a secret
 	if i.ExpiresAt == 0 {
-		i.ExpiresAt = time.MaxUnixTime
+		i.ExpiresAt = constants.MaxUnixTime
 	}
 	if i.Type == "" {
 		i.Type = models.AccessInputTypeService

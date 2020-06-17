@@ -3,9 +3,10 @@ package access
 import (
 	"context"
 	"core/generated/models"
-	"core/internal/codes"
+	"core/internal/constants"
 	"core/internal/crypto"
 	"core/internal/db"
+	"core/internal/enforce"
 
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
@@ -27,19 +28,20 @@ func CreateAccess(i models.Access) (
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
-				Code:    codes.CryptoError,
+				Code:    constants.CryptoError,
 				Message: err.Error(),
 			},
 		)
 	}
 
+	var accessID string
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO access
     (key, encrypted_secret, type, expires_at, name, description, tags)
   VALUES
     ($1, $2, $3, $4, $5, $6, $7)
   RETURNING
-    key, type, expires_at, name, description, tags;`,
+    id, key, type, expires_at, name, description, tags;`,
 		i.Key,
 		encryptedSecret,
 		i.Type,
@@ -49,6 +51,7 @@ func CreateAccess(i models.Access) (
 		pq.Array(i.Tags),
 	)
 	if err := row.Scan(
+		&accessID,
 		&a.Key,
 		&a.Type,
 		&a.ExpiresAt,
@@ -60,11 +63,17 @@ func CreateAccess(i models.Access) (
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
-				Code:    codes.InputError,
+				Code:    constants.InputError,
 				Message: err.Error(),
 			},
 		)
 	}
+
+	// TODO remove this after implementing auth middleware
+	parentAccessID := accessID
+
+	// Create new enforcer policy
+	enforce.Enforcer.AddPolicy(parentAccessID, accessID, a.Type)
 
 	// display unencrypted secret one time upon creation
 	a.Secret = i.Secret
