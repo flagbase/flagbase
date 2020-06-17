@@ -19,6 +19,7 @@ require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/toorop/gin-logrus v0.0.0-20190701131413-6c374ad36b67
+	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/crypto v0.0.0-20200604202706-70a84ac30bf9
 	golang.org/x/sys v0.0.0-20200515095857-1151b9dac4a9 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
