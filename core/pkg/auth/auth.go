@@ -17,8 +17,8 @@ func Enforce(
 ) (string, *models.ErrorResponse) {
 	var e models.ErrorResponse
 
-	// skip auth if using runtime token
-	// used when creating genesis access
+	// Skip auth if using runtime token, which is used for
+	// creating the genesis access key-secret (i.e. root)
 	if accessToken == constants.RuntimeToken {
 		return accessToken, &e
 	}

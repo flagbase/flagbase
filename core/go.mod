@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/casbin/casbin-pg-adapter v0.1.5
 	github.com/casbin/casbin/v2 v2.7.1
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/errors v0.19.2
 	github.com/go-openapi/strfmt v0.19.5

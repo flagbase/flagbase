@@ -7,11 +7,13 @@ import (
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/enforce"
+	"core/internal/jwt"
 
 	"core/pkg/auth"
 
 	"github.com/lib/pq"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // CreateAccess create a new access key-secret pair.
@@ -103,21 +105,50 @@ func GenAccessToken(i models.AccessPairInput) (
 ) {
 	var e models.ErrorResponse
 
-	// row := db.Pool.QueryRow(ctx, `
-	// SELECT
-	//   key, name
-	// FROM
-	//   access
-	// WHERE
-	//   key = $1
-	// `, key)
-	// if err := row.Scan(&i.Key, &w.Name); err == pgx.ErrNoRows {
-	// 	logrus.Error(err)
-	// 	return nil, errors.New("Cannot find workspace")
-	// } else if err != nil {
-	// 	logrus.Error(err)
-	// 	return nil, err
-	// }
+	var accessKeyID string
+	var encryptedSecret string
+	row := db.Pool.QueryRow(context.Background(), `
+	SELECT
+	  id, encrypted_secret
+	FROM
+	  access
+	WHERE
+	  key = $1
+	`, i.Key)
+	if err := row.Scan(&accessKeyID, &encryptedSecret); err != nil {
+		e.Errors = append(
+			e.Errors,
+			&models.Error{
+				Code:    constants.AuthError,
+				Message: "Can not find access secret-key pair",
+			},
+		)
+	}
 
-	return &models.SuccessResponse{Data: nil}, &e
+	if err := bcrypt.CompareHashAndPassword([]byte(encryptedSecret), []byte(i.Secret)); err != nil {
+		e.Errors = append(
+			e.Errors,
+			&models.Error{
+				Code:    constants.AuthError,
+				Message: "Mismatching access key-secret pair",
+			},
+		)
+	}
+
+	tokenString, err := jwt.Sign(accessKeyID)
+	if err != nil {
+		e.Errors = append(
+			e.Errors,
+			&models.Error{
+				Code:    constants.AuthError,
+				Message: "Unable to sign JWT",
+			},
+		)
+	}
+
+	return &models.SuccessResponse{
+		Data: &models.AccessToken{
+			Token: tokenString,
+		},
+	}, &e
 }

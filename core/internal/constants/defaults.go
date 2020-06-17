@@ -2,6 +2,7 @@ package constants
 
 import (
 	"core/internal/rand"
+	"time"
 )
 
 var (
@@ -21,4 +22,8 @@ var (
 	// RuntimeToken is a randomly generated token
 	// used for generating root user
 	RuntimeToken string = rand.String(64)
+	// JWTKey used to encode jwt
+	JWTKey string = "bad_secret"
+	// JWTExpiry default jwt expiry time
+	JWTExpiry int64 = time.Now().Add(5 * time.Minute).Unix()
 )
