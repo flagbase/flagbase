@@ -8,6 +8,7 @@ import (
 	"core/internal/db"
 
 	"github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 )
 
 // CreateAccess create a new access key-secret pair.
@@ -20,8 +21,9 @@ func CreateAccess(i models.Access) (
 	var a models.Access
 
 	// encrypt secret
-	encryptedSecret, err := crypto.Encrypt(a.Secret)
+	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
+		logrus.Error("Unable to encrypt secret - ", err.Error())
 		e.Errors = append(
 			e.Errors,
 			&models.Error{
@@ -54,6 +56,7 @@ func CreateAccess(i models.Access) (
 		&a.Description,
 		&a.Tags,
 	); err != nil {
+		logrus.Error("Unable to create access - ", err.Error())
 		e.Errors = append(
 			e.Errors,
 			&models.Error{

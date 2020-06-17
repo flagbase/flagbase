@@ -43,14 +43,13 @@ var StartCommand cli.Command = cli.Command{
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: "postgres://flagbase:BjrvWmjQ3dykPu@127.0.0.1:5432/flagbase" +
-				"?sslmode=disable",
+			Value: DefaultDbURL,
 		},
 		&cli.BoolFlag{
 			Name:    "verbose",
 			Aliases: []string{"v"},
 			Usage:   "Enable logging to stdout",
-			Value:   false,
+			Value:   DefaultVerbose,
 		},
 	},
 	Action: func(ctx *cli.Context) error {

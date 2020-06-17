@@ -72,7 +72,9 @@ CREATE TABLE access (
   expires_at BIGINT NOT NULL DEFAULT 9223372036854775807,
   name resource_name,
   description resource_description,
-  tags resource_tags
+  tags resource_tags,
+  -- contraints
+  CONSTRAINT access_key UNIQUE(key)
 );
 
 
