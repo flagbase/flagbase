@@ -6,8 +6,8 @@ import (
 	"core/internal/constants"
 	"core/internal/crypto"
 	"core/internal/db"
-	"core/internal/enforce"
 	"core/internal/jwt"
+	"core/internal/policy"
 
 	"core/pkg/auth"
 
@@ -23,15 +23,15 @@ func CreateAccess(atk string, i models.Access) (
 	var e models.ErrorResponse
 	var a models.Access
 
-	parentAccessID, authError := auth.Enforce(atk, "access", i.Key, i.Type)
-	if authError.Errors != nil {
+	// TODO: think about user paradox (draw up workflow)
+	// Make sure only root can create new admin users
+	parentAccess, authErr := auth.Enforce(atk, "access", i.Key, i.Type)
+	if authErr.Errors != nil {
 		e.Errors = append(
 			e.Errors,
-			&models.Error{
-				Code:    constants.AuthError,
-				Message: "forbidden operation",
-			},
+			authErr.Errors...,
 		)
+		// TODO: Remove early exit and use context to cancel operations
 		return nil, &e
 	}
 
@@ -84,12 +84,12 @@ func CreateAccess(atk string, i models.Access) (
 	}
 
 	// overide parent access id to self if using RuntimeToken
-	if parentAccessID == constants.RuntimeToken {
-		parentAccessID = accessID
+	if atk == constants.RuntimeToken {
+		parentAccess.ID = accessID
 	}
 
 	// Create new enforcer policy
-	enforce.Enforcer.AddPolicy(parentAccessID, accessID, a.Type)
+	policy.Enforcer.AddPolicy(parentAccess.ID, accessID, a.Type)
 
 	// display unencrypted secret one time upon creation
 	a.Secret = i.Secret

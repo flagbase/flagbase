@@ -25,5 +25,5 @@ var (
 	// JWTKey used to encode jwt
 	JWTKey string = "bad_secret"
 	// JWTExpiry default jwt expiry time
-	JWTExpiry int64 = time.Now().Add(5 * time.Minute).Unix()
+	JWTExpiry int64 = time.Now().Add(50000 * time.Minute).Unix()
 )

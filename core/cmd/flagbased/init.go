@@ -5,7 +5,7 @@ import (
 	"core/generated/models"
 	"core/internal/constants"
 	"core/internal/db"
-	"core/internal/enforce"
+	"core/internal/policy"
 	"core/pkg/access"
 	"errors"
 	"os"
@@ -71,7 +71,7 @@ func Init(cnf InitConfig) {
 	}
 	defer db.Pool.Close()
 
-	if err := enforce.NewEnforcer(cnf.DbURL); err != nil {
+	if err := policy.NewEnforcer(cnf.DbURL); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
 		os.Exit(1)
 	}

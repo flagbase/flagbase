@@ -1,4 +1,4 @@
-package enforce
+package policy
 
 import (
 	pgadapter "github.com/casbin/casbin-pg-adapter"
@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	// Enforcer global casbin enforcer
+	// Enforcer global casbin enforcer object
 	Enforcer *casbin.Enforcer
 )
 
@@ -18,7 +18,7 @@ func NewEnforcer(connStr string) error {
 	}
 
 	enforcer, err := casbin.NewEnforcer(
-		"./internal/enforce/model.conf",
+		"./internal/policy/model.conf",
 		adapter,
 	)
 	if err != nil {
@@ -29,4 +29,17 @@ func NewEnforcer(connStr string) error {
 	Enforcer.LoadPolicy()
 
 	return nil
+}
+
+// Enforce enforces a casbin policy
+func Enforce(
+	accessID string,
+	resourceID string,
+	accessType string,
+) (bool, error) {
+	return Enforcer.Enforce(
+		accessID,
+		resourceID,
+		accessType,
+	)
 }

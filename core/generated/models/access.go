@@ -27,6 +27,9 @@ type Access struct {
 	// Unix time stating when this access expires.
 	ExpiresAt int64 `json:"expiresAt,omitempty"`
 
+	// Arbitrary access identifier
+	ID string `json:"id,omitempty"`
+
 	// Generated access key (make sure you save this key)
 	Key string `json:"key,omitempty"`
 

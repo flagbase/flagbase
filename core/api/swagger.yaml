@@ -29,35 +29,35 @@ info:
     altText: Flagbase Core API
   termsOfService: 'https://flagbase.com/legal/terms'
 tags:
-  - name: access
-    x-displayName: Access
-    description: Access is a representation of the relationship between the service user and its resources. Access is usually required by resources that are sensitive in nature and need some sort of protection. Users with root or admin privelleges have full control over resources and can also create and update resource access. Service users only have read access and used by SDKs and other read-only clients.
+  - name: auth
+    x-displayName: Auth Management
+    description: Access authentication
   - name: workspaces
-    x-displayName: Workspaces
+    x-displayName: Workspace Management
     description: "Workspaces represent a collection of projects. It can be used to group an individual or organisation's projects."
   - name: workspace-access
     x-displayName: Workspace Access
     description: A new workspace-access link should be created in order to enable the appropriate acess permissions to this resource and its children.
   - name: projects
-    x-displayName: Projects
+    x-displayName: Project Management
     description: Projects represent a collection of feature flags and their respective rollout rules etc. Projects also have different contexts which are applied (i.e. environments).
   - name: project-access
     x-displayName: Project Access
     description: A new project-access link should be created in order to enable the appropriate acess permissions to this resource and its children.
   - name: environments
-    x-displayName: Environments
+    x-displayName: Environment Management
     description: 'Environments are used to maintain isolated contexts for project resources (such as feature flags, rollout rules etc). For example, you can have Test and Production environments, which contain completely separate rollout rules etc.'
   - name: environment-access
     x-displayName: Environment Access
     description: A new environment-access link should be created in order to enable the appropriate acess permissions to this resource and its children.
   - name: flags
-    x-displayName: Feature Flags
+    x-displayName: Flag Management
     description: 'A feature flag (aka feature switch) represent the current state of a feature. Feature flags consists of variations (ie. boolean (true, false) or multi-variant (A, B, C)), where each variation represents a unique state of a particular feature.'
   - name: variations
-    x-displayName: Variations
+    x-displayName: Variation Management
     description: A variation represents a particular feature flag state. Feature flags usually consist of multiple variations (e.g. True and False). We can rollout different feature variations to particular users or user segments.
   - name: targeting
-    x-displayName: Targeting
+    x-displayName: Targeting Management
     description: 'Targeting is essentially a rollout configuration which defines how feature flag variations are rolled out to specific users. Rollout rules can target specific user or segments. After users "evaluate" a specific rollout rule and obtain a flag variation.'
   - name: targeting-rules
     x-displayName: Targeting Rules
@@ -66,45 +66,49 @@ tags:
     x-displayName: Targeting Percentages
     description: Targeting percentages are used when you want to conduct a incremental rollouts on a certain percentage of users. It allows you to rollout variations to explicit percentages of your whole cohort base.
   - name: segments
-    x-displayName: Segments
+    x-displayName: Segment Management
     description: Segments represent a specific group of users based on their attributes. You can define a specific user segments using a set rules. Rules contain conditions that are applied to attributes.
   - name: segment-rules
     x-displayName: Segment Rules
     description: "Segment rules consists of conditions that need to match a specific user's attributes (i.e. identity traits) ."
   - name: identities
-    x-displayName: Identities
+    x-displayName: Identity Management
     description: An identity is an instance of a user. Identities are initially created when the first evaluate a feature flag (i.e. by using the SDK).
   - name: auditlog
     x-displayName: Auditlog
     description: 'Auditlog is a log of all mutations on the workspace and its children resources (i.e. projects, environments and feature flags).'
 x-tagGroups:
-  - name: Authentication
+  - name: Authorization
     tags:
-      - access
-  - name: Project Management
+      - auth
+  - name: Workspaces
     tags:
       - workspaces
+      - workspace-access
+  - name: Projects
+    tags:
       - projects
+      - project-access
+  - name: Environments
+    tags:
       - environments
-  - name: Flag Management
+      - environment-access
+  - name: Feature Flags
     tags:
       - flags
       - variations
-  - name: Targeting Management
+  - name: Targeting
     tags:
       - targeting
       - targeting-rules
       - targeting-percentages
-  - name: User Management
+  - name: Users
     tags:
       - identities
       - segments
       - segment-rules
-  - name: Access Management
+  - name: Access
     tags:
-      - workspace-access
-      - project-access
-      - environment-access
       - auditlog
 paths:
   '/workspaces/{workspaceKey}':
@@ -565,7 +569,7 @@ paths:
         - projects
   /access/token:
     post:
-      summary: Generate Access token
+      summary: Obtain access token
       operationId: gen-access-token
       responses:
         '200':
@@ -579,8 +583,6 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResponse'
-      tags:
-        - access
       description: Obtain a signed access token using an access key-secret pair.
       parameters:
         - in: body
@@ -598,6 +600,8 @@ paths:
               - key
               - secret
           description: Access key-secret pair.
+      tags:
+        - auth
     parameters: []
   /auditlog:
     get:
@@ -706,7 +710,7 @@ paths:
         - in: body
           name: body
           schema:
-            $ref: '#/definitions/AccessPairInput'
+            $ref: '#/definitions/AccessInput'
           description: Access Key-Secret Pair
       tags:
         - workspace-access
@@ -790,7 +794,7 @@ paths:
         - in: body
           name: body
           schema:
-            $ref: '#/definitions/AccessPairInput'
+            $ref: '#/definitions/AccessInput'
           description: Access Key-Secret Pair
       tags:
         - project-access
@@ -887,7 +891,7 @@ paths:
         - in: body
           name: body
           schema:
-            $ref: '#/definitions/AccessPairInput'
+            $ref: '#/definitions/AccessInput'
           description: Access Key-Secret Pair
     delete:
       summary: Delete environment access
@@ -2036,6 +2040,9 @@ definitions:
     type: object
     description: 'Access is used to represent the relationship between the API user and the service. Access objects are attached to the resources, which are used to authorise users.'
     properties:
+      id:
+        type: string
+        description: Arbitrary access identifier
       key:
         type: string
         description: Generated access key (make sure you save this key)

@@ -3,6 +3,7 @@ package access
 import (
 	"core/generated/models"
 	"core/internal/constants"
+	"core/internal/httputils"
 	"core/internal/rand"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +17,10 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func createAccessHandler(ctx *gin.Context) {
+	// retrieve access token
+	atk := httputils.RetrieveAccessToken(ctx)
+
+	// bind req body to input
 	var i models.Access
 	ctx.BindJSON(&i)
 
@@ -33,13 +38,13 @@ func createAccessHandler(ctx *gin.Context) {
 	}
 
 	// TODO retreive token from context
-	data, err := CreateAccess("sometoken", i)
+	data, err := CreateAccess(atk, i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
 
-	ctx.JSON(200, data)
+	ctx.JSON(201, data)
 }
 
 func genAccessTokenHandler(ctx *gin.Context) {
