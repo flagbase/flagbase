@@ -24,13 +24,6 @@ DELETE TABLE variation;
 DELETE TABLE flag;
 
 -- ------| RESOURCE ACCESS |------ --
-DELETE TRIGGER environment_access_trigger;
-DELETE TRIGGER project_access_trigger;
-DELETE TRIGGER workspace_access_trigger;
-DELETE FUNCTION access_verification;
-DELETE TABLE environment_access;
-DELETE TABLE project_access;
-DELETE TABLE workspace_access;
 DELETE TABLE access;
 DELETE TYPE access_type;
 
@@ -48,5 +41,8 @@ DELETE DOMAIN resource_key;
 DELETE DOMAIN resource_name;
 DELETE DOMAIN resource_description;
 DELETE DOMAIN resource_tags;
+
+-- ------| Extensions |------ --
+DELETE EXTENSION "pgcrypto";
 
 END;

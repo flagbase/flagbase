@@ -1,4 +1,4 @@
-# Core
+# Flagbase Core
 
 ## Documentation
 TODO
