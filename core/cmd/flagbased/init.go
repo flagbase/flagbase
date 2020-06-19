@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"core/generated/models"
 	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/policy"
@@ -88,7 +87,7 @@ func Init(cnf InitConfig) {
 }
 
 func createRootAccess(rootKey string, rootSecret string) error {
-	a := models.Access{
+	_, err := access.CreateAccess(access.Access{
 		Key:         rootKey,
 		Secret:      rootSecret,
 		Name:        "Flagbase Root",
@@ -96,11 +95,9 @@ func createRootAccess(rootKey string, rootSecret string) error {
 		Type:        "root",
 		Tags:        []string{},
 		ExpiresAt:   constants.MaxUnixTime,
-	}
-
-	_, err := access.CreateAccess(constants.RuntimeToken, a)
+	})
 	if err.Errors != nil {
-		return errors.New("unable to create root access")
+		return errors.New("unable to create root access - perhaps thisuser already exists")
 	}
 
 	return nil

@@ -8,10 +8,6 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-/*
- * SERVICES
- */
-
 // Ping sends a useless query to the database to see if the connection is working.
 func Ping(ctx context.Context) (string, error) {
 	var msg string

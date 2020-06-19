@@ -2,13 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 
 	"core/internal/constants"
 	"core/internal/db"
+	"core/internal/http"
 	"core/internal/policy"
 
 	"github.com/sirupsen/logrus"
@@ -89,8 +90,5 @@ func Start(cnf StartConfig) {
 		os.Exit(1)
 	}
 
-	ok, err := policy.Enforcer.Enforce("5fe72c43-5ab6-4933-b439-6e740b405be9", "5fe72c43-5ab6-4933-b439-6e740b405be9", "root")
-	fmt.Println(ok, err.Error())
-
-	// http.NewHTTPServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)
+	http.NewHTTPServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)
 }

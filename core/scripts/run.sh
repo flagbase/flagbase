@@ -84,6 +84,7 @@ function db_init() {
 
 function db_drop() {
   psql -h $DB_HOST -p $DB_PORT -c "DROP DATABASE $DB_NAME;"
+  psql -h $DB_HOST -p $DB_PORT -c "DROP DATABASE casbin;"
 }
 
 
@@ -120,36 +121,6 @@ function db_show() {
   pgexec "\dt;"
 }
 
-
-# ------- Swagger Commands ------- #
-
-# function swagger_flatten {
-#   check_swagger
-#   swagger flatten ./api/swagger.yaml > ./generated/swagger.json
-#   # cp generated/swagger.json ../website/static/docs/core/swagger.json
-# }
-
-function swagger_validate {
-  check_swagger
-  swagger validate ./api/swagger.yaml
-}
-
-
-function swagger_generate_models {
-  check_swagger
-  rm -rf ./generated/models/*
-  swagger generate model -t ./generated -f ./api/swagger.yaml
-}
-
-function swagger_generate {
-  check_swagger
-  swagger_validate
-  # swagger_flatten
-  swagger_generate_models
-}
-
-
-
 # ------- Command Selector ------- #
 
 function help() {
@@ -166,10 +137,6 @@ function help() {
   echo 1>&2 "   db:migrate:reset          Roll back migrations."
   echo 1>&2 "   db:show                   Show db schemas."
   echo 1>&2 "   db:drop                   Drop database."
-  # echo 1>&2 "   swagger:flatten           Flatten swagger specs."
-  echo 1>&2 "   swagger:generate          Generate swagger files."
-  echo 1>&2 "   swagger:generate:models   Generate swagger models."
-  echo 1>&2 "   swagger:validate          Validates a swagger specification."
   echo 1>&2 ""
 }
 
@@ -228,26 +195,6 @@ function run() {
     "db:drop" )
       shift
       db_drop "$@"
-      ;;
-
-    # "swagger:flatten" )
-    #   shift
-    #   swagger_flatten "$@"
-    #   ;;
-
-    "swagger:validate" )
-      shift
-      swagger_validate "$@"
-      ;;
-
-    "swagger:generate:models" )
-      shift
-      swagger_generate_models "$@"
-      ;;
-
-    "swagger:generate" )
-      shift
-      swagger_generate "$@"
       ;;
 
     *)
