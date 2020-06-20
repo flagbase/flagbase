@@ -6,7 +6,7 @@ import (
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/jwt"
-	"core/internal/response"
+	res "core/internal/response"
 
 	"github.com/lib/pq"
 )
@@ -37,10 +37,10 @@ type Token struct {
 
 // GenAccessToken generate an access token via an access pair
 func GenAccessToken(i PairInput) (
-	*response.Success,
-	*response.Errors,
+	*res.Success,
+	*res.Errors,
 ) {
-	var e response.Errors
+	var e res.Errors
 	var a Access
 
 	var encryptedSecret string
@@ -74,7 +74,7 @@ func GenAccessToken(i PairInput) (
 		e.Append(constants.AuthError, "Unable to sign JWT")
 	}
 
-	return &response.Success{
+	return &res.Success{
 		Data: &Token{
 			Token:  tokenString,
 			Access: &a,
@@ -84,11 +84,12 @@ func GenAccessToken(i PairInput) (
 
 // CreateAccess create a new access key-secret pair.
 func CreateAccess(i Access) (
-	*response.Success,
-	*response.Errors,
+	*res.Success,
+	*res.Errors,
 ) {
-	var e response.Errors
+	var e res.Errors
 	var a Access
+
 	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
@@ -97,8 +98,16 @@ func CreateAccess(i Access) (
 
 	// create root user
 	row := db.Pool.QueryRow(context.Background(), `
-  INSERT INTO access
-    (key, encrypted_secret, type, expires_at, name, description, tags)
+  INSERT INTO
+    access(
+      key,
+      encrypted_secret,
+      type,
+      expires_at,
+      name,
+      description,
+      tags
+    )
   VALUES
     ($1, $2, $3, $4, $5, $6, $7)
   RETURNING
@@ -125,5 +134,5 @@ func CreateAccess(i Access) (
 	// display unencrypted secret one time upon creation
 	a.Secret = i.Secret
 
-	return &response.Success{Data: a}, &e
+	return &res.Success{Data: a}, &e
 }

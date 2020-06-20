@@ -2,11 +2,11 @@ package workspace
 
 import (
 	"context"
+	"core/internal/constants"
 	"core/internal/db"
-	"errors"
+	res "core/internal/response"
 
-	"github.com/jackc/pgx"
-	"github.com/sirupsen/logrus"
+	"github.com/lib/pq"
 )
 
 // Workspace represents a collection of projects
@@ -18,23 +18,65 @@ type Workspace struct {
 }
 
 // GetWorkspace get a workspace using its key
-func GetWorkspace(ctx context.Context, key string) (*Workspace, error) {
-	var w Workspace
-	row := db.Pool.QueryRow(ctx, `
+func GetWorkspace(key string) (
+	*res.Success,
+	*res.Errors,
+) {
+	var o Workspace
+	var e res.Errors
+
+	row := db.Pool.QueryRow(context.Background(), `
   SELECT
-    key, name
+    key, name, description, tags
   FROM
     workspace
   WHERE
     key = $1
   `, key)
-	err := row.Scan(&w.Key, &w.Name)
-	if err == pgx.ErrNoRows {
-		logrus.Error(err)
-		return nil, errors.New("Cannot find workspace")
-	} else if err != nil {
-		logrus.Error(err)
-		return nil, err
+	err := row.Scan(
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
+	)
+	if err != nil {
+		e.Append("NotFound", err.Error())
 	}
-	return &w, nil
+
+	return &res.Success{Data: o}, &e
+}
+
+// CreateWorkspace get a workspace using its key
+func CreateWorkspace(i Workspace) (
+	*res.Success,
+	*res.Errors,
+) {
+	var o Workspace
+	var e res.Errors
+
+	// create root user
+	row := db.Pool.QueryRow(context.Background(), `
+  INSERT INTO
+    workspace(
+      key, name, description, tags
+    )
+  VALUES
+    ($1, $2, $3, $4)
+  RETURNING
+    key, name, description, tags;`,
+		i.Key,
+		i.Name,
+		i.Description,
+		pq.Array(i.Tags),
+	)
+	if err := row.Scan(
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
+	); err != nil {
+		e.Append(constants.InputError, err.Error())
+	}
+
+	return &res.Success{Data: o}, &e
 }

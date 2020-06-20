@@ -2,7 +2,6 @@ package access
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
 )
 
 // ApplyRoutes workspace route handlers
@@ -16,7 +15,6 @@ func genAccessTokenHandler(ctx *gin.Context) {
 	ctx.BindJSON(&i)
 
 	data, err := GenAccessToken(i)
-	logrus.Info(err.Errors)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return

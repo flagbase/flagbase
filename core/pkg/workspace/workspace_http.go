@@ -6,16 +6,28 @@ import (
 
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("workspace")
+	routes := r.Group("workspaces")
+	routes.POST("", createWorkspaceHandler)
 	routes.GET(":key", getWorkspaceHandler)
+}
+
+func createWorkspaceHandler(ctx *gin.Context) {
+	var i Workspace
+	ctx.BindJSON(&i)
+	data, err := CreateWorkspace(i)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
+		return
+	}
+	ctx.JSON(201, data)
 }
 
 func getWorkspaceHandler(ctx *gin.Context) {
 	key := ctx.Param("key")
-	data, err := GetWorkspace(ctx, key)
-	if err != nil {
-		ctx.AbortWithStatusJSON(404, gin.H{"error": err.Error()})
+	data, err := GetWorkspace(key)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
-	ctx.JSON(200, gin.H{"data": data})
+	ctx.JSON(200, data)
 }
