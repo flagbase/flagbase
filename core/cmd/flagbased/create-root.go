@@ -13,19 +13,19 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// InitConfig server config
-type InitConfig struct {
+// CreateRootConfig server config
+type CreateRootConfig struct {
 	DbURL      string
 	Verbose    bool
 	RootKey    string
 	RootSecret string
 }
 
-// InitCommand init cli command
-var InitCommand cli.Command = cli.Command{
-	Name:        "init",
-	Usage:       "Initialise server",
-	Description: "Initialise server database, root user etc. This should be run only once.",
+// CreateRootCommand init cli command
+var CreateRootCommand cli.Command = cli.Command{
+	Name:        "create-root",
+	Usage:       "Create root access",
+	Description: "Create root access key-secret pair",
 	ArgsUsage:   "[arrgh]",
 	Flags: []cli.Flag{
 		&cli.StringFlag{
@@ -51,19 +51,19 @@ var InitCommand cli.Command = cli.Command{
 		},
 	},
 	Action: func(ctx *cli.Context) error {
-		cnf := InitConfig{
+		cnf := CreateRootConfig{
 			DbURL:      ctx.String("db-url"),
 			RootKey:    ctx.String("root-key"),
 			RootSecret: ctx.String("root-secret"),
 			Verbose:    ctx.Bool("verbose"),
 		}
-		Init(cnf)
+		CreateRoot(cnf)
 		return nil
 	},
 }
 
-// Init initialisation process
-func Init(cnf InitConfig) {
+// CreateRoot create root access
+func CreateRoot(cnf CreateRootConfig) {
 	if err := db.NewPool(context.Background(), cnf.DbURL, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		os.Exit(1)
@@ -76,13 +76,13 @@ func Init(cnf InitConfig) {
 	}
 
 	if err := createRootAccess(cnf.RootKey, cnf.RootSecret); err != nil {
-		logrus.Error("Unable to create root user")
+		logrus.Error("Unable to create root access. Perhap the access-key already exists.")
 		os.Exit(1)
 	} else {
 		logrus.WithFields(logrus.Fields{
 			"key":    cnf.RootKey,
 			"secret": cnf.RootSecret,
-		}).Info("Created root user")
+		}).Info("Created root access")
 	}
 }
 
@@ -91,7 +91,7 @@ func createRootAccess(rootKey string, rootSecret string) error {
 		Key:         rootKey,
 		Secret:      rootSecret,
 		Name:        "Flagbase Root",
-		Description: "Default root user",
+		Description: "Default root access",
 		Type:        "root",
 		Tags:        []string{},
 		ExpiresAt:   constants.MaxUnixTime,
