@@ -164,7 +164,11 @@ paths:
         - workspaces
       description: Update an existing workspace.
       requestBody:
-        $ref: '#/components/requestBodies/Workspace'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete workspace
       operationId: delete-workspace
@@ -233,7 +237,10 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Project'
-        description: Project Object
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete project
       operationId: delete-project
@@ -322,8 +329,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentInput'
-        description: Environment Object
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete environment
       operationId: delete-environment
@@ -958,6 +965,12 @@ paths:
           description: The environment key
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete feature flag
       operationId: delete-flag
@@ -1100,7 +1113,11 @@ paths:
         - variations
       description: Update a specific variation.
       requestBody:
-        $ref: '#/components/requestBodies/Variation'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete variation
       operationId: delete-variation
@@ -1296,6 +1313,12 @@ paths:
             type: string
       tags:
         - targeting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
   '/targeting/{projectKey}/{flagKey}/rules':
     parameters:
       - name: projectKey
@@ -1434,6 +1457,12 @@ paths:
             type: string
       tags:
         - targeting-rules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete targeting rule
       operationId: delete-targeting-rule
@@ -1517,6 +1546,12 @@ paths:
             type: string
       tags:
         - targeting-percentages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
   '/segments/{projectKey}':
     parameters:
       - name: projectKey
@@ -1630,7 +1665,11 @@ paths:
       tags:
         - segments
       requestBody:
-        $ref: '#/components/requestBodies/Segment'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete segment
       operationId: delete-segment
@@ -1768,6 +1807,12 @@ paths:
       description: Update an existing segment rule.
       tags:
         - segment-rules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete segment rule
       operationId: delete-segment-rule
@@ -1821,6 +1866,32 @@ components:
             $ref: '#/components/schemas/Segment'
       description: Segment Object
   schemas:
+    PatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      title: PatchDocument
+      type: array
+      items:
+        type: object
+        properties:
+          op:
+            type: string
+            description: The operation to be performed
+            enum:
+              - add
+              - remove
+              - replace
+              - move
+              - copy
+              - test
+          path:
+            type: string
+            description: A JSON-Pointer
+          value:
+            type: object
+            description: The value to be used within the operations.
+          from:
+            type: string
+            description: A string containing a JSON Pointer value.
     Workspace:
       description: A representation of a workspace
       type: object

@@ -17,7 +17,7 @@ type Workspace struct {
 	Tags        []string `json:"tags,omitempty"`
 }
 
-// GetWorkspace get a workspace using its key
+// GetWorkspace get workspace service
 func GetWorkspace(key string) (
 	*res.Success,
 	*res.Errors,
@@ -44,6 +44,21 @@ func GetWorkspace(key string) (
 	}
 
 	return &res.Success{Data: o}, &e
+}
+
+// UpdateWorkspace update workspace service
+func UpdateWorkspace(key string, i Workspace) (
+	*res.Success,
+	*res.Errors,
+) {
+
+	return nil, nil
+}
+
+// DeleteWorkspace delete workspace service
+func DeleteWorkspace(key string) *res.Errors {
+
+	return nil
 }
 
 // CreateWorkspace get a workspace using its key
@@ -76,6 +91,37 @@ func CreateWorkspace(i Workspace) (
 		&o.Tags,
 	); err != nil {
 		e.Append(constants.InputError, err.Error())
+	}
+
+	return &res.Success{Data: o}, &e
+}
+
+// ListWorkspaces list workspace service
+func ListWorkspaces() (
+	*res.Success,
+	*res.Errors,
+) {
+	var o []Workspace
+	var e res.Errors
+
+	rows, err := db.Pool.Query(context.Background(), `
+  SELECT
+    key, name, description, tags
+  FROM
+    workspace
+  `)
+
+	for rows.Next() {
+		var w Workspace
+		if err = rows.Scan(
+			&w.Key,
+			&w.Name,
+			&w.Description,
+			&w.Tags,
+		); err != nil {
+			e.Append("NotFound", err.Error())
+		}
+		o = append(o, w)
 	}
 
 	return &res.Success{Data: o}, &e

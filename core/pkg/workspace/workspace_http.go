@@ -7,10 +7,49 @@ import (
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("workspaces")
-	routes.POST("", createWorkspaceHandler)
 	routes.GET(":key", getWorkspaceHandler)
+	routes.PATCH(":key", updateWorkspaceHandler)
+	routes.DELETE(":key", deleteWorkspaceHandler)
+	routes.POST("", createWorkspaceHandler)
+	routes.GET("", listWorkspaceHandler)
 }
 
+// getWorkspaceHandler get workspace http handler
+func getWorkspaceHandler(ctx *gin.Context) {
+	key := ctx.Param("key")
+	data, err := GetWorkspace(key)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
+		return
+	}
+	ctx.JSON(200, data)
+}
+
+// updateWorkspaceHandler update workspace http handler
+func updateWorkspaceHandler(ctx *gin.Context) {
+	key := ctx.Param("key")
+	var i Workspace
+	ctx.BindJSON(&i)
+	data, err := UpdateWorkspace(key, i)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
+		return
+	}
+	ctx.JSON(201, data)
+}
+
+// deleteWorkspaceHandler delete workspace http handler
+func deleteWorkspaceHandler(ctx *gin.Context) {
+	key := ctx.Param("key")
+	err := DeleteWorkspace(key)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(500, err)
+		return
+	}
+	ctx.Status(204)
+}
+
+// createWorkspaceHandler create workspace http handler
 func createWorkspaceHandler(ctx *gin.Context) {
 	var i Workspace
 	ctx.BindJSON(&i)
@@ -22,9 +61,9 @@ func createWorkspaceHandler(ctx *gin.Context) {
 	ctx.JSON(201, data)
 }
 
-func getWorkspaceHandler(ctx *gin.Context) {
-	key := ctx.Param("key")
-	data, err := GetWorkspace(key)
+// listWorkspaceHandler list workspace http handler
+func listWorkspaceHandler(ctx *gin.Context) {
+	data, err := ListWorkspaces()
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return
