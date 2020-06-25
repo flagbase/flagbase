@@ -32,20 +32,24 @@ func UpdateWorkspace(key string, p patch.Patch) (
 ) {
   var o Workspace
 	var e res.Errors
+  ctx := context.Background()
+  ctx, cancel := context.WithCancel(ctx)
 
 	// get original document
 	w, err := getWorkspaceByKey(key)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+    e.Append(constants.NotFoundError, err.Error())
+    cancel()
 	}
 
   // apply patch and get modified document
   if err := patch.Transform(w, p, &o); err != nil {
 		e.Append(constants.InternalError, err.Error())
+    cancel()
   }
 
   // update original with patched document
-	if _, err := db.Pool.Exec(context.Background(), `
+	if _, err := db.Pool.Exec(ctx, `
   UPDATE workspace
   SET
     key = $2, name = $3, description = $4, tags = $5
@@ -56,7 +60,7 @@ func UpdateWorkspace(key string, p patch.Patch) (
 		o.Name,
 		o.Description,
 		pq.Array(o.Tags),
-  ); err != nil {
+  ); err != nil && err != context.Canceled {
     e.Append(constants.InternalError, err.Error())
   }
 

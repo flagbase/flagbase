@@ -2,6 +2,7 @@ package patch
 
 import (
 	"encoding/json"
+	"errors"
 
 	jsonpatch "github.com/evanphx/json-patch"
 )
@@ -26,6 +27,11 @@ func Transform(i interface{}, p Patch, o interface{}) error {
 	mo, err := jp.Apply(mi)
 	if err != nil {
 		return err
+	}
+
+	// check if patch made any difference
+	if jsonpatch.Equal(mi, mo) {
+		return errors.New("patch made no difference")
 	}
 
 	// unmarshall output
