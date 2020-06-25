@@ -1,6 +1,8 @@
 package workspace
 
 import (
+	"core/internal/patch"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,14 +30,15 @@ func getWorkspaceHandler(ctx *gin.Context) {
 // updateWorkspaceHandler update workspace http handler
 func updateWorkspaceHandler(ctx *gin.Context) {
 	key := ctx.Param("key")
-	var i Workspace
+	var i patch.Patch
 	ctx.BindJSON(&i)
+
 	data, err := UpdateWorkspace(key, i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
-	ctx.JSON(201, data)
+	ctx.JSON(200, data)
 }
 
 // deleteWorkspaceHandler delete workspace http handler
