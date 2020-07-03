@@ -35,7 +35,9 @@ func Transform(i interface{}, p Patch, o interface{}) error {
 	}
 
 	// unmarshall output
-	json.Unmarshal(mo, &o)
+	if err := json.Unmarshal(mo, &o); err != nil {
+		return err
+	}
 
 	return nil
 }

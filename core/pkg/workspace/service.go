@@ -1,17 +1,18 @@
 package workspace
 
 import (
-  "context"
+	"context"
 	"core/internal/constants"
-	"core/internal/patch"
 	"core/internal/db"
+	"core/internal/patch"
 	res "core/internal/response"
+	"core/pkg/auth"
 
 	"github.com/lib/pq"
 )
 
 // GetWorkspace get workspace service
-func GetWorkspace(key string) (
+func GetWorkspace(atk string, key string) (
 	*res.Success,
 	*res.Errors,
 ) {
@@ -22,6 +23,10 @@ func GetWorkspace(key string) (
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
+	if err := auth.Enforce(atk, o.ID, "service"); err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
+
 	return &res.Success{Data: o}, &e
 }
 
@@ -30,27 +35,28 @@ func UpdateWorkspace(key string, p patch.Patch) (
 	*res.Success,
 	*res.Errors,
 ) {
-  var o Workspace
+	var o Workspace
 	var e res.Errors
-  ctx := context.Background()
-  ctx, cancel := context.WithCancel(ctx)
+	ctx := context.Background()
+	ctx, cancel := context.WithCancel(ctx)
 
 	// get original document
 	w, err := getWorkspaceByKey(key)
 	if err != nil {
-    e.Append(constants.NotFoundError, err.Error())
-    cancel()
+		e.Append(constants.NotFoundError, err.Error())
+		cancel()
 	}
 
-  // apply patch and get modified document
-  if err := patch.Transform(w, p, &o); err != nil {
+	// apply patch and get modified document
+	if err := patch.Transform(w, p, &o); err != nil {
 		e.Append(constants.InternalError, err.Error())
-    cancel()
-  }
+		cancel()
+	}
 
-  // update original with patched document
+	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
-  UPDATE workspace
+  UPDATE
+    workspace
   SET
     key = $2, name = $3, description = $4, tags = $5
   WHERE
@@ -60,17 +66,29 @@ func UpdateWorkspace(key string, p patch.Patch) (
 		o.Name,
 		o.Description,
 		pq.Array(o.Tags),
-  ); err != nil && err != context.Canceled {
-    e.Append(constants.InternalError, err.Error())
-  }
+	); err != nil && err != context.Canceled {
+		e.Append(constants.InternalError, err.Error())
+	}
 
 	return &res.Success{Data: o}, &e
 }
 
-// DeleteWorkspace delete workspace service
+// DeleteWorkspace delete workspace given its key
 func DeleteWorkspace(key string) *res.Errors {
+	var e res.Errors
 
-	return nil
+	if _, err := db.Pool.Exec(context.Background(), `
+  DELETE FROM
+    workspace
+  WHERE
+    key = $1
+  `,
+		key,
+	); err != nil {
+		e.Append(constants.InternalError, err.Error())
+	}
+
+	return &e
 }
 
 // CreateWorkspace get a workspace using its key

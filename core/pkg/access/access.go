@@ -12,8 +12,8 @@ type Access struct {
 	Type        string   `json:"type,omitempty"`
 }
 
-// PairInput access secret-key pair, used for login
-type PairInput struct {
+// KeySecretPair access secret-key pair, used for login
+type KeySecretPair struct {
 	Key    string `json:"key,omitempty"`
 	Secret string `json:"secret,omitempty"`
 }

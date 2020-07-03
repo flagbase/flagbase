@@ -6,18 +6,18 @@ import (
 	"fmt"
 )
 
-// getWorkspaceByKey retrieve a workspace given its unique key
 func getWorkspaceByKey(key string) (*Workspace, error) {
 	var w Workspace
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
-    key, name, description, tags
+    id, key, name, description, tags
   FROM
     workspace
   WHERE
     key = $1
   `, key)
 	if err := row.Scan(
+		&w.ID,
 		&w.Key,
 		&w.Name,
 		&w.Description,

@@ -7,12 +7,13 @@ import (
 	"core/internal/db"
 	"core/internal/jwt"
 	res "core/internal/response"
+	"encoding/json"
 
 	"github.com/lib/pq"
 )
 
 // GenAccessToken generate an access token via an access pair
-func GenAccessToken(i PairInput) (
+func GenAccessToken(i KeySecretPair) (
 	*res.Success,
 	*res.Errors,
 ) {
@@ -45,14 +46,19 @@ func GenAccessToken(i PairInput) (
 		e.Append(constants.AuthError, "Mismatching access key-secret pair")
 	}
 
-	tokenString, err := jwt.Sign(a)
+	ma, err := json.Marshal(a)
+	if err != nil {
+		e.Append(constants.InternalError, err.Error())
+	}
+
+	atk, err := jwt.Sign(ma)
 	if err != nil {
 		e.Append(constants.AuthError, "Unable to sign JWT")
 	}
 
 	return &res.Success{
 		Data: &Token{
-			Token:  tokenString,
+			Token:  atk,
 			Access: &a,
 		},
 	}, &e

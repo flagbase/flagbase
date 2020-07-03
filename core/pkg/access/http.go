@@ -11,7 +11,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func genAccessTokenHandler(ctx *gin.Context) {
-	var i PairInput
+	var i KeySecretPair
 	ctx.BindJSON(&i)
 
 	data, err := GenAccessToken(i)
