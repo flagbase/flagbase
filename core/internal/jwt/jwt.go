@@ -3,19 +3,18 @@ package jwt
 import (
 	"core/internal/constants"
 	"errors"
-	"fmt"
 
 	"github.com/dgrijalva/jwt-go"
 )
 
 // Claims a jwt claim
 type Claims struct {
-	Access interface{}
+	Access []byte
 	jwt.StandardClaims
 }
 
 // Sign generate token using access id
-func Sign(a interface{}) (string, error) {
+func Sign(a []byte) (string, error) {
 	claims := &Claims{
 		Access: a,
 		StandardClaims: jwt.StandardClaims{
@@ -30,9 +29,9 @@ func Sign(a interface{}) (string, error) {
 }
 
 // Verify a jwt and get the ID
-func Verify(atk string) (interface{}, error) {
+func Verify(atk string) ([]byte, error) {
 	claims := &Claims{}
-	fmt.Println(atk)
+
 	tkn, err := jwt.ParseWithClaims(atk, claims, func(token *jwt.Token) (interface{}, error) {
 		return []byte(constants.JWTKey), nil
 	})
@@ -43,5 +42,5 @@ func Verify(atk string) (interface{}, error) {
 		return nil, errors.New("invalid access token")
 	}
 
-	return &claims.Access, nil
+	return claims.Access, nil
 }

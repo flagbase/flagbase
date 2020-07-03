@@ -23,3 +23,8 @@ func (e *Errors) Append(c string, m string) {
 		"code": c,
 	}).Error(m)
 }
+
+// Extend extend an existing errors response with another errors response
+func (e *Errors) Extend(e2 *Errors) {
+	e.Errors = append(e.Errors, e2.Errors...)
+}

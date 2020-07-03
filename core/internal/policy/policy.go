@@ -17,8 +17,10 @@ func NewEnforcer(connStr string) error {
 		return err
 	}
 
+	model := NewModel()
+
 	enforcer, err := casbin.NewEnforcer(
-		"./internal/policy/model.conf",
+		model,
 		adapter,
 	)
 	if err != nil {

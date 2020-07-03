@@ -128,20 +128,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Workspace'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -166,27 +154,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Workspace'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          headers: {}
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -195,7 +164,11 @@ paths:
         - workspaces
       description: Update an existing workspace.
       requestBody:
-        $ref: '#/components/requestBodies/Workspace'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete workspace
       operationId: delete-workspace
@@ -205,20 +178,8 @@ paths:
           content:
             application/json:
               schema: {}
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -246,20 +207,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Project'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -274,6 +223,12 @@ paths:
       responses:
         '200':
           description: OK
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - projects
       description: Update an existing project.
@@ -282,27 +237,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Project'
-        description: Project Object
+          application/xml:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete project
       operationId: delete-project
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -383,8 +329,8 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentInput'
-        description: Environment Object
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete environment
       operationId: delete-environment
@@ -452,26 +398,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Flag'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -508,26 +436,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Workspace'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -547,20 +457,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -585,20 +483,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Project'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -628,6 +514,12 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Project'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       description: List all projects in the workspace associated with this access key-secret pair.
       tags:
         - projects
@@ -742,20 +634,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Access'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -777,26 +657,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Access'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -812,6 +674,12 @@ paths:
       responses:
         '204':
           description: No Content
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       description: Delete an existing workspace access link.
       requestBody:
         $ref: '#/components/requestBodies/AccessPairInput'
@@ -830,20 +698,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/AccessPairInput'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -872,26 +728,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Access'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -907,20 +745,8 @@ paths:
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -981,26 +807,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Access'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1016,20 +824,8 @@ paths:
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1084,26 +880,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Environment'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1172,26 +950,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Flag'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1205,26 +965,20 @@ paths:
           description: The environment key
           schema:
             type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete feature flag
       operationId: delete-flag
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1262,20 +1016,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Variation'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1295,26 +1037,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Variation'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1358,20 +1082,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Variation'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1391,26 +1103,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Variation'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1419,27 +1113,19 @@ paths:
         - variations
       description: Update a specific variation.
       requestBody:
-        $ref: '#/components/requestBodies/Variation'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete variation
       operationId: delete-variation
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1477,20 +1163,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Identity'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1547,20 +1221,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Identity'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1576,20 +1238,8 @@ paths:
           content:
             application/json:
               schema: {}
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1620,20 +1270,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1659,26 +1297,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1693,6 +1313,12 @@ paths:
             type: string
       tags:
         - targeting
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
   '/targeting/{projectKey}/{flagKey}/rules':
     parameters:
       - name: projectKey
@@ -1718,20 +1344,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1755,26 +1369,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1820,20 +1416,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1857,26 +1441,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1891,6 +1457,12 @@ paths:
             type: string
       tags:
         - targeting-rules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete targeting rule
       operationId: delete-targeting-rule
@@ -1900,26 +1472,8 @@ paths:
           content:
             application/json:
               schema: {}
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1959,20 +1513,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -1989,26 +1531,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2022,6 +1546,12 @@ paths:
             type: string
       tags:
         - targeting-percentages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
   '/segments/{projectKey}':
     parameters:
       - name: projectKey
@@ -2071,26 +1601,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2125,20 +1637,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2155,26 +1655,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2183,27 +1665,19 @@ paths:
       tags:
         - segments
       requestBody:
-        $ref: '#/components/requestBodies/Segment'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete segment
       operationId: delete-segment
       responses:
         '204':
           description: No Content
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2236,20 +1710,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2266,37 +1728,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SuccessResponse'
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
-                type: object
-                properties: {}
+                $ref: '#/components/schemas/ErrorResponse'
       tags:
         - segment-rules
       description: Create a new segment rule for a particular segment.
@@ -2340,20 +1777,8 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/SegmentRule'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2373,35 +1798,29 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/SegmentRule'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       description: Update an existing segment rule.
       tags:
         - segment-rules
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
     delete:
       summary: Delete segment rule
       operationId: delete-segment-rule
       responses:
         '204':
           description: No Content
-        '400':
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
+        '500':
+          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -2447,6 +1866,32 @@ components:
             $ref: '#/components/schemas/Segment'
       description: Segment Object
   schemas:
+    PatchDocument:
+      description: A JSONPatch document as defined by RFC 6902
+      title: PatchDocument
+      type: array
+      items:
+        type: object
+        properties:
+          op:
+            type: string
+            description: The operation to be performed
+            enum:
+              - add
+              - remove
+              - replace
+              - move
+              - copy
+              - test
+          path:
+            type: string
+            description: A JSON-Pointer
+          value:
+            type: object
+            description: The value to be used within the operations.
+          from:
+            type: string
+            description: A string containing a JSON Pointer value.
     Workspace:
       description: A representation of a workspace
       type: object

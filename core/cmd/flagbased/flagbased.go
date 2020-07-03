@@ -16,7 +16,7 @@ func main() {
 		EnableBashCompletion: true,
 		Commands: []*cli.Command{
 			&StartCommand,
-			&InitCommand,
+			&CreateRootCommand,
 		},
 	}
 

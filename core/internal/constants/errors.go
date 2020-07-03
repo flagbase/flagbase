@@ -7,4 +7,8 @@ const (
 	CryptoError string = "CryptoError"
 	// InputError suggests an invalid input error
 	InputError string = "InputError"
+	// InternalError suggests some internal error
+	InternalError string = "InternalError"
+	// NotFoundError suggests the queried resource does not exist
+	NotFoundError string = "NotFoundError"
 )
