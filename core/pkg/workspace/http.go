@@ -3,6 +3,7 @@ package workspace
 import (
 	"core/internal/httputils"
 	"core/internal/patch"
+	"core/internal/resource"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func getWorkspaceHandler(ctx *gin.Context) {
-	key := ctx.Param("key")
+	key := resource.Key(ctx.Param("key"))
 	atk := httputils.RetrieveAccessToken(ctx)
 
 	data, err := GetWorkspace(atk, key)
@@ -31,7 +32,7 @@ func getWorkspaceHandler(ctx *gin.Context) {
 }
 
 func updateWorkspaceHandler(ctx *gin.Context) {
-	key := ctx.Param("key")
+	key := resource.Key(ctx.Param("key"))
 	var i patch.Patch
 	ctx.BindJSON(&i)
 

@@ -2,6 +2,7 @@ package jwt
 
 import (
 	"core/internal/constants"
+	"core/internal/resource"
 	"errors"
 
 	"github.com/dgrijalva/jwt-go"
@@ -29,17 +30,21 @@ func Sign(a []byte) (string, error) {
 }
 
 // Verify a jwt and get the ID
-func Verify(atk string) ([]byte, error) {
+func Verify(atk resource.Token) ([]byte, error) {
 	claims := &Claims{}
 
-	tkn, err := jwt.ParseWithClaims(atk, claims, func(token *jwt.Token) (interface{}, error) {
-		return []byte(constants.JWTKey), nil
-	})
+	tkn, err := jwt.ParseWithClaims(
+		atk.String(),
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(constants.JWTKey), nil
+		},
+	)
 
 	if err != nil {
 		return nil, err
 	} else if !tkn.Valid {
-		return nil, errors.New("invalid access token")
+		return nil, errors.New("Invalid access token")
 	}
 
 	return claims.Access, nil

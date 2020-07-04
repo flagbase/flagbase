@@ -4,7 +4,7 @@ import (
 	"github.com/casbin/casbin/v2/model"
 )
 
-// NewModel creates a new casbin model
+// NewModel flagbase casbin model
 func NewModel() model.Model {
 	m := model.NewModel()
 

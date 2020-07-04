@@ -5,40 +5,42 @@ import (
 	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/patch"
-	res "core/internal/response"
+	"core/internal/resource"
+	"core/internal/response"
 	"core/pkg/auth"
 
 	"github.com/lib/pq"
 )
 
 // GetWorkspace get workspace service
-func GetWorkspace(atk string, key string) (
-	*res.Success,
-	*res.Errors,
+func GetWorkspace(atk resource.Token, key resource.Key) (
+	*response.Success,
+	*response.Errors,
 ) {
-	var e res.Errors
+	var e response.Errors
 
 	o, err := getWorkspaceByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
-	if err := auth.Enforce(atk, o.ID, "service"); err != nil {
+	if err := auth.Enforce(atk, resource.ID(o.ID), "service"); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &response.Success{Data: o}, &e
 }
 
 // UpdateWorkspace update workspace service
-func UpdateWorkspace(key string, p patch.Patch) (
-	*res.Success,
-	*res.Errors,
+func UpdateWorkspace(key resource.Key, p patch.Patch) (
+	*response.Success,
+	*response.Errors,
 ) {
 	var o Workspace
-	var e res.Errors
+	var e response.Errors
 	ctx := context.Background()
 	ctx, cancel := context.WithCancel(ctx)
+	defer cancel()
 
 	// get original document
 	w, err := getWorkspaceByKey(key)
@@ -70,12 +72,12 @@ func UpdateWorkspace(key string, p patch.Patch) (
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &response.Success{Data: o}, &e
 }
 
 // DeleteWorkspace delete workspace given its key
-func DeleteWorkspace(key string) *res.Errors {
-	var e res.Errors
+func DeleteWorkspace(key string) *response.Errors {
+	var e response.Errors
 
 	if _, err := db.Pool.Exec(context.Background(), `
   DELETE FROM
@@ -93,11 +95,11 @@ func DeleteWorkspace(key string) *res.Errors {
 
 // CreateWorkspace get a workspace using its key
 func CreateWorkspace(i Workspace) (
-	*res.Success,
-	*res.Errors,
+	*response.Success,
+	*response.Errors,
 ) {
 	var o Workspace
-	var e res.Errors
+	var e response.Errors
 
 	// create root user
 	row := db.Pool.QueryRow(context.Background(), `
@@ -123,16 +125,20 @@ func CreateWorkspace(i Workspace) (
 		e.Append(constants.InputError, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	if e.Errors == nil {
+		// TODO: check
+	}
+
+	return &response.Success{Data: o}, &e
 }
 
 // ListWorkspaces list workspace service
 func ListWorkspaces() (
-	*res.Success,
-	*res.Errors,
+	*response.Success,
+	*response.Errors,
 ) {
 	var o []Workspace
-	var e res.Errors
+	var e response.Errors
 
 	rows, err := db.Pool.Query(context.Background(), `
   SELECT
@@ -154,5 +160,5 @@ func ListWorkspaces() (
 		o = append(o, w)
 	}
 
-	return &res.Success{Data: o}, &e
+	return &response.Success{Data: o}, &e
 }

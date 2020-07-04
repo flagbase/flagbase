@@ -3,6 +3,7 @@ package auth
 import (
 	"core/internal/jwt"
 	"core/internal/policy"
+	"core/internal/resource"
 	"core/pkg/access"
 	"encoding/json"
 	"errors"
@@ -17,8 +18,8 @@ import (
 //
 // Enforce is used to validate a policy
 func Enforce(
-	atk string,
-	resourceID string,
+	atk resource.Token,
+	resourceID resource.ID,
 	accessType string,
 ) error {
 	a, err := getAccessFromToken(atk)
@@ -37,13 +38,13 @@ func Enforce(
 		return err
 	}
 	if !ok {
-		return errors.New("unable to enforce policy using this access token")
+		return errors.New("Insufficient permission")
 	}
 
 	return nil
 }
 
-func getAccessFromToken(atk string) (*access.Access, error) {
+func getAccessFromToken(atk resource.Token) (*access.Access, error) {
 	var a access.Access
 
 	ma, err := jwt.Verify(atk)

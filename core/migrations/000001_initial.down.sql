@@ -37,10 +37,11 @@ DELETE TABLE project;
 DELETE TABLE workspace;
 
 -- ------| Types and Domains |------ --
-DELETE DOMAIN resource_key;
-DELETE DOMAIN resource_name;
-DELETE DOMAIN resource_description;
 DELETE DOMAIN resource_tags;
+DELETE DOMAIN resource_description;
+DELETE DOMAIN resource_name;
+DELETE DOMAIN resource_key;
+DELETE DOMAIN resource_id;
 
 -- ------| Extensions |------ --
 DELETE EXTENSION "pgcrypto";

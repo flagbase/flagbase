@@ -1,15 +1,17 @@
 package access
 
+import "core/internal/resource"
+
 // Access is used to represent the relationship between the API user and the service. Access objects are attached to the resources, which are used to authorise users.
 type Access struct {
-	ID          string   `json:"id,omitempty"`
-	Key         string   `json:"key,omitempty"`
-	Description string   `json:"description,omitempty"`
-	ExpiresAt   int64    `json:"expiresAt,omitempty"`
-	Name        string   `json:"name,omitempty"`
-	Secret      string   `json:"secret,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
-	Type        string   `json:"type,omitempty"`
+	ID          resource.ID          `json:"id,omitempty"`
+	Key         resource.Key         `json:"key,omitempty"`
+	Description resource.Description `json:"description,omitempty"`
+	Name        resource.Name        `json:"name,omitempty"`
+	Tags        resource.Tags        `json:"tags,omitempty"`
+	Secret      string               `json:"secret,omitempty"`
+	Type        string               `json:"type,omitempty"`
+	ExpiresAt   int64                `json:"expiresAt,omitempty"`
 }
 
 // KeySecretPair access secret-key pair, used for login
