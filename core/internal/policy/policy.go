@@ -42,21 +42,21 @@ func Enforce(
 	accessType string,
 ) (bool, error) {
 	return Enforcer.Enforce(
-		accessID,
-		resourceID,
+		accessID.String(),
+		resourceID.String(),
 		accessType,
 	)
 }
 
 // AddPolicy add new casbin policy
 func AddPolicy(
-	accessID string,
-	resourceID string,
+	accessID resource.ID,
+	resourceID resource.ID,
 	accessType string,
 ) (bool, error) {
 	return Enforcer.AddPolicy(
-		accessID,
-		resourceID,
+		accessID.String(),
+		resourceID.String(),
 		accessType,
 	)
 }

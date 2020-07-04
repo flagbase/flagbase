@@ -7,8 +7,6 @@ import (
 	"core/pkg/access"
 	"encoding/json"
 	"errors"
-
-	"github.com/sirupsen/logrus"
 )
 
 // Enforce algorithm
@@ -30,11 +28,28 @@ func Enforce(
 	// enforce policy
 	ok, err := policy.Enforce(a.ID, resourceID, accessType)
 	if err != nil {
-		logrus.WithFields(logrus.Fields{
-			"accessID":   a.ID,
-			"resourceID": resourceID,
-			"accessType": accessType,
-		}).Info("Unable to enforce policy")
+		return err
+	}
+	if !ok {
+		return errors.New("Insufficient permission")
+	}
+
+	return nil
+}
+
+// AddPolicy add casbin policy
+func AddPolicy(
+	atk resource.Token,
+	resourceID resource.ID,
+	accessType string,
+) error {
+	a, err := getAccessFromToken(atk)
+	if err != nil {
+		return err
+	}
+
+	ok, err := policy.AddPolicy(a.ID, resourceID, accessType)
+	if err != nil {
 		return err
 	}
 	if !ok {

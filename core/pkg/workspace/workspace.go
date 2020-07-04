@@ -1,10 +1,12 @@
 package workspace
 
+import "core/internal/resource"
+
 // Workspace represents a collection of projects
 type Workspace struct {
-	ID          string   `json:"id"`
-	Key         string   `json:"key"`
-	Name        string   `json:"name,omitempty"`
-	Description string   `json:"description,omitempty"`
-	Tags        []string `json:"tags,omitempty"`
+	ID          resource.ID          `json:"id"`
+	Key         resource.Key         `json:"key"`
+	Name        resource.Name        `json:"name,omitempty"`
+	Description resource.Description `json:"description,omitempty"`
+	Tags        resource.Tags        `json:"tags,omitempty"`
 }

@@ -19,8 +19,8 @@ func ApplyRoutes(r *gin.RouterGroup) {
 }
 
 func getWorkspaceHandler(ctx *gin.Context) {
-	key := resource.Key(ctx.Param("key"))
 	atk := httputils.RetrieveAccessToken(ctx)
+	key := resource.Key(ctx.Param("key"))
 
 	data, err := GetWorkspace(atk, key)
 	if err.Errors != nil {
@@ -57,10 +57,12 @@ func deleteWorkspaceHandler(ctx *gin.Context) {
 }
 
 func createWorkspaceHandler(ctx *gin.Context) {
+	atk := httputils.RetrieveAccessToken(ctx)
+
 	var i Workspace
 	ctx.BindJSON(&i)
 
-	data, err := CreateWorkspace(i)
+	data, err := CreateWorkspace(atk, i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return

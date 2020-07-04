@@ -94,7 +94,7 @@ func DeleteWorkspace(key string) *response.Errors {
 }
 
 // CreateWorkspace get a workspace using its key
-func CreateWorkspace(i Workspace) (
+func CreateWorkspace(atk resource.Token, i Workspace) (
 	*response.Success,
 	*response.Errors,
 ) {
@@ -110,13 +110,14 @@ func CreateWorkspace(i Workspace) (
   VALUES
     ($1, $2, $3, $4)
   RETURNING
-    key, name, description, tags;`,
+    id, key, name, description, tags;`,
 		i.Key,
 		i.Name,
 		i.Description,
 		pq.Array(i.Tags),
 	)
 	if err := row.Scan(
+		&o.ID,
 		&o.Key,
 		&o.Name,
 		&o.Description,
@@ -125,8 +126,11 @@ func CreateWorkspace(i Workspace) (
 		e.Append(constants.InputError, err.Error())
 	}
 
+	// Add policy for requesting user
 	if e.Errors == nil {
-		// TODO: check
+		if err := auth.AddPolicy(atk, o.ID, "admin"); err != nil {
+			e.Append(constants.AuthError, err.Error())
+		}
 	}
 
 	return &response.Success{Data: o}, &e
