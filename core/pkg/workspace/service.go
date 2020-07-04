@@ -24,7 +24,7 @@ func GetWorkspace(atk resource.Token, key resource.Key) (
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
-	if err := auth.Enforce(atk, resource.ID(o.ID), "service"); err != nil {
+	if err := auth.Enforce(atk, resource.ID(o.ID), resource.AdminAccess); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
@@ -128,7 +128,8 @@ func CreateWorkspace(atk resource.Token, i Workspace) (
 
 	// Add policy for requesting user
 	if e.Errors == nil {
-		if err := auth.AddPolicy(atk, o.ID, "admin"); err != nil {
+		err := auth.AddPolicy(atk, o.ID, resource.AdminAccess)
+		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
 	}

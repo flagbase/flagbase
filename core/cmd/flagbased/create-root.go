@@ -93,7 +93,7 @@ func createRootAccess(rootKey resource.Key, rootSecret string) error {
 		Secret:      rootSecret,
 		Name:        "Flagbase Root",
 		Description: "Default root access",
-		Type:        "root",
+		Type:        resource.RootAccess,
 		Tags:        []string{},
 		ExpiresAt:   constants.MaxUnixTime,
 	})

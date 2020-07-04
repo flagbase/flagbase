@@ -18,7 +18,7 @@ import (
 func Enforce(
 	atk resource.Token,
 	resourceID resource.ID,
-	accessType string,
+	accessType resource.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)
 	if err != nil {
@@ -41,7 +41,7 @@ func Enforce(
 func AddPolicy(
 	atk resource.Token,
 	resourceID resource.ID,
-	accessType string,
+	accessType resource.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)
 	if err != nil {
