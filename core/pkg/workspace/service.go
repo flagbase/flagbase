@@ -5,45 +5,48 @@ import (
 	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/patch"
-	"core/internal/resource"
-	"core/internal/response"
+	rsc "core/internal/resource"
+	res "core/internal/response"
 	"core/pkg/auth"
 
 	"github.com/lib/pq"
 )
 
-// GetWorkspace get workspace service
-func GetWorkspace(atk resource.Token, key resource.Key) (
-	*response.Success,
-	*response.Errors,
+// Get gets a resource instance given an atk & key
+func Get(atk rsc.Token, key rsc.Key) (
+	*res.Success,
+	*res.Errors,
 ) {
-	var e response.Errors
+	var e res.Errors
 
-	o, err := getWorkspaceByKey(key)
+	o, err := getByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
-	if err := auth.Enforce(atk, resource.ID(o.ID), resource.AdminAccess); err != nil {
+	if err := auth.Enforce(
+		atk,
+		rsc.ID(o.ID),
+		rsc.AdminAccess,
+	); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	return &response.Success{Data: o}, &e
+	return &res.Success{Data: o}, &e
 }
 
-// UpdateWorkspace update workspace service
-func UpdateWorkspace(key resource.Key, p patch.Patch) (
-	*response.Success,
-	*response.Errors,
+// Update updates resource instance given an atk, key & patch object
+func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (
+	*res.Success,
+	*res.Errors,
 ) {
 	var o Workspace
-	var e response.Errors
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	w, err := getWorkspaceByKey(key)
+	w, err := getByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -72,14 +75,33 @@ func UpdateWorkspace(key resource.Key, p patch.Patch) (
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	return &response.Success{Data: o}, &e
+	return &res.Success{Data: o}, &e
 }
 
-// DeleteWorkspace delete workspace given its key
-func DeleteWorkspace(key string) *response.Errors {
-	var e response.Errors
+// Delete deletes a resource instance given an atk & key
+func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	if _, err := db.Pool.Exec(context.Background(), `
+	// get original document
+	w, err := getByKey(key)
+	if err != nil {
+		e.Append(constants.NotFoundError, err.Error())
+		cancel()
+	}
+
+	// authorize deletion
+	if err := auth.Enforce(
+		atk,
+		rsc.ID(w.ID),
+		rsc.AdminAccess,
+	); err != nil {
+		e.Append(constants.AuthError, err.Error())
+		cancel()
+	}
+
+	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
     workspace
   WHERE
@@ -93,16 +115,18 @@ func DeleteWorkspace(key string) *response.Errors {
 	return &e
 }
 
-// CreateWorkspace get a workspace using its key
-func CreateWorkspace(atk resource.Token, i Workspace) (
-	*response.Success,
-	*response.Errors,
+// Create creates a new resource instance given the resource instance
+func Create(atk rsc.Token, i Workspace) (
+	*res.Success,
+	*res.Errors,
 ) {
-	var o Workspace
-	var e response.Errors
+	var w Workspace
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// create root user
-	row := db.Pool.QueryRow(context.Background(), `
+	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     workspace(
       key, name, description, tags
@@ -117,53 +141,56 @@ func CreateWorkspace(atk resource.Token, i Workspace) (
 		pq.Array(i.Tags),
 	)
 	if err := row.Scan(
-		&o.ID,
-		&o.Key,
-		&o.Name,
-		&o.Description,
-		&o.Tags,
+		&w.ID,
+		&w.Key,
+		&w.Name,
+		&w.Description,
+		&w.Tags,
 	); err != nil {
 		e.Append(constants.InputError, err.Error())
 	}
 
 	// Add policy for requesting user
-	if e.Errors == nil {
-		err := auth.AddPolicy(atk, o.ID, resource.AdminAccess)
+	if e.NotEmpty() {
+		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
 	}
 
-	return &response.Success{Data: o}, &e
+	return &res.Success{Data: w}, &e
 }
 
-// ListWorkspaces list workspace service
-func ListWorkspaces() (
-	*response.Success,
-	*response.Errors,
+// List returns a list of resource instances
+func List(atk rsc.Token) (
+	*res.Success,
+	*res.Errors,
 ) {
-	var o []Workspace
-	var e response.Errors
+	var w []Workspace
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	rows, err := db.Pool.Query(context.Background(), `
+	rows, err := db.Pool.Query(ctx, `
   SELECT
-    key, name, description, tags
+    id, key, name, description, tags
   FROM
     workspace
   `)
 
 	for rows.Next() {
-		var w Workspace
+		var _w Workspace
 		if err = rows.Scan(
-			&w.Key,
-			&w.Name,
-			&w.Description,
-			&w.Tags,
+			&_w.ID,
+			&_w.Key,
+			&_w.Name,
+			&_w.Description,
+			&_w.Tags,
 		); err != nil {
-			e.Append("NotFound", err.Error())
+			e.Append(constants.NotFoundError, err.Error())
 		}
-		o = append(o, w)
+		w = append(w, _w)
 	}
 
-	return &response.Success{Data: o}, &e
+	return &res.Success{Data: w}, &e
 }

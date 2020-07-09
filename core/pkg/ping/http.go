@@ -6,10 +6,10 @@ import (
 
 // ApplyRoutes ping route handler
 func ApplyRoutes(r *gin.RouterGroup) {
-	r.GET("ping", pingHandler)
+	r.GET("ping", pingHTTPHandler)
 }
 
-func pingHandler(ctx *gin.Context) {
+func pingHTTPHandler(ctx *gin.Context) {
 	pong, err := Ping(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(500)

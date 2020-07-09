@@ -13,6 +13,11 @@ type Error struct {
 	Message string `json:"message,omitempty"`
 }
 
+// NotEmpty returns true if errors exist
+func (e *Errors) NotEmpty() bool {
+	return e.Errors != nil
+}
+
 // Append new error to an existing error object
 func (e *Errors) Append(c string, m string) {
 	e.Errors = append(e.Errors, &Error{

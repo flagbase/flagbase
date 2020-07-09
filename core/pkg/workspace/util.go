@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func getWorkspaceByKey(key resource.Key) (*Workspace, error) {
+func getByKey(key resource.Key) (*Workspace, error) {
 	var w Workspace
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT

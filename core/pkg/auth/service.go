@@ -53,7 +53,7 @@ func AddPolicy(
 		return err
 	}
 	if !ok {
-		return errors.New("Insufficient permission")
+		return errors.New("Unable to add policy")
 	}
 
 	return nil

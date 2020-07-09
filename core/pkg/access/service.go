@@ -6,7 +6,7 @@ import (
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/jwt"
-	res "core/internal/response"
+	"core/internal/response"
 	"encoding/json"
 
 	"github.com/lib/pq"
@@ -14,10 +14,10 @@ import (
 
 // GenAccessToken generate an access token via an access pair
 func GenAccessToken(i KeySecretPair) (
-	*res.Success,
-	*res.Errors,
+	*response.Success,
+	*response.Errors,
 ) {
-	var e res.Errors
+	var e response.Errors
 	var a Access
 
 	var encryptedSecret string
@@ -56,7 +56,7 @@ func GenAccessToken(i KeySecretPair) (
 		e.Append(constants.AuthError, "Unable to sign JWT")
 	}
 
-	return &res.Success{
+	return &response.Success{
 		Data: &Token{
 			Token:  atk,
 			Access: &a,
@@ -66,10 +66,10 @@ func GenAccessToken(i KeySecretPair) (
 
 // CreateAccess create a new access key-secret pair.
 func CreateAccess(i Access) (
-	*res.Success,
-	*res.Errors,
+	*response.Success,
+	*response.Errors,
 ) {
-	var e res.Errors
+	var e response.Errors
 	var a Access
 
 	// encrypt secret
@@ -116,5 +116,5 @@ func CreateAccess(i Access) (
 	// display unencrypted secret one time upon creation
 	a.Secret = i.Secret
 
-	return &res.Success{Data: a}, &e
+	return &response.Success{Data: a}, &e
 }

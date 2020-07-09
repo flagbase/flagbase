@@ -1,9 +1,11 @@
 package workspace
 
 import (
+	"core/internal/constants"
 	"core/internal/httputils"
 	"core/internal/patch"
-	"core/internal/resource"
+	rsc "core/internal/resource"
+	res "core/internal/response"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,72 +13,118 @@ import (
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("workspaces")
-	routes.GET(":key", getWorkspaceHandler)
-	routes.PATCH(":key", updateWorkspaceHandler)
-	routes.DELETE(":key", deleteWorkspaceHandler)
-	routes.POST("", createWorkspaceHandler)
-	routes.GET("", listWorkspaceHandler)
+	routes.GET(":key", getHTTPHandler)
+	routes.PATCH(":key", updateHTTPHandler)
+	routes.DELETE(":key", deleteHTTPHandler)
+	routes.POST("", createHTTPHandler)
+	routes.GET("", listHTTPHandler)
 }
 
-func getWorkspaceHandler(ctx *gin.Context) {
-	atk := httputils.RetrieveAccessToken(ctx)
-	key := resource.Key(ctx.Param("key"))
+func getHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
 
-	data, err := GetWorkspace(atk, key)
-	if err.Errors != nil {
-		ctx.AbortWithStatusJSON(500, err)
-		return
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
 	}
 
+	key := rsc.Key(ctx.Param("key"))
+
+	data, _err := Get(atk, key)
+	if _err.NotEmpty() {
+		e.Extend(_err)
+	}
+
+	if e.NotEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
+		return
+	}
 	ctx.JSON(200, data)
 }
 
-func updateWorkspaceHandler(ctx *gin.Context) {
-	key := resource.Key(ctx.Param("key"))
+func updateHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
 	var i patch.Patch
+
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
+
+	key := rsc.Key(ctx.Param("key"))
 	ctx.BindJSON(&i)
 
-	data, err := UpdateWorkspace(key, i)
-	if err.Errors != nil {
+	data, _err := Update(atk, key, i)
+	if _err.NotEmpty() {
+		e.Extend(_err)
+	}
+
+	if e.NotEmpty() {
 		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
-
 	ctx.JSON(200, data)
 }
 
-func deleteWorkspaceHandler(ctx *gin.Context) {
-	key := ctx.Param("key")
+func deleteHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
+	key := rsc.Key(ctx.Param("key"))
 
-	if err := DeleteWorkspace(key); err.Errors != nil {
-		ctx.AbortWithStatusJSON(500, err)
-		return
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
 	}
 
+	if err := Delete(atk, key); err.NotEmpty() {
+		e.Extend(err)
+	}
+
+	if e.NotEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
+		return
+	}
 	ctx.Status(204)
 }
 
-func createWorkspaceHandler(ctx *gin.Context) {
-	atk := httputils.RetrieveAccessToken(ctx)
+func createHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
+
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
 
 	var i Workspace
 	ctx.BindJSON(&i)
 
-	data, err := CreateWorkspace(atk, i)
-	if err.Errors != nil {
-		ctx.AbortWithStatusJSON(500, err)
-		return
+	data, _err := Create(atk, i)
+	if _err.NotEmpty() {
+		e.Extend(_err)
 	}
 
+	if e.NotEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
+		return
+	}
 	ctx.JSON(201, data)
 }
 
-func listWorkspaceHandler(ctx *gin.Context) {
-	data, err := ListWorkspaces()
-	if err.Errors != nil {
+func listHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
+
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
+
+	data, _err := List(atk)
+	if _err.NotEmpty() {
+		e.Extend(_err)
+	}
+
+	if e.NotEmpty() {
 		ctx.AbortWithStatusJSON(500, err)
 		return
 	}
-
 	ctx.JSON(200, data)
 }

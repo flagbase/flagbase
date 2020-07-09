@@ -1,4 +1,4 @@
-# Flagbase Docs
+# Docs
 This repo contains all the markdown files that make up http://flagbase.com/docs.
 
 ## Contents
