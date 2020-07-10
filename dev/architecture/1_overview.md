@@ -4,5 +4,4 @@ title: Architecture
 sidebar_label: Overview
 ---
 
-## Architecture
-TODO
+TODO: embed architecture diagram
