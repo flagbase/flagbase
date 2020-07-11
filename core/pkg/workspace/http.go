@@ -13,11 +13,34 @@ import (
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("workspaces")
+	routes.POST("", createHTTPHandler)
 	routes.GET(":key", getHTTPHandler)
 	routes.PATCH(":key", updateHTTPHandler)
 	routes.DELETE(":key", deleteHTTPHandler)
-	routes.POST("", createHTTPHandler)
 	routes.GET("", listHTTPHandler)
+}
+
+func createHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
+
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
+
+	var i Workspace
+	ctx.BindJSON(&i)
+
+	data, _err := Create(atk, i)
+	if !_err.IsEmpty() {
+		e.Extend(_err)
+	}
+
+	if !e.IsEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
+		return
+	}
+	ctx.JSON(201, data)
 }
 
 func getHTTPHandler(ctx *gin.Context) {
@@ -84,29 +107,6 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		return
 	}
 	ctx.Status(204)
-}
-
-func createHTTPHandler(ctx *gin.Context) {
-	var e res.Errors
-
-	atk, err := httputils.ExtractATK(ctx)
-	if err != nil {
-		e.Append(constants.AuthError, err.Error())
-	}
-
-	var i Workspace
-	ctx.BindJSON(&i)
-
-	data, _err := Create(atk, i)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
-	}
-
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.JSON(201, data)
 }
 
 func listHTTPHandler(ctx *gin.Context) {

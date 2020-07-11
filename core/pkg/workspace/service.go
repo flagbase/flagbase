@@ -12,6 +12,63 @@ import (
 	"github.com/lib/pq"
 )
 
+// Create creates a new resource instance given the resource instance
+// (*) atk: access_type <= root
+func Create(atk rsc.Token, i Workspace) (
+	*res.Success,
+	*res.Errors,
+) {
+	var w Workspace
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// authorize operation
+	a, err := auth.GetAccessFromToken(atk)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+		cancel()
+	} else if a.Type != rsc.RootAccess {
+		e.Append(constants.AuthError, "You need root access to create a workspace")
+		cancel()
+	}
+
+	// create root user
+	row := db.Pool.QueryRow(ctx, `
+  INSERT INTO
+    workspace(
+      key, name, description, tags
+    )
+  VALUES
+    ($1, $2, $3, $4)
+  RETURNING
+    id, key, name, description, tags;`,
+		i.Key,
+		i.Name,
+		i.Description,
+		pq.Array(i.Tags),
+	)
+	if err := row.Scan(
+		&w.ID,
+		&w.Key,
+		&w.Name,
+		&w.Description,
+		&w.Tags,
+	); err != nil {
+		e.Append(constants.InputError, err.Error())
+	}
+
+	// Add policy for requesting user
+	if e.IsEmpty() {
+		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
+		if err != nil {
+			e.Append(constants.AuthError, err.Error())
+		}
+	}
+
+	return &res.Success{Data: w}, &e
+}
+
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
 func Get(atk rsc.Token, key rsc.Key) (
@@ -129,13 +186,13 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	return &e
 }
 
-// Create creates a new resource instance given the resource instance
+// List returns a list of resource instances
 // (*) atk: access_type <= root
-func Create(atk rsc.Token, i Workspace) (
+func List(atk rsc.Token) (
 	*res.Success,
 	*res.Errors,
 ) {
-	var w Workspace
+	var w []Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -149,53 +206,6 @@ func Create(atk rsc.Token, i Workspace) (
 		e.Append(constants.AuthError, "You need root access to create a workspace")
 		cancel()
 	}
-
-	// create root user
-	row := db.Pool.QueryRow(ctx, `
-  INSERT INTO
-    workspace(
-      key, name, description, tags
-    )
-  VALUES
-    ($1, $2, $3, $4)
-  RETURNING
-    id, key, name, description, tags;`,
-		i.Key,
-		i.Name,
-		i.Description,
-		pq.Array(i.Tags),
-	)
-	if err := row.Scan(
-		&w.ID,
-		&w.Key,
-		&w.Name,
-		&w.Description,
-		&w.Tags,
-	); err != nil {
-		e.Append(constants.InputError, err.Error())
-	}
-
-	// Add policy for requesting user
-	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
-		if err != nil {
-			e.Append(constants.AuthError, err.Error())
-		}
-	}
-
-	return &res.Success{Data: w}, &e
-}
-
-// List returns a list of resource instances
-// (*) atk: access_type <= root
-func List(atk rsc.Token) (
-	*res.Success,
-	*res.Errors,
-) {
-	var w []Workspace
-	var e res.Errors
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
