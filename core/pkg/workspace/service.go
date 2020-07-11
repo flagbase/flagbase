@@ -13,6 +13,7 @@ import (
 )
 
 // Get gets a resource instance given an atk & key
+// (*) atk: access_type <= service
 func Get(atk rsc.Token, key rsc.Key) (
 	*res.Success,
 	*res.Errors,
@@ -24,10 +25,11 @@ func Get(atk rsc.Token, key rsc.Key) (
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
+	// authorize operation
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(o.ID),
-		rsc.AdminAccess,
+		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
@@ -36,6 +38,7 @@ func Get(atk rsc.Token, key rsc.Key) (
 }
 
 // Update updates resource instance given an atk, key & patch object
+// (*) atk: access_type <= user
 func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (
 	*res.Success,
 	*res.Errors,
@@ -49,6 +52,16 @@ func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (
 	w, err := getByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
+		cancel()
+	}
+
+	// authorize operation
+	if err := auth.Enforce(
+		atk,
+		rsc.ID(w.ID),
+		rsc.UserAccess,
+	); err != nil {
+		e.Append(constants.AuthError, err.Error())
 		cancel()
 	}
 
@@ -79,6 +92,7 @@ func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (
 }
 
 // Delete deletes a resource instance given an atk & key
+// (*) atk: access_type <= admin
 func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -91,7 +105,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 		cancel()
 	}
 
-	// authorize deletion
+	// authorize operation
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(w.ID),
@@ -116,6 +130,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 }
 
 // Create creates a new resource instance given the resource instance
+// (*) atk: access_type <= root
 func Create(atk rsc.Token, i Workspace) (
 	*res.Success,
 	*res.Errors,
@@ -124,6 +139,16 @@ func Create(atk rsc.Token, i Workspace) (
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
+
+	// authorize operation
+	a, err := auth.GetAccessFromToken(atk)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+		cancel()
+	} else if a.Type != rsc.RootAccess {
+		e.Append(constants.AuthError, "You need root access to create a workspace")
+		cancel()
+	}
 
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
@@ -151,7 +176,7 @@ func Create(atk rsc.Token, i Workspace) (
 	}
 
 	// Add policy for requesting user
-	if e.NotEmpty() {
+	if e.IsEmpty() {
 		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
@@ -162,6 +187,7 @@ func Create(atk rsc.Token, i Workspace) (
 }
 
 // List returns a list of resource instances
+// (*) atk: access_type <= root
 func List(atk rsc.Token) (
 	*res.Success,
 	*res.Errors,

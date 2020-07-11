@@ -1,5 +1,5 @@
 # Docs
-This repo contains all the markdown files that make up http://flagbase.com/docs.
+This folder contains all the markdown files that make up http://flagbase.com/docs.
 
 ## Contents
 1. [Intro](intro/1_overview.md)

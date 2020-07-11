@@ -13,9 +13,9 @@ type Error struct {
 	Message string `json:"message,omitempty"`
 }
 
-// NotEmpty returns true if errors exist
-func (e *Errors) NotEmpty() bool {
-	return e.Errors != nil
+// IsEmpty returns true if there are no errors
+func (e *Errors) IsEmpty() bool {
+	return len(e.Errors) == 0
 }
 
 // Append new error to an existing error object

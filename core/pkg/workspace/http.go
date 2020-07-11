@@ -31,11 +31,11 @@ func getHTTPHandler(ctx *gin.Context) {
 	key := rsc.Key(ctx.Param("key"))
 
 	data, _err := Get(atk, key)
-	if _err.NotEmpty() {
+	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	if e.NotEmpty() {
+	if !e.IsEmpty() {
 		ctx.AbortWithStatusJSON(500, e)
 		return
 	}
@@ -55,12 +55,12 @@ func updateHTTPHandler(ctx *gin.Context) {
 	ctx.BindJSON(&i)
 
 	data, _err := Update(atk, key, i)
-	if _err.NotEmpty() {
+	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	if e.NotEmpty() {
-		ctx.AbortWithStatusJSON(500, err)
+	if !e.IsEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
 		return
 	}
 	ctx.JSON(200, data)
@@ -75,11 +75,11 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, key); err.NotEmpty() {
+	if err := Delete(atk, key); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
-	if e.NotEmpty() {
+	if !e.IsEmpty() {
 		ctx.AbortWithStatusJSON(500, e)
 		return
 	}
@@ -98,11 +98,11 @@ func createHTTPHandler(ctx *gin.Context) {
 	ctx.BindJSON(&i)
 
 	data, _err := Create(atk, i)
-	if _err.NotEmpty() {
+	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	if e.NotEmpty() {
+	if !e.IsEmpty() {
 		ctx.AbortWithStatusJSON(500, e)
 		return
 	}
@@ -118,12 +118,12 @@ func listHTTPHandler(ctx *gin.Context) {
 	}
 
 	data, _err := List(atk)
-	if _err.NotEmpty() {
+	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	if e.NotEmpty() {
-		ctx.AbortWithStatusJSON(500, err)
+	if !e.IsEmpty() {
+		ctx.AbortWithStatusJSON(500, e)
 		return
 	}
 	ctx.JSON(200, data)

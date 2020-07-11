@@ -4,11 +4,18 @@
 
 Flagbase is an all-in-one feature flag management solution. It offers flag management, analysis & distribution. This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbased (daemon process for the core server), Flagbase (the CLI app to interface with the core server), Client SDKs and docs.
 
-## Core
+## Packages
+### [`/core`](./core/README.md)
 TBA
 
-## SDKs
+### [`/sdk`](./sdk/README.md)
 TBA
 
-## CLI
+### [`/cli`](./cli/README.md)
 TBA
+
+
+## Security
+
+## Contributing
+

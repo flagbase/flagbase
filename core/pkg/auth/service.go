@@ -3,7 +3,7 @@ package auth
 import (
 	"core/internal/jwt"
 	"core/internal/policy"
-	"core/internal/resource"
+	rsc "core/internal/resource"
 	"core/pkg/access"
 	"encoding/json"
 	"errors"
@@ -16,11 +16,11 @@ import (
 //
 // Enforce is used to validate a policy
 func Enforce(
-	atk resource.Token,
-	resourceID resource.ID,
-	accessType resource.AccessType,
+	atk rsc.Token,
+	resourceID rsc.ID,
+	accessType rsc.AccessType,
 ) error {
-	a, err := getAccessFromToken(atk)
+	a, err := GetAccessFromToken(atk)
 	if err != nil {
 		return err
 	}
@@ -39,11 +39,11 @@ func Enforce(
 
 // AddPolicy add casbin policy
 func AddPolicy(
-	atk resource.Token,
-	resourceID resource.ID,
-	accessType resource.AccessType,
+	atk rsc.Token,
+	resourceID rsc.ID,
+	accessType rsc.AccessType,
 ) error {
-	a, err := getAccessFromToken(atk)
+	a, err := GetAccessFromToken(atk)
 	if err != nil {
 		return err
 	}
@@ -59,7 +59,8 @@ func AddPolicy(
 	return nil
 }
 
-func getAccessFromToken(atk resource.Token) (*access.Access, error) {
+// GetAccessFromToken retrieves access from access token (atk)
+func GetAccessFromToken(atk rsc.Token) (*access.Access, error) {
 	var a access.Access
 
 	ma, err := jwt.Verify(atk)
