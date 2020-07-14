@@ -2,7 +2,7 @@ package jwt
 
 import (
 	"core/internal/constants"
-	"core/internal/resource"
+	rsc "core/internal/resource"
 	"errors"
 
 	"github.com/dgrijalva/jwt-go"
@@ -30,7 +30,7 @@ func Sign(a []byte) (string, error) {
 }
 
 // Verify a jwt and get the ID
-func Verify(atk resource.Token) ([]byte, error) {
+func Verify(atk rsc.Token) ([]byte, error) {
 	claims := &Claims{}
 
 	tkn, err := jwt.ParseWithClaims(

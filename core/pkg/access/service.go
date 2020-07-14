@@ -6,18 +6,18 @@ import (
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/jwt"
-	"core/internal/response"
+	res "core/internal/response"
 	"encoding/json"
 
 	"github.com/lib/pq"
 )
 
-// GenAccessToken generate an access token via an access pair
-func GenAccessToken(i KeySecretPair) (
-	*response.Success,
-	*response.Errors,
+// GenerateToken generate an access token via an access pair
+func GenerateToken(i KeySecretPair) (
+	*res.Success,
+	*res.Errors,
 ) {
-	var e response.Errors
+	var e res.Errors
 	var a Access
 
 	var encryptedSecret string
@@ -56,7 +56,7 @@ func GenAccessToken(i KeySecretPair) (
 		e.Append(constants.AuthError, "Unable to sign JWT")
 	}
 
-	return &response.Success{
+	return &res.Success{
 		Data: &Token{
 			Token:  atk,
 			Access: &a,
@@ -64,22 +64,25 @@ func GenAccessToken(i KeySecretPair) (
 	}, &e
 }
 
-// CreateAccess create a new access key-secret pair.
-func CreateAccess(i Access) (
-	*response.Success,
-	*response.Errors,
+// Create creates new access resource.
+func Create(i Access) (
+	*res.Success,
+	*res.Errors,
 ) {
-	var e response.Errors
+	var e res.Errors
 	var a Access
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
 		e.Append(constants.CryptoError, err.Error())
+		cancel()
 	}
 
 	// create root user
-	row := db.Pool.QueryRow(context.Background(), `
+	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     access(
       key,
@@ -116,5 +119,5 @@ func CreateAccess(i Access) (
 	// display unencrypted secret one time upon creation
 	a.Secret = i.Secret
 
-	return &response.Success{Data: a}, &e
+	return &res.Success{Data: a}, &e
 }

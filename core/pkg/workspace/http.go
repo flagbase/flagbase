@@ -13,11 +13,27 @@ import (
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("workspaces")
+	routes.GET("", listHTTPHandler)
 	routes.POST("", createHTTPHandler)
 	routes.GET(":key", getHTTPHandler)
 	routes.PATCH(":key", updateHTTPHandler)
 	routes.DELETE(":key", deleteHTTPHandler)
-	routes.GET("", listHTTPHandler)
+}
+
+func listHTTPHandler(ctx *gin.Context) {
+	var e res.Errors
+
+	atk, err := httputils.ExtractATK(ctx)
+	if err != nil {
+		e.Append(constants.AuthError, err.Error())
+	}
+
+	data, _err := List(atk)
+	if !_err.IsEmpty() {
+		e.Extend(_err)
+	}
+
+	httputils.Send(ctx, 200, data, 500, e)
 }
 
 func createHTTPHandler(ctx *gin.Context) {
@@ -36,11 +52,7 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.JSON(201, data)
+	httputils.Send(ctx, 201, data, 500, e)
 }
 
 func getHTTPHandler(ctx *gin.Context) {
@@ -58,11 +70,7 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.JSON(200, data)
+	httputils.Send(ctx, 200, data, 500, e)
 }
 
 func updateHTTPHandler(ctx *gin.Context) {
@@ -82,11 +90,7 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.JSON(200, data)
+	httputils.Send(ctx, 200, data, 500, e)
 }
 
 func deleteHTTPHandler(ctx *gin.Context) {
@@ -102,29 +106,5 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Extend(err)
 	}
 
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.Status(204)
-}
-
-func listHTTPHandler(ctx *gin.Context) {
-	var e res.Errors
-
-	atk, err := httputils.ExtractATK(ctx)
-	if err != nil {
-		e.Append(constants.AuthError, err.Error())
-	}
-
-	data, _err := List(atk)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
-	}
-
-	if !e.IsEmpty() {
-		ctx.AbortWithStatusJSON(500, e)
-		return
-	}
-	ctx.JSON(200, data)
+	httputils.Send(ctx, 204, &res.Success{}, 500, e)
 }

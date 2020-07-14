@@ -5,7 +5,7 @@ import (
 	"core/internal/constants"
 	"core/internal/db"
 	"core/internal/policy"
-	"core/internal/resource"
+	rsc "core/internal/resource"
 	"core/pkg/access"
 	"errors"
 	"os"
@@ -18,7 +18,7 @@ import (
 type CreateRootConfig struct {
 	DbURL      string
 	Verbose    bool
-	RootKey    resource.Key
+	RootKey    rsc.Key
 	RootSecret string
 }
 
@@ -54,7 +54,7 @@ var CreateRootCommand cli.Command = cli.Command{
 	Action: func(ctx *cli.Context) error {
 		cnf := CreateRootConfig{
 			DbURL:      ctx.String("db-url"),
-			RootKey:    resource.Key(ctx.String("root-key")),
+			RootKey:    rsc.Key(ctx.String("root-key")),
 			RootSecret: ctx.String("root-secret"),
 			Verbose:    ctx.Bool("verbose"),
 		}
@@ -87,13 +87,13 @@ func CreateRoot(cnf CreateRootConfig) {
 	}
 }
 
-func createRootAccess(rootKey resource.Key, rootSecret string) error {
-	_, err := access.CreateAccess(access.Access{
+func createRootAccess(rootKey rsc.Key, rootSecret string) error {
+	_, err := access.Create(access.Access{
 		Key:         rootKey,
 		Secret:      rootSecret,
 		Name:        "Flagbase Root",
 		Description: "Default root access",
-		Type:        resource.RootAccess,
+		Type:        rsc.RootAccess,
 		Tags:        []string{},
 		ExpiresAt:   constants.MaxUnixTime,
 	})

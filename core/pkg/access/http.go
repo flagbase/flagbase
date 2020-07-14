@@ -7,14 +7,14 @@ import (
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("access")
-	routes.POST("/token", genAccessTokenHandler)
+	routes.POST("/token", generateTokenHTTPHandler)
 }
 
-func genAccessTokenHandler(ctx *gin.Context) {
+func generateTokenHTTPHandler(ctx *gin.Context) {
 	var i KeySecretPair
 	ctx.BindJSON(&i)
 
-	data, err := GenAccessToken(i)
+	data, err := GenerateToken(i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(500, err)
 		return

@@ -1,26 +1,39 @@
 package auth
 
 import (
-	"core/internal/jwt"
 	"core/internal/policy"
 	rsc "core/internal/resource"
-	"core/pkg/access"
-	"encoding/json"
 	"errors"
+	"fmt"
 )
 
-// Enforce algorithm
-// 1. Decode JWT & Check if it's not expired
-// 2. Enforce policy
-// Return (access, ErrorResponse)
-//
-// Enforce is used to validate a policy
+// Authorize checks if an access token is of a desired type
+func Authorize(
+	atk rsc.Token,
+	accessType rsc.AccessType,
+) error {
+	a, err := getAccessFromToken(atk)
+	if err != nil {
+		return err
+	}
+
+	if a.Type != accessType.String() {
+		return fmt.Errorf(
+			"You need %s access in order to conduct this operation",
+			accessType,
+		)
+	}
+
+	return nil
+}
+
+// Enforce enforces a resource policy
 func Enforce(
 	atk rsc.Token,
 	resourceID rsc.ID,
 	accessType rsc.AccessType,
 ) error {
-	a, err := GetAccessFromToken(atk)
+	a, err := getAccessFromToken(atk)
 	if err != nil {
 		return err
 	}
@@ -43,7 +56,7 @@ func AddPolicy(
 	resourceID rsc.ID,
 	accessType rsc.AccessType,
 ) error {
-	a, err := GetAccessFromToken(atk)
+	a, err := getAccessFromToken(atk)
 	if err != nil {
 		return err
 	}
@@ -57,20 +70,4 @@ func AddPolicy(
 	}
 
 	return nil
-}
-
-// GetAccessFromToken retrieves access from access token (atk)
-func GetAccessFromToken(atk rsc.Token) (*access.Access, error) {
-	var a access.Access
-
-	ma, err := jwt.Verify(atk)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := json.Unmarshal(ma, &a); err != nil {
-		return nil, err
-	}
-
-	return &a, nil
 }

@@ -61,7 +61,7 @@ function app_build() {
 }
 
 function app_exec() {
-  ./bin/flagbased $@
+  ./bin/flagbased start $@
 }
 
 function app_run() {

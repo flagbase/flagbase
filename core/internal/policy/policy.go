@@ -1,7 +1,7 @@
 package policy
 
 import (
-	"core/internal/resource"
+	rsc "core/internal/resource"
 
 	pgadapter "github.com/casbin/casbin-pg-adapter"
 	"github.com/casbin/casbin/v2"
@@ -37,9 +37,9 @@ func NewEnforcer(connStr string) error {
 
 // Enforce enforces a casbin policy
 func Enforce(
-	accessID resource.ID,
-	resourceID resource.ID,
-	accessType resource.AccessType,
+	accessID rsc.ID,
+	resourceID rsc.ID,
+	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.Enforce(
 		accessID.String(),
@@ -50,9 +50,9 @@ func Enforce(
 
 // AddPolicy add new casbin policy
 func AddPolicy(
-	accessID resource.ID,
-	resourceID resource.ID,
-	accessType resource.AccessType,
+	accessID rsc.ID,
+	resourceID rsc.ID,
+	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.AddPolicy(
 		accessID.String(),

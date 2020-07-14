@@ -12,33 +12,62 @@ import (
 	"github.com/lib/pq"
 )
 
+// List returns a list of resource instances
+// (*) atk: access_type <= root
+func List(atk rsc.Token) (*res.Success, *res.Errors) {
+	var w []Workspace
+	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// authorize operation
+	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
+		e.Append(constants.AuthError, err.Error())
+		cancel()
+	}
+
+	rows, err := db.Pool.Query(ctx, `
+  SELECT
+    id, key, name, description, tags
+  FROM
+    workspace
+  `)
+
+	for rows.Next() {
+		var _w Workspace
+		if err = rows.Scan(
+			&_w.ID,
+			&_w.Key,
+			&_w.Name,
+			&_w.Description,
+			&_w.Tags,
+		); err != nil {
+			e.Append(constants.NotFoundError, err.Error())
+		}
+		w = append(w, _w)
+	}
+
+	return &res.Success{Data: w}, &e
+}
+
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= root
-func Create(atk rsc.Token, i Workspace) (
-	*res.Success,
-	*res.Errors,
-) {
+func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 	var w Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	a, err := auth.GetAccessFromToken(atk)
-	if err != nil {
+	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
 		e.Append(constants.AuthError, err.Error())
-		cancel()
-	} else if a.Type != rsc.RootAccess {
-		e.Append(constants.AuthError, "You need root access to create a workspace")
 		cancel()
 	}
 
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    workspace(
-      key, name, description, tags
-    )
+    workspace(key, name, description, tags)
   VALUES
     ($1, $2, $3, $4)
   RETURNING
@@ -58,7 +87,7 @@ func Create(atk rsc.Token, i Workspace) (
 		e.Append(constants.InputError, err.Error())
 	}
 
-	// Add policy for requesting user
+	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
 		if err != nil {
@@ -71,10 +100,7 @@ func Create(atk rsc.Token, i Workspace) (
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, key rsc.Key) (
-	*res.Success,
-	*res.Errors,
-) {
+func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 	var e res.Errors
 
 	o, err := getByKey(key)
@@ -96,10 +122,7 @@ func Get(atk rsc.Token, key rsc.Key) (
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (
-	*res.Success,
-	*res.Errors,
-) {
+func Update(atk rsc.Token, key rsc.Key, p patch.Patch) (*res.Success, *res.Errors) {
 	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -184,49 +207,4 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	}
 
 	return &e
-}
-
-// List returns a list of resource instances
-// (*) atk: access_type <= root
-func List(atk rsc.Token) (
-	*res.Success,
-	*res.Errors,
-) {
-	var w []Workspace
-	var e res.Errors
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// authorize operation
-	a, err := auth.GetAccessFromToken(atk)
-	if err != nil {
-		e.Append(constants.AuthError, err.Error())
-		cancel()
-	} else if a.Type != rsc.RootAccess {
-		e.Append(constants.AuthError, "You need root access to create a workspace")
-		cancel()
-	}
-
-	rows, err := db.Pool.Query(ctx, `
-  SELECT
-    id, key, name, description, tags
-  FROM
-    workspace
-  `)
-
-	for rows.Next() {
-		var _w Workspace
-		if err = rows.Scan(
-			&_w.ID,
-			&_w.Key,
-			&_w.Name,
-			&_w.Description,
-			&_w.Tags,
-		); err != nil {
-			e.Append(constants.NotFoundError, err.Error())
-		}
-		w = append(w, _w)
-	}
-
-	return &res.Success{Data: w}, &e
 }

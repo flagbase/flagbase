@@ -3,11 +3,11 @@ package workspace
 import (
 	"context"
 	"core/internal/db"
-	"core/internal/resource"
+	rsc "core/internal/resource"
 	"fmt"
 )
 
-func getByKey(key resource.Key) (*Workspace, error) {
+func getByKey(key rsc.Key) (*Workspace, error) {
 	var w Workspace
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
