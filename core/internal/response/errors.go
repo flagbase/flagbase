@@ -30,6 +30,6 @@ func (e *Errors) Append(c string, m string) {
 }
 
 // Extend extend an existing errors response with another errors response
-func (e *Errors) Extend(e2 *Errors) {
-	e.Errors = append(e.Errors, e2.Errors...)
+func (e *Errors) Extend(_e *Errors) {
+	e.Errors = append(e.Errors, _e.Errors...)
 }
