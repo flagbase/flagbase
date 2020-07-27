@@ -223,6 +223,13 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Project'
         '500':
           description: Internal Server Error
           content:
@@ -236,7 +243,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Project'
+              $ref: '#/components/schemas/PatchDocument'
           application/xml:
             schema:
               $ref: '#/components/schemas/PatchDocument'

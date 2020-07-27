@@ -3,6 +3,7 @@ package http
 import (
 	"core/pkg/access"
 	"core/pkg/ping"
+	"core/pkg/project"
 	"core/pkg/workspace"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,7 @@ import (
 func ApplyRoutes(r *gin.Engine) {
 	root := r.Group("/")
 	access.ApplyRoutes(root)
+	project.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
 }

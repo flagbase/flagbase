@@ -1,4 +1,4 @@
-package workspace
+package project
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 // List returns a list of resource instances
 // (*) atk: access_type <= root
 func List(atk rsc.Token) (*res.Success, *res.Errors) {
-	var w []Workspace
+	var p []Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -30,30 +30,30 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
   SELECT
     id, key, name, description, tags
   FROM
-    workspace
+    project
   `)
 
 	for rows.Next() {
-		var _w Workspace
+		var _p Project
 		if err = rows.Scan(
-			&_w.ID,
-			&_w.Key,
-			&_w.Name,
-			&_w.Description,
-			&_w.Tags,
+			&_p.ID,
+			&_p.Key,
+			&_p.Name,
+			&_p.Description,
+			&_p.Tags,
 		); err != nil {
 			e.Append(constants.NotFoundError, err.Error())
 		}
-		w = append(w, _w)
+		p = append(p, _p)
 	}
 
-	return &res.Success{Data: w}, &e
+	return &res.Success{Data: p}, &e
 }
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= root
-func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
-	var w Workspace
+func Create(atk rsc.Token, i Project) (*res.Success, *res.Errors) {
+	var p Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -67,7 +67,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    workspace(key, name, description, tags)
+    project(key, name, description, tags)
   VALUES
     ($1, $2, $3, $4)
   RETURNING
@@ -78,24 +78,24 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 		pq.Array(i.Tags),
 	)
 	if err := row.Scan(
-		&w.ID,
-		&w.Key,
-		&w.Name,
-		&w.Description,
-		&w.Tags,
+		&p.ID,
+		&p.Key,
+		&p.Name,
+		&p.Description,
+		&p.Tags,
 	); err != nil {
 		e.Append(constants.InputError, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, p.ID, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
 	}
 
-	return &res.Success{Data: w}, &e
+	return &res.Success{Data: p}, &e
 }
 
 // Get gets a resource instance given an atk & key
@@ -123,13 +123,13 @@ func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
 func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
-	var o Workspace
+	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	w, err := getByKey(key)
+	p, err := getByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -138,7 +138,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(w.ID),
+		rsc.ID(p.ID),
 		rsc.UserAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -146,7 +146,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	}
 
 	// apply patch and get modified document
-	if err := patch.Transform(w, patchDoc, &o); err != nil {
+	if err := patch.Transform(p, patchDoc, &o); err != nil {
 		e.Append(constants.InternalError, err.Error())
 		cancel()
 	}
@@ -154,7 +154,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
   UPDATE
-    workspace
+    project
   SET
     key = $2, name = $3, description = $4, tags = $5
   WHERE
@@ -179,7 +179,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	defer cancel()
 
 	// get original document
-	w, err := getByKey(key)
+	p, err := getByKey(key)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -188,7 +188,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(w.ID),
+		rsc.ID(p.ID),
 		rsc.AdminAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -197,7 +197,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 
 	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
-    workspace
+    project
   WHERE
     key = $1
   `,
