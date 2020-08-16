@@ -14,8 +14,4 @@ TBA
 ### [`/cli`](./cli/README.md)
 TBA
 
-
-## Security
-
 ## Contributing
-
