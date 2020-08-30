@@ -167,7 +167,7 @@ CREATE TABLE identity (
 --  on ->
 --    if rules exist  -> derive from targeting_rule
 --    else            -> derive from targeting_percentages
---  off  ->  use fallback_variation
+--  off  ->  use fallthrough_variation
 --
 CREATE TYPE targeting_state AS ENUM (
   'on',
@@ -178,7 +178,7 @@ CREATE TABLE targeting (
   -- attributes
   state targeting_state,
   -- references
-  fallback_variation_id UUID REFERENCES variation (id),
+  fallthrough_variation_id UUID REFERENCES variation (id),
   flag_id UUID REFERENCES flag (id),
   environment_id UUID REFERENCES environment (id)
 );
