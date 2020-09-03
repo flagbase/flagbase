@@ -35,7 +35,7 @@ var StartCommand cli.Command = cli.Command{
 		&cli.StringFlag{
 			Name:  "host",
 			Usage: "Server Host Address",
-			Value: "localhost",
+			Value: "0.0.0.0",
 		},
 		&cli.IntFlag{
 			Name:  "http-port",

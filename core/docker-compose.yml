@@ -1,0 +1,41 @@
+version: "3"
+
+services:
+  core:
+    container_name: flagbase-core
+    build: .
+    command: ["air"]
+    ports:
+      - 5051:5051
+    volumes:
+      - ./:/go/src/github.com/flagbase/flagbase/core
+    depends_on:
+      - db
+      - migrations
+    links:
+      - db
+
+  db:
+    container_name: flagbase-db
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: flagbase
+      POSTGRES_USER: flagbase
+      POSTGRES_PASSWORD: BjrvWmjQ3dykPu
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  migrations:
+    container_name: flagbase-migrations
+    image: migrate/migrate
+    command: ["-path", "/migrations", "-database",  "postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable", "up"]
+    volumes:
+      - ./migrations:/migrations
+    links:
+      - db
+
+volumes:
+  pgdata:
