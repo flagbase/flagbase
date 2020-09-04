@@ -1,24 +1,18 @@
-# Core
+# Flagbase Core
 
-## Getting Started
-Initial database and run migrations.
+The core is the primary microservice feature flag clients interact with when making requests.
+
+## Getting started
+
+In order to run the service locally, you will need to have [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/) installed on your machine.
+
+### Starting up services
 ```sh
-./scripts/core.sh db:init
-./scripts/core.sh db:migrate
+docker-compose up
 ```
 
-Run using [air](https://github.com/cosmtrek/air), which reloads the app automatically on file changes.
-
+### Creating a root user
 ```sh
-./scripts/core.sh app:dev
+docker-compose exec core ./bin/flagbased create-root --root-key=<ACCESS_KEY> --root-secret=<ACCESS_SECRET>
 ```
-
-Otherwise, you can manually build and run the app.
-```sh
-./scripts/core.sh app:build
-./bin/flagbased <args>
-```
-
-
-
 
