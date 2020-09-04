@@ -16,3 +16,7 @@ docker-compose up
 docker-compose exec core ./bin/flagbased create-root --root-key=<ACCESS_KEY> --root-secret=<ACCESS_SECRET>
 ```
 
+### Check that it's working
+```sh
+curl -P GET http://localhost:5051/ping
+```
