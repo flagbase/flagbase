@@ -8,7 +8,7 @@ import (
 var (
 	// DefaultDbURL the default postgres database connection string
 	DefaultDbURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
-		"127.0.0.1:5432/flagbase" +
+		"db:5432/flagbase" +
 		"?sslmode=disable"
 	// DefaultVerbose should log verbosely by default
 	DefaultVerbose bool = false
