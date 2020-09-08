@@ -27,13 +27,13 @@ CREATE TABLE workspace (
 -- ------| PROJECT |------ --
 CREATE TABLE project (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
-  -- references
-  workspace_id UUID REFERENCES workspace (id),
   -- attributes
   key resource_key,
   name resource_name,
   description resource_description,
   tags resource_tags,
+  -- references
+  workspace_id UUID NOT NULL REFERENCES workspace (id),
   -- contraints
   CONSTRAINT project_key UNIQUE(key, workspace_id)
 );
@@ -49,7 +49,7 @@ CREATE TABLE environment (
   description resource_description,
   tags resource_tags,
   -- references
-  project_id UUID REFERENCES project (id),
+  project_id UUID NOT NULL REFERENCES project (id),
   -- contraints
   CONSTRAINT environment_key UNIQUE(key, project_id)
 );
@@ -100,7 +100,7 @@ CREATE TABLE variation (
   description resource_description,
   tags resource_tags,
   -- references
-  flag_id UUID REFERENCES flag (id),
+  flag_id UUID NOT NULL REFERENCES flag (id),
   -- contraints
   CONSTRAINT variation_key UNIQUE(key, flag_id)
 );
@@ -115,7 +115,7 @@ CREATE TABLE segment (
   description resource_description,
   tags resource_tags,
   -- references
-  project_id UUID REFERENCES project (id),
+  project_id UUID NOT NULL REFERENCES project (id),
   -- contraints
   CONSTRAINT segment_key UNIQUE(key, project_id)
 );
@@ -137,7 +137,7 @@ CREATE TABLE segment_rule (
   negate BOOLEAN DEFAULT FALSE,
   trait_value VARCHAR(40),
   -- references
-  segment_id UUID REFERENCES segment (id),
+  segment_id UUID NOT NULL REFERENCES segment (id),
   -- contraints
   CONSTRAINT segment_rule_key UNIQUE(key, segment_id)
 );
@@ -153,7 +153,7 @@ CREATE TABLE identity (
   key identity_resource_key,
   traits JSONB,
   -- references
-  environment_id UUID REFERENCES environment (id),
+  environment_id UUID NOT NULL REFERENCES environment (id),
   -- contraints
   CONSTRAINT identity_key UNIQUE(key, environment_id)
 );
@@ -178,9 +178,9 @@ CREATE TABLE targeting (
   -- attributes
   state targeting_state,
   -- references
-  fallthrough_variation_id UUID REFERENCES variation (id),
-  flag_id UUID REFERENCES flag (id),
-  environment_id UUID REFERENCES environment (id)
+  fallthrough_variation_id UUID NOT NULL REFERENCES variation (id),
+  flag_id UUID NOT NULL REFERENCES flag (id),
+  environment_id UUID NOT NULL REFERENCES environment (id)
 );
 
 -- --------------------------
@@ -205,8 +205,8 @@ CREATE TABLE targeting_rule (
   -- references
   identity_id UUID REFERENCES identity (id),
   segment_id UUID REFERENCES segment (id),
-  variation_id UUID REFERENCES variation (id),
-  targeting_id UUID REFERENCES targeting (id),
+  variation_id UUID NOT NULL REFERENCES variation (id),
+  targeting_id UUID NOT NULL REFERENCES targeting (id),
   -- contraints
   CONSTRAINT targeting_rule_key UNIQUE(key, targeting_id)
 );
@@ -216,8 +216,8 @@ CREATE TABLE targeting_percentage (
   -- attributes
   percentage INT,
   -- references
-  variation_id UUID REFERENCES variation (id),
-  targeting_id UUID REFERENCES targeting (id)
+  variation_id UUID NOT NULL REFERENCES variation (id),
+  targeting_id UUID NOT NULL REFERENCES targeting (id)
 );
 
 -- verify targeting percentage doesn't exceed 100
@@ -242,9 +242,9 @@ END;
 CREATE TABLE evaluation (
   time BIGINT NOT NULL DEFAULT EXTRACT(EPOCH FROM NOW()) PRIMARY KEY,
   -- references
-  variation_id UUID REFERENCES variation (id),
+  variation_id UUID NOT NULL REFERENCES variation (id),
   targeting_id UUID REFERENCES targeting (id),
-  identity_id UUID REFERENCES identity (id)
+  identity_id UUID NOT NULL REFERENCES identity (id)
 );
 
 
