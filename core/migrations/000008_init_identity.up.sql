@@ -9,7 +9,7 @@ CREATE TABLE identity (
   key identity_resource_key,
   traits JSONB,
   -- references
-  environment_id UUID REFERENCES environment (id),
+  environment_id UUID NOT NULL REFERENCES environment (id),
   -- contraints
   CONSTRAINT identity_key UNIQUE(key, environment_id)
 );

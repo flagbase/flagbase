@@ -8,7 +8,7 @@ CREATE TABLE segment (
   description resource_description,
   tags resource_tags,
   -- references
-  project_id UUID REFERENCES project (id),
+  project_id UUID NOT NULL REFERENCES project (id),
   -- contraints
   CONSTRAINT segment_key UNIQUE(key, project_id)
 );
@@ -30,7 +30,7 @@ CREATE TABLE segment_rule (
   negate BOOLEAN DEFAULT FALSE,
   trait_value VARCHAR(40),
   -- references
-  segment_id UUID REFERENCES segment (id),
+  segment_id UUID NOT NULL REFERENCES segment (id),
   -- contraints
   CONSTRAINT segment_rule_key UNIQUE(key, segment_id)
 );
