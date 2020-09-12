@@ -1,4 +1,4 @@
-BEGIN
+BEGIN;
 
 DELETE TABLE identity;
 

@@ -1,4 +1,4 @@
-BEGIN
+BEGIN;
 
 CREATE DOMAIN identity_resource_key as VARCHAR(50) NOT NULL
   CHECK (value ~* '^[a-zA-Z0-9]*$');
