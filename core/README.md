@@ -20,3 +20,8 @@ docker-compose exec core ./bin/flagbased create-root --root-key=<ACCESS_KEY> --r
 ```sh
 curl -P GET http://localhost:5051/ping
 ```
+
+### Remove all containers and volumes (fresh-start)
+```sh
+docker-compose down -v
+```
