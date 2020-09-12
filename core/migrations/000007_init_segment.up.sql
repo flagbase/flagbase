@@ -1,7 +1,7 @@
 BEGIN;
 
 CREATE TABLE segment (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
@@ -22,7 +22,7 @@ CREATE TYPE segment_rule_condition AS ENUM (
 );
 
 CREATE TABLE segment_rule (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   trait_key VARCHAR(40),

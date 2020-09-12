@@ -1,7 +1,7 @@
 BEGIN;
 
 CREATE TABLE flag (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,
@@ -14,7 +14,7 @@ CREATE TABLE flag (
 );
 
 CREATE TABLE variation (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   name resource_name,

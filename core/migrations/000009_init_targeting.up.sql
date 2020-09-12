@@ -14,7 +14,7 @@ CREATE TYPE targeting_state AS ENUM (
   'off'
 );
 CREATE TABLE targeting (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   state targeting_state,
   -- references
@@ -37,7 +37,7 @@ CREATE TYPE targeting_rule_condition AS ENUM (
   'exclude'
 );
 CREATE TABLE targeting_rule (
-  id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   type targeting_rule_type,
