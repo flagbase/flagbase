@@ -25,3 +25,16 @@ curl -P GET http://localhost:5051/ping
 ```sh
 docker-compose down -v
 ```
+
+
+### How to view metrics via prometheus:
+
+To view metrics about the whole my app container use:
+```
+http://localhost:8080/docker/flagbase-core
+```
+
+To view metrics using prometheus' query use:
+```
+http://localhost:9090/graph
+```
