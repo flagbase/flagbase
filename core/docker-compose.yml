@@ -67,8 +67,3 @@ services:
 
 volumes:
   pgdata:
-  prometheus_data: {}
-  prometheus_config:
-    driver_opts:
-      type: tmpfs
-      device: tmpfs

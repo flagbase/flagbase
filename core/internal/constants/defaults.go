@@ -26,6 +26,6 @@ var (
 	JWTKey string = "bad_secret"
 	// JWTExpiry default jwt expiry time
 	JWTExpiry int64 = time.Now().Add(50000 * time.Minute).Unix()
-	// Status for if prometheus is setup
+	// DefaultPrometheus for if prometheus is setup
 	DefaultPrometheus bool = false
 )
