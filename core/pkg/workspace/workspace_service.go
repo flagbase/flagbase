@@ -89,7 +89,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, w.ID, rsc.Workspace, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
@@ -112,6 +112,7 @@ func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(o.ID),
+		rsc.Workspace,
 		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -139,6 +140,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(w.ID),
+		rsc.Workspace,
 		rsc.UserAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -189,6 +191,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(w.ID),
+		rsc.Workspace,
 		rsc.AdminAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())

@@ -8,8 +8,8 @@ import (
 func NewModel() model.Model {
 	m := model.NewModel()
 
-	m.AddDef("r", "r", "access_id, resource_id, access_type")
-	m.AddDef("p", "p", "access_id, resource_id, access_type")
+	m.AddDef("r", "r", "access_id, resource_id, resource_type, access_type")
+	m.AddDef("p", "p", "access_id, resource_id, resource_type, access_type")
 	m.AddDef("g", "g", "_, _")
 	m.AddDef("e", "e", "some(where (p.eft == allow))")
 

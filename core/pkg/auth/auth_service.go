@@ -31,6 +31,7 @@ func Authorize(
 func Enforce(
 	atk rsc.Token,
 	resourceID rsc.ID,
+	resourceType rsc.ResourceType,
 	accessType rsc.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)
@@ -39,7 +40,7 @@ func Enforce(
 	}
 
 	// enforce policy
-	ok, err := policy.Enforce(a.ID, resourceID, accessType)
+	ok, err := policy.Enforce(a.ID, resourceID, resourceType, accessType)
 	if err != nil {
 		return err
 	}
@@ -50,10 +51,11 @@ func Enforce(
 	return nil
 }
 
-// AddPolicy add casbin policy
+// AddPolicy add casbin policy for a given resource
 func AddPolicy(
 	atk rsc.Token,
 	resourceID rsc.ID,
+	resourceType rsc.ResourceType,
 	accessType rsc.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)
@@ -61,7 +63,7 @@ func AddPolicy(
 		return err
 	}
 
-	ok, err := policy.AddPolicy(a.ID, resourceID, accessType)
+	ok, err := policy.AddPolicy(a.ID, resourceID, resourceType, accessType)
 	if err != nil {
 		return err
 	}
