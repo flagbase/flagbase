@@ -39,11 +39,13 @@ func NewEnforcer(connStr string) error {
 func Enforce(
 	accessID rsc.ID,
 	resourceID rsc.ID,
+	resourceType rsc.ResourceType,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.Enforce(
 		accessID.String(),
 		resourceID.String(),
+		resourceType.String(),
 		accessType.String(),
 	)
 }
@@ -52,11 +54,13 @@ func Enforce(
 func AddPolicy(
 	accessID rsc.ID,
 	resourceID rsc.ID,
+	resourceType rsc.ResourceType,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.AddPolicy(
 		accessID.String(),
 		resourceID.String(),
+		resourceType.String(),
 		accessType.String(),
 	)
 }

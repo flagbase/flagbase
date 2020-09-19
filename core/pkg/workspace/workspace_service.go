@@ -89,7 +89,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, w.ID, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, w.ID, rsc.Workspace, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
@@ -98,12 +98,12 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 	return &res.Success{Data: w}, &e
 }
 
-// Get gets a resource instance given an atk & key
+// Get gets a resource instance given an atk & workspaceKey
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
+func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getByKey(key)
+	o, err := getResource(workspaceKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -112,6 +112,7 @@ func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(o.ID),
+		rsc.Workspace,
 		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -120,16 +121,16 @@ func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 	return &res.Success{Data: o}, &e
 }
 
-// Update updates resource instance given an atk, key & patch object
+// Update updates resource instance given an atk, workspaceKey & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
+func Update(atk rsc.Token, workspaceKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
 	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	w, err := getByKey(key)
+	w, err := getResource(workspaceKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -139,6 +140,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(w.ID),
+		rsc.Workspace,
 		rsc.UserAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -159,7 +161,7 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
     key = $2, name = $3, description = $4, tags = $5
   WHERE
     key = $1`,
-		key,
+		workspaceKey,
 		o.Key,
 		o.Name,
 		o.Description,
@@ -171,15 +173,15 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 	return &res.Success{Data: o}, &e
 }
 
-// Delete deletes a resource instance given an atk & key
+// Delete deletes a resource instance given an atk & workspaceKey
 // (*) atk: access_type <= admin
-func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
+func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	w, err := getByKey(key)
+	w, err := getResource(workspaceKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -189,6 +191,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
 	if err := auth.Enforce(
 		atk,
 		rsc.ID(w.ID),
+		rsc.Workspace,
 		rsc.AdminAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -201,7 +204,7 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
   WHERE
     key = $1
   `,
-		key,
+		workspaceKey,
 	); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}

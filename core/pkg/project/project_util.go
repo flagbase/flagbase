@@ -7,16 +7,16 @@ import (
 	"fmt"
 )
 
-func getByKey(key rsc.Key) (*Project, error) {
+func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
 	var w Project
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
-    id, key, name, description, tags
+    p.id, p.key, p.name, p.description, p.tags
   FROM
-    project
+    project p, workspace w
   WHERE
-    key = $1
-  `, key)
+    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
+  `, workspaceKey, projectKey)
 	if err := row.Scan(
 		&w.ID,
 		&w.Key,
@@ -24,7 +24,7 @@ func getByKey(key rsc.Key) (*Project, error) {
 		&w.Description,
 		&w.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("Unable to find project with key %s", key)
+		return &w, fmt.Errorf("Unable to find project with key %s", projectKey)
 	}
 
 	return &w, nil

@@ -187,7 +187,7 @@ paths:
       description: Delete an existing workspace. This operation can not be undone. Please proceed with caution.
       tags:
         - workspaces
-  '/projects/{projectKey}':
+  '/projects/{workspaceKey}/{projectKey}':
     parameters:
       - name: projectKey
         in: path
@@ -195,6 +195,13 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: |
+          The workspace key
     get:
       summary: Get project
       responses:
@@ -476,7 +483,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Workspace'
     parameters: []
-  /projects:
+  '/projects/{workspaceKey}':
     post:
       summary: Create project
       operationId: create-project
@@ -505,7 +512,13 @@ paths:
       tags:
         - projects
       description: Create a new project. The project will be created in the workspace accociated with the access key-secret pair being used.
-    parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List projects
       operationId: get-projects
@@ -692,7 +705,7 @@ paths:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - workspace-access
-  '/projects/{projectKey}/access':
+  '/projects/{workspaceKey}/{projectKey}/access':
     get:
       summary: List project access
       responses:
@@ -722,6 +735,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     post:
       summary: Create project access
       operationId: create-project-access
