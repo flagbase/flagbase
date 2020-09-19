@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func getByKey(key rsc.Key) (*Workspace, error) {
+func getResource(workspaceKey rsc.Key) (*Workspace, error) {
 	var w Workspace
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
@@ -16,7 +16,7 @@ func getByKey(key rsc.Key) (*Workspace, error) {
     workspace
   WHERE
     key = $1
-  `, key)
+  `, workspaceKey)
 	if err := row.Scan(
 		&w.ID,
 		&w.Key,
@@ -24,7 +24,7 @@ func getByKey(key rsc.Key) (*Workspace, error) {
 		&w.Description,
 		&w.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("Unable to find workspace with key %s", key)
+		return &w, fmt.Errorf("Unable to find workspace with key %s", workspaceKey)
 	}
 
 	return &w, nil

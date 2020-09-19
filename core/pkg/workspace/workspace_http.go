@@ -15,9 +15,9 @@ func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("workspaces")
 	routes.GET("", listHTTPHandler)
 	routes.POST("", createHTTPHandler)
-	routes.GET(":key", getHTTPHandler)
-	routes.PATCH(":key", updateHTTPHandler)
-	routes.DELETE(":key", deleteHTTPHandler)
+	routes.GET(":workspaceKey", getHTTPHandler)
+	routes.PATCH(":workspaceKey", updateHTTPHandler)
+	routes.DELETE(":workspaceKey", deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -63,9 +63,9 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	key := rsc.Key(ctx.Param("key"))
+	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 
-	data, _err := Get(atk, key)
+	data, _err := Get(atk, workspaceKey)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -82,10 +82,10 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	key := rsc.Key(ctx.Param("key"))
+	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	ctx.BindJSON(&i)
 
-	data, _err := Update(atk, key, i)
+	data, _err := Update(atk, workspaceKey, i)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -95,14 +95,14 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
-	key := rsc.Key(ctx.Param("key"))
+	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, key); !err.IsEmpty() {
+	if err := Delete(atk, workspaceKey); !err.IsEmpty() {
 		e.Extend(err)
 	}
 

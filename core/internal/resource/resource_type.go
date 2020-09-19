@@ -11,7 +11,7 @@ const (
 	// Workspace represents a workspace resource
 	Workspace = "workspace"
 	// Project represents a project resource
-	Project = "workspace"
+	Project = "project"
 	// Environment represents a environment resource
 	Environment = "environment"
 	// Access represents a environment resource

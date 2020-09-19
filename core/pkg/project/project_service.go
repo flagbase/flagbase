@@ -14,24 +14,26 @@ import (
 
 // List returns a list of resource instances
 // (*) atk: access_type <= root
-func List(atk rsc.Token) (*res.Success, *res.Errors) {
+func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 	var p []Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.ServiceAccess); err != nil {
 		e.Append(constants.AuthError, err.Error())
 		cancel()
 	}
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
-    id, key, name, description, tags
+    p.id, p.key, p.name, p.description, p.tags
   FROM
-    project
-  `)
+    project p, workspace w
+  WHERE
+    w.key = $1 AND p.workspace_id = w.id
+  `, workspaceKey)
 
 	for rows.Next() {
 		var _p Project
@@ -51,15 +53,15 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
 }
 
 // Create creates a new resource instance given the resource instance
-// (*) atk: access_type <= root
-func Create(atk rsc.Token, i Project) (*res.Success, *res.Errors) {
+// (*) atk: access_type <= admin
+func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 	var p Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.AdminAccess); err != nil {
 		e.Append(constants.AuthError, err.Error())
 		cancel()
 	}
@@ -67,15 +69,20 @@ func Create(atk rsc.Token, i Project) (*res.Success, *res.Errors) {
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    project(key, name, description, tags)
+    project(key, name, description, tags, workspace_id)
   VALUES
-    ($1, $2, $3, $4)
+    ($1, $2, $3, $4, (
+      SELECT id
+      FROM workspace
+      WHERE key = $5
+    ))
   RETURNING
     id, key, name, description, tags;`,
 		i.Key,
 		i.Name,
 		i.Description,
 		pq.Array(i.Tags),
+		workspaceKey,
 	)
 	if err := row.Scan(
 		&p.ID,
@@ -100,10 +107,10 @@ func Create(atk rsc.Token, i Project) (*res.Success, *res.Errors) {
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
+func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getByKey(key)
+	o, err := getResource(workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -123,14 +130,14 @@ func Get(atk rsc.Token, key rsc.Key) (*res.Success, *res.Errors) {
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
+func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
 	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	p, err := getByKey(key)
+	p, err := getResource(workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -158,10 +165,15 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
   UPDATE
     project
   SET
-    key = $2, name = $3, description = $4, tags = $5
+    key = $3, name = $4, description = $5, tags = $6
   WHERE
-    key = $1`,
-		key,
+    workspace_id = (
+      SELECT id
+      FROM workspace
+      WHERE key = $1
+    ) AND key = $2`,
+		workspaceKey,
+		projectKey,
 		o.Key,
 		o.Name,
 		o.Description,
@@ -175,13 +187,13 @@ func Update(atk rsc.Token, key rsc.Key, patchDoc patch.Patch) (*res.Success, *re
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
+func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	p, err := getByKey(key)
+	p, err := getResource(workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -202,9 +214,14 @@ func Delete(atk rsc.Token, key rsc.Key) *res.Errors {
   DELETE FROM
     project
   WHERE
-    key = $1
+    workspace_id = (
+      SELECT id
+      FROM workspace
+      WHERE key = $1
+    ) AND key = $2
   `,
-		key,
+		workspaceKey,
+		projectKey,
 	); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}

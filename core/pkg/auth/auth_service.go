@@ -17,9 +17,11 @@ func Authorize(
 		return err
 	}
 
-	if a.Type != accessType.String() {
+	// Check access based priority
+	// Root > Admin > User > Service
+	if rsc.AccessTypeFromString[a.Type] < accessType {
 		return fmt.Errorf(
-			"You need %s access in order to conduct this operation",
+			"You need %s access (or greater) to conduct this operation",
 			accessType,
 		)
 	}
