@@ -120,3 +120,4 @@ fabric.properties
 node_modules
 build
 dist
+.vscode
