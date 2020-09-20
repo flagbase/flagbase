@@ -16,3 +16,6 @@ Command-line utility used as an interface for Flagase Core. [Read more](./cli/RE
 
 ## Contributing
 Refer to [dev/contributing](./dev/contributing/1_overview.md).
+
+## License
+Mozilla Public License Version 2.0, see [LICENSE](./LICENSE)

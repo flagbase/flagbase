@@ -1,6 +1,26 @@
 version: "3"
 
 services:
+  core:
+    container_name: flagbase-core
+    build: .
+    command: ["air"]
+    ports:
+      - 5051:5051
+    volumes:
+      - ./:/go/src/github.com/flagbase/flagbase/core
+    depends_on:
+      - db
+      - migrations
+    links:
+      - db
+
+  redis:
+    container_name: flagbase-cache
+    image: redis:latest
+    ports:
+      - 6379:6379
+
   db:
     container_name: flagbase-db
     image: postgres
@@ -27,23 +47,9 @@ services:
     links:
       - db
 
-  core:
-    container_name: flagbase-core
-    build: .
-    command: ["air"]
-    ports:
-      - 5051:5051
-    volumes:
-      - ./:/go/src/github.com/flagbase/flagbase/core
-    depends_on:
-      - db
-      - migrations
-    links:
-      - db
-  
   prometheus:
+    container_name: flagbase-metrics
     image: prom/prometheus:latest
-    container_name: prometheus
     ports:
     - 9090:9090
     command:
@@ -52,17 +58,19 @@ services:
     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
     depends_on:
     - cadvisor
-  cadvisor:
-    image: gcr.io/google-containers/cadvisor:latest
-    container_name: cadvisor
-    ports:
-    - 8080:8080
-    volumes:
-    - /:/rootfs:ro
-    - /var/run:/var/run:rw
-    - /sys:/sys:ro
-    - /var/lib/docker/:/var/lib/docker:ro
 
+  cadvisor:
+    container_name: flagbase-cadvisor
+    image: gcr.io/google-containers/cadvisor:latest
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+      - redis
 
 
 volumes:

@@ -2,7 +2,6 @@ package http
 
 import (
 	"core/pkg/access"
-	"core/pkg/metrics"
 	"core/pkg/ping"
 	"core/pkg/project"
 	"core/pkg/workspace"
@@ -12,7 +11,7 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(r *gin.Engine) {
-	metrics.ApplyRoutes(r)
+	ApplyMetrics(r)
 	root := r.Group("/")
 	access.ApplyRoutes(root)
 	project.ApplyRoutes(root)

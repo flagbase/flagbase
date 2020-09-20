@@ -27,7 +27,7 @@ docker-compose down -v
 ```
 
 
-### How to view metrics via prometheus:
+## Metrics
 
 To view metrics about the whole my app container use:
 ```
