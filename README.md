@@ -1,35 +1,26 @@
-<center>
-  <img width="275px" src="./docs/assets/img/banner-dark.svg" />
-  <p>
+<div align="center">
 
-![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
-)
-![Spectrum](https://img.shields.io/static/v1?label=community&message=spectrum.chat/flagbase&color=green
-)
-![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
+  <img width="250px" src="./docs/assets/img/banner-dark.svg" /></br>
+  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
 
-  </p>
-</center>
+  ![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
+  )
+  ![Spectrum](https://img.shields.io/static/v1?label=community&message=spectrum.chat/flagbase&color=green
+  )
+  ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
+
+</div>
 
 Flagbase is an all-in-one feature management solution. Flagbase offers two delivery mechanisms for transporting flagsets including both polling and streaming via [SSE (Server-Sent Events)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). Flagbase also offers features such as targeted rollouts, auditing and extensive service monitoring via [Prometheus](https://prometheus.io).
 
-<center>
-  <img width="500px"  src="./docs/assets/img/readme-banner.svg" />
-</center>
-
 ## Architecture
-### System in Context Diagram
-<center>
-  <img width="500px"  src="./dev/assets/img/system-in-context.png" />
-</center>
+![Architecture diagram](./dev/assets/img/system-in-context.png)
 
-### Entity-relationship Diagram
-<center>
-  <img width="500px"  src="./dev/assets/img/er-diagram.png" />
-</center>
+### Resources
+![ER Diagram](./dev/assets/img/er-diagram.png)
 
-## Packages
-This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, CLI, SDKs and [user](./docs/README.md)/[contributor](./dev/README.md) documentation.
+## Directories
+This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, CLI, SDKs. It also contains the [user](./docs/README.md) and [maintainer](./dev/README.md) docs.
 * *[`/core`](./core/README.md)*: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream evaluated flagsets down to consumers (via the SDK). [Read more](./core/README.md)
 * *[`/sdk`](./sdk/README.md)*: SDKs use to retrieve evaluated flagsets from the Core. [Read more](./sdk/README.md)
 * *[`/cli`](./cli/README.md)*: CLI interacts with the [Core's API](https://flagbase.com/docs/api) is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./cli/README.md)
