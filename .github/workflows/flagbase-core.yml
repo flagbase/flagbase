@@ -2,10 +2,12 @@ name: flagbase-core
 
 on:
   push:
+    paths:
+      - 'core/**'
   pull_request:
     branches: [ master ]
-  paths:
-    - 'core/**'
+    paths:
+      - 'core/**'
 
 jobs:
   build:
