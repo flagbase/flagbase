@@ -31,16 +31,14 @@ jobs:
       uses: golangci/golangci-lint-action@v2
       with:
         version: v1.29
-        working-directory: ./core
         args: --issues-exit-code=0
-        only-new-issues: true
 
     - name: Test
       run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
       working-directory: ./core
 
     - name: Upload Coverage report to CodeCov
-      uses: codecov/codecov-action@v1.0.0
+      uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CORE_CODECOV_TOKEN }}
         file: ./core/coverage.txt
