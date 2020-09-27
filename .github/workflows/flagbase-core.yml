@@ -31,7 +31,7 @@ jobs:
       uses: golangci/golangci-lint-action@v1
       with:
         version: v1.29
-      working-directory: ./core
+        working-directory: ./core
 
     - name: Test
       run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
@@ -42,4 +42,4 @@ jobs:
       with:
         token: ${{ secrets.CORE_CODECOV_TOKEN }}
         file: ./coverage.txt
-      working-directory: ./core
+        directory: ./core
