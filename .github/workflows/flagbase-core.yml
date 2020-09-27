@@ -1,7 +1,8 @@
 name: flagbase-core
 
 on:
-  push:
+  pull_request:
+    branches: [ master ]
     paths:
       - 'core/**'
 
