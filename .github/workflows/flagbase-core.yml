@@ -4,10 +4,6 @@ on:
   push:
     paths:
       - 'core/**'
-  pull_request:
-    branches: [ master ]
-    paths:
-      - 'core/**'
 
 jobs:
   build:
@@ -49,3 +45,4 @@ jobs:
           version: v1.29
           working-directory: core
           args: --config=.golangci.yml
+          only-new-issues: true
