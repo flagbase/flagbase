@@ -1,0 +1,44 @@
+name: flagbase-core
+
+on:
+  push:
+  pull_request:
+    branches: [ master ]
+  paths:
+    - 'core/**'
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.14
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.14
+      id: go
+      working-directory: ./core
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Build
+      run: go build -v ./cmd/flagbased
+      working-directory: ./core
+
+    - name: Lint
+      uses: golangci/golangci-lint-action@v1
+      with:
+        version: v1.29
+      working-directory: ./core
+
+    - name: Test
+      run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
+      working-directory: ./core
+
+    - name: Upload Coverage report to CodeCov
+      uses: codecov/codecov-action@v1.0.0
+      with:
+        token: ${{ secrets.CORE_CODECOV_TOKEN }}
+        file: ./coverage.txt
+      working-directory: ./core

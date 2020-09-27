@@ -33,7 +33,7 @@ func Authorize(
 func Enforce(
 	atk rsc.Token,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)
@@ -57,7 +57,7 @@ func Enforce(
 func AddPolicy(
 	atk rsc.Token,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) error {
 	a, err := getAccessFromToken(atk)

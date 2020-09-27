@@ -39,7 +39,7 @@ func NewEnforcer(connStr string) error {
 func Enforce(
 	accessID rsc.ID,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.Enforce(
@@ -54,7 +54,7 @@ func Enforce(
 func AddPolicy(
 	accessID rsc.ID,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.AddPolicy(

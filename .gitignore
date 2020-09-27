@@ -121,3 +121,5 @@ node_modules
 build
 dist
 .vscode
+flagbased
+coverage.txt
