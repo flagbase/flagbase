@@ -1,5 +1,5 @@
 FROM golang:alpine
-LABEL maintainer="Flagbase Team <info@flagbase.com>"
+LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
 # Set up working environment
 RUN apk add --no-cache git bash openssh
@@ -9,6 +9,7 @@ COPY . .
 # Download dependencies
 RUN go mod download
 RUN go get -u github.com/cosmtrek/air
+RUN go get -u golang.org/x/lint/golint
 
 # Build executable
 RUN go build -o ./bin/flagbased ./cmd/flagbased
