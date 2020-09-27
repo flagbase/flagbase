@@ -8,7 +8,7 @@ func (r Type) String() string {
 }
 
 const (
-	// Workspace represents a workspace resource
+	// Workspac represents a workspace resource
 	Workspace = "workspace"
 	// Project represents a project resource
 	Project = "project"
