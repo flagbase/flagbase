@@ -10,16 +10,17 @@ on:
       - 'core/**'
 
 jobs:
-  lint:
-    name: Lint
+  linter:
+    name: Linter
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: lint
-        uses: golangci/golangci-lint-action@v2
+      - name: Linter
+        uses: golangci/golangci-lint-action@v2.2.0
         with:
           version: v1.29
           args: --issues-exit-code=0
+          working-directory: core
 
   build:
     name: Build and test
