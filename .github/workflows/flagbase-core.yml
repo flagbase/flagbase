@@ -19,7 +19,6 @@ jobs:
       with:
         go-version: ^1.14
       id: go
-      working-directory: ./core
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
