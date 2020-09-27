@@ -32,6 +32,8 @@ jobs:
       with:
         version: v1.29
         working-directory: ./core
+        only-new-issues: true
+        args: --issues-exit-code=0
 
     - name: Test
       run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
