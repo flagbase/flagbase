@@ -1,22 +1,31 @@
 <div align="center">
 
   <img width="250px" src="./docs/assets/img/banner-dark.svg" /></br>
-  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
 
   ![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
   )
   ![Spectrum](https://img.shields.io/static/v1?label=community&message=spectrum.chat/flagbase&color=green
   )
   ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
+  [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase?ref=badge_shield)
 
 </div>
 
+
+
 Flagbase is an all-in-one feature management solution. Flagbase offers two delivery mechanisms for transporting flagsets including both polling and streaming via [SSE (Server-Sent Events)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). Flagbase also offers features such as targeted rollouts, auditing and extensive service monitoring via [Prometheus](https://prometheus.io).
 
-## Architecture
+<div align="center">
+
+  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
+
+</div>
+
+
+## Architecture overview
 ![Architecture diagram](./dev/assets/img/system-in-context.png)
 
-### Resources
+### ER Diagram
 ![ER Diagram](./dev/assets/img/er-diagram.png)
 
 ## Directories

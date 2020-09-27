@@ -1,7 +1,6 @@
 package constants
 
 import (
-	"core/internal/rand"
 	"time"
 )
 
@@ -19,9 +18,6 @@ var (
 	// MaxUnixTime The maxiumum unix time
 	// TODO: come up with better method in year 2038
 	MaxUnixTime int64 = 9223372036854775807
-	// RuntimeToken is a randomly generated token
-	// used for generating root user
-	RuntimeToken string = rand.String(64)
 	// JWTKey used to encode jwt
 	JWTKey string = "bad_secret"
 	// JWTExpiry default jwt expiry time

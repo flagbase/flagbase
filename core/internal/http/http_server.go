@@ -14,7 +14,7 @@ func NewHTTPServer(host string, port string, debug bool) {
 
 	r := gin.New()
 
-	if debug == true {
+	if debug {
 		r.Use(ginlogrus.Logger(logrus.New()), gin.Recovery())
 	}
 

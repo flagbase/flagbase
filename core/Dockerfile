@@ -9,7 +9,6 @@ COPY . .
 # Download dependencies
 RUN go mod download
 RUN go get -u github.com/cosmtrek/air
-RUN go get -u golang.org/x/lint/golint
 
 # Build executable
 RUN go build -o ./bin/flagbased ./cmd/flagbased
