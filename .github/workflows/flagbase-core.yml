@@ -28,7 +28,7 @@ jobs:
       working-directory: ./core
 
     - name: Lint
-      uses: golangci/golangci-lint-action@v2
+      uses: golangci/golangci-lint-action@v1
       with:
         version: v1.29
         args: --issues-exit-code=0
