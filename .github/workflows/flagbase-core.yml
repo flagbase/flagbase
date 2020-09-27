@@ -46,4 +46,3 @@ jobs:
           version: v1.29
           working-directory: core
           args: --config=.golangci.yml
-          only-new-issues: true
