@@ -30,7 +30,10 @@ func NewEnforcer(connStr string) error {
 	}
 
 	Enforcer = enforcer
-	Enforcer.LoadPolicy()
+
+	if err := Enforcer.LoadPolicy(); err != nil {
+		return err
+	}
 
 	return nil
 }

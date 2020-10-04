@@ -34,6 +34,9 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
   WHERE
     w.key = $1 AND p.workspace_id = w.id
   `, workspaceKey)
+	if err != nil {
+		e.Append(constants.NotFoundError, err.Error())
+	}
 
 	for rows.Next() {
 		var _p Project
@@ -118,7 +121,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(o.ID),
+		o.ID,
 		rsc.Project,
 		rsc.ServiceAccess,
 	); err != nil {
@@ -146,7 +149,7 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc pa
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(p.ID),
+		p.ID,
 		rsc.Project,
 		rsc.UserAccess,
 	); err != nil {
@@ -202,7 +205,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(p.ID),
+		p.ID,
 		rsc.Project,
 		rsc.AdminAccess,
 	); err != nil {

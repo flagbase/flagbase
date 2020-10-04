@@ -21,7 +21,7 @@ func Authorize(
 	// Root > Admin > User > Service
 	if rsc.AccessTypeFromString[a.Type] < accessType {
 		return fmt.Errorf(
-			"You need %s access (or greater) to conduct this operation",
+			"need %s access role (or greater) to conduct this operation",
 			accessType,
 		)
 	}
@@ -47,7 +47,7 @@ func Enforce(
 		return err
 	}
 	if !ok {
-		return errors.New("Insufficient permission")
+		return errors.New("insufficient permission")
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func AddPolicy(
 		return err
 	}
 	if !ok {
-		return errors.New("Unable to add policy")
+		return errors.New("unable to add policy")
 	}
 
 	return nil

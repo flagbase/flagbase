@@ -8,7 +8,7 @@ import (
 
 // NewHTTPServer initialize a new gin-based http server
 func NewHTTPServer(host string, port string, debug bool) {
-	if debug == false {
+	if !debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

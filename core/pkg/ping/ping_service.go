@@ -3,7 +3,6 @@ package ping
 import (
 	"context"
 	"core/internal/db"
-	"errors"
 
 	"github.com/sirupsen/logrus"
 )
@@ -14,9 +13,6 @@ func Ping(ctx context.Context) (string, error) {
 	row := db.Pool.QueryRow(ctx, "SELECT 'pong'")
 	err := row.Scan(&msg)
 	if err != nil {
-		logrus.Error(err)
-		return "error", errors.New("Cannot query db")
-	} else if err != nil {
 		logrus.Error(err)
 		return "error", err
 	}

@@ -4,6 +4,7 @@ import (
 	"core/internal/constants"
 	rsc "core/internal/resource"
 	"errors"
+	"time"
 
 	"github.com/dgrijalva/jwt-go"
 )
@@ -16,10 +17,11 @@ type Claims struct {
 
 // Sign generate token using access id
 func Sign(a []byte) (string, error) {
+	expiry := time.Now().Add(time.Minute * constants.JWTExpiryMinutes).Unix()
 	claims := &Claims{
 		Access: a,
 		StandardClaims: jwt.StandardClaims{
-			ExpiresAt: constants.JWTExpiry,
+			ExpiresAt: expiry,
 		},
 	}
 
@@ -44,7 +46,7 @@ func Verify(atk rsc.Token) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	} else if !tkn.Valid {
-		return nil, errors.New("Invalid access token")
+		return nil, errors.New("invalid access token")
 	}
 
 	return claims.Access, nil

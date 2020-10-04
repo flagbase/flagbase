@@ -20,7 +20,7 @@ func NewPool(ctx context.Context, connStr string, debug bool) error {
 		return err
 	}
 
-	if debug == true {
+	if debug {
 		poolConfig.ConnConfig.Logger = logrusadapter.NewLogger(logrus.New())
 	}
 

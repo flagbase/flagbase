@@ -1,6 +1,8 @@
 package access
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,13 +14,15 @@ func ApplyRoutes(r *gin.RouterGroup) {
 
 func generateTokenHTTPHandler(ctx *gin.Context) {
 	var i KeySecretPair
-	ctx.BindJSON(&i)
-
-	data, err := GenerateToken(i)
-	if err.Errors != nil {
-		ctx.AbortWithStatusJSON(500, err)
+	if err := ctx.BindJSON(&i); err != nil {
 		return
 	}
 
-	ctx.JSON(200, data)
+	data, err := GenerateToken(i)
+	if err.Errors != nil {
+		ctx.AbortWithStatusJSON(http.StatusOK, err)
+		return
+	}
+
+	ctx.JSON(http.StatusInternalServerError, data)
 }

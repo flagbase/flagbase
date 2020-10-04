@@ -24,7 +24,7 @@ func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
 		&w.Description,
 		&w.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("Unable to find project with key %s", projectKey)
+		return &w, fmt.Errorf("unable to find project with key %s", projectKey)
 	}
 
 	return &w, nil

@@ -24,7 +24,7 @@ func getResource(workspaceKey rsc.Key) (*Workspace, error) {
 		&w.Description,
 		&w.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("Unable to find workspace with key %s", workspaceKey)
+		return &w, fmt.Errorf("unable to find workspace with key %s", workspaceKey)
 	}
 
 	return &w, nil
