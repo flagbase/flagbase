@@ -30,7 +30,10 @@ func NewEnforcer(connStr string) error {
 	}
 
 	Enforcer = enforcer
-	Enforcer.LoadPolicy()
+
+	if err := Enforcer.LoadPolicy(); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -39,7 +42,7 @@ func NewEnforcer(connStr string) error {
 func Enforce(
 	accessID rsc.ID,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.Enforce(
@@ -54,7 +57,7 @@ func Enforce(
 func AddPolicy(
 	accessID rsc.ID,
 	resourceID rsc.ID,
-	resourceType rsc.ResourceType,
+	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) (bool, error) {
 	return Enforcer.AddPolicy(

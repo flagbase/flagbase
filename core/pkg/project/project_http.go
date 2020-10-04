@@ -48,7 +48,9 @@ func createHTTPHandler(ctx *gin.Context) {
 
 	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	var i Project
-	ctx.BindJSON(&i)
+	if err := ctx.BindJSON(&i); err != nil {
+		e.Append(constants.InternalError, err.Error())
+	}
 
 	data, _err := Create(atk, i, workspaceKey)
 	if !_err.IsEmpty() {
@@ -88,7 +90,9 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	projectKey := rsc.Key(ctx.Param("projectKey"))
-	ctx.BindJSON(&i)
+	if err := ctx.BindJSON(&i); err != nil {
+		e.Append(constants.InternalError, err.Error())
+	}
 
 	data, _err := Update(atk, workspaceKey, projectKey, i)
 	if !_err.IsEmpty() {

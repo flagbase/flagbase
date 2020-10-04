@@ -4,7 +4,7 @@ import (
 	"context"
 	"io/ioutil"
 	"log"
-	"os"
+	"runtime"
 	"strconv"
 
 	"core/internal/constants"
@@ -20,7 +20,7 @@ import (
 type StartConfig struct {
 	Host     string
 	HTTPPort int
-	DbURL    string
+	DBURL    string
 	Verbose  bool
 }
 
@@ -39,12 +39,12 @@ var StartCommand cli.Command = cli.Command{
 		},
 		&cli.IntFlag{
 			Name:  "http-port",
-			Value: 5051,
+			Value: constants.DefaultHTTPPort,
 		},
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: constants.DefaultDbURL,
+			Value: constants.DefaultDBURL,
 		},
 		&cli.BoolFlag{
 			Name:    "verbose",
@@ -57,7 +57,7 @@ var StartCommand cli.Command = cli.Command{
 		cnf := StartConfig{
 			Host:     ctx.String("host"),
 			HTTPPort: ctx.Int("http-port"),
-			DbURL:    ctx.String("db-url"),
+			DBURL:    ctx.String("db-url"),
 			Verbose:  ctx.Bool("verbose"),
 		}
 		Start(cnf)
@@ -67,7 +67,7 @@ var StartCommand cli.Command = cli.Command{
 
 // Start run server process
 func Start(cnf StartConfig) {
-	if cnf.Verbose == false {
+	if !cnf.Verbose {
 		log.SetOutput(ioutil.Discard)
 		logrus.SetOutput(ioutil.Discard)
 	}
@@ -75,19 +75,19 @@ func Start(cnf StartConfig) {
 	logrus.WithFields(logrus.Fields{
 		"host":     cnf.Host,
 		"httpPort": cnf.HTTPPort,
-		"dbURL":    cnf.DbURL,
+		"dbURL":    cnf.DBURL,
 		"verbose":  cnf.Verbose,
 	}).Info("Starting flagbased with the following flags")
 
-	if err := db.NewPool(context.Background(), cnf.DbURL, cnf.Verbose); err != nil {
+	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
-		os.Exit(1)
+		runtime.Goexit()
 	}
 	defer db.Pool.Close()
 
-	if err := policy.NewEnforcer(cnf.DbURL); err != nil {
+	if err := policy.NewEnforcer(cnf.DBURL); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
-		os.Exit(1)
+		runtime.Goexit()
 	}
 
 	http.NewHTTPServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)

@@ -1,0 +1,48 @@
+name: flagbase-core
+
+on:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'core/**'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.14
+      - name: Build
+        run: go build -v ./cmd/flagbased
+        working-directory: ./core
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ^1.14
+      - name: Run tests
+        run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
+        working-directory: ./core
+      - name: Upload coverage report to CodeCov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CORE_CODECOV_TOKEN }}
+          file: ./core/coverage.txt
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: golangci/golangci-lint-action@v2.2.0
+        with:
+          version: v1.29
+          working-directory: core
+          args: --config=.golangci.yml

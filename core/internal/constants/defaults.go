@@ -1,15 +1,16 @@
 package constants
 
 import (
-	"core/internal/rand"
 	"time"
 )
 
 var (
-	// DefaultDbURL the default postgres database connection string
-	DefaultDbURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
+	// DefaultDBURL the default postgres database connection string
+	DefaultDBURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
 		"db:5432/flagbase" +
 		"?sslmode=disable"
+	// DefaultHTTPPort default http server port
+	DefaultHTTPPort int = 5051
 	// DefaultVerbose should log verbosely by default
 	DefaultVerbose bool = false
 	// DefaultRootKey default root access key
@@ -19,13 +20,10 @@ var (
 	// MaxUnixTime The maxiumum unix time
 	// TODO: come up with better method in year 2038
 	MaxUnixTime int64 = 9223372036854775807
-	// RuntimeToken is a randomly generated token
-	// used for generating root user
-	RuntimeToken string = rand.String(64)
 	// JWTKey used to encode jwt
 	JWTKey string = "bad_secret"
-	// JWTExpiry default jwt expiry time
-	JWTExpiry int64 = time.Now().Add(50000 * time.Minute).Unix()
+	// JWTExpiryMinutes default JWT lifetime (in minutes)
+	JWTExpiryMinutes time.Duration = 5000
 	// DefaultPrometheus for if prometheus is setup
 	DefaultPrometheus bool = false
 )

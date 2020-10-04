@@ -1,5 +1,5 @@
 FROM golang:alpine
-LABEL maintainer="Flagbase Team <info@flagbase.com>"
+LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
 # Set up working environment
 RUN apk add --no-cache git bash openssh

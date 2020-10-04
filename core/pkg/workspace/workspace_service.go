@@ -32,6 +32,9 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
   FROM
     workspace
   `)
+	if err != nil {
+		e.Append(constants.NotFoundError, err.Error())
+	}
 
 	for rows.Next() {
 		var _w Workspace
@@ -111,7 +114,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(o.ID),
+		o.ID,
 		rsc.Workspace,
 		rsc.ServiceAccess,
 	); err != nil {
@@ -139,7 +142,7 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, patchDoc patch.Patch) (*res.Suc
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(w.ID),
+		w.ID,
 		rsc.Workspace,
 		rsc.UserAccess,
 	); err != nil {
@@ -190,7 +193,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		rsc.ID(w.ID),
+		w.ID,
 		rsc.Workspace,
 		rsc.AdminAccess,
 	); err != nil {

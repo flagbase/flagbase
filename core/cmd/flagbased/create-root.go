@@ -8,7 +8,7 @@ import (
 	rsc "core/internal/resource"
 	"core/pkg/access"
 	"errors"
-	"os"
+	"runtime"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -16,7 +16,7 @@ import (
 
 // CreateRootConfig server config
 type CreateRootConfig struct {
-	DbURL      string
+	DBURL      string
 	Verbose    bool
 	RootKey    rsc.Key
 	RootSecret string
@@ -32,7 +32,7 @@ var CreateRootCommand cli.Command = cli.Command{
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: constants.DefaultDbURL,
+			Value: constants.DefaultDBURL,
 		},
 		&cli.StringFlag{
 			Name:  "root-key",
@@ -53,7 +53,7 @@ var CreateRootCommand cli.Command = cli.Command{
 	},
 	Action: func(ctx *cli.Context) error {
 		cnf := CreateRootConfig{
-			DbURL:      ctx.String("db-url"),
+			DBURL:      ctx.String("db-url"),
 			RootKey:    rsc.Key(ctx.String("root-key")),
 			RootSecret: ctx.String("root-secret"),
 			Verbose:    ctx.Bool("verbose"),
@@ -65,20 +65,20 @@ var CreateRootCommand cli.Command = cli.Command{
 
 // CreateRoot create root access
 func CreateRoot(cnf CreateRootConfig) {
-	if err := db.NewPool(context.Background(), cnf.DbURL, cnf.Verbose); err != nil {
+	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
-		os.Exit(1)
+		runtime.Goexit()
 	}
 	defer db.Pool.Close()
 
-	if err := policy.NewEnforcer(cnf.DbURL); err != nil {
+	if err := policy.NewEnforcer(cnf.DBURL); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
-		os.Exit(1)
+		runtime.Goexit()
 	}
 
 	if err := createRootAccess(cnf.RootKey, cnf.RootSecret); err != nil {
 		logrus.Error("Unable to create root access. Perhap the access-key already exists.")
-		os.Exit(1)
+		runtime.Goexit()
 	} else {
 		logrus.WithFields(logrus.Fields{
 			"key":    cnf.RootKey,

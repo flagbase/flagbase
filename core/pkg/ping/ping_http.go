@@ -1,6 +1,8 @@
 package ping
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -12,8 +14,8 @@ func ApplyRoutes(r *gin.RouterGroup) {
 func pingHTTPHandler(ctx *gin.Context) {
 	pong, err := Ping(ctx)
 	if err != nil {
-		ctx.AbortWithStatus(500)
+		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	ctx.Data(200, "text/plain", []byte(pong))
+	ctx.Data(http.StatusOK, "text/plain", []byte(pong))
 }

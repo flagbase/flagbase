@@ -1,9 +1,9 @@
 package resource
 
-// ResourceType specifies the type of resource object
-type ResourceType string
+// Type specifies the type of resource object
+type Type string
 
-func (r ResourceType) String() string {
+func (r Type) String() string {
 	return string(r)
 }
 
