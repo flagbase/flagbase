@@ -2,6 +2,8 @@
 
   <img width="250px" src="./docs/assets/img/banner-dark.svg" /></br>
 
+  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
+
   ![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
   )
   ![Spectrum](https://img.shields.io/static/v1?label=community&message=spectrum.chat/flagbase&color=green
@@ -11,15 +13,7 @@
 
 </div>
 
-
-
 Flagbase is an all-in-one feature management solution. Flagbase offers two delivery mechanisms for transporting flagsets including both polling and streaming via [SSE (Server-Sent Events)](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events). Flagbase also offers features such as targeted rollouts, auditing and extensive service monitoring via [Prometheus](https://prometheus.io).
-
-<div align="center">
-
-  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
-
-</div>
 
 
 ## Architecture overview
