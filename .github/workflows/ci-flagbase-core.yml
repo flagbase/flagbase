@@ -1,8 +1,9 @@
-name: flagbase-core
+name: ci-flagbase-core
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
     paths:
       - 'core/**'
 
