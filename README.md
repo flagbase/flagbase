@@ -1,8 +1,8 @@
 <div align="center">
 
-  <img width="250px" src="./docs/assets/img/banner-dark.svg" /></br>
+  <img width="250px" src="./www/docs/assets/img/banner-dark.svg" /></br>
 
-  <img width="570px"  src="./docs/assets/img/readme-banner.svg" /></br>
+  <img width="570px"  src="./www/docs/assets/img/readme-banner.svg" /></br>
 
   ![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
   )
@@ -17,16 +17,16 @@ Flagbase is an all-in-one feature management solution. Flagbase offers two deliv
 
 
 ## Architecture overview
-![Architecture diagram](./dev/assets/img/system-in-context.png)
+![Architecture diagram](./www/dev/assets/img/system-in-context.png)
 
 ### ER Diagram
-![ER Diagram](./dev/assets/img/er-diagram.png)
+![ER Diagram](./www/dev/assets/img/er-diagram.png)
 
 ## Directories
-This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, CLI, SDKs. It also contains the [user](./docs/README.md) and [maintainer](./dev/README.md) docs.
+This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI, SDKs.
 * *[`/core`](./core/README.md)*: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream evaluated flagsets down to consumers (via the SDK). [Read more](./core/README.md)
 * *[`/sdk`](./sdk/README.md)*: SDKs use to retrieve evaluated flagsets from the Core. [Read more](./sdk/README.md)
-* *[`/cli`](./cli/README.md)*: CLI interacts with the [Core's API](https://flagbase.com/docs/api) is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./cli/README.md)
+* *[`/ui`](./ui/README.md)*: UI interacts with the [Core's API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./ui/README.md)
 
 ## Community
 Join us on [Spectrum](https://spectrum.chat/flagbase).
@@ -34,7 +34,7 @@ Join us on [Spectrum](https://spectrum.chat/flagbase).
 * [Development](https://spectrum.chat/flagbase/dev): where contributers discuss ideas and ask questions
 
 ## Contributing
-Refer to [dev/contributing](./dev/contributing/1_overview.md).
+Refer to [dev/contributing](./www/dev/contributing/1_overview.md).
 
 ## License
 Mozilla Public License Version 2.0, see [LICENSE](./LICENSE)
