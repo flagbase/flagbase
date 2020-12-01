@@ -11,7 +11,7 @@ For debugging purposes, you can run a minimal version of the website.
 
 You can preview the website using docker & docker-compose, using the following command:
 ```sh
-$ docker-compoes up
+$ docker-compose up
 ```
 
 
