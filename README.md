@@ -24,9 +24,9 @@ Flagbase is an all-in-one feature management solution. Flagbase offers two deliv
 
 ## Directories
 This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI, SDKs.
-* *[`/core`](./core/README.md)*: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream evaluated flagsets down to consumers (via the SDK). [Read more](./core/README.md)
-* *[`/sdk`](./sdk/README.md)*: SDKs use to retrieve evaluated flagsets from the Core. [Read more](./sdk/README.md)
-* *[`/ui`](./ui/README.md)*: UI interacts with the [Core's API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./ui/README.md)
+* **[`/core`](./core/README.md)**: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream evaluated flagsets down to consumers (via the SDK). [Read more](./core/README.md)
+* **[`/sdk`](./sdk/README.md)**: SDKs use to retrieve evaluated flagsets from the Core. [Read more](./sdk/README.md)
+* **[`/ui`](./ui/README.md)**: UI interacts with the [Core's API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./ui/README.md)
 
 ## Community
 Join us on [Spectrum](https://spectrum.chat/flagbase).
