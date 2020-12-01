@@ -13,4 +13,4 @@ This PR introduces the following changes:
 I've completed the following tasks:
 - [x] Signed the Contributers License Agreement (CLA)
 - [ ] Added/updated tests
-- [ ] Added/updated documents
+- [ ] Added/updated docs
