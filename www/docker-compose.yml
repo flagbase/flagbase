@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  core:
+    container_name: flagbase-www
+    build: .
+    command: ["npm", "start", "--", "--host", "0.0.0.0"]
+    ports:
+      - 3000:3000
+    volumes:
+      - ./_app_/docusaurus.config.js:/app/flagbase/docusaurus.config.js
+      - ./blog:/app/flagbase/blog
+      - ./dev:/app/flagbase/dev
+      - ./docs:/app/flagbase/docs

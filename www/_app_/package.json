@@ -1,0 +1,53 @@
+{
+  "name": "flagbase-www",
+  "version": "0.0.0",
+  "scripts": {
+    "pre": "npm run sync",
+    "start": "npm run pre && docusaurus start",
+    "build": "npm run pre && docusaurus build",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "sync": "npm-run-all sync:vendor:flagbase:**",
+    "sync:vendor:flagbase:blog:assets": "rsync -r ./blog/assets/ static/assets/",
+    "sync:vendor:flagbase:docs:assets": "rsync -r ./docs/assets/ static/assets/",
+    "sync:vendor:flagbase:dev:assets": "rsync -r ./dev/assets/ static/assets/"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^2.0.0-alpha.56",
+    "@docusaurus/plugin-content-docs": "^2.0.0-alpha.56",
+    "@docusaurus/plugin-debug": "^2.0.0-alpha.56",
+    "@docusaurus/plugin-google-analytics": "^2.0.0-alpha.68",
+    "@docusaurus/preset-classic": "^2.0.0-alpha.56",
+    "@fortawesome/fontawesome": "^1.1.8",
+    "@fortawesome/fontawesome-svg-core": "^1.2.28",
+    "@fortawesome/free-brands-svg-icons": "^5.13.0",
+    "@fortawesome/free-solid-svg-icons": "^5.13.0",
+    "@fortawesome/react-fontawesome": "^0.1.9",
+    "classnames": "^2.2.6",
+    "core-js": "^3.6.5",
+    "docusaurus-plugin-auto-sidebars": "^1.0.7",
+    "mobx": "^4.15.4",
+    "node-fetch": "^2.6.1",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-github-btn": "^1.2.0",
+    "redoc": "^2.0.0-rc.30",
+    "styled-components": "^5.1.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "redoc-cli": "^0.9.8"
+  }
+}
