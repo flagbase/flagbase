@@ -1,5 +1,5 @@
 ---
-title: Genesis
+title: Introducing Flagbase
 author: Chris Joy
 authorURL: http://github.com/cjoy
 authorImageURL: https://avatars2.githubusercontent.com/u/10393925?s=60&v=4
