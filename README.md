@@ -10,6 +10,7 @@
   )
   ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
   [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase?ref=badge_shield)
+  [![CLA assistant](https://cla-assistant.io/readme/badge/flagbase/flagbase)](https://cla-assistant.io/flagbase/flagbase)
 
 </div>
 

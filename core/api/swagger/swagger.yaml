@@ -270,7 +270,7 @@ paths:
       tags:
         - projects
       description: Delete an existing project.
-  '/environments/{projectKey}/{envKey}':
+  '/environments/{workspaceKey}/{projectKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -284,6 +284,12 @@ paths:
         description: The environment key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get environment
       tags:
@@ -360,7 +366,7 @@ paths:
       tags:
         - environments
       description: Delete an existing environment.
-  '/flags/{projectKey}':
+  '/flags/{workspaceKey}/{projectKey}':
     parameters:
       - name: projectKey
         in: path
@@ -368,6 +374,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List feature flags
       tags:
@@ -782,7 +794,7 @@ paths:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - project-access
-  '/environments/{projectKey}/{envKey}/access':
+  '/environments/{workspaceKey}/{projectKey}/{envKey}/access':
     parameters:
       - name: envKey
         in: path
@@ -796,6 +808,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List environment access
       tags:
@@ -861,7 +879,7 @@ paths:
       description: Delete an existing environment access link.
       requestBody:
         $ref: '#/components/requestBodies/AccessPairInput'
-  '/environments/{projectKey}':
+  '/environments/{workspaceKey}/{projectKey}':
     parameters:
       - name: projectKey
         in: path
@@ -869,6 +887,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List project environments
       tags:
@@ -921,7 +945,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Environment'
         description: Environmnet Object
-  '/flag/{projectKey}/{flagKey}':
+  '/flag/{workspaceKey}/{projectKey}/{flagKey}':
     parameters:
       - name: projectKey
         in: path
@@ -935,6 +959,12 @@ paths:
         description: The flag key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get feature flag
       tags:
@@ -1012,7 +1042,7 @@ paths:
       tags:
         - flags
       description: Delete an existing flag.
-  '/variations/{projectKey}/{flagKey}':
+  '/variations/{workspaceKey}/{projectKey}/{flagKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1026,6 +1056,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List variations
       tags:
@@ -1074,7 +1110,7 @@ paths:
       description: Create a flag variation.
       requestBody:
         $ref: '#/components/requestBodies/Variation'
-  '/variations/{projectKey}/{flagKey}/{variationKey}':
+  '/variations/{workspaceKey}/{projectKey}/{flagKey}/{variationKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1094,6 +1130,12 @@ paths:
         description: The variation key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get variation
       tags:
@@ -1159,7 +1201,7 @@ paths:
       tags:
         - variations
       description: Delete a single flag variation
-  '/identities/{projectKey}/{envKey}':
+  '/identities/{workspaceKey}/{projectKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1173,6 +1215,12 @@ paths:
         description: The environment key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List identities
       tags:
@@ -1213,7 +1261,7 @@ paths:
           description: Number of identities to skip. Useful for pagination.
           schema:
             type: number
-  '/identities/{projectKey}/{envKey}/{identityKey}':
+  '/identities/{workspaceKey}/{projectKey}/{envKey}/{identityKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1233,6 +1281,12 @@ paths:
         description: The identity key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get identity
       tags:
@@ -1273,7 +1327,7 @@ paths:
       tags:
         - identities
       description: Delete an environment specific identity.
-  '/targeting/{projectKey}/{flagKey}':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1287,6 +1341,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get targeting
       responses:
@@ -1345,7 +1405,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
-  '/targeting/{projectKey}/{flagKey}/rules':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules':
     parameters:
       - name: projectKey
         in: path
@@ -1359,6 +1419,12 @@ paths:
         description: The flag key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List targeting rules
       tags:
@@ -1411,7 +1477,7 @@ paths:
           required: true
           schema:
             type: string
-  '/targeting/{projectKey}/{flagKey}/rules/{ruleKey}':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules/{ruleKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1431,6 +1497,12 @@ paths:
         description: The rule key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get targeting rule
       tags:
@@ -1514,7 +1586,7 @@ paths:
             type: string
       tags:
         - targeting-rules
-  '/targeting/{projectKey}/{flagKey}/percentages':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/percentages':
     parameters:
       - name: projectKey
         in: path
@@ -1528,6 +1600,12 @@ paths:
         description: The flag key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List targeting percentages
       tags:
@@ -1578,7 +1656,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
-  '/segments/{projectKey}':
+  '/segments/{workspaceKey}/{projectKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1586,6 +1664,12 @@ paths:
         description: The project key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List segments
       tags:
@@ -1638,7 +1722,7 @@ paths:
       description: Create a user segment in a specific project.
       requestBody:
         $ref: '#/components/requestBodies/Segment'
-  '/segments/{projectKey}/{segmentKey}':
+  '/segments/{workspaceKey}/{projectKey}/{segmentKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1652,6 +1736,12 @@ paths:
         description: The segment key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get segment
       tags:
@@ -1711,7 +1801,7 @@ paths:
       tags:
         - segments
       description: Delete an existing user segment.
-  '/segments/{projectKey}/{segmentKey}/rules':
+  '/segments/{workspaceKey}/{projectKey}/{segmentKey}/rules':
     parameters:
       - name: projectKey
         in: path
@@ -1725,6 +1815,12 @@ paths:
         description: The segment key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: List segment rules
       tags:
@@ -1769,7 +1865,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SegmentRule'
         description: Segment Rules
-  '/segments/{projectKey}/{segmentKey}/rules/{ruleKey}':
+  '/segments/{workspaceKey}/{projectKey}/{segmentKey}/rules/{ruleKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1789,6 +1885,12 @@ paths:
         description: The segment rule key
         schema:
           type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
     get:
       summary: Get segment rule
       tags:
