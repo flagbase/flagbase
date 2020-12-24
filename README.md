@@ -4,13 +4,10 @@
 
   <img width="570px"  src="./www/docs/assets/img/readme-banner.svg" /></br>
 
-  ![Status](https://img.shields.io/static/v1?label=status&message=initialising&color=yellow
-  )
-  ![Spectrum](https://img.shields.io/static/v1?label=community&message=spectrum.chat/flagbase&color=green
-  )
   ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
   [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase?ref=badge_shield)
   [![CLA assistant](https://cla-assistant.io/readme/badge/flagbase/flagbase)](https://cla-assistant.io/flagbase/flagbase)
+  [![Maintainability](https://api.codeclimate.com/v1/badges/a4766905458a5cb74f7b/maintainability)](https://codeclimate.com/github/flagbase/flagbase/maintainability)
 
 </div>
 
