@@ -125,7 +125,7 @@ func Get(
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getResource(workspaceKey, environmentKey)
+	o, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -159,7 +159,7 @@ func Update(
 	defer cancel()
 
 	// get original document
-	p, err := getResource(workspaceKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -168,7 +168,7 @@ func Update(
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		p.ID,
+		r.ID,
 		rsc.Environment,
 		rsc.UserAccess,
 	); err != nil {
@@ -177,7 +177,7 @@ func Update(
 	}
 
 	// apply patch and get modified document
-	if err := patch.Transform(p, patchDoc, &o); err != nil {
+	if err := patch.Transform(r, patchDoc, &o); err != nil {
 		e.Append(constants.InternalError, err.Error())
 		cancel()
 	}
@@ -187,15 +187,10 @@ func Update(
   UPDATE
     environment
   SET
-    key = $3, name = $4, description = $5, tags = $6
+    key = $2, name = $3, description = $4, tags = $5
   WHERE
-    workspace_id = (
-      SELECT id
-      FROM workspace
-      WHERE key = $1
-    ) AND key = $2`,
-		workspaceKey,
-		environmentKey,
+    id = $1`,
+		r.ID.String(),
 		o.Key,
 		o.Name,
 		o.Description,
@@ -221,7 +216,7 @@ func Delete(
 	defer cancel()
 
 	// get original document
-	p, err := getResource(workspaceKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -230,7 +225,7 @@ func Delete(
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		p.ID,
+		r.ID,
 		rsc.Environment,
 		rsc.AdminAccess,
 	); err != nil {
@@ -242,14 +237,9 @@ func Delete(
   DELETE FROM
     environment
   WHERE
-    workspace_id = (
-      SELECT id
-      FROM workspace
-      WHERE key = $1
-    ) AND key = $2
+    id = $1
   `,
-		workspaceKey,
-		environmentKey,
+		r.ID.String(),
 	); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}

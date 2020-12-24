@@ -8,7 +8,7 @@ import (
 )
 
 func getResource(workspaceKey rsc.Key) (*Workspace, error) {
-	var w Workspace
+	var o Workspace
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
     id, key, name, description, tags
@@ -18,14 +18,14 @@ func getResource(workspaceKey rsc.Key) (*Workspace, error) {
     key = $1
   `, workspaceKey)
 	if err := row.Scan(
-		&w.ID,
-		&w.Key,
-		&w.Name,
-		&w.Description,
-		&w.Tags,
+		&o.ID,
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("unable to find workspace with key %s", workspaceKey)
+		return &o, fmt.Errorf("unable to find workspace with key %s", workspaceKey)
 	}
 
-	return &w, nil
+	return &o, nil
 }

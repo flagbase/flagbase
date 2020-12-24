@@ -7,25 +7,29 @@ import (
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, environmentKey rsc.Key) (*Environment, error) {
-	var w Environment
+func getResource(workspaceKey rsc.Key, projectKey rsc.Key, environmentKey rsc.Key) (*Environment, error) {
+	var o Environment
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
-    p.id, p.key, p.name, p.description, p.tags
+    e.id, e.key, e.name, e.description, e.tags
   FROM
-    environment p, workspace w
+    environment e, project p, workspace w
   WHERE
-    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
-  `, workspaceKey, environmentKey)
+    w.key = $1 AND
+    p.key = $2 AND
+    e.key = $3 AND
+    p.workspace_id = w.id AND
+    e.project_id = p.id
+  `, workspaceKey, projectKey, environmentKey)
 	if err := row.Scan(
-		&w.ID,
-		&w.Key,
-		&w.Name,
-		&w.Description,
-		&w.Tags,
+		&o.ID,
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("unable to find environment with key %s", environmentKey)
+		return &o, fmt.Errorf("unable to find environment with key %s", environmentKey)
 	}
 
-	return &w, nil
+	return &o, nil
 }
