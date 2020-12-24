@@ -1,4 +1,4 @@
-package project
+package environment
 
 import (
 	"context"
@@ -14,9 +14,10 @@ import (
 
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
-	var p []Project
+func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+	var p []Environment
 	var e res.Errors
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -32,14 +33,14 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
   FROM
     project p, workspace w
   WHERE
-    w.key = $1 AND p.workspace_id = w.id
-  `, workspaceKey)
+    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
+  `, workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
 	for rows.Next() {
-		var _p Project
+		var _p Environment
 		if err = rows.Scan(
 			&_p.ID,
 			&_p.Key,
@@ -57,9 +58,10 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
-	var p Project
+func Create(atk rsc.Token, i Environment, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+	var p Environment
 	var e res.Errors
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -72,13 +74,17 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    project(key, name, description, tags, workspace_id)
+    environment(key, name, description, tags, project_id)
   VALUES
     ($1, $2, $3, $4, (
-      SELECT id
-      FROM workspace
-      WHERE key = $5
-    ))
+        SELECT
+          p.id
+        FROM
+          project p, workspace w
+        WHERE
+          w.key = $5 AND p.key = $6 AND p.workspace_id = w.id
+      )
+    )
   RETURNING
     id, key, name, description, tags;`,
 		i.Key,
@@ -86,6 +92,7 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 		i.Description,
 		pq.Array(i.Tags),
 		workspaceKey,
+		projectKey,
 	)
 	if err := row.Scan(
 		&p.ID,
@@ -99,7 +106,7 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, p.ID, rsc.Project, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, p.ID, rsc.Environment, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
@@ -110,10 +117,15 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+func Get(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	environmentKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getResource(workspaceKey, projectKey)
+	o, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -122,7 +134,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 	if err := auth.Enforce(
 		atk,
 		o.ID,
-		rsc.Project,
+		rsc.Environment,
 		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -133,14 +145,21 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
-	var o Project
+func Update(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	environmentKey rsc.Key,
+	patchDoc patch.Patch,
+) (*res.Success, *res.Errors) {
+	var o Environment
 	var e res.Errors
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey)
+	r, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -150,7 +169,7 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc pa
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Project,
+		rsc.Environment,
 		rsc.UserAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -166,7 +185,7 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc pa
 	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
   UPDATE
-    project
+    environment
   SET
     key = $2, name = $3, description = $4, tags = $5
   WHERE
@@ -185,13 +204,19 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc pa
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors {
+func Delete(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	environmentKey rsc.Key,
+) *res.Errors {
 	var e res.Errors
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	p, err := getResource(workspaceKey, projectKey)
+	r, err := getResource(workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -200,8 +225,8 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		p.ID,
-		rsc.Project,
+		r.ID,
+		rsc.Environment,
 		rsc.AdminAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -210,16 +235,11 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors
 
 	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
-    project
+    environment
   WHERE
-    workspace_id = (
-      SELECT id
-      FROM workspace
-      WHERE key = $1
-    ) AND key = $2
+    id = $1
   `,
-		workspaceKey,
-		projectKey,
+		r.ID.String(),
 	); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}

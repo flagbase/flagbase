@@ -8,7 +8,7 @@ import (
 )
 
 func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
-	var w Project
+	var o Project
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT
     p.id, p.key, p.name, p.description, p.tags
@@ -18,14 +18,14 @@ func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
     w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
   `, workspaceKey, projectKey)
 	if err := row.Scan(
-		&w.ID,
-		&w.Key,
-		&w.Name,
-		&w.Description,
-		&w.Tags,
+		&o.ID,
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
 	); err != nil {
-		return &w, fmt.Errorf("unable to find project with key %s", projectKey)
+		return &o, fmt.Errorf("unable to find project with key %s", projectKey)
 	}
 
-	return &w, nil
+	return &o, nil
 }

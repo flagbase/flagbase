@@ -2,6 +2,7 @@ package http
 
 import (
 	"core/pkg/access"
+	"core/pkg/environment"
 	"core/pkg/ping"
 	"core/pkg/project"
 	"core/pkg/workspace"
@@ -17,4 +18,5 @@ func ApplyRoutes(r *gin.Engine) {
 	project.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
+	environment.ApplyRoutes(root)
 }
