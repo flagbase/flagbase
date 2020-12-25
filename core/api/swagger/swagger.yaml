@@ -945,7 +945,7 @@ paths:
             schema:
               $ref: '#/components/schemas/Environment'
         description: Environmnet Object
-  '/flag/{workspaceKey}/{projectKey}/{flagKey}':
+  '/flags/{workspaceKey}/{projectKey}/{flagKey}':
     parameters:
       - name: projectKey
         in: path
