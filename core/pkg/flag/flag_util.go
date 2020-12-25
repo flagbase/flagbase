@@ -19,7 +19,7 @@ func getResource(workspaceKey rsc.Key, projectKey rsc.Key, flagKey rsc.Key) (*Fl
     p.key = $2 AND
     f.key = $3 AND
     p.workspace_id = w.id AND
-    e.project_id = p.id
+    f.project_id = p.id
   `, workspaceKey, projectKey, flagKey)
 	if err := row.Scan(
 		&o.ID,

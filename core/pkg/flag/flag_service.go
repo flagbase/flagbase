@@ -29,11 +29,11 @@ func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
-    p.id, p.key, p.name, p.description, p.tags
+    f.id, f.key, f.name, f.description, f.tags
   FROM
-    project p, workspace w
+    flag f, project p, workspace w
   WHERE
-    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
+    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id AND f.project_id = p.id
   `, workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
