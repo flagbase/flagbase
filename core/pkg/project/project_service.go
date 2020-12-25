@@ -15,7 +15,7 @@ import (
 // List returns a list of resource instances
 // (*) atk: access_type <= service
 func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
-	var p []Project
+	var o []Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -39,26 +39,26 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 	}
 
 	for rows.Next() {
-		var _p Project
+		var _o Project
 		if err = rows.Scan(
-			&_p.ID,
-			&_p.Key,
-			&_p.Name,
-			&_p.Description,
-			&_p.Tags,
+			&_o.ID,
+			&_o.Key,
+			&_o.Name,
+			&_o.Description,
+			&_o.Tags,
 		); err != nil {
 			e.Append(constants.NotFoundError, err.Error())
 		}
-		p = append(p, _p)
+		o = append(o, _o)
 	}
 
-	return &res.Success{Data: p}, &e
+	return &res.Success{Data: o}, &e
 }
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
 func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
-	var p Project
+	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -88,24 +88,24 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 		workspaceKey,
 	)
 	if err := row.Scan(
-		&p.ID,
-		&p.Key,
-		&p.Name,
-		&p.Description,
-		&p.Tags,
+		&o.ID,
+		&o.Key,
+		&o.Name,
+		&o.Description,
+		&o.Tags,
 	); err != nil {
 		e.Append(constants.InputError, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, p.ID, rsc.Project, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, o.ID, rsc.Project, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
 	}
 
-	return &res.Success{Data: p}, &e
+	return &res.Success{Data: o}, &e
 }
 
 // Get gets a resource instance given an atk & key
@@ -113,7 +113,7 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getResource(workspaceKey, projectKey)
+	r, err := getResource(workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -121,14 +121,14 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		o.ID,
+		r.ID,
 		rsc.Project,
 		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Update updates resource instance given an atk, key & patch object
@@ -191,7 +191,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors
 	defer cancel()
 
 	// get original document
-	p, err := getResource(workspaceKey, projectKey)
+	r, err := getResource(workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -200,7 +200,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		p.ID,
+		r.ID,
 		rsc.Project,
 		rsc.AdminAccess,
 	); err != nil {

@@ -1,4 +1,4 @@
-package environment
+package flag
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 // List returns a list of resource instances
 // (*) atk: access_type <= service
 func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
-	var o []Environment
+	var o []Flag
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -29,18 +29,18 @@ func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
-    e.id, e.key, e.name, e.description, e.tags
+    f.id, f.key, f.name, f.description, f.tags
   FROM
-    environment e, project p, workspace w
+    flag f, project p, workspace w
   WHERE
-    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id AND e.project_id = p.id
+    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id AND f.project_id = p.id
   `, workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
 
 	for rows.Next() {
-		var _o Environment
+		var _o Flag
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -58,8 +58,8 @@ func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(atk rsc.Token, i Environment, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
-	var o Environment
+func Create(atk rsc.Token, i Flag, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+	var o Flag
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -74,7 +74,7 @@ func Create(atk rsc.Token, i Environment, workspaceKey rsc.Key, projectKey rsc.K
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    environment(key, name, description, tags, project_id)
+    flag(key, name, description, tags, project_id)
   VALUES
     ($1, $2, $3, $4, (
         SELECT
@@ -106,7 +106,7 @@ func Create(atk rsc.Token, i Environment, workspaceKey rsc.Key, projectKey rsc.K
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Environment, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, o.ID, rsc.Flag, rsc.AdminAccess)
 		if err != nil {
 			e.Append(constants.AuthError, err.Error())
 		}
@@ -121,11 +121,11 @@ func Get(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	flagKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	o, err := getResource(workspaceKey, projectKey, flagKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 	}
@@ -133,14 +133,14 @@ func Get(
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		r.ID,
-		rsc.Environment,
+		o.ID,
+		rsc.Flag,
 		rsc.ServiceAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	return &res.Success{Data: r}, &e
+	return &res.Success{Data: o}, &e
 }
 
 // Update updates resource instance given an atk, key & patch object
@@ -149,17 +149,17 @@ func Update(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	flagKey rsc.Key,
 	patchDoc patch.Patch,
 ) (*res.Success, *res.Errors) {
-	var o Environment
+	var o Flag
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, flagKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -169,7 +169,7 @@ func Update(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Environment,
+		rsc.Flag,
 		rsc.UserAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -185,7 +185,7 @@ func Update(
 	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
   UPDATE
-    environment
+    flag
   SET
     key = $2, name = $3, description = $4, tags = $5
   WHERE
@@ -208,7 +208,7 @@ func Delete(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	flagKey rsc.Key,
 ) *res.Errors {
 	var e res.Errors
 
@@ -216,7 +216,7 @@ func Delete(
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, flagKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
 		cancel()
@@ -226,7 +226,7 @@ func Delete(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Environment,
+		rsc.Flag,
 		rsc.AdminAccess,
 	); err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -235,7 +235,7 @@ func Delete(
 
 	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
-    environment
+    flag
   WHERE
     id = $1
   `,

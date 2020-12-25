@@ -3,6 +3,7 @@ package http
 import (
 	"core/pkg/access"
 	"core/pkg/environment"
+	"core/pkg/flag"
 	"core/pkg/ping"
 	"core/pkg/project"
 	"core/pkg/workspace"
@@ -15,8 +16,9 @@ func ApplyRoutes(r *gin.Engine) {
 	ApplyMetrics(r)
 	root := r.Group("/")
 	access.ApplyRoutes(root)
+	environment.ApplyRoutes(root)
+	flag.ApplyRoutes(root)
 	project.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
-	environment.ApplyRoutes(root)
 }
