@@ -18,6 +18,8 @@ const (
 	Access = "access"
 	// Flag represents a flag resource
 	Flag = "flag"
+	// Variation represents a variation resource
+	Variation = "variation"
 	// Segment represents a segment resource
 	Segment = "segment"
 	// Identity represents a identity resource

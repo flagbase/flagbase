@@ -1,6 +1,5 @@
 BEGIN;
 
-DELETE TABLE variation;
 DELETE TABLE flag;
 
 END;

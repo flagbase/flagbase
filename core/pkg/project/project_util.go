@@ -13,9 +13,11 @@ func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
   SELECT
     p.id, p.key, p.name, p.description, p.tags
   FROM
-    project p, workspace w
+    workspace w, project p
   WHERE
-    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id
+    w.key = $1 AND
+    p.key = $2 AND
+    p.workspace_id = w.id
   `, workspaceKey, projectKey)
 	if err := row.Scan(
 		&o.ID,

@@ -31,9 +31,12 @@ func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success
   SELECT
     f.id, f.key, f.name, f.description, f.tags
   FROM
-    flag f, project p, workspace w
+    workspace w, project p, flag f
   WHERE
-    w.key = $1 AND p.key = $2 AND p.workspace_id = w.id AND f.project_id = p.id
+    w.key = $1 AND
+    p.key = $2 AND
+    p.workspace_id = w.id AND
+    f.project_id = p.id
   `, workspaceKey, projectKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
@@ -66,7 +69,7 @@ func Create(atk rsc.Token, i Flag, workspaceKey rsc.Key, projectKey rsc.Key) (*r
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.AdminAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.UserAccess); err != nil {
 		e.Append(constants.AuthError, err.Error())
 		cancel()
 	}
@@ -80,9 +83,11 @@ func Create(atk rsc.Token, i Flag, workspaceKey rsc.Key, projectKey rsc.Key) (*r
         SELECT
           p.id
         FROM
-          project p, workspace w
+          workspace w, project p
         WHERE
-          w.key = $5 AND p.key = $6 AND p.workspace_id = w.id
+          w.key = $5 AND
+          p.key = $6 AND
+          p.workspace_id = w.id
       )
     )
   RETURNING

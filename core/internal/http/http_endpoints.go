@@ -6,6 +6,7 @@ import (
 	"core/pkg/flag"
 	"core/pkg/ping"
 	"core/pkg/project"
+	"core/pkg/variation"
 	"core/pkg/workspace"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +19,8 @@ func ApplyRoutes(r *gin.Engine) {
 	access.ApplyRoutes(root)
 	environment.ApplyRoutes(root)
 	flag.ApplyRoutes(root)
-	project.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
+	project.ApplyRoutes(root)
+	variation.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
 }

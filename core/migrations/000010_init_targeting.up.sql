@@ -6,8 +6,8 @@ BEGIN;
 -- state (on, off)
 --  on ->
 --    if rules exist  -> derive from targeting_rule
---    else            -> derive from targeting_percentages
---  off  ->  use fallback_variation
+--    else            -> derive from targeting_weights
+--  off  ->  use fallthrough_variation
 --
 CREATE TYPE targeting_state AS ENUM (
   'on',
@@ -18,7 +18,7 @@ CREATE TABLE targeting (
   -- attributes
   state targeting_state,
   -- references
-  fallback_variation_id UUID REFERENCES variation (id),
+  fallthrough_variation_id UUID REFERENCES variation (id),
   flag_id UUID REFERENCES flag (id),
   environment_id UUID REFERENCES environment (id)
 );
@@ -51,31 +51,31 @@ CREATE TABLE targeting_rule (
   CONSTRAINT targeting_rule_key UNIQUE(key, targeting_id)
 );
 
-CREATE TABLE targeting_percentage (
+CREATE TABLE targeting_weight (
   PRIMARY KEY (variation_id, targeting_id),
   -- attributes
-  percentage INT,
+  weight INT,
   -- references
   variation_id UUID REFERENCES variation (id),
   targeting_id UUID REFERENCES targeting (id)
 );
 
--- verify targeting percentage doesn't exceed 100
-CREATE FUNCTION targeting_percentage_verification() RETURNS TRIGGER AS $$
+-- verify targeting weight doesn't exceed 100
+CREATE FUNCTION targeting_weight_verification() RETURNS TRIGGER AS $$
 BEGIN
-    IF coalesce((select sum(percentage)
-                from targeting_percentage
+    IF coalesce((select sum(weight)
+                from targeting_weight
                 where targeting_id = NEW.targeting_id), 0)
-        + coalesce(NEW.percentage, 0) > 100 THEN
-      RAISE EXCEPTION 'targeting_percentage % exceeds 100 percent', NEW.targeting_id;
+        + coalesce(NEW.weight, 0) > 100 THEN
+      RAISE EXCEPTION 'targeting_weight aggregation exceeds 100%', NEW.targeting_id;
     END IF;
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
-CREATE TRIGGER targeting_percentage_verification_trigger
+CREATE TRIGGER targeting_weight_verification_trigger
   BEFORE INSERT OR UPDATE
-  ON targeting_percentage
-  FOR EACH ROW EXECUTE PROCEDURE targeting_percentage_verification();
+  ON targeting_weight
+  FOR EACH ROW EXECUTE PROCEDURE targeting_weight_verification();
 END;
 
 END;

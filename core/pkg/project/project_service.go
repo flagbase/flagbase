@@ -32,7 +32,8 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
   FROM
     project p, workspace w
   WHERE
-    w.key = $1 AND p.workspace_id = w.id
+    w.key = $1 AND
+    p.workspace_id = w.id
   `, workspaceKey)
 	if err != nil {
 		e.Append(constants.NotFoundError, err.Error())
