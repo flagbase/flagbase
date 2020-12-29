@@ -15,7 +15,9 @@ Flagbase is an all-in-one feature management solution. Flagbase offers two deliv
 
 
 ## Architecture overview
-![Architecture diagram](./www/dev/assets/img/system-in-context.png)
+<div align="center">
+  <img width="570px" aria-label="Architecture Diagram" src="./www/dev/assets/img/system-in-context.jpg" /></br>
+</div>
 
 ### ER Diagram
 ![ER Diagram](./www/dev/assets/img/er-diagram.png)
