@@ -31,25 +31,18 @@ module.exports = {
           label: "Docs",
           position: "left",
         },
-      ]
+      ],
     },
   },
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       {
         docs: {
           path: "./docs",
           routeBasePath: "docs",
           homePageId: "intro/overview",
           sidebarPath: require.resolve("./sidebars.docs.js"),
-          showLastUpdateTime: true,
-        },
-        dev: {
-          path: "./dev",
-          routeBasePath: "dev",
-          homePageId: "development/overview",
-          sidebarPath: require.resolve("./sidebars.dev.js"),
           showLastUpdateTime: true,
         },
         blog: {
@@ -62,6 +55,17 @@ module.exports = {
     ],
   ],
   plugins: [
+    [
+      require.resolve("@docusaurus/plugin-content-docs"),
+      {
+        path: "./dev",
+        routeBasePath: "dev",
+        homePageId: "development/overview",
+        include: ["**/*.md", "**/*.mdx"],
+        sidebarPath: require.resolve("./sidebars.dev.js"),
+        showLastUpdateTime: true,
+      },
+    ],
     [
       "docusaurus-plugin-auto-sidebars",
       {
