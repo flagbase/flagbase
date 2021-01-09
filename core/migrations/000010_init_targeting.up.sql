@@ -22,22 +22,21 @@ CREATE TABLE targeting (
 -- --------------------------
 -- Targeting Rule Evaluation
 -- --------------------------
--- <condition> (identity_id || segment_id) ==> <variation_id>
+-- matches (TRUE, FALSE)
+--  TRUE  ->
+--    if type (identity || segment) matches user context -> variation
+-- FALSE  -> ignore rule
 --
 CREATE TYPE targeting_rule_type AS ENUM (
   'identity',
   'segment'
-);
-CREATE TYPE targeting_rule_condition AS ENUM (
-  'include',
-  'exclude'
 );
 CREATE TABLE targeting_rule (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   -- attributes
   key resource_key,
   type targeting_rule_type NOT NULL,
-  condition targeting_rule_condition NOT NULL,
+  matches BOOLEAN DEFAULT TRUE NOT NULL,
   -- references
   identity_id UUID REFERENCES identity (id),
   segment_id UUID REFERENCES segment (id),
