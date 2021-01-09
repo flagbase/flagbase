@@ -4,4 +4,4 @@ title: Data models
 sidebar_label: Data models
 ---
 
-![ER Diagram](/assets/img/er-diagram.png)
+![ER Diagram](/assets/dev/er-diagram.png)
