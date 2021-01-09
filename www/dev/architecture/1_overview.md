@@ -4,4 +4,6 @@ title: Architecture
 sidebar_label: Overview
 ---
 
-TODO: embed architecture diagram
+<div align="center">
+  <img width="570px" aria-label="Architecture Diagram" src="../assets/img/system-in-context.jpg" />
+</div>
