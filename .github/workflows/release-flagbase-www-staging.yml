@@ -1,4 +1,4 @@
-name: release-flagbase-www-staging
+name: release-flagbase-www
 
 on:
   push:
@@ -16,4 +16,5 @@ jobs:
         uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
-          event-type: release-website-staging
+          repository: ${{ secrets.FLAGBASE_COM_REPO }}
+          event-type: ${{ secrets.FLAGBASE_COM_RELEASE_WEBSITE_EVENT_TYPE }}
