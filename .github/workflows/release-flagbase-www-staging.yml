@@ -1,0 +1,19 @@
+name: release-flagbase-www-staging
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'www/**'
+
+jobs:
+  release:
+    name: Release website
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
+          event-type: release-website-staging

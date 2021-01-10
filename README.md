@@ -1,8 +1,8 @@
 <div align="center">
 
-  <img width="250px" src="./www/docs/assets/dev/banner-dark.svg" /></br>
+  <img width="250px" src="./www/docs/assets/img/banner-dark.svg" /></br>
 
-  <img width="570px"  src="./www/docs/assets/dev/readme-banner.svg" /></br>
+  <img width="570px"  src="./www/docs/assets/img/readme-banner.svg" /></br>
 
   ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
   [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fflagbase%2Fflagbase?ref=badge_shield)
@@ -16,11 +16,11 @@ Flagbase is an all-in-one feature management solution. Flagbase offers two deliv
 
 ## Architecture overview
 <div align="center">
-  <img width="570px" aria-label="Architecture Diagram" src="./www/dev/assets/dev/system-in-context.jpg" /></br>
+  <img width="570px" aria-label="Architecture Diagram" src="./www/dev/assets/img/system-in-context.jpg" /></br>
 </div>
 
 ### ER Diagram
-![ER Diagram](./www/dev/assets/dev/er-diagram.png)
+![ER Diagram](./www/dev/assets/img/er-diagram.png)
 
 ## Directories
 This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI, SDKs.
