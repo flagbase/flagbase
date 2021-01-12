@@ -96,7 +96,7 @@ Flagbase will be a fully decentralised organisation. During this stage, we will 
   - External → Docusaurus
 - Community
   - Internal → Slack
-  - External → Spectrum.chat
+  - External → [Github dicussions](https://github.com/flagbase/flagbase/discussions)
 - Repo
   - OSS → Github
   - Proprietary → Github
@@ -137,5 +137,5 @@ Our cloud product will just attempt at making use of the service easier across t
 ## Resources
 
 - [Read our documentation](https://flagbase.com/docs)
-- [Join our community](https://spectrum.chat/flagbase)
+- [Join our community](https://github.com/flagbase/flagbase/discussions)
 - [Star the project on GitHub](https://github.com/flagbase/flagbase)

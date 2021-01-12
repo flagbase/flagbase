@@ -16,11 +16,11 @@ Flagbase is an all-in-one feature management solution. Flagbase offers two deliv
 
 ## Architecture overview
 <div align="center">
-  <img width="570px" aria-label="Architecture Diagram" src="./www/dev/assets/img/system-in-context.jpg" /></br>
+  <img width="570px" aria-label="Architecture Diagram" src="./www/dev/assets/dev/system-in-context.jpg" /></br>
 </div>
 
 ### ER Diagram
-![ER Diagram](./www/dev/assets/img/er-diagram.png)
+![ER Diagram](./www/dev/assets/dev/er-diagram.png)
 
 ## Directories
 This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI, SDKs.
@@ -29,9 +29,10 @@ This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Fl
 * **[`/ui`](./ui/README.md)**: UI interacts with the [Core's API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc). [Read more](./ui/README.md)
 
 ## Community
-Join us on [Spectrum](https://spectrum.chat/flagbase).
-* [Help](https://spectrum.chat/flagbase/help): Stuck on something? Ask for help here :)
-* [Development](https://spectrum.chat/flagbase/dev): where contributers discuss ideas and ask questions
+Join us on [Github Dicussions](https://github.com/flagbase/flagbase/discussions).
+* [Help](https://github.com/flagbase/flagbase/discussions/categories/help): Stuck on something? Ask for help here :)
+* [Dev](https://github.com/flagbase/flagbase/discussions/categories/dev): Where contributers discuss ideas
+* [Announcements](https://github.com/flagbase/flagbase/discussions/categories/announcements):  General PSAs & feature updates
 
 ## Contributing
 Refer to [dev/contributing](./www/dev/contributing/1_overview.md).
