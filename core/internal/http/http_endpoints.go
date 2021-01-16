@@ -6,6 +6,7 @@ import (
 	"core/pkg/flag"
 	"core/pkg/ping"
 	"core/pkg/project"
+	"core/pkg/trait"
 	"core/pkg/variation"
 	"core/pkg/workspace"
 
@@ -21,6 +22,7 @@ func ApplyRoutes(r *gin.Engine) {
 	flag.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
 	project.ApplyRoutes(root)
+	trait.ApplyRoutes(root)
 	variation.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
 }

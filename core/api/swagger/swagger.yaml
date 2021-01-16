@@ -65,6 +65,9 @@ tags:
   - name: targeting-percentages
     x-displayName: Targeting Percentages
     description: Targeting percentages are used when you want to conduct a incremental rollouts on a certain percentage of users. It allows you to rollout variations to explicit percentages of your whole cohort base.
+  - name: traits
+    x-displayName: Trait Management
+    description: Traits represent a particular characteristic of a particular identity (aka users). You can create segments using these traits. Traits can also be used to target variations to specific users.
   - name: segments
     x-displayName: Segment Management
     description: Segments represent a specific group of users based on their attributes. You can define a specific user segments using a set rules. Rules contain conditions that are applied to attributes.
@@ -105,6 +108,7 @@ x-tagGroups:
   - name: Users
     tags:
       - identities
+      - traits
       - segments
       - segment-rules
   - name: Auditing
@@ -312,17 +316,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: get-environment
       description: Get a project environment.
-      parameters:
-        - in: query
-          name: workspaceKey
-          description: The workspace key
-          schema:
-            type: string
-        - in: query
-          name: projectKey
-          description: The project key
-          schema:
-            type: string
+      parameters: []
     patch:
       summary: Update environment
       operationId: update-environment
@@ -860,8 +854,6 @@ paths:
       tags:
         - environment-access
       description: Create a new environment access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessInput'
     delete:
       summary: Delete environment access
       operationId: delete-environment-access
@@ -943,7 +935,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Environment'
+              $ref: '#/components/schemas/EnvironmentInput'
         description: Environmnet Object
   '/flags/{workspaceKey}/{projectKey}/{flagKey}':
     parameters:
@@ -1656,6 +1648,170 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
+  '/traits/{workspaceKey}/{projectKey}/{envKey}/{traitKey}':
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        description: The project key
+        schema:
+          type: string
+      - name: envKey
+        in: path
+        required: true
+        description: The environment key
+        schema:
+          type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
+      - schema:
+          type: string
+        name: traitKey
+        in: path
+        required: true
+        description: The trait key
+    get:
+      summary: Get trait
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trait'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: get-trait
+      description: Get a trait within a specific environment.
+      parameters: []
+      tags:
+        - traits
+    patch:
+      summary: Update trait
+      operationId: update-trait
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trait'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Update an existing trait.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
+      tags:
+        - traits
+    delete:
+      summary: Delete trait
+      operationId: delete-trait
+      responses:
+        '204':
+          description: No Content
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Delete an existing trait.
+      tags:
+        - traits
+  '/trait/{workspaceKey}/{projectKey}/{environmentKey}':
+    parameters:
+      - name: projectKey
+        in: path
+        required: true
+        description: The project key
+        schema:
+          type: string
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
+      - schema:
+          type: string
+        name: environmentKey
+        in: path
+        required: true
+        description: The environment key
+    get:
+      summary: List traits indexed in an environment
+      tags:
+        - traits
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Trait'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: list-traits
+      description: Retreive a list of traits in a particular environment.
+    post:
+      summary: Create trait
+      operationId: create-trait
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Trait'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      tags:
+        - traits
+      description: Create a new trait for a particular environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Trait'
+        description: Environmnet Object
   '/segments/{workspaceKey}/{projectKey}':
     parameters:
       - name: projectKey
@@ -2311,3 +2467,17 @@ components:
           type: string
         access:
           $ref: '#/components/schemas/Access'
+    Trait:
+      title: Trait
+      type: object
+      properties:
+        id:
+          type: string
+        key:
+          type: string
+        isIdentifier:
+          type: boolean
+      required:
+        - id
+        - key
+        - isIdentifier
