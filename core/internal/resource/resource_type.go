@@ -24,6 +24,8 @@ const (
 	Segment = "segment"
 	// Identity represents a identity resource
 	Identity = "identity"
+	// Trait represents a certain characteristic of an identity
+	Trait = "trait"
 	// Targeting represents a targeting resource
 	Targeting = "targeting"
 )
