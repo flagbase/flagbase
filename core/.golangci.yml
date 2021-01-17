@@ -42,3 +42,6 @@ linters:
 linters-settings:
   golint:
     min-confidence: 0.25
+  funlen:
+    lines: 100
+    statements: 100
