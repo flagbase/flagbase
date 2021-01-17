@@ -14,7 +14,11 @@ import (
 
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+func List(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o []Environment
 	var e res.Errors
 
@@ -61,7 +65,12 @@ func List(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(atk rsc.Token, i Environment, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+func Create(
+	atk rsc.Token,
+	i Environment,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Environment
 	var e res.Errors
 
@@ -152,10 +161,10 @@ func Get(
 // (*) atk: access_type <= user
 func Update(
 	atk rsc.Token,
+	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	environmentKey rsc.Key,
-	patchDoc patch.Patch,
 ) (*res.Success, *res.Errors) {
 	var o Environment
 	var e res.Errors

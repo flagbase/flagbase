@@ -36,7 +36,7 @@ func List(
   SELECT
     v.id, v.key, v.name, v.description, v.tags
   FROM
-    variation v, flag f, project p, workspace w
+    workspace w, project p, flag f, variation v
   WHERE
     w.key = $1 AND
     p.key = $2 AND
@@ -95,7 +95,7 @@ func Create(
         SELECT
           f.id
         FROM
-          flag f, project p, workspace w
+          workspace w, project p, flag f
         WHERE
           w.key = $5 AND
           p.key = $6 AND
@@ -168,11 +168,11 @@ func Get(
 // (*) atk: access_type <= user
 func Update(
 	atk rsc.Token,
+	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	flagKey rsc.Key,
 	variationKey rsc.Key,
-	patchDoc patch.Patch,
 ) (*res.Success, *res.Errors) {
 	var o Variation
 	var e res.Errors

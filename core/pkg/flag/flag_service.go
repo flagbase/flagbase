@@ -152,10 +152,10 @@ func Get(
 // (*) atk: access_type <= user
 func Update(
 	atk rsc.Token,
+	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	flagKey rsc.Key,
-	patchDoc patch.Patch,
 ) (*res.Success, *res.Errors) {
 	var o Flag
 	var e res.Errors

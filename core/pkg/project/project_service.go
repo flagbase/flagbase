@@ -30,7 +30,7 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
   SELECT
     p.id, p.key, p.name, p.description, p.tags
   FROM
-    project p, workspace w
+    workspace w, project p
   WHERE
     w.key = $1 AND
     p.workspace_id = w.id
@@ -134,7 +134,12 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
+func Update(
+	atk rsc.Token,
+	patchDoc patch.Patch,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
