@@ -14,7 +14,10 @@ import (
 
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
+func List(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o []Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -30,7 +33,7 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
   SELECT
     p.id, p.key, p.name, p.description, p.tags
   FROM
-    project p, workspace w
+    workspace w, project p
   WHERE
     w.key = $1 AND
     p.workspace_id = w.id
@@ -58,7 +61,11 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
+func Create(
+	atk rsc.Token,
+	i Project,
+	workspaceKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -111,7 +118,11 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+func Get(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var e res.Errors
 
 	r, err := getResource(workspaceKey, projectKey)
@@ -134,7 +145,12 @@ func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success,
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
+func Update(
+	atk rsc.Token,
+	patchDoc patch.Patch,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -186,7 +202,11 @@ func Update(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key, patchDoc pa
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors {
+func Delete(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

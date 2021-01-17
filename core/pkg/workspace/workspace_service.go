@@ -126,7 +126,11 @@ func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 
 // Update updates resource instance given an atk, workspaceKey & patch object
 // (*) atk: access_type <= user
-func Update(atk rsc.Token, workspaceKey rsc.Key, patchDoc patch.Patch) (*res.Success, *res.Errors) {
+func Update(
+	atk rsc.Token,
+	patchDoc patch.Patch,
+	workspaceKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())

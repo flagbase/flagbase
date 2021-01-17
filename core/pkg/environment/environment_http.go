@@ -100,7 +100,13 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, workspaceKey, projectKey, environmentKey, i)
+	data, _err := Update(
+		atk,
+		i,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -120,7 +126,12 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, workspaceKey, projectKey, environmentKey); !err.IsEmpty() {
+	if err := Delete(
+		atk,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 

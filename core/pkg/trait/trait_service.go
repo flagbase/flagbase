@@ -166,11 +166,11 @@ func Get(
 // (*) atk: access_type <= user
 func Update(
 	atk rsc.Token,
+	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	environmentKey rsc.Key,
 	traitKey rsc.Key,
-	patchDoc patch.Patch,
 ) (*res.Success, *res.Errors) {
 	var o Trait
 	var e res.Errors

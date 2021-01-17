@@ -13,7 +13,7 @@ func getResource(workspaceKey rsc.Key, projectKey rsc.Key, environmentKey rsc.Ke
   SELECT
     e.id, e.key, e.name, e.description, e.tags
   FROM
-    environment e, project p, workspace w
+    workspace w, project p, environment e
   WHERE
     w.key = $1 AND
     p.key = $2 AND

@@ -90,7 +90,7 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, workspaceKey, i)
+	data, _err := Update(atk, i, workspaceKey)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
