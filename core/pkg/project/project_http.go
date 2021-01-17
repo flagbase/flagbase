@@ -112,7 +112,11 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, workspaceKey, projectKey); !err.IsEmpty() {
+	if err := Delete(
+		atk,
+		workspaceKey,
+		projectKey,
+	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 

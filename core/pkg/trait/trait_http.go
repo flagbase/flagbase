@@ -32,7 +32,12 @@ func listHTTPHandler(ctx *gin.Context) {
 	projectKey := rsc.Key(ctx.Param("projectKey"))
 	environmentKey := rsc.Key(ctx.Param("environmentKey"))
 
-	data, _err := List(atk, workspaceKey, projectKey, environmentKey)
+	data, _err := List(
+		atk,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -57,7 +62,13 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Create(atk, i, workspaceKey, projectKey, environmentKey)
+	data, _err := Create(
+		atk,
+		i,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -78,7 +89,13 @@ func getHTTPHandler(ctx *gin.Context) {
 	environmentKey := rsc.Key(ctx.Param("environmentKey"))
 	traitKey := rsc.Key(ctx.Param("traitKey"))
 
-	data, _err := Get(atk, workspaceKey, projectKey, environmentKey, traitKey)
+	data, _err := Get(
+		atk,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -104,7 +121,14 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, i, workspaceKey, projectKey, environmentKey, traitKey)
+	data, _err := Update(
+		atk,
+		i,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -125,7 +149,13 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, workspaceKey, projectKey, environmentKey, traitKey); !err.IsEmpty() {
+	if err := Delete(
+		atk,
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 

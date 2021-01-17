@@ -14,7 +14,10 @@ import (
 
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
+func List(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o []Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -58,7 +61,11 @@ func List(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
+func Create(
+	atk rsc.Token,
+	i Project,
+	workspaceKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var o Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -111,7 +118,11 @@ func Create(atk rsc.Token, i Project, workspaceKey rsc.Key) (*res.Success, *res.
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) (*res.Success, *res.Errors) {
+func Get(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*res.Success, *res.Errors) {
 	var e res.Errors
 
 	r, err := getResource(workspaceKey, projectKey)
@@ -191,7 +202,11 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(atk rsc.Token, workspaceKey rsc.Key, projectKey rsc.Key) *res.Errors {
+func Delete(
+	atk rsc.Token,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
