@@ -4,6 +4,7 @@ import (
 	"core/pkg/access"
 	"core/pkg/environment"
 	"core/pkg/flag"
+	"core/pkg/identity"
 	"core/pkg/ping"
 	"core/pkg/project"
 	"core/pkg/trait"
@@ -20,6 +21,7 @@ func ApplyRoutes(r *gin.Engine) {
 	access.ApplyRoutes(root)
 	environment.ApplyRoutes(root)
 	flag.ApplyRoutes(root)
+	identity.ApplyRoutes(root)
 	ping.ApplyRoutes(root)
 	project.ApplyRoutes(root)
 	trait.ApplyRoutes(root)
