@@ -2200,9 +2200,6 @@ components:
         key:
           type: string
           description: Unique key representing an identity
-        traits:
-          type: object
-          description: Custom user attributes
       required:
         - key
     Access:
