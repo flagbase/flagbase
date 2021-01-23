@@ -1740,7 +1740,7 @@ paths:
       description: Delete an existing trait.
       tags:
         - traits
-  '/trait/{workspaceKey}/{projectKey}/{environmentKey}':
+  '/trait/{workspaceKey}/{projectKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1756,7 +1756,7 @@ paths:
         description: The workspace key
       - schema:
           type: string
-        name: environmentKey
+        name: envKey
         in: path
         required: true
         description: The environment key
