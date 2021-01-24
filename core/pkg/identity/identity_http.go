@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes environment route handlers
+// ApplyRoutes identity route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("identities")
 	routes.GET(":workspaceKey/:projectKey/:environmentKey", listHTTPHandler)

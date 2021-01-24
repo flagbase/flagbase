@@ -1878,6 +1878,10 @@ paths:
       description: Create a user segment in a specific project.
       requestBody:
         $ref: '#/components/requestBodies/Segment'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Segment'
   '/segments/{workspaceKey}/{projectKey}/{segmentKey}':
     parameters:
       - name: projectKey

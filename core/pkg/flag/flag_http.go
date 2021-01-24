@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes environment route handlers
+// ApplyRoutes flag route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("flags")
 	routes.GET(":workspaceKey/:projectKey", listHTTPHandler)

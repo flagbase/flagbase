@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes workspace route handlers
+// ApplyRoutes access route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group("access")
 	routes.POST("/token", generateTokenHTTPHandler)
