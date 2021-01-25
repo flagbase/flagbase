@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes ping route handler
+// ApplyRoutes healthcheck route handler
 func ApplyRoutes(r *gin.RouterGroup) {
 	r.GET("healthcheck", healthCheckHTTPHandler)
 }

@@ -18,7 +18,7 @@ docker-compose exec core ./bin/flagbased create-root --root-key=<ACCESS_KEY> --r
 
 ### Check that it's working
 ```sh
-curl -P GET http://localhost:5051/ping
+curl -P GET http://localhost:5051/healthcheck
 ```
 
 ### Remove all containers and volumes (fresh-start)
