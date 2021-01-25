@@ -28,10 +28,11 @@ func listHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-
-	data, _err := List(atk, workspaceKey, projectKey)
+	data, _err := List(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -47,15 +48,17 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-
 	var i Environment
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Create(atk, i, workspaceKey, projectKey)
+	data, _err := Create(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -71,11 +74,12 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	environmentKey := rsc.Key(ctx.Param("environmentKey"))
-
-	data, _err := Get(atk, workspaceKey, projectKey, environmentKey)
+	data, _err := Get(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("environmentKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -92,10 +96,6 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	environmentKey := rsc.Key(ctx.Param("environmentKey"))
-
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
@@ -103,9 +103,9 @@ func updateHTTPHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		workspaceKey,
-		projectKey,
-		environmentKey,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("environmentKey")),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -117,10 +117,6 @@ func updateHTTPHandler(ctx *gin.Context) {
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	environmentKey := rsc.Key(ctx.Param("environmentKey"))
-
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
 		e.Append(constants.AuthError, err.Error())
@@ -128,9 +124,9 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		workspaceKey,
-		projectKey,
-		environmentKey,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("environmentKey")),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

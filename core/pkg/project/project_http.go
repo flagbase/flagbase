@@ -28,9 +28,10 @@ func listHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-
-	data, _err := List(atk, workspaceKey)
+	data, _err := List(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -46,13 +47,16 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	var i Project
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Create(atk, i, workspaceKey)
+	data, _err := Create(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -68,10 +72,11 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-
-	data, _err := Get(atk, workspaceKey, projectKey)
+	data, _err := Get(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -88,13 +93,16 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, i, workspaceKey, projectKey)
+	data, _err := Update(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -104,8 +112,6 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
@@ -114,8 +120,8 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		workspaceKey,
-		projectKey,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

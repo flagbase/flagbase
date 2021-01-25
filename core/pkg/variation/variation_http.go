@@ -28,11 +28,12 @@ func listHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	flagKey := rsc.Key(ctx.Param("flagKey"))
-
-	data, _err := List(atk, workspaceKey, projectKey, flagKey)
+	data, _err := List(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("flagKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -48,16 +49,18 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	flagKey := rsc.Key(ctx.Param("flagKey"))
-
 	var i Variation
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Create(atk, i, workspaceKey, projectKey, flagKey)
+	data, _err := Create(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("flagKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -73,12 +76,13 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	flagKey := rsc.Key(ctx.Param("flagKey"))
-	variationKey := rsc.Key(ctx.Param("variationKey"))
-
-	data, _err := Get(atk, workspaceKey, projectKey, flagKey, variationKey)
+	data, _err := Get(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("flagKey")),
+		rsc.Key(ctx.Param("variationKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -95,16 +99,18 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	flagKey := rsc.Key(ctx.Param("flagKey"))
-	variationKey := rsc.Key(ctx.Param("variationKey"))
-
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, i, workspaceKey, projectKey, flagKey, variationKey)
+	data, _err := Update(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("flagKey")),
+		rsc.Key(ctx.Param("variationKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -115,17 +121,18 @@ func updateHTTPHandler(ctx *gin.Context) {
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-	flagKey := rsc.Key(ctx.Param("flagKey"))
-	variationKey := rsc.Key(ctx.Param("variationKey"))
-
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, workspaceKey, projectKey, flagKey, variationKey); !err.IsEmpty() {
+	if err := Delete(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+		rsc.Key(ctx.Param("projectKey")),
+		rsc.Key(ctx.Param("flagKey")),
+		rsc.Key(ctx.Param("variationKey")),
+	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 

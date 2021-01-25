@@ -66,9 +66,10 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-
-	data, _err := Get(atk, workspaceKey)
+	data, _err := Get(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -85,12 +86,15 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(constants.InternalError, err.Error())
 	}
 
-	data, _err := Update(atk, i, workspaceKey)
+	data, _err := Update(
+		atk,
+		i,
+		rsc.Key(ctx.Param("workspaceKey")),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -100,14 +104,16 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
 		e.Append(constants.AuthError, err.Error())
 	}
 
-	if err := Delete(atk, workspaceKey); !err.IsEmpty() {
+	if err := Delete(
+		atk,
+		rsc.Key(ctx.Param("workspaceKey")),
+	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
