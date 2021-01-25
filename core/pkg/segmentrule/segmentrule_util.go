@@ -49,7 +49,7 @@ func getResource(
 		&o.Operator,
 		&o.Negate,
 	); err != nil {
-		return &o, fmt.Errorf("unable to find segment_rule with key %s", segmentKey)
+		return &o, fmt.Errorf("unable to find segment_rule with key %s", segmentRuleKey)
 	}
 
 	return &o, nil
