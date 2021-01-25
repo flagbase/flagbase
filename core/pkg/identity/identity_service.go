@@ -25,7 +25,7 @@ func List(
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.ServiceAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -77,7 +77,7 @@ func Create(
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.AdminAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -116,7 +116,7 @@ func Create(
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Identity, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, o.ID, rsc.Identity, rsc.AccessAdmin)
 		if err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
@@ -151,7 +151,7 @@ func Get(
 		atk,
 		r.ID,
 		rsc.Identity,
-		rsc.ServiceAccess,
+		rsc.AccessService,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -192,7 +192,7 @@ func Update(
 		atk,
 		r.ID,
 		rsc.Identity,
-		rsc.UserAccess,
+		rsc.AccessUser,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -252,7 +252,7 @@ func Delete(
 		atk,
 		r.ID,
 		rsc.Identity,
-		rsc.AdminAccess,
+		rsc.AccessAdmin,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()

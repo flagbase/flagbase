@@ -21,7 +21,7 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -62,7 +62,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -92,7 +92,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Workspace, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, o.ID, rsc.Workspace, rsc.AccessAdmin)
 		if err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
@@ -116,7 +116,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 		atk,
 		r.ID,
 		rsc.Workspace,
-		rsc.ServiceAccess,
+		rsc.AccessService,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -148,7 +148,7 @@ func Update(
 		atk,
 		r.ID,
 		rsc.Workspace,
-		rsc.UserAccess,
+		rsc.AccessUser,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -199,7 +199,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
 		atk,
 		r.ID,
 		rsc.Workspace,
-		rsc.AdminAccess,
+		rsc.AccessAdmin,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()

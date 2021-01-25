@@ -9,25 +9,25 @@ func (r Type) String() string {
 
 const (
 	// Workspace represents a workspace resource
-	Workspace = "workspace"
+	Workspace Type = "workspace"
 	// Project represents a project resource
-	Project = "project"
+	Project Type = "project"
 	// Environment represents a environment resource
-	Environment = "environment"
+	Environment Type = "environment"
 	// Access represents a environment resource
-	Access = "access"
+	Access Type = "access"
 	// Flag represents a flag resource
-	Flag = "flag"
+	Flag Type = "flag"
 	// Variation represents a variation resource
-	Variation = "variation"
+	Variation Type = "variation"
 	// Segment represents a segment resource
-	Segment = "segment"
+	Segment Type = "segment"
 	// SegmentRule represents a segment rule resource
-	SegmentRule = "segment_rule"
+	SegmentRule Type = "segment_rule"
 	// Identity represents a identity resource
-	Identity = "identity"
+	Identity Type = "identity"
 	// Trait represents a certain characteristic of an identity
-	Trait = "trait"
+	Trait Type = "trait"
 	// Targeting represents a targeting resource
-	Targeting = "targeting"
+	Targeting Type = "targeting"
 )
