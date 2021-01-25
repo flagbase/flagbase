@@ -1877,7 +1877,6 @@ paths:
         - segments
       description: Create a user segment in a specific project.
       requestBody:
-        $ref: '#/components/requestBodies/Segment'
         content:
           application/json:
             schema:
@@ -2430,21 +2429,18 @@ components:
     SegmentRule:
       title: SegmentRule
       type: object
-      description: Rule consists of a trait a condition and a value.
+      description: SegmentRule represents a condition used to filter identities for a particular segment.
       properties:
         key:
           $ref: '#/components/schemas/ResourceKey'
         traitKey:
           type: string
-        condition:
+        operator:
           type: string
           enum:
             - equal
-            - not_equal
             - greater_than
             - greater_than_or_equal
-            - less_than
-            - less_than_or_equal
             - contains
             - regex
           example: equal
