@@ -22,6 +22,8 @@ const (
 	Variation = "variation"
 	// Segment represents a segment resource
 	Segment = "segment"
+	// SegmentRule represents a segment rule resource
+	SegmentRule = "segment_rule"
 	// Identity represents a identity resource
 	Identity = "identity"
 	// Trait represents a certain characteristic of an identity
