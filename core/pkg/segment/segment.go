@@ -2,7 +2,7 @@ package segment
 
 import rsc "core/internal/resource"
 
-// Segment represents a group of identities with similiar characteristics.
+// Segment represents a group of identities with similar characteristics.
 type Segment struct {
 	ID          rsc.ID          `json:"id"`
 	Key         rsc.Key         `json:"key"`
