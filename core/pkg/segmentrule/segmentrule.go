@@ -5,6 +5,7 @@ import rsc "core/internal/resource"
 // SegmentRule represents a condition used to filter identities for a particular segment
 type SegmentRule struct {
 	ID         rsc.ID   `json:"id"`
+	Key        rsc.ID   `json:"key"`
 	TraitKey   string   `json:"traitKey"`
 	TraitValue string   `json:"traitValue"`
 	Operator   Operator `json:"operator"`
