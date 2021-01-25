@@ -1,4 +1,4 @@
-package ping
+package healthcheck
 
 import (
 	"net/http"
@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes ping route handler
+// ApplyRoutes healthcheck route handler
 func ApplyRoutes(r *gin.RouterGroup) {
-	r.GET("ping", pingHTTPHandler)
+	r.GET("healthcheck", healthCheckHTTPHandler)
 }
 
-func pingHTTPHandler(ctx *gin.Context) {
-	pong, err := Ping(ctx)
+func healthCheckHTTPHandler(ctx *gin.Context) {
+	pong, err := HealthCheck(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
 		return
