@@ -23,7 +23,7 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := List(
@@ -50,7 +50,7 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := Get(
@@ -78,7 +78,7 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	if err := Delete(

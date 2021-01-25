@@ -26,7 +26,7 @@ func List(
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.ServiceAccess); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -52,7 +52,7 @@ func List(
     sr.segment_id = s.id
   `, workspaceKey, projectKey, segmentKey)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	for rows.Next() {
@@ -65,7 +65,7 @@ func List(
 			&_o.Operator,
 			&_o.Negate,
 		); err != nil {
-			e.Append(cons.NotFoundError, err.Error())
+			e.Append(cons.ErrorNotFound, err.Error())
 		}
 		o = append(o, _o)
 	}
@@ -90,7 +90,7 @@ func Create(
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.UserAccess); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -143,14 +143,14 @@ func Create(
 		&o.Operator,
 		&o.Negate,
 	); err != nil {
-		e.Append(cons.InputError, err.Error())
+		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		err := auth.AddPolicy(atk, o.ID, rsc.SegmentRule, rsc.AdminAccess)
 		if err != nil {
-			e.Append(cons.AuthError, err.Error())
+			e.Append(cons.ErrorAuth, err.Error())
 		}
 	}
 
@@ -175,7 +175,7 @@ func Get(
 		segmentRuleKey,
 	)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	// authorize operation
@@ -185,7 +185,7 @@ func Get(
 		rsc.SegmentRule,
 		rsc.ServiceAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	return &res.Success{Data: o}, &e
@@ -215,7 +215,7 @@ func Update(
 		segmentRuleKey,
 	)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -226,13 +226,13 @@ func Update(
 		rsc.SegmentRule,
 		rsc.UserAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
 	// apply patch and get modified document
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 		cancel()
 	}
 
@@ -255,7 +255,7 @@ func Update(
 		&o.Operator,
 		&o.Negate,
 	); err != nil && err != context.Canceled {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &res.Success{Data: o}, &e
@@ -283,7 +283,7 @@ func Delete(
 		segmentRuleKey,
 	)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -294,7 +294,7 @@ func Delete(
 		rsc.SegmentRule,
 		rsc.AdminAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -306,7 +306,7 @@ func Delete(
   `,
 		r.ID.String(),
 	); err != nil {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &e

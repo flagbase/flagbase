@@ -22,7 +22,7 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -33,7 +33,7 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
     workspace
   `)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	for rows.Next() {
@@ -45,7 +45,7 @@ func List(atk rsc.Token) (*res.Success, *res.Errors) {
 			&_o.Description,
 			&_o.Tags,
 		); err != nil {
-			e.Append(cons.NotFoundError, err.Error())
+			e.Append(cons.ErrorNotFound, err.Error())
 		}
 		o = append(o, _o)
 	}
@@ -63,7 +63,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.RootAccess); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -87,14 +87,14 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 		&o.Description,
 		&o.Tags,
 	); err != nil {
-		e.Append(cons.InputError, err.Error())
+		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		err := auth.AddPolicy(atk, o.ID, rsc.Workspace, rsc.AdminAccess)
 		if err != nil {
-			e.Append(cons.AuthError, err.Error())
+			e.Append(cons.ErrorAuth, err.Error())
 		}
 	}
 
@@ -108,7 +108,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 
 	r, err := getResource(workspaceKey)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	// authorize operation
@@ -118,7 +118,7 @@ func Get(atk rsc.Token, workspaceKey rsc.Key) (*res.Success, *res.Errors) {
 		rsc.Workspace,
 		rsc.ServiceAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	return &res.Success{Data: r}, &e
@@ -139,7 +139,7 @@ func Update(
 	// get original document
 	r, err := getResource(workspaceKey)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -150,13 +150,13 @@ func Update(
 		rsc.Workspace,
 		rsc.UserAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
 	// apply patch and get modified document
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 		cancel()
 	}
 
@@ -174,7 +174,7 @@ func Update(
 		o.Description,
 		pq.Array(o.Tags),
 	); err != nil && err != context.Canceled {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &res.Success{Data: o}, &e
@@ -190,7 +190,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
 	// get original document
 	r, err := getResource(workspaceKey)
 	if err != nil {
-		e.Append(cons.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -201,7 +201,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
 		rsc.Workspace,
 		rsc.AdminAccess,
 	); err != nil {
-		e.Append(cons.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -213,7 +213,7 @@ func Delete(atk rsc.Token, workspaceKey rsc.Key) *res.Errors {
   `,
 		workspaceKey,
 	); err != nil {
-		e.Append(cons.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &e
