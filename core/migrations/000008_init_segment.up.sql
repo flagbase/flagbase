@@ -13,7 +13,7 @@ CREATE TABLE segment (
   CONSTRAINT segment_key UNIQUE(key, project_id)
 );
 
-CREATE TYPE segment_rule_condition AS ENUM (
+CREATE TYPE segment_rule_operator AS ENUM (
   'equal',
   'greater_than',
   'greater_than_or_equal',
@@ -26,9 +26,9 @@ CREATE TABLE segment_rule (
   -- attributes
   key resource_key,
   trait_key VARCHAR(40),
-  condition segment_rule_condition,
-  negate BOOLEAN DEFAULT FALSE,
   trait_value VARCHAR(40),
+  operator segment_rule_operator,
+  negate BOOLEAN DEFAULT FALSE,
   -- references
   segment_id UUID NOT NULL REFERENCES segment (id),
   -- contraints

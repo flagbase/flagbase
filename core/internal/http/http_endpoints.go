@@ -7,6 +7,7 @@ import (
 	"core/pkg/identity"
 	"core/pkg/ping"
 	"core/pkg/project"
+	"core/pkg/segment"
 	"core/pkg/trait"
 	"core/pkg/variation"
 	"core/pkg/workspace"
@@ -25,6 +26,7 @@ func ApplyRoutes(r *gin.Engine) {
 	ping.ApplyRoutes(root)
 	project.ApplyRoutes(root)
 	trait.ApplyRoutes(root)
+	segment.ApplyRoutes(root)
 	variation.ApplyRoutes(root)
 	workspace.ApplyRoutes(root)
 }
