@@ -1,23 +1,32 @@
 package project
 
 import (
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/httputils"
 	"core/internal/patch"
 	rsc "core/internal/resource"
 	res "core/internal/response"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
 
 // ApplyRoutes project route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("projects")
-	routes.GET(":workspaceKey", listHTTPHandler)
-	routes.POST(":workspaceKey", createHTTPHandler)
-	routes.GET(":workspaceKey/:projectKey", getHTTPHandler)
-	routes.PATCH(":workspaceKey/:projectKey", updateHTTPHandler)
-	routes.DELETE(":workspaceKey/:projectKey", deleteHTTPHandler)
+	routes := r.Group(rsc.RouteProject)
+	rootPath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+	)
+	resourcePath := httputils.AppendPath(
+		rootPath,
+		rsc.ProjectKey,
+	)
+
+	routes.GET(rootPath, listHTTPHandler)
+	routes.POST(rootPath, createHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.PATCH(resourcePath, updateHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -25,17 +34,24 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-
-	data, _err := List(atk, workspaceKey)
+	data, _err := List(
+		atk,
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func createHTTPHandler(ctx *gin.Context) {
@@ -43,21 +59,30 @@ func createHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
 	var i Project
 	if err := ctx.BindJSON(&i); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Create(atk, i, workspaceKey)
+	data, _err := Create(
+		atk,
+		i,
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 201, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusCreated,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func getHTTPHandler(ctx *gin.Context) {
@@ -65,18 +90,25 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
-
-	data, _err := Get(atk, workspaceKey, projectKey)
+	data, _err := Get(
+		atk,
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func updateHTTPHandler(ctx *gin.Context) {
@@ -85,40 +117,53 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
 	if err := ctx.BindJSON(&i); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Update(atk, i, workspaceKey, projectKey)
+	data, _err := Update(
+		atk,
+		i,
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func deleteHTTPHandler(ctx *gin.Context) {
 	var e res.Errors
-	workspaceKey := rsc.Key(ctx.Param("workspaceKey"))
-	projectKey := rsc.Key(ctx.Param("projectKey"))
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	if err := Delete(
 		atk,
-		workspaceKey,
-		projectKey,
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
-	httputils.Send(ctx, 204, &res.Success{}, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusNoContent,
+		&res.Success{},
+		http.StatusInternalServerError,
+		e,
+	)
 }

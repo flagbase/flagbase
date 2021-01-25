@@ -2,7 +2,7 @@ package trait
 
 import (
 	"context"
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/db"
 	"core/internal/patch"
 	rsc "core/internal/resource"
@@ -25,8 +25,8 @@ func List(
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.ServiceAccess); err != nil {
-		e.Append(constants.AuthError, err.Error())
+	if err := auth.Authorize(atk, rsc.AccessService); err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -44,7 +44,7 @@ func List(
     t.environment_key = e.id
   `, workspaceKey, projectKey, environmentKey)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	for rows.Next() {
@@ -54,7 +54,7 @@ func List(
 			&_o.Key,
 			&_o.IsIdentifier,
 		); err != nil {
-			e.Append(constants.NotFoundError, err.Error())
+			e.Append(cons.ErrorNotFound, err.Error())
 		}
 		o = append(o, _o)
 	}
@@ -78,8 +78,8 @@ func Create(
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.AdminAccess); err != nil {
-		e.Append(constants.AuthError, err.Error())
+	if err := auth.Authorize(atk, rsc.AccessAdmin); err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -114,14 +114,14 @@ func Create(
 		&o.Key,
 		&o.IsIdentifier,
 	); err != nil {
-		e.Append(constants.InputError, err.Error())
+		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Trait, rsc.AdminAccess)
+		err := auth.AddPolicy(atk, o.ID, rsc.Trait, rsc.AccessAdmin)
 		if err != nil {
-			e.Append(constants.AuthError, err.Error())
+			e.Append(cons.ErrorAuth, err.Error())
 		}
 	}
 
@@ -146,7 +146,7 @@ func Get(
 		traitKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	// authorize operation
@@ -154,9 +154,9 @@ func Get(
 		atk,
 		r.ID,
 		rsc.Trait,
-		rsc.ServiceAccess,
+		rsc.AccessService,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	return &res.Success{Data: r}, &e
@@ -186,7 +186,7 @@ func Update(
 		traitKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -195,15 +195,15 @@ func Update(
 		atk,
 		r.ID,
 		rsc.Trait,
-		rsc.UserAccess,
+		rsc.AccessUser,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
 	// apply patch and get modified document
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 		cancel()
 	}
 
@@ -219,7 +219,7 @@ func Update(
 		o.Key,
 		o.IsIdentifier,
 	); err != nil && err != context.Canceled {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &res.Success{Data: o}, &e
@@ -247,7 +247,7 @@ func Delete(
 		traitKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
@@ -256,9 +256,9 @@ func Delete(
 		atk,
 		r.ID,
 		rsc.Trait,
-		rsc.AdminAccess,
+		rsc.AccessAdmin,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -270,7 +270,7 @@ func Delete(
   `,
 		r.ID.String(),
 	); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	return &e

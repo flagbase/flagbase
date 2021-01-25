@@ -2,7 +2,7 @@ package access
 
 import (
 	"context"
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/jwt"
@@ -23,7 +23,14 @@ func GenerateToken(i KeySecretPair) (
 	var encryptedSecret string
 	row := db.Pool.QueryRow(context.Background(), `
 	SELECT
-	  id, key, type, expires_at, name, description, tags,  encrypted_secret
+    id,
+    key,
+    name,
+    description,
+    tags,
+    type,
+    expires_at,
+    encrypted_secret
 	FROM
 	  access
 	WHERE
@@ -32,28 +39,28 @@ func GenerateToken(i KeySecretPair) (
 	if err := row.Scan(
 		&a.ID,
 		&a.Key,
-		&a.Type,
-		&a.ExpiresAt,
 		&a.Name,
 		&a.Description,
 		&a.Tags,
+		&a.Type,
+		&a.ExpiresAt,
 		&encryptedSecret,
 	); err != nil {
-		e.Append(constants.AuthError, "Can't find access pair")
+		e.Append(cons.ErrorAuth, "Can't find access pair")
 	}
 
 	if err := crypto.Compare(encryptedSecret, i.Secret); err != nil {
-		e.Append(constants.AuthError, "Mismatching access key-secret pair")
+		e.Append(cons.ErrorAuth, "Mismatching access key-secret pair")
 	}
 
 	ma, err := json.Marshal(a)
 	if err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	atk, err := jwt.Sign(ma)
 	if err != nil {
-		e.Append(constants.AuthError, "Unable to sign JWT")
+		e.Append(cons.ErrorAuth, "Unable to sign JWT")
 	}
 
 	return &res.Success{
@@ -77,7 +84,7 @@ func Create(i Access) (
 	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
-		e.Append(constants.CryptoError, err.Error())
+		e.Append(cons.ErrorCrypto, err.Error())
 		cancel()
 	}
 
@@ -113,7 +120,7 @@ func Create(i Access) (
 		&a.Description,
 		&a.Tags,
 	); err != nil {
-		e.Append(constants.InputError, err.Error())
+		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	// display unencrypted secret one time upon creation
