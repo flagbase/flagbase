@@ -2,7 +2,7 @@ package access
 
 import (
 	"context"
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/crypto"
 	"core/internal/db"
 	"core/internal/jwt"
@@ -39,21 +39,21 @@ func GenerateToken(i KeySecretPair) (
 		&a.Tags,
 		&encryptedSecret,
 	); err != nil {
-		e.Append(constants.AuthError, "Can't find access pair")
+		e.Append(cons.AuthError, "Can't find access pair")
 	}
 
 	if err := crypto.Compare(encryptedSecret, i.Secret); err != nil {
-		e.Append(constants.AuthError, "Mismatching access key-secret pair")
+		e.Append(cons.AuthError, "Mismatching access key-secret pair")
 	}
 
 	ma, err := json.Marshal(a)
 	if err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 	}
 
 	atk, err := jwt.Sign(ma)
 	if err != nil {
-		e.Append(constants.AuthError, "Unable to sign JWT")
+		e.Append(cons.AuthError, "Unable to sign JWT")
 	}
 
 	return &res.Success{
@@ -77,7 +77,7 @@ func Create(i Access) (
 	// encrypt secret
 	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
-		e.Append(constants.CryptoError, err.Error())
+		e.Append(cons.CryptoError, err.Error())
 		cancel()
 	}
 
@@ -113,7 +113,7 @@ func Create(i Access) (
 		&a.Description,
 		&a.Tags,
 	); err != nil {
-		e.Append(constants.InputError, err.Error())
+		e.Append(cons.InputError, err.Error())
 	}
 
 	// display unencrypted secret one time upon creation

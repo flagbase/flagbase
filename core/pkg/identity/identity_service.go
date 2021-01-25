@@ -2,7 +2,7 @@ package identity
 
 import (
 	"context"
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/db"
 	"core/internal/patch"
 	rsc "core/internal/resource"
@@ -26,7 +26,7 @@ func List(
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.ServiceAccess); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 		cancel()
 	}
 
@@ -44,7 +44,7 @@ func List(
     i.environment_key = e.id
   `, workspaceKey, projectKey, environmentKey)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.NotFoundError, err.Error())
 	}
 
 	for rows.Next() {
@@ -53,7 +53,7 @@ func List(
 			&_o.ID,
 			&_o.Key,
 		); err != nil {
-			e.Append(constants.NotFoundError, err.Error())
+			e.Append(cons.NotFoundError, err.Error())
 		}
 		o = append(o, _o)
 	}
@@ -78,7 +78,7 @@ func Create(
 
 	// authorize operation
 	if err := auth.Authorize(atk, rsc.AdminAccess); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 		cancel()
 	}
 
@@ -111,14 +111,14 @@ func Create(
 		&o.ID,
 		&o.Key,
 	); err != nil {
-		e.Append(constants.InputError, err.Error())
+		e.Append(cons.InputError, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		err := auth.AddPolicy(atk, o.ID, rsc.Identity, rsc.AdminAccess)
 		if err != nil {
-			e.Append(constants.AuthError, err.Error())
+			e.Append(cons.AuthError, err.Error())
 		}
 	}
 
@@ -143,7 +143,7 @@ func Get(
 		identityKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.NotFoundError, err.Error())
 	}
 
 	// authorize operation
@@ -153,7 +153,7 @@ func Get(
 		rsc.Identity,
 		rsc.ServiceAccess,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	return &res.Success{Data: r}, &e
@@ -183,7 +183,7 @@ func Update(
 		identityKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.NotFoundError, err.Error())
 		cancel()
 	}
 
@@ -194,13 +194,13 @@ func Update(
 		rsc.Identity,
 		rsc.UserAccess,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 		cancel()
 	}
 
 	// apply patch and get modified document
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 		cancel()
 	}
 
@@ -215,7 +215,7 @@ func Update(
 		r.ID.String(),
 		o.Key,
 	); err != nil && err != context.Canceled {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 	}
 
 	return &res.Success{Data: o}, &e
@@ -243,7 +243,7 @@ func Delete(
 		identityKey,
 	)
 	if err != nil {
-		e.Append(constants.NotFoundError, err.Error())
+		e.Append(cons.NotFoundError, err.Error())
 		cancel()
 	}
 
@@ -254,7 +254,7 @@ func Delete(
 		rsc.Identity,
 		rsc.AdminAccess,
 	); err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 		cancel()
 	}
 
@@ -266,7 +266,7 @@ func Delete(
   `,
 		r.ID.String(),
 	); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 	}
 
 	return &e

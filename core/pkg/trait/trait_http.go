@@ -1,7 +1,7 @@
 package trait
 
 import (
-	"core/internal/constants"
+	cons "core/internal/constants"
 	"core/internal/httputils"
 	"core/internal/patch"
 	rsc "core/internal/resource"
@@ -26,7 +26,7 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	data, _err := List(
@@ -53,12 +53,12 @@ func createHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	var i Trait
 	if err := ctx.BindJSON(&i); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 	}
 
 	data, _err := Create(
@@ -86,7 +86,7 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	data, _err := Get(
@@ -115,11 +115,11 @@ func updateHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	if err := ctx.BindJSON(&i); err != nil {
-		e.Append(constants.InternalError, err.Error())
+		e.Append(cons.InternalError, err.Error())
 	}
 
 	data, _err := Update(
@@ -148,7 +148,7 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	atk, err := httputils.ExtractATK(ctx)
 	if err != nil {
-		e.Append(constants.AuthError, err.Error())
+		e.Append(cons.AuthError, err.Error())
 	}
 
 	if err := Delete(

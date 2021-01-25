@@ -1,7 +1,7 @@
 package jwt
 
 import (
-	"core/internal/constants"
+	cons "core/internal/constants"
 	rsc "core/internal/resource"
 	"errors"
 	"time"
@@ -17,7 +17,7 @@ type Claims struct {
 
 // Sign generate token using access id
 func Sign(a []byte) (string, error) {
-	expiry := time.Now().Add(time.Minute * constants.JWTExpiryMinutes).Unix()
+	expiry := time.Now().Add(time.Minute * cons.JWTExpiryMinutes).Unix()
 	claims := &Claims{
 		Access: a,
 		StandardClaims: jwt.StandardClaims{
@@ -26,7 +26,7 @@ func Sign(a []byte) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString([]byte(constants.JWTKey))
+	tokenString, err := token.SignedString([]byte(cons.JWTKey))
 
 	return tokenString, err
 }
@@ -39,7 +39,7 @@ func Verify(atk rsc.Token) ([]byte, error) {
 		atk.String(),
 		claims,
 		func(token *jwt.Token) (interface{}, error) {
-			return []byte(constants.JWTKey), nil
+			return []byte(cons.JWTKey), nil
 		},
 	)
 
