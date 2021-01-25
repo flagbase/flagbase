@@ -13,12 +13,16 @@ import (
 
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("workspaces")
+	routes := r.Group(rsc.RouteWorkspace)
+	resourcePath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+	)
+
 	routes.GET("", listHTTPHandler)
 	routes.POST("", createHTTPHandler)
-	routes.GET(":workspaceKey", getHTTPHandler)
-	routes.PATCH(":workspaceKey", updateHTTPHandler)
-	routes.DELETE(":workspaceKey", deleteHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.PATCH(resourcePath, updateHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -80,7 +84,7 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	data, _err := Get(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -111,7 +115,7 @@ func updateHTTPHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -136,7 +140,7 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

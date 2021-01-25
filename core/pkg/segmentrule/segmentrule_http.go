@@ -13,12 +13,22 @@ import (
 
 // ApplyRoutes segment route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("segment-rules")
-	routes.GET(":workspaceKey/:projectKey/:segmentKey", listHTTPHandler)
-	routes.POST(":workspaceKey/:projectKey/:segmentKey", createHTTPHandler)
-	routes.GET(":workspaceKey/:projectKey/:segmentKey/:ruleKey", getHTTPHandler)
-	routes.PATCH(":workspaceKey/:projectKey/:segmentKey/:ruleKey", updateHTTPHandler)
-	routes.DELETE(":workspaceKey/:projectKey/:segmentKey/:ruleKey", deleteHTTPHandler)
+	routes := r.Group(rsc.RouteSegmentRule)
+	rootPath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+		rsc.ProjectKey,
+		rsc.SegmentKey,
+	)
+	resourcePath := httputils.AppendPath(
+		rootPath,
+		rsc.RuleKey,
+	)
+
+	routes.GET(rootPath, listHTTPHandler)
+	routes.POST(rootPath, createHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.PATCH(resourcePath, updateHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -31,9 +41,9 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	data, _err := List(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("segmentKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.SegmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -64,9 +74,9 @@ func createHTTPHandler(ctx *gin.Context) {
 	data, _err := Create(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("segmentKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.SegmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -91,10 +101,10 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	data, _err := Get(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("segmentKey")),
-		rsc.Key(ctx.Param("ruleKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputils.GetParam(ctx, rsc.RuleKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -125,10 +135,10 @@ func updateHTTPHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("segmentKey")),
-		rsc.Key(ctx.Param("ruleKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputils.GetParam(ctx, rsc.RuleKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -153,10 +163,10 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("segmentKey")),
-		rsc.Key(ctx.Param("ruleKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputils.GetParam(ctx, rsc.RuleKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

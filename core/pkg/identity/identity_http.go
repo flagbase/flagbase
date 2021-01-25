@@ -12,10 +12,20 @@ import (
 
 // ApplyRoutes identity route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("identities")
-	routes.GET(":workspaceKey/:projectKey/:environmentKey", listHTTPHandler)
-	routes.GET(":workspaceKey/:projectKey/:environmentKey/:identityKey", getHTTPHandler)
-	routes.DELETE(":workspaceKey/:projectKey/:environmentKey/:identityKey", deleteHTTPHandler)
+	routes := r.Group(rsc.RouteIdentity)
+	rootPath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+		rsc.ProjectKey,
+		rsc.EnvironmentKey,
+	)
+	resourcePath := httputils.AppendPath(
+		rootPath,
+		rsc.IdentityKey,
+	)
+
+	routes.GET(rootPath, listHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -28,9 +38,9 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	data, _err := List(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("environmentKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.EnvironmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -55,10 +65,10 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	data, _err := Get(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("environmentKey")),
-		rsc.Key(ctx.Param("identityKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.EnvironmentKey),
+		httputils.GetParam(ctx, rsc.IdentityKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -83,10 +93,10 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("environmentKey")),
-		rsc.Key(ctx.Param("identityKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.EnvironmentKey),
+		httputils.GetParam(ctx, rsc.IdentityKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

@@ -34,7 +34,10 @@ func List(
   SELECT
     i.id, i.key
   FROM
-    workspace w, project p, environment e, identity i
+    workspace w,
+    project p,
+    environment e,
+    identity i
   WHERE
     w.key = $1 AND
     p.key = $2 AND

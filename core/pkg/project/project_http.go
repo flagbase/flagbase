@@ -13,12 +13,20 @@ import (
 
 // ApplyRoutes project route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("projects")
-	routes.GET(":workspaceKey", listHTTPHandler)
-	routes.POST(":workspaceKey", createHTTPHandler)
-	routes.GET(":workspaceKey/:projectKey", getHTTPHandler)
-	routes.PATCH(":workspaceKey/:projectKey", updateHTTPHandler)
-	routes.DELETE(":workspaceKey/:projectKey", deleteHTTPHandler)
+	routes := r.Group(rsc.RouteProject)
+	rootPath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+	)
+	resourcePath := httputils.AppendPath(
+		rootPath,
+		rsc.ProjectKey,
+	)
+
+	routes.GET(rootPath, listHTTPHandler)
+	routes.POST(rootPath, createHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.PATCH(resourcePath, updateHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -31,7 +39,7 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	data, _err := List(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -62,7 +70,7 @@ func createHTTPHandler(ctx *gin.Context) {
 	data, _err := Create(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -87,8 +95,8 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	data, _err := Get(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -119,8 +127,8 @@ func updateHTTPHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -145,8 +153,8 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

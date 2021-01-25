@@ -13,12 +13,22 @@ import (
 
 // ApplyRoutes variation route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
-	routes := r.Group("variations")
-	routes.GET(":workspaceKey/:projectKey/:flagKey", listHTTPHandler)
-	routes.POST(":workspaceKey/:projectKey/:flagKey", createHTTPHandler)
-	routes.GET(":workspaceKey/:projectKey/:flagKey/:variationKey", getHTTPHandler)
-	routes.PATCH(":workspaceKey/:projectKey/:flagKey/:variationKey", updateHTTPHandler)
-	routes.DELETE(":workspaceKey/:projectKey/:flagKey/:variationKey", deleteHTTPHandler)
+	routes := r.Group(rsc.RouteVariation)
+	rootPath := httputils.BuildPath(
+		rsc.WorkspaceKey,
+		rsc.ProjectKey,
+		rsc.FlagKey,
+	)
+	resourcePath := httputils.AppendPath(
+		rootPath,
+		rsc.VariationKey,
+	)
+
+	routes.GET(rootPath, listHTTPHandler)
+	routes.POST(rootPath, createHTTPHandler)
+	routes.GET(resourcePath, getHTTPHandler)
+	routes.PATCH(resourcePath, updateHTTPHandler)
+	routes.DELETE(resourcePath, deleteHTTPHandler)
 }
 
 func listHTTPHandler(ctx *gin.Context) {
@@ -31,9 +41,9 @@ func listHTTPHandler(ctx *gin.Context) {
 
 	data, _err := List(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("flagKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.FlagKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -64,9 +74,9 @@ func createHTTPHandler(ctx *gin.Context) {
 	data, _err := Create(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("flagKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.FlagKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -91,10 +101,10 @@ func getHTTPHandler(ctx *gin.Context) {
 
 	data, _err := Get(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("flagKey")),
-		rsc.Key(ctx.Param("variationKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.FlagKey),
+		httputils.GetParam(ctx, rsc.VariationKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -125,10 +135,10 @@ func updateHTTPHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("flagKey")),
-		rsc.Key(ctx.Param("variationKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.FlagKey),
+		httputils.GetParam(ctx, rsc.VariationKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -153,10 +163,10 @@ func deleteHTTPHandler(ctx *gin.Context) {
 
 	if err := Delete(
 		atk,
-		rsc.Key(ctx.Param("workspaceKey")),
-		rsc.Key(ctx.Param("projectKey")),
-		rsc.Key(ctx.Param("flagKey")),
-		rsc.Key(ctx.Param("variationKey")),
+		httputils.GetParam(ctx, rsc.WorkspaceKey),
+		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputils.GetParam(ctx, rsc.FlagKey),
+		httputils.GetParam(ctx, rsc.VariationKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
