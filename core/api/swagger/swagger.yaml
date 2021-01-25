@@ -399,7 +399,7 @@ paths:
       operationId: list-flags
       parameters:
         - in: query
-          name: env
+          name: envKey
           description: The environment key
           required: true
           schema:
@@ -429,7 +429,7 @@ paths:
       description: Create a new feature flag in the specified project
       parameters:
         - in: query
-          name: env
+          name: envKey
           description: The environment key
           schema:
             type: string
@@ -980,7 +980,7 @@ paths:
       operationId: get-flag
       parameters:
         - in: query
-          name: env
+          name: envKey
           required: true
           schema:
             type: string
@@ -1009,7 +1009,7 @@ paths:
       description: Update an existing flag.
       parameters:
         - in: query
-          name: env
+          name: envKey
           description: The environment key
           schema:
             type: string
@@ -1319,7 +1319,7 @@ paths:
       tags:
         - identities
       description: Delete an environment specific identity.
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/{envKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1339,6 +1339,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: Get targeting
       responses:
@@ -1360,7 +1366,7 @@ paths:
         - targeting
       parameters:
         - in: query
-          name: env
+          name: envKey
           description: The environment key
           required: true
           schema:
@@ -1382,13 +1388,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Update a targeting configuration of a existing feature flag.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting
       requestBody:
@@ -1397,7 +1397,7 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/{envKey}/rules':
     parameters:
       - name: projectKey
         in: path
@@ -1417,6 +1417,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: List targeting rules
       tags:
@@ -1436,13 +1442,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: list-target-rules
       description: List the targeting rules of an existing flag in a specific environment.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
     post:
       summary: Create targeting rule
       operationId: create-targeting-rule
@@ -1462,15 +1462,15 @@ paths:
       tags:
         - targeting-rules
       description: Create a new targeting rule for a feature flag in a specific environment.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules/{ruleKey}':
+      parameters: []
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/{envKey}/rules/{ruleKey}':
     parameters:
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
       - name: projectKey
         in: path
         required: true
@@ -1483,18 +1483,18 @@ paths:
         description: The flag key
         schema:
           type: string
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
       - name: ruleKey
         in: path
         required: true
         description: The rule key
         schema:
           type: string
-      - schema:
-          type: string
-        name: workspaceKey
-        in: path
-        required: true
-        description: The workspace key
     get:
       summary: Get targeting rule
       tags:
@@ -1513,13 +1513,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: get-targeting-rule
-      parameters:
-        - in: query
-          name: env
-          required: true
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       description: Get a targeting rule for a specfic flag and its environment.
     patch:
       summary: Update targeting rule
@@ -1538,13 +1532,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Update an existing target rule.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting-rules
       requestBody:
@@ -1569,17 +1557,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Delete an existing targeting rule.
-      parameters:
-        - in: query
-          name: env
-          required: true
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting-rules
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/percentages':
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/{envKey}/weights':
     parameters:
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
       - name: projectKey
         in: path
         required: true
@@ -1594,10 +1582,10 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: envKey
         in: path
         required: true
-        description: The workspace key
+        description: The environment key
     get:
       summary: List targeting percentages
       tags:
@@ -1615,11 +1603,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
-      operationId: list-targeting-percentages
+      operationId: list-targeting-weights
       description: Provide new targeting percentages for each variations.
+      parameters: []
     patch:
       summary: Update targeting percentages
-      operationId: update-targeting-percentages
+      operationId: update-targeting-weights
       responses:
         '200':
           description: OK
@@ -1634,12 +1623,85 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Update targeting percentages.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
+      tags:
+        - targeting-percentages
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Patch Document (RFC 6902)
+  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/{envKey}/weights/{ruleKey}':
+    parameters:
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
+      - name: projectKey
+        in: path
+        required: true
+        description: The project key
+        schema:
+          type: string
+      - name: flagKey
+        in: path
+        required: true
+        description: The flag key
+        schema:
+          type: string
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
+      - schema:
+          type: string
+        name: ruleKey
+        in: path
+        description: The rule key
+        required: true
+    get:
+      summary: List targeting percentages
+      tags:
+        - targeting-percentages
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: list-targeting-rule-weights
+      description: Provide new targeting percentages for each variations.
+      parameters: []
+    patch:
+      summary: Update targeting percentages
+      operationId: update-targeting-rule-weights
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Update targeting percentages.
+      parameters: []
       tags:
         - targeting-percentages
       requestBody:
@@ -2185,6 +2247,8 @@ components:
       title: Workspace
       x-examples: {}
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2287,7 +2351,7 @@ components:
       pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
       maxLength: 30
       example: example-key
-      description: A unique key used to identify this resource.
+      description: A unique key (human-readable) used to identify this resource.
       minLength: 4
     ResouceName:
       type: string
@@ -2312,6 +2376,8 @@ components:
       title: Environment
       type: object
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2326,6 +2392,8 @@ components:
       title: EnvironmentInput
       type: object
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2341,6 +2409,8 @@ components:
       type: object
       description: A project is a collection of environments and their respective flags.
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2356,6 +2426,8 @@ components:
       type: object
       description: "A flag (aka feature flag) refers to a software toggle used to define a particular module's state. Flags can belong to multiple environments."
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2371,6 +2443,8 @@ components:
       type: object
       description: 'A variation refers to a feature flag value. Eg. (Bool: True, False), (Multi-variant: A, B, C)'
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2416,6 +2490,8 @@ components:
       type: object
       description: A segment is a collection of identities with similar traits.
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         name:
@@ -2431,6 +2507,8 @@ components:
       type: object
       description: SegmentRule represents a condition used to filter identities for a particular segment.
       properties:
+        id:
+          $ref: '#/components/schemas/ResourceId'
         key:
           $ref: '#/components/schemas/ResourceKey'
         traitKey:
