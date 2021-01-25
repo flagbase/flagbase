@@ -1,5 +1,0 @@
-BEGIN;
-
-DELETE TABLE identity;
-
-END;

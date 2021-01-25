@@ -8,7 +8,7 @@ CREATE TYPE access_type AS ENUM (
 );
 
 CREATE TABLE access (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  id resource_id_default PRIMARY KEY,
   -- attributes
   key TEXT,
   encrypted_secret TEXT,
