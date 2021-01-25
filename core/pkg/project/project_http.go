@@ -6,6 +6,7 @@ import (
 	"core/internal/patch"
 	rsc "core/internal/resource"
 	res "core/internal/response"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -36,7 +37,13 @@ func listHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func createHTTPHandler(ctx *gin.Context) {
@@ -61,7 +68,13 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 201, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusCreated,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func getHTTPHandler(ctx *gin.Context) {
@@ -81,7 +94,13 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func updateHTTPHandler(ctx *gin.Context) {
@@ -107,7 +126,13 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 200, data, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func deleteHTTPHandler(ctx *gin.Context) {
@@ -126,5 +151,11 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Extend(err)
 	}
 
-	httputils.Send(ctx, 204, &res.Success{}, 500, e)
+	httputils.Send(
+		ctx,
+		http.StatusNoContent,
+		&res.Success{},
+		http.StatusInternalServerError,
+		e,
+	)
 }

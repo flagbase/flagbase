@@ -34,7 +34,13 @@ func listHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, http.StatusOK, data, http.StatusInternalServerError, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func createHTTPHandler(ctx *gin.Context) {
@@ -55,7 +61,13 @@ func createHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, 201, data, http.StatusInternalServerError, e)
+	httputils.Send(
+		ctx,
+		http.StatusCreated,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func getHTTPHandler(ctx *gin.Context) {
@@ -74,7 +86,13 @@ func getHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, http.StatusOK, data, http.StatusInternalServerError, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func updateHTTPHandler(ctx *gin.Context) {
@@ -99,7 +117,13 @@ func updateHTTPHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputils.Send(ctx, http.StatusOK, data, http.StatusInternalServerError, e)
+	httputils.Send(
+		ctx,
+		http.StatusOK,
+		data,
+		http.StatusInternalServerError,
+		e,
+	)
 }
 
 func deleteHTTPHandler(ctx *gin.Context) {
@@ -117,5 +141,11 @@ func deleteHTTPHandler(ctx *gin.Context) {
 		e.Extend(err)
 	}
 
-	httputils.Send(ctx, 204, &res.Success{}, http.StatusInternalServerError, e)
+	httputils.Send(
+		ctx,
+		http.StatusNoContent,
+		&res.Success{},
+		http.StatusInternalServerError,
+		e,
+	)
 }
