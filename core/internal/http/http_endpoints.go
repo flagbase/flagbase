@@ -9,6 +9,7 @@ import (
 	"core/pkg/project"
 	"core/pkg/segment"
 	"core/pkg/segmentrule"
+	"core/pkg/targeting"
 	"core/pkg/trait"
 	"core/pkg/variation"
 	"core/pkg/workspace"
@@ -27,6 +28,7 @@ func ApplyRoutes(r *gin.Engine) {
 	identity.ApplyRoutes(root)
 	project.ApplyRoutes(root)
 	trait.ApplyRoutes(root)
+	targeting.ApplyRoutes(root)
 	segment.ApplyRoutes(root)
 	segmentrule.ApplyRoutes(root)
 	variation.ApplyRoutes(root)

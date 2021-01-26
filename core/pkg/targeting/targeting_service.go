@@ -76,7 +76,7 @@ func Create(
 		e.Append(cons.ErrorInput, err.Error())
 	}
 	// todo: get variation key from db
-	o.FallthroughVariationKey = &i.FallthroughVariationKey
+	o.FallthroughVariationKey = i.FallthroughVariationKey
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
