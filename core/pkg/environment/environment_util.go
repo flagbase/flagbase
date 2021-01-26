@@ -7,7 +7,11 @@ import (
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key, environmentKey rsc.Key) (*Environment, error) {
+func getResource(
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	environmentKey rsc.Key,
+) (*Environment, error) {
 	var o Environment
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT

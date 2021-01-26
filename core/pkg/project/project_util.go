@@ -7,7 +7,10 @@ import (
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
+func getResource(
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*Project, error) {
 	var o Project
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT

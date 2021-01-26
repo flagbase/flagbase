@@ -7,7 +7,11 @@ import (
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key, segmentKey rsc.Key) (*Segment, error) {
+func getResource(
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	segmentKey rsc.Key,
+) (*Segment, error) {
 	var o Segment
 	row := db.Pool.QueryRow(context.Background(), `
   SELECT

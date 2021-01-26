@@ -86,7 +86,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     variation(key, name, description, tags, flag_id)

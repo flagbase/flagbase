@@ -67,7 +67,7 @@ func Create(atk rsc.Token, i Workspace) (*res.Success, *res.Errors) {
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     workspace(key, name, description, tags)

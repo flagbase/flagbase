@@ -85,7 +85,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     identity(key, environment_id)

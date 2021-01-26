@@ -77,7 +77,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     project(key, name, description, tags, workspace_id)

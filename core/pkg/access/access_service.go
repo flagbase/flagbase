@@ -88,7 +88,7 @@ func Create(i Access) (
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
     access(
