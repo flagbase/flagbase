@@ -25,6 +25,7 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		rsc.RuleKey,
 	)
 
+	routes.GET(rootPath, listHTTPHandler)
 	routes.POST(rootPath, createHTTPHandler)
 	routes.GET(resourcePath, getHTTPHandler)
 	routes.PATCH(resourcePath, updateHTTPHandler)
