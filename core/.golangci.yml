@@ -43,5 +43,5 @@ linters-settings:
   golint:
     min-confidence: 0.25
   funlen:
-    lines: 100
-    statements: 100
+    lines: 200 # TODO: decrease limit
+    statements: 200 # TODO: decrease limit
