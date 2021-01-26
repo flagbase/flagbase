@@ -23,4 +23,8 @@ const (
 	RouteTrait string = "traits"
 	// RouteTargeting root route for the targeting resource
 	RouteTargeting string = "targeting"
+	// RouteTargetingRule root route for the targeting rules resource
+	RouteTargetingRule string = "targeting-rules"
+	// RouteTargetingWeight root route for the targeting rules resource
+	RouteTargetingWeight string = "targeting-weights"
 )

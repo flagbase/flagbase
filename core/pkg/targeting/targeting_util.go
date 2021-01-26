@@ -22,8 +22,8 @@ func getResource(
     project p,
     environment e,
     flag f,
-    targeting t,
-    variation v
+    variation v,
+    targeting t
   WHERE
     w.key = $1 AND
     p.key = $2 AND

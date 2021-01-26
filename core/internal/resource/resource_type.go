@@ -30,4 +30,8 @@ const (
 	Trait Type = "trait"
 	// Targeting represents a targeting resource
 	Targeting Type = "targeting"
+	// TargetingRule represents a targeting rule resource
+	TargetingRule Type = "targeting_rule"
+	// TargetingWeight represents a targeting weight resource
+	TargetingWeight Type = "targeting_weight"
 )
