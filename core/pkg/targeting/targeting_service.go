@@ -179,14 +179,12 @@ func Update(
       FROM
         workspace w,
         project p,
-        environment e,
         flag f,
         variation v
       WHERE
         w.key = $4 AND
         p.key = $5 AND
         f.key = $6 AND
-        e.key = $7 AND
         v.key = $3 AND
         p.workspace_id = w.id AND
         f.project_id = p.id AND
@@ -200,7 +198,6 @@ func Update(
 		workspaceKey,
 		projectKey,
 		flagKey,
-		environmentKey,
 	); err != nil && err != context.Canceled {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
