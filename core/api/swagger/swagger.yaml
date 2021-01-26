@@ -1407,6 +1407,26 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Targeting'
+      tags:
+        - targeting
+    delete:
+      summary: Delete targeting
+      operationId: delete-targeting
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Delete targeting for a particular flag
+      tags:
+        - targeting
   '/targeting-rules/{workspaceKey}/{projectKey}/{flagKey}/{envKey}':
     parameters:
       - name: projectKey
@@ -1638,6 +1658,12 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: list-targeting-weights
       description: Provide new targeting weight for each variations.
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ruleKey
+          description: Targeting rule key
     patch:
       summary: Update targeting weights
       operationId: update-targeting-weights
@@ -1657,8 +1683,8 @@ paths:
       description: Update targeting weights.
       parameters:
         - in: query
-          name: env
-          description: The environment key
+          name: ruleKey
+          description: Targeting rule key
           schema:
             type: string
       tags:
@@ -1696,6 +1722,36 @@ paths:
         description: ''
       tags:
         - targeting-weights
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ruleKey
+          description: Targeting rule key
+    delete:
+      summary: Delete targeting weights
+      operationId: delete-targeting-weights
+      responses:
+        '204':
+          description: No Content
+          content:
+            application/json:
+              schema: {}
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: "Delete a flag's targeting weights"
+      tags:
+        - targeting-weights
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: ruleKey
+          description: Targeting rule key
   '/traits/{workspaceKey}/{projectKey}/{envKey}/{traitKey}':
     parameters:
       - name: projectKey
@@ -2555,6 +2611,7 @@ components:
     TargetingWeight:
       title: TargetingWeight
       type: object
+      description: TargetingWeight represents a percentage value assigned to a variation for a given targeting configuration
       properties:
         key:
           $ref: '#/components/schemas/ResourceKey'
@@ -2562,8 +2619,5 @@ components:
           type: string
         weight:
           type: number
-        targetingRuleKey:
-          type: string
         variationKey:
           type: string
-      description: TargetingWeight represents a percentage value assigned to a variation for a given targeting configuration

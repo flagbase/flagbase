@@ -4,12 +4,11 @@ import rsc "core/internal/resource"
 
 // TargetingWeight used to incrementally rollout variations to a specific percentage of users
 type TargetingWeight struct {
-	ID               rsc.ID  `json:"id"`
-	Key              rsc.Key `json:"key"`
-	Type             Type    `json:"type"`
-	Weight           uint8   `json:"weight"`
-	TargetingRuleKey rsc.Key `json:"targetingRuleKey"`
-	VariationKey     rsc.Key `json:"variationKey"`
+	ID           rsc.ID  `json:"id"`
+	Key          rsc.Key `json:"key"`
+	Type         Type    `json:"type"`
+	Weight       uint8   `json:"weight"`
+	VariationKey rsc.Key `json:"variationKey"`
 }
 
 // Type is used to specify which entity is weighted (i.e. fallthrough or rule)
