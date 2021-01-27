@@ -1613,145 +1613,6 @@ paths:
             type: string
       tags:
         - targeting-rules
-  '/targeting-weights/{workspaceKey}/{projectKey}/{flagKey}/{envKey}':
-    parameters:
-      - name: projectKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: workspaceKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
-    get:
-      summary: List targeting weights
-      tags:
-        - targeting-weights
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      operationId: list-targeting-weights
-      description: Provide new targeting weight for each variations.
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: ruleKey
-          description: Targeting rule key
-    patch:
-      summary: Update targeting weights
-      operationId: update-targeting-weights
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      description: Update targeting weights.
-      parameters:
-        - in: query
-          name: ruleKey
-          description: Targeting rule key
-          schema:
-            type: string
-      tags:
-        - targeting-weights
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchDocument'
-        description: Patch Document (RFC 6902)
-    post:
-      summary: Create targeting weights
-      operationId: create-targeting-weights
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      description: Initialise targeting weights for a given flag
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/TargetingWeight'
-        description: ''
-      tags:
-        - targeting-weights
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: ruleKey
-          description: Targeting rule key
-    delete:
-      summary: Delete targeting weights
-      operationId: delete-targeting-weights
-      responses:
-        '204':
-          description: No Content
-          content:
-            application/json:
-              schema: {}
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      description: "Delete a flag's targeting weights"
-      tags:
-        - targeting-weights
-      parameters:
-        - schema:
-            type: string
-          in: query
-          name: ruleKey
-          description: Targeting rule key
   '/traits/{workspaceKey}/{projectKey}/{envKey}/{traitKey}':
     parameters:
       - name: projectKey
@@ -2591,6 +2452,8 @@ components:
           type: boolean
         fallthroughVariationKey:
           type: string
+        '':
+          $ref: '#/components/schemas/TargetingWeight'
     TargetingRule:
       title: TargetingRule
       type: object
@@ -2611,12 +2474,8 @@ components:
     TargetingWeight:
       title: TargetingWeight
       type: object
-      description: TargetingWeight represents a percentage value assigned to a variation for a given targeting configuration
+      description: TargetingWeight specifies rollout percentage for a particular flag variation.
       properties:
-        key:
-          $ref: '#/components/schemas/ResourceKey'
-        type:
-          type: string
         weight:
           type: number
         variationKey:
