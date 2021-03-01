@@ -6,12 +6,7 @@ const rootPath = path.resolve(__dirname, '..')
 module.exports = {
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
-    mainFields: ['main', 'module', 'browser'],
-    alias: {
-      '@components': 'components',
-      '@containers': 'app/containers',
-      '@pages': 'app/pages',
-    }
+    mainFields: ['main', 'module', 'browser']
   },
   entry: path.resolve(rootPath, 'app', 'containers', 'Entry', 'index.tsx'),
   target: 'electron-renderer',
@@ -24,7 +19,11 @@ module.exports = {
         use: {
           loader: 'babel-loader'
         }
-      }
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ]
   },
   devServer: {

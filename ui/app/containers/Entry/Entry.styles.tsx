@@ -1,5 +1,6 @@
 import React from 'react';
 import { Global, css } from '@emotion/react';
+import 'antd/dist/antd.css';
 
 export const GlobalStyle = () => (
   <Global
