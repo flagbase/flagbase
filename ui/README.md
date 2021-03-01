@@ -1,7 +1,16 @@
 # Flagbase UI
 
+This folder contains everything that makes up Flagbase UI. It contains reusable UI components and app-specific code.
 
-## Installation
+## Directories
+* **components**: dumb UI components (purely functional)
+* **app**: where app specific code sits
+  * **containers**: UI components connected to state / API
+  * **pages**: composition of containers / components that make up a page
+* **electron**: electron related setup files
+* **webpack**: webpack related configuration files
+
+# Installation
 ```bash
 npm install
 ```
