@@ -31,6 +31,16 @@ or
 npm run dev
 ```
 
+## Storybooks
+Run storybook locally using:
+
+```bash
+npm run storybook
+```
+
+You can view it here: [http://localhost:6006/](http://localhost:6006/)
+
+
 ## Packaging
 To generate a project package run `package`
 
