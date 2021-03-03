@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 
-import { Container, Image, Text } from './Greetings.styles'
+import { Container, Image, Text } from './greetings.styles';
 
 const Greetings: React.FC = () => {
   return (
@@ -11,7 +11,7 @@ const Greetings: React.FC = () => {
       />
       <Text>An Electron boilerplate including TypeScript, React, Jest and ESLint.</Text>
     </Container>
-  )
-}
+  );
+};
 
-export default Greetings
+export default Greetings;
