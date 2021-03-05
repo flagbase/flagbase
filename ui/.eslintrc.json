@@ -33,11 +33,15 @@
         "ts": "never",
         "tsx": "never"
       }
-    ]
+    ],
+    "semi": [2, "always"]
   },
   "settings": {
     "import/resolver": {
-      "typescript": {} 
+      "typescript": {}
+    },
+    "react": {
+      "version": "detect"
     }
   }
 }
