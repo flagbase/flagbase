@@ -1,1 +1,1 @@
-export * from './entity-store';
+export { default as createEntityContext } from './entity-context';
