@@ -1,0 +1,29 @@
+name: ci-flagbase-ui
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'ui/**'
+
+jobs:
+  build:
+    name: Build, Test and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Install dependencies
+        uses: actions/setup-node@master
+        with:
+          node-version: 12
+      - run: npm ci
+        working-directory: ./ui
+
+      - name: Build app
+        run: npm run build
+        run: npm run test
+        run: npm run lint
+        working-directory: ./ui
