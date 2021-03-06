@@ -4,6 +4,7 @@ export type EntityActions<T> = {
   addEntity: (entity: Entity<T>) => void;
   addEntities: (entities: { [entityId: string]: Entity<T> }) => void;
   removeEntity: (entityId: string) => void;
+  clearEntities: () => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string) => void;
   setSelectedEntityId: (selectedEntityId: string) => void;
@@ -27,11 +28,18 @@ export const createActions = <T>(
         ...state,
         entities: { ...state.entities, [entityId]: undefined }
       }),
+    clearEntities: () =>
+      setState({
+        ...state,
+        entities: {},
+        selectedEntityId: null
+      }),
     setLoading: (isLoading = true) => setState({ ...state, isLoading }),
     setError: (error: string) => setState({ ...state, error }),
     setSelectedEntityId: (selectedEntityId: string) =>
       setState({ ...state, selectedEntityId }),
     selectEntity: (entity: Entity<T>) =>
       setState({ ...state, selectedEntityId: entity.id }),
-    getEntity: (entityId: string): Entity<T> | undefined => state.entities[entityId]
+    getEntity: (entityId: string): Entity<T> | undefined =>
+      state.entities[entityId]
   });

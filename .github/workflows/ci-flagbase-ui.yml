@@ -22,8 +22,14 @@ jobs:
       - run: npm ci
         working-directory: ./ui
 
-      - name: Build app
+      - name: Build
         run: npm run build
+        working-directory: ./ui
+
+      - name: Test
         run: npm run test
+        working-directory: ./ui
+
+      - name: Lint
         run: npm run lint
         working-directory: ./ui

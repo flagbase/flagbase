@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-import Greetings from './Greetings';
+import Greetings from '../greetings';
 
 test('Greetings should renders', () => {
   const { getByText, getByAltText } = render(<Greetings />);
