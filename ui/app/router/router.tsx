@@ -1,25 +1,25 @@
-import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
-import { RouteParams } from "./router.types";
-import Context from "../context";
-import Instances from "../pages/instances";
-import Workspaces from "../pages/workspaces";
-import Projects from "../pages/projects";
-import Flags from "../pages/flags";
-import Segments from "../pages/segments";
-import Identities from "../pages/identities";
-import Traits from "../pages/traits";
+import { RouteParams } from './router.types';
+import Context from '../context';
+import Instances from '../pages/instances';
+import Workspaces from '../pages/workspaces';
+import Projects from '../pages/projects';
+import Flags from '../pages/flags';
+import Segments from '../pages/segments';
+import Identities from '../pages/identities';
+import Traits from '../pages/traits';
 
 const {
   InstanceKey,
   WorkspaceKey,
   ProjectKey,
-  EnvironmentKey,
-  FlagKey,
-  SegmentKey,
-  IdentityKey,
-  TraitKey,
+  EnvironmentKey
+  // FlagKey,
+  // SegmentKey,
+  // IdentityKey,
+  // TraitKey
 } = RouteParams;
 
 const Router: React.FC = () => (
