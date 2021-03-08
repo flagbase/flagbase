@@ -26,6 +26,7 @@
     "package": "npm-run-all build package:dist",
     "package:dist": "electron-builder --dir",
     "test": "jest",
+    "test:update": "npm run test -- -u",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
     "lint": "eslint .",

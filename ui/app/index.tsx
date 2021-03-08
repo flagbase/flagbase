@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { debugContextDevtool } from 'react-context-devtool';
+import 'antd/dist/antd.css';
 
 import Router from './router';
 
