@@ -7,10 +7,10 @@ import (
 	"runtime"
 	"strconv"
 
-	"core/internal/constants"
-	"core/internal/db"
-	"core/internal/http"
-	"core/internal/policy"
+	cons "core/internal/pkg/constants"
+	"core/pkg/db"
+	"core/internal/pkg/http"
+	"core/internal/pkg/policy"
 
 	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
@@ -39,18 +39,18 @@ var StartCommand cli.Command = cli.Command{
 		},
 		&cli.IntFlag{
 			Name:  "http-port",
-			Value: constants.DefaultHTTPPort,
+			Value: cons.DefaultHTTPPort,
 		},
 		&cli.StringFlag{
 			Name:  "db-url",
 			Usage: "Postgres Connection URL",
-			Value: constants.DefaultDBURL,
+			Value: cons.DefaultDBURL,
 		},
 		&cli.BoolFlag{
 			Name:    "verbose",
 			Aliases: []string{"v"},
 			Usage:   "Enable logging to stdout",
-			Value:   constants.DefaultVerbose,
+			Value:   cons.DefaultVerbose,
 		},
 	},
 	Action: func(ctx *cli.Context) error {
