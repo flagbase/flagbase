@@ -2,11 +2,11 @@ package main
 
 import (
 	"context"
-	"core/internal/constants"
-	"core/internal/db"
-	"core/internal/policy"
-	rsc "core/internal/resource"
-	"core/pkg/access"
+	"core/internal/pkg/constants"
+	"core/pkg/db"
+	"core/internal/pkg/policy"
+	rsc "core/internal/pkg/resource"
+	"core/internal/core/access"
 	"errors"
 	"runtime"
 
