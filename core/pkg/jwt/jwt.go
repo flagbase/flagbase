@@ -1,7 +1,7 @@
 package jwt
 
 import (
-  // TODO move to local
+	// TODO move to local
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"errors"

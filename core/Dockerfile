@@ -11,7 +11,7 @@ RUN go mod download
 RUN go get -u github.com/cosmtrek/air
 
 # Build executable
-RUN go build -o ./bin/flagbased ./cmd/flagbased
+RUN go build -o ./bin/flagbase ./cmd/flagbase
 
 # Expose relevant ports
 EXPOSE 5051

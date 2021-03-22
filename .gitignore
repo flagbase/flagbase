@@ -122,4 +122,5 @@ build
 dist
 .vscode
 flagbased
+flagbase
 coverage.txt
