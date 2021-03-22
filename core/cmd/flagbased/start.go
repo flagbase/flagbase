@@ -9,7 +9,7 @@ import (
 
 	cons "core/internal/pkg/constants"
 	"core/pkg/db"
-	"core/internal/pkg/http"
+	"core/internal/pkg/api"
 	"core/internal/pkg/policy"
 
 	"github.com/sirupsen/logrus"
@@ -90,5 +90,5 @@ func Start(cnf StartConfig) {
 		runtime.Goexit()
 	}
 
-	http.NewHTTPServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)
+	api.NewServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)
 }

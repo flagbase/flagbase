@@ -1,4 +1,4 @@
-package http
+package api
 
 import (
 	"github.com/gin-gonic/gin"
@@ -6,8 +6,8 @@ import (
 	ginlogrus "github.com/toorop/gin-logrus"
 )
 
-// NewHTTPServer initialize a new gin-based http server
-func NewHTTPServer(host string, port string, debug bool) {
+// NewServer initialize a new gin-based HTTP server
+func NewServer(host string, port string, debug bool) {
 	if !debug {
 		gin.SetMode(gin.ReleaseMode)
 	}
