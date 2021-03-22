@@ -1,4 +1,4 @@
-package main
+package manage
 
 import (
 	"context"
@@ -14,16 +14,16 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// CreateRootConfig server config
-type CreateRootConfig struct {
+// ManageAccessConfig server config
+type ManageAccessConfig struct {
 	DBURL      string
 	Verbose    bool
 	RootKey    rsc.Key
 	RootSecret string
 }
 
-// CreateRootCommand init cli command
-var CreateRootCommand cli.Command = cli.Command{
+// ManageAccessCommand init cli command
+var ManageAccessCommand cli.Command = cli.Command{
 	Name:        "create-root",
 	Usage:       "Create root access",
 	Description: "Create root access key-secret pair",
@@ -52,7 +52,7 @@ var CreateRootCommand cli.Command = cli.Command{
 		},
 	},
 	Action: func(ctx *cli.Context) error {
-		cnf := CreateRootConfig{
+		cnf := ManageAccessConfig{
 			DBURL:      ctx.String("db-url"),
 			RootKey:    rsc.Key(ctx.String("root-key")),
 			RootSecret: ctx.String("root-secret"),
@@ -64,7 +64,7 @@ var CreateRootCommand cli.Command = cli.Command{
 }
 
 // CreateRoot create root access
-func CreateRoot(cnf CreateRootConfig) {
+func CreateRoot(cnf ManageAccessConfig) {
 	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		runtime.Goexit()
