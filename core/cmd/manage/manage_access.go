@@ -24,8 +24,8 @@ const (
 	TypeFlag string = "type"
 )
 
-// ManageAccessConfig server config
-type ManageAccessConfig struct {
+// AccessConfig server config
+type AccessConfig struct {
 	DBURL   string
 	Verbose bool
 	Key     rsc.Key
@@ -66,7 +66,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
-		cnf := ManageAccessConfig{
+		cnf := AccessConfig{
 			DBURL:   ctx.String(cmdutil.DBURLFlag),
 			Verbose: ctx.Bool(cmdutil.VerboseFlag),
 			Key:     rsc.Key(ctx.String(KeyFlag)),
@@ -79,7 +79,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 }
 
 // CreateAccess create access
-func CreateAccess(cnf ManageAccessConfig) {
+func CreateAccess(cnf AccessConfig) {
 	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		runtime.Goexit()

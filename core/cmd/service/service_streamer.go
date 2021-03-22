@@ -7,8 +7,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// ServiceStreamerConfig API service configuration
-type ServiceStreamerConfig struct {
+// StreamerConfig API service configuration
+type StreamerConfig struct {
 	Host         string
 	StreamerPort int
 	DBURL        string
@@ -16,7 +16,7 @@ type ServiceStreamerConfig struct {
 }
 
 // StartStreamer start streamer
-func StartStreamer(cnf ServiceStreamerConfig) {
+func StartStreamer(cnf StreamerConfig) {
 	if !cnf.Verbose {
 		log.SetOutput(ioutil.Discard)
 		logrus.SetOutput(ioutil.Discard)

@@ -14,7 +14,7 @@ var AppCommand *cli.App = &cli.App{
 	Description:          "Flagbase is a general-purpose feature management service.",
 	EnableBashCompletion: true,
 	Commands: []*cli.Command{
-		&service.ServiceCommand,
-		&manage.ManageCommand,
+		&service.Command,
+		&manage.Command,
 	},
 }

@@ -14,8 +14,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// ServiceAPIConfig API service configuration
-type ServiceAPIConfig struct {
+// APIConfig API service configuration
+type APIConfig struct {
 	Host    string
 	APIPort int
 	DBURL   string
@@ -23,7 +23,7 @@ type ServiceAPIConfig struct {
 }
 
 // StartAPI start API
-func StartAPI(cnf ServiceAPIConfig) {
+func StartAPI(cnf APIConfig) {
 	if !cnf.Verbose {
 		log.SetOutput(ioutil.Discard)
 		logrus.SetOutput(ioutil.Discard)

@@ -4,8 +4,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// ManageCommand manage command entry
-var ManageCommand cli.Command = cli.Command{
+// Command manage command entry
+var Command cli.Command = cli.Command{
 	Name:        "manage",
 	Usage:       "Manage resources",
 	Description: "Manage flagbase resources.",

@@ -21,18 +21,18 @@ const (
 	StreamerPortFlag string = "streamer-port"
 )
 
-// ServiceCommand service command entry
-var ServiceCommand cli.Command = cli.Command{
+// Command service command entry
+var Command cli.Command = cli.Command{
 	Name:        "service",
 	Usage:       "Manage service workers",
 	Description: "Manage flagbase service workers (API, Streamer)",
 	Subcommands: []*cli.Command{
-		&ServiceStartCommand,
+		&StartCommand,
 	},
 }
 
-// ServiceStartCommand service start command
-var ServiceStartCommand cli.Command = cli.Command{
+// StartCommand service start command
+var StartCommand cli.Command = cli.Command{
 	Name:        "start",
 	Usage:       "Start service workers",
 	Description: "Manage flagbase service workers (API, Streamer)",
@@ -61,7 +61,7 @@ var ServiceStartCommand cli.Command = cli.Command{
 
 		startAPI := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartAPI(ServiceAPIConfig{
+			StartAPI(APIConfig{
 				Host:    ctx.String(HostFlag),
 				APIPort: ctx.Int(APIPortFlag),
 				DBURL:   ctx.String(cmdutil.DBURLFlag),
@@ -71,7 +71,7 @@ var ServiceStartCommand cli.Command = cli.Command{
 
 		startSteamer := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartStreamer(ServiceStreamerConfig{
+			StartStreamer(StreamerConfig{
 				Host:         ctx.String(HostFlag),
 				StreamerPort: ctx.Int(StreamerPortFlag),
 				DBURL:        ctx.String(cmdutil.DBURLFlag),
