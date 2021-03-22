@@ -9,11 +9,11 @@ var (
 	DefaultDBURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
 		"db:5432/flagbase" +
 		"?sslmode=disable"
-	// DefaultHTTPPort default http server port
-	DefaultHTTPPort int = 5051
+	// DefaultAPIPort default HTTP API server port
+	DefaultAPIPort int = 5051
 	// DefaultStreamerPort default streamer server port
 	DefaultStreamerPort int = 7051
-  // DefaultVerbose should log verbosely by default
+	// DefaultVerbose should log verbosely by default
 	DefaultVerbose bool = false
 	// DefaultRootKey default root access key
 	DefaultRootKey string = "root"

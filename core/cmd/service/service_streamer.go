@@ -9,10 +9,10 @@ import (
 
 // ServiceStreamerConfig API service configuration
 type ServiceStreamerConfig struct {
-	Host     string
+	Host         string
 	StreamerPort int
-	DBURL    string
-	Verbose  bool
+	DBURL        string
+	Verbose      bool
 }
 
 // StartStreamer start streamer
@@ -29,5 +29,5 @@ func StartStreamer(cnf ServiceStreamerConfig) {
 		"verbose":  cnf.Verbose,
 	}).Info("Starting Streamer")
 
-  logrus.Warn("Streamer has not been implemented yet.")
+	logrus.Warn("Streamer has not been implemented yet.")
 }

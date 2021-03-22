@@ -7,19 +7,19 @@ import (
 	"runtime"
 	"strconv"
 
-	"core/pkg/db"
 	"core/internal/pkg/api"
 	"core/internal/pkg/policy"
+	"core/pkg/db"
 
 	"github.com/sirupsen/logrus"
 )
 
 // ServiceAPIConfig API service configuration
 type ServiceAPIConfig struct {
-	Host     string
-	HTTPPort int
-	DBURL    string
-	Verbose  bool
+	Host    string
+	APIPort int
+	DBURL   string
+	Verbose bool
 }
 
 // StartAPI start API
@@ -30,10 +30,10 @@ func StartAPI(cnf ServiceAPIConfig) {
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"host":     cnf.Host,
-		"httpPort": cnf.HTTPPort,
-		"dbURL":    cnf.DBURL,
-		"verbose":  cnf.Verbose,
+		"host":    cnf.Host,
+		"apiPort": cnf.APIPort,
+		"dbURL":   cnf.DBURL,
+		"verbose": cnf.Verbose,
 	}).Info("Starting API")
 
 	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
@@ -47,5 +47,5 @@ func StartAPI(cnf ServiceAPIConfig) {
 		runtime.Goexit()
 	}
 
-	api.NewServer(cnf.Host, strconv.Itoa(cnf.HTTPPort), cnf.Verbose)
+	api.NewServer(cnf.Host, strconv.Itoa(cnf.APIPort), cnf.Verbose)
 }
