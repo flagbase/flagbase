@@ -23,12 +23,12 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		rsc.IdentityKey,
 	)
 
-	routes.GET(rootPath, listHTTPHandler)
-	routes.GET(resourcePath, getHTTPHandler)
-	routes.DELETE(resourcePath, deleteHTTPHandler)
+	routes.GET(rootPath, listAPIHandler)
+	routes.GET(resourcePath, getAPIHandler)
+	routes.DELETE(resourcePath, deleteAPIHandler)
 }
 
-func listHTTPHandler(ctx *gin.Context) {
+func listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
@@ -55,7 +55,7 @@ func listHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func getHTTPHandler(ctx *gin.Context) {
+func getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
@@ -83,7 +83,7 @@ func getHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func deleteHTTPHandler(ctx *gin.Context) {
+func deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
