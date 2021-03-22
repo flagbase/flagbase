@@ -24,14 +24,14 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		rsc.RuleKey,
 	)
 
-	routes.GET(rootPath, listHTTPHandler)
-	routes.POST(rootPath, createHTTPHandler)
-	routes.GET(resourcePath, getHTTPHandler)
-	routes.PATCH(resourcePath, updateHTTPHandler)
-	routes.DELETE(resourcePath, deleteHTTPHandler)
+	routes.GET(rootPath, listAPIHandler)
+	routes.POST(rootPath, createAPIHandler)
+	routes.GET(resourcePath, getAPIHandler)
+	routes.PATCH(resourcePath, updateAPIHandler)
+	routes.DELETE(resourcePath, deleteAPIHandler)
 }
 
-func listHTTPHandler(ctx *gin.Context) {
+func listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
@@ -58,7 +58,7 @@ func listHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func createHTTPHandler(ctx *gin.Context) {
+func createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
@@ -91,7 +91,7 @@ func createHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func getHTTPHandler(ctx *gin.Context) {
+func getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)
@@ -119,7 +119,7 @@ func getHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func updateHTTPHandler(ctx *gin.Context) {
+func updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -153,7 +153,7 @@ func updateHTTPHandler(ctx *gin.Context) {
 	)
 }
 
-func deleteHTTPHandler(ctx *gin.Context) {
+func deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputils.ExtractATK(ctx)

@@ -10,10 +10,10 @@ import (
 // ApplyRoutes access route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteAccess)
-	routes.POST("/token", generateTokenHTTPHandler)
+	routes.POST("/token", generateTokenAPIHandler)
 }
 
-func generateTokenHTTPHandler(ctx *gin.Context) {
+func generateTokenAPIHandler(ctx *gin.Context) {
 	var i KeySecretPair
 	if err := ctx.BindJSON(&i); err != nil {
 		return

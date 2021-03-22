@@ -8,10 +8,10 @@ import (
 
 // ApplyRoutes healthcheck route handler
 func ApplyRoutes(r *gin.RouterGroup) {
-	r.GET("healthcheck", healthCheckHTTPHandler)
+	r.GET("healthcheck", healthCheckAPIHandler)
 }
 
-func healthCheckHTTPHandler(ctx *gin.Context) {
+func healthCheckAPIHandler(ctx *gin.Context) {
 	pong, err := HealthCheck(ctx)
 	if err != nil {
 		ctx.AbortWithStatus(http.StatusInternalServerError)
