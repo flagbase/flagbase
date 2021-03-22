@@ -2,12 +2,12 @@ package workspace
 
 import (
 	"context"
+	"core/internal/app/auth"
 	cons "core/internal/pkg/constants"
+	rsc "core/internal/pkg/resource"
 	"core/pkg/db"
 	"core/pkg/patch"
-	rsc "core/internal/pkg/resource"
 	res "core/pkg/response"
-	"core/internal/app/auth"
 
 	"github.com/lib/pq"
 )

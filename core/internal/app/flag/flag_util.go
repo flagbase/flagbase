@@ -2,8 +2,8 @@ package flag
 
 import (
 	"context"
-	"core/pkg/db"
 	rsc "core/internal/pkg/resource"
+	"core/pkg/db"
 	"fmt"
 )
 

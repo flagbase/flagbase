@@ -2,12 +2,12 @@ package segmentrule
 
 import (
 	"context"
+	"core/internal/app/auth"
 	cons "core/internal/pkg/constants"
+	rsc "core/internal/pkg/resource"
 	"core/pkg/db"
 	"core/pkg/patch"
-	rsc "core/internal/pkg/resource"
 	res "core/pkg/response"
-	"core/internal/app/auth"
 )
 
 // List returns a list of resource instances

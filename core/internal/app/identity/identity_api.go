@@ -2,8 +2,8 @@ package identity
 
 import (
 	cons "core/internal/pkg/constants"
-	"core/pkg/httputils"
 	rsc "core/internal/pkg/resource"
+	"core/pkg/httputils"
 	res "core/pkg/response"
 	"net/http"
 

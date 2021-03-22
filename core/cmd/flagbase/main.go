@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-  "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 // Exec flagbased with args

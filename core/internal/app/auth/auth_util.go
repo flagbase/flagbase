@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"core/pkg/jwt"
-	rsc "core/internal/pkg/resource"
 	"core/internal/app/access"
+	rsc "core/internal/pkg/resource"
+	"core/pkg/jwt"
 	"encoding/json"
 )
 

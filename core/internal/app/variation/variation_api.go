@@ -2,9 +2,9 @@ package variation
 
 import (
 	cons "core/internal/pkg/constants"
+	rsc "core/internal/pkg/resource"
 	"core/pkg/httputils"
 	"core/pkg/patch"
-	rsc "core/internal/pkg/resource"
 	res "core/pkg/response"
 	"net/http"
 
