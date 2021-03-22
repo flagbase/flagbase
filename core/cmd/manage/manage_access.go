@@ -6,7 +6,7 @@ import (
 	"core/pkg/db"
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
-	"core/internal/core/access"
+	"core/internal/app/access"
 	"errors"
 	"runtime"
 

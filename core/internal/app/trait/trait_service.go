@@ -1,4 +1,4 @@
-package variation
+package trait
 
 import (
 	"context"
@@ -7,9 +7,7 @@ import (
 	"core/pkg/patch"
 	rsc "core/internal/pkg/resource"
 	res "core/pkg/response"
-	"core/internal/core/auth"
-
-	"github.com/lib/pq"
+	"core/internal/app/auth"
 )
 
 // List returns a list of resource instances
@@ -18,9 +16,9 @@ func List(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	flagKey rsc.Key,
+	environmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o []Variation
+	var o []Trait
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -34,28 +32,27 @@ func List(
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
-    v.id, v.key, v.name, v.description, v.tags
+    t.id, t.key, t.is_identifier
   FROM
-    workspace w, project p, flag f, variation v
+    workspace w, project p, environment e, trait t
   WHERE
     w.key = $1 AND
     p.key = $2 AND
+    e.key = $3 AND
     p.workspace_id = w.id AND
-    f.project_id = p.id AND
-    v.flag_id = f.id
-  `, workspaceKey, projectKey)
+    e.project_id = p.id AND
+    t.environment_key = e.id
+  `, workspaceKey, projectKey, environmentKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	for rows.Next() {
-		var _o Variation
+		var _o Trait
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
-			&_o.Name,
-			&_o.Description,
-			&_o.Tags,
+			&_o.IsIdentifier,
 		); err != nil {
 			e.Append(cons.ErrorNotFound, err.Error())
 		}
@@ -69,19 +66,19 @@ func List(
 // (*) atk: access_type <= admin
 func Create(
 	atk rsc.Token,
-	i Variation,
+	i Trait,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	flagKey rsc.Key,
+	environmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o Variation
+	var o Trait
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -89,44 +86,40 @@ func Create(
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    variation(key, name, description, tags, flag_id)
+    trait(key, is_identifier, environment_id)
   VALUES
-    ($1, $2, $3, $4, (
+    ($1, $2, (
         SELECT
-          f.id
+          e.id
         FROM
-          workspace w, project p, flag f
+          workspace w, project p, environment e
         WHERE
-          w.key = $5 AND
-          p.key = $6 AND
-          f.key = $7 AND
+          w.key = $3 AND
+          p.key = $4 AND
+          p.key = $5 AND
           p.workspace_id = w.id AND
-          f.project_id = p.id
+          e.project_id = p.id
       )
     )
   RETURNING
-    id, key, name, description, tags;`,
+    id, key, is_identifier;`,
 		i.Key,
-		i.Name,
-		i.Description,
-		pq.Array(i.Tags),
+		i.IsIdentifier,
 		workspaceKey,
 		projectKey,
-		flagKey,
+		environmentKey,
 	)
 	if err := row.Scan(
 		&o.ID,
 		&o.Key,
-		&o.Name,
-		&o.Description,
-		&o.Tags,
+		&o.IsIdentifier,
 	); err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Variation, rsc.AccessAdmin)
+		err := auth.AddPolicy(atk, o.ID, rsc.Trait, rsc.AccessAdmin)
 		if err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
@@ -141,12 +134,17 @@ func Get(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	flagKey rsc.Key,
-	variationKey rsc.Key,
+	environmentKey rsc.Key,
+	traitKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	o, err := getResource(workspaceKey, projectKey, flagKey, variationKey)
+	r, err := getResource(
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -154,14 +152,14 @@ func Get(
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		o.ID,
-		rsc.Variation,
+		r.ID,
+		rsc.Trait,
 		rsc.AccessService,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Update updates resource instance given an atk, key & patch object
@@ -171,17 +169,22 @@ func Update(
 	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	flagKey rsc.Key,
-	variationKey rsc.Key,
+	environmentKey rsc.Key,
+	traitKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o Variation
+	var o Trait
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, flagKey, variationKey)
+	r, err := getResource(
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -191,7 +194,7 @@ func Update(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Variation,
+		rsc.Trait,
 		rsc.AccessUser,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
@@ -207,16 +210,14 @@ func Update(
 	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
   UPDATE
-    variation
+    trait
   SET
-    key = $2, name = $3, description = $4, tags = $5
+    key = $2, is_identifier = $3
   WHERE
     id = $1`,
 		r.ID.String(),
 		o.Key,
-		o.Name,
-		o.Description,
-		pq.Array(o.Tags),
+		o.IsIdentifier,
 	); err != nil && err != context.Canceled {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -230,8 +231,8 @@ func Delete(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	flagKey rsc.Key,
-	variationKey rsc.Key,
+	environmentKey rsc.Key,
+	traitKey rsc.Key,
 ) *res.Errors {
 	var e res.Errors
 
@@ -239,7 +240,12 @@ func Delete(
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, flagKey, variationKey)
+	r, err := getResource(
+		workspaceKey,
+		projectKey,
+		environmentKey,
+		traitKey,
+	)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -249,7 +255,7 @@ func Delete(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Variation,
+		rsc.Trait,
 		rsc.AccessAdmin,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
@@ -258,7 +264,7 @@ func Delete(
 
 	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
-    variation
+    trait
   WHERE
     id = $1
   `,

@@ -1,17 +1,17 @@
 package api
 
 import (
-	"core/internal/core/access"
-	"core/internal/core/environment"
-	"core/internal/core/flag"
-	"core/internal/core/healthcheck"
-	"core/internal/core/identity"
-	"core/internal/core/project"
-	"core/internal/core/segment"
-	"core/internal/core/segmentrule"
-	"core/internal/core/trait"
-	"core/internal/core/variation"
-	"core/internal/core/workspace"
+	"core/internal/app/access"
+	"core/internal/app/environment"
+	"core/internal/app/flag"
+	"core/internal/app/healthcheck"
+	"core/internal/app/identity"
+	"core/internal/app/project"
+	"core/internal/app/segment"
+	"core/internal/app/segmentrule"
+	"core/internal/app/trait"
+	"core/internal/app/variation"
+	"core/internal/app/workspace"
 
 	"github.com/gin-gonic/gin"
 )

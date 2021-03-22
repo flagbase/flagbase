@@ -1,4 +1,4 @@
-package environment
+package segment
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"core/pkg/patch"
 	rsc "core/internal/pkg/resource"
 	res "core/pkg/response"
-	"core/internal/core/auth"
+	"core/internal/app/auth"
 
 	"github.com/lib/pq"
 )
@@ -19,7 +19,7 @@ func List(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o []Environment
+	var o []Segment
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -33,21 +33,21 @@ func List(
 
 	rows, err := db.Pool.Query(ctx, `
   SELECT
-    e.id, e.key, e.name, e.description, e.tags
+    s.id, s.key, s.name, s.description, s.tags
   FROM
-    workspace w, project p, environment e
+    workspace w, project p, segment s
   WHERE
     w.key = $1 AND
     p.key = $2 AND
     p.workspace_id = w.id AND
-    e.project_id = p.id
+    s.project_id = p.id
   `, workspaceKey, projectKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	for rows.Next() {
-		var _o Environment
+		var _o Segment
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -64,21 +64,21 @@ func List(
 }
 
 // Create creates a new resource instance given the resource instance
-// (*) atk: access_type <= admin
+// (*) atk: access_type <= user
 func Create(
 	atk rsc.Token,
-	i Environment,
+	i Segment,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o Environment
+	var o Segment
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(atk, rsc.AccessAdmin); err != nil {
+	if err := auth.Authorize(atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -86,7 +86,7 @@ func Create(
 	// create root user
 	row := db.Pool.QueryRow(ctx, `
   INSERT INTO
-    environment(key, name, description, tags, project_id)
+    segment(key, name, description, tags, project_id)
   VALUES
     ($1, $2, $3, $4, (
         SELECT
@@ -120,7 +120,7 @@ func Create(
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Environment, rsc.AccessAdmin)
+		err := auth.AddPolicy(atk, o.ID, rsc.Segment, rsc.AccessAdmin)
 		if err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
@@ -135,11 +135,11 @@ func Get(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	segmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
 
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	o, err := getResource(workspaceKey, projectKey, segmentKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -147,14 +147,14 @@ func Get(
 	// authorize operation
 	if err := auth.Enforce(
 		atk,
-		r.ID,
-		rsc.Environment,
+		o.ID,
+		rsc.Segment,
 		rsc.AccessService,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	return &res.Success{Data: r}, &e
+	return &res.Success{Data: o}, &e
 }
 
 // Update updates resource instance given an atk, key & patch object
@@ -164,16 +164,16 @@ func Update(
 	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	segmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
-	var o Environment
+	var o Segment
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, segmentKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -183,7 +183,7 @@ func Update(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Environment,
+		rsc.Segment,
 		rsc.AccessUser,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
@@ -199,7 +199,7 @@ func Update(
 	// update original with patched document
 	if _, err := db.Pool.Exec(ctx, `
   UPDATE
-    environment
+    segment
   SET
     key = $2, name = $3, description = $4, tags = $5
   WHERE
@@ -222,7 +222,7 @@ func Delete(
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
-	environmentKey rsc.Key,
+	segmentKey rsc.Key,
 ) *res.Errors {
 	var e res.Errors
 
@@ -230,7 +230,7 @@ func Delete(
 	defer cancel()
 
 	// get original document
-	r, err := getResource(workspaceKey, projectKey, environmentKey)
+	r, err := getResource(workspaceKey, projectKey, segmentKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -240,7 +240,7 @@ func Delete(
 	if err := auth.Enforce(
 		atk,
 		r.ID,
-		rsc.Environment,
+		rsc.Segment,
 		rsc.AccessAdmin,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
@@ -249,7 +249,7 @@ func Delete(
 
 	if _, err := db.Pool.Exec(ctx, `
   DELETE FROM
-    environment
+    segment
   WHERE
     id = $1
   `,
