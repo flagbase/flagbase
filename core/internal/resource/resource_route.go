@@ -23,4 +23,6 @@ const (
 	RouteTrait string = "traits"
 	// RouteTargeting points to the targeting resource
 	RouteTargeting string = "targeting"
+	// RouteEvaluate is the endpoint to evaluate a flagset for an environment
+	RouteEvaluate string = "evaluate"
 )
