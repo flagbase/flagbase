@@ -13,7 +13,7 @@ docker-compose up
 
 ### Creating a root user
 ```sh
-docker-compose exec core ./bin/flagbased create-root --root-key=<ACCESS_KEY> --root-secret=<ACCESS_SECRET>
+docker-compose exec core ./bin/flagbase manage access create --key=<ACCESS_KEY> --secret=<ACCESS_SECRET> --type=root
 ```
 
 ### Check that it's working

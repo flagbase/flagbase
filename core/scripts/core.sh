@@ -57,11 +57,11 @@ function pgexec() {
 # ------- App Commands ------- #
 
 function app_build() {
-  go build -o ./bin/flagbased ./cmd/flagbased
+  go build -o ./bin/flagbase ./cmd/flagbase
 }
 
 function app_exec() {
-  ./bin/flagbased start $@
+  ./bin/flagbase start $@
 }
 
 function app_run() {

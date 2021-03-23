@@ -17,7 +17,7 @@ jobs:
         with:
           go-version: ^1.14
       - name: Build
-        run: go build -v ./cmd/flagbased
+        run: go build -v ./cmd/flagbase
         working-directory: ./core
 
   test:
