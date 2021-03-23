@@ -1,11 +1,11 @@
 package evaluation
 
 import (
-	cons "core/internal/constants"
-	"core/internal/httputils"
-	"core/internal/patch"
-	rsc "core/internal/resource"
-	res "core/internal/response"
+	cons "core/internal/pkg/constants"
+	rsc "core/internal/pkg/resource"
+	"core/pkg/httputils"
+	"core/pkg/patch"
+	res "core/pkg/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -30,7 +30,7 @@ func evaluateHTTPHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i Environment
+	var i Evaluation
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -47,7 +47,7 @@ func evaluateHTTPHandler(ctx *gin.Context) {
 
 	httputils.Send(
 		ctx,
-		http.StatusCreated,
+		http.StatusOK,
 		data,
 		http.StatusInternalServerError,
 		e,
