@@ -2,13 +2,10 @@ package appcontext
 
 import (
 	"context"
-	"io/ioutil"
-	"os"
 
 	"core/internal/pkg/policy"
 	"core/pkg/db"
-
-	"github.com/rs/zerolog"
+	"core/pkg/logger"
 )
 
 // Config app context configuration
@@ -21,21 +18,16 @@ type Config struct {
 // Setup init services that make up app-context
 func Setup(cnf Config) (*Ctx, error) {
 	// setup: logger
-	var logger zerolog.Logger
-	if cnf.Verbose {
-		logger = zerolog.New(
-			zerolog.ConsoleWriter{Out: os.Stderr},
-		)
-	} else {
-		logger = zerolog.New(ioutil.Discard)
-	}
+	logInst := logger.New(logger.Config{
+		Verbose: cnf.Verbose,
+	})
 
 	// setup DB
-	dbConn, err := db.New(db.Config{
+	dbInst, err := db.New(db.Config{
 		Ctx:     cnf.Ctx,
 		ConnStr: cnf.PGConnStr,
 		Verbose: cnf.Verbose,
-		Log:     &logger,
+		Log:     logInst.Logger,
 	})
 	if err != nil {
 		return nil, err
@@ -50,8 +42,8 @@ func Setup(cnf Config) (*Ctx, error) {
 	}
 
 	return &Ctx{
-		DB:     dbConn,
-		Log:    &logger,
+		DB:     dbInst,
+		Log:    logInst,
 		Policy: policyInst,
 	}, nil
 }
