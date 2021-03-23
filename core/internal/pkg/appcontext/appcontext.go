@@ -1,8 +1,8 @@
 package appcontext
 
 import (
-	"core//pkg/logger"
 	"core/internal/pkg/policy"
+	"core/pkg/logger"
 
 	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4/pgxpool"
