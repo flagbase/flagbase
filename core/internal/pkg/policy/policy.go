@@ -7,16 +7,31 @@ import (
 	"github.com/casbin/casbin/v2"
 )
 
-var (
-	// Enforcer global casbin enforcer object
-	Enforcer *casbin.Enforcer
-)
+// Contract consist of policy identifiers
+type Contract struct {
+	accessID     rsc.ID
+	resourceID   rsc.ID
+	resourceType rsc.Type
+	accessType   rsc.AccessType
+}
 
-// NewEnforcer postgresql connection pool
-func NewEnforcer(connStr string) error {
-	adapter, err := pgadapter.NewAdapter(connStr)
+// Policy casbin interface
+type Policy struct {
+	Enforcer      *casbin.Enforcer
+	EnforcePolicy func(cnf Contract) (bool, error)
+	AddPolicy     func(cnf Contract) (bool, error)
+}
+
+// Config policy setup configuration
+type Config struct {
+	PGConnStr string
+}
+
+// Setup init casbin policy interface
+func Setup(cnf Config) (*Policy, error) {
+	adapter, err := pgadapter.NewAdapter(cnf.PGConnStr)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
 	model := NewModel()
@@ -26,44 +41,46 @@ func NewEnforcer(connStr string) error {
 		adapter,
 	)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	Enforcer = enforcer
-
-	if err := Enforcer.LoadPolicy(); err != nil {
-		return err
+	policy := &Policy{
+		Enforcer:      enforcer,
+		EnforcePolicy: EnforcePolicyFactory(enforcer),
+		AddPolicy:     AddPolicyFactory(enforcer),
 	}
 
-	return nil
+	if err := enforcer.LoadPolicy(); err != nil {
+		return policy, err
+	}
+
+	return policy, err
 }
 
-// Enforce enforces a casbin policy
-func Enforce(
-	accessID rsc.ID,
-	resourceID rsc.ID,
-	resourceType rsc.Type,
-	accessType rsc.AccessType,
-) (bool, error) {
-	return Enforcer.Enforce(
-		accessID.String(),
-		resourceID.String(),
-		resourceType.String(),
-		accessType.String(),
-	)
+// EnforcePolicyFactory return a function that enforces a casbin policy using a policy contract
+func EnforcePolicyFactory(
+	enf *casbin.Enforcer,
+) func(cnf Contract) (bool, error) {
+	return func(cnf Contract) (bool, error) {
+		return enf.Enforce(
+			cnf.accessID.String(),
+			cnf.resourceID.String(),
+			cnf.resourceType.String(),
+			cnf.accessType.String(),
+		)
+	}
 }
 
-// AddPolicy add new casbin policy
-func AddPolicy(
-	accessID rsc.ID,
-	resourceID rsc.ID,
-	resourceType rsc.Type,
-	accessType rsc.AccessType,
-) (bool, error) {
-	return Enforcer.AddPolicy(
-		accessID.String(),
-		resourceID.String(),
-		resourceType.String(),
-		accessType.String(),
-	)
+// AddPolicyFactory return a function that add new casbin policy using a policy contract
+func AddPolicyFactory(
+	enf *casbin.Enforcer,
+) func(cnf Contract) (bool, error) {
+	return func(cnf Contract) (bool, error) {
+		return enf.AddPolicy(
+			cnf.accessID.String(),
+			cnf.resourceID.String(),
+			cnf.resourceType.String(),
+			cnf.accessType.String(),
+		)
+	}
 }

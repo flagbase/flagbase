@@ -13,6 +13,7 @@ require (
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.10
 	github.com/go-pg/pg/v9 v9.1.0
+	github.com/go-redis/redis/v8 v8.7.1 // indirect
 	github.com/google/uuid v1.1.1
 	github.com/jackc/pgtype v1.3.0
 	github.com/jackc/pgx v3.6.2+incompatible
@@ -20,6 +21,7 @@ require (
 	github.com/lib/pq v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.7.1
+	github.com/rs/zerolog v1.15.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/toorop/gin-logrus v0.0.0-20190701131413-6c374ad36b67
 	github.com/urfave/cli/v2 v2.2.0
@@ -27,6 +29,5 @@ require (
 	github.com/zsais/go-gin-prometheus v0.1.0
 	golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9
 	golang.org/x/lint v0.0.0-20200302205851-738671d3881b // indirect
-	golang.org/x/tools v0.0.0-20200925191224-5d1fdd8fa346 // indirect
 	gopkg.in/yaml.v2 v2.3.0 // indirect
 )
