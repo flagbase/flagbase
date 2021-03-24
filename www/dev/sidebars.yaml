@@ -1,11 +1,11 @@
-- development:
-  - Development
+- intro:
+  - Intro
 
-- architecture:
-  - Architecture
+- core:
+  - Core
 
-- contributing:
-  - Contributing
+- sdk:
+  - SDKs
 
-- roadmap:
-  - Roadmap
+- ui:
+  - UI

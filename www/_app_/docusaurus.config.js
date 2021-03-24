@@ -60,7 +60,7 @@ module.exports = {
       {
         path: "./dev",
         routeBasePath: "dev",
-        homePageId: "development/overview",
+        homePageId: "intro/overview",
         include: ["**/*.md", "**/*.mdx"],
         sidebarPath: require.resolve("./sidebars.dev.js"),
         showLastUpdateTime: true,

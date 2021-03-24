@@ -1,7 +1,7 @@
 ---
-id: overview
+id: architecture
 title: Architecture
-sidebar_label: Overview
+sidebar_label: Architecture
 ---
 
 <div align="center">
