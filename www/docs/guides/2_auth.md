@@ -1,7 +1,7 @@
 ---
 id: auth
-title: Authorization
-sidebar_label: Authorization
+title: Auth
+sidebar_label: Auth
 ---
 
 TODO

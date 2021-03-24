@@ -1,7 +1,7 @@
 ---
 id: data-models
-title: Data models
-sidebar_label: Data models
+title: Data Models
+sidebar_label: Data Models
 ---
 
 ![ER Diagram](/assets/dev/er-diagram.png)

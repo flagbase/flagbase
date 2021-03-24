@@ -105,12 +105,14 @@ x-tagGroups:
       - targeting
       - targeting-rules
       - targeting-percentages
-  - name: Users
+  - name: Segments
+    tags:
+      - segments
+      - segment-rules
+  - name: Identities
     tags:
       - identities
       - traits
-      - segments
-      - segment-rules
   - name: Auditing
     tags:
       - auditlog

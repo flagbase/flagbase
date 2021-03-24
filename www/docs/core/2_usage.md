@@ -1,6 +1,6 @@
 ---
 id: usage
-title: Core Usage
+title: Usage
 sidebar_label: Usage
 ---
 
