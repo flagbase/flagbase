@@ -53,7 +53,7 @@ func Setup(cnf Config) (*Ctx, error) {
 		DB:       cnf.RedisDB,
 	})
 	if cacheInst == nil {
-		return nil, errors.New("Unable to connect to redis")
+		return nil, errors.New("unable to connect to redis")
 	}
 
 	return &Ctx{
