@@ -17,13 +17,13 @@ type Contract struct {
 // EnforcePolicyFactory return a function that enforces a casbin policy using a policy contract
 func EnforcePolicyFactory(
 	enf *casbin.Enforcer,
-) func(cnf Contract) (bool, error) {
-	return func(cnf Contract) (bool, error) {
+) func(cfg Contract) (bool, error) {
+	return func(cfg Contract) (bool, error) {
 		return enf.Enforce(
-			cnf.accessID.String(),
-			cnf.resourceID.String(),
-			cnf.resourceType.String(),
-			cnf.accessType.String(),
+			cfg.accessID.String(),
+			cfg.resourceID.String(),
+			cfg.resourceType.String(),
+			cfg.accessType.String(),
 		)
 	}
 }
@@ -31,13 +31,13 @@ func EnforcePolicyFactory(
 // AddPolicyFactory return a function that add new casbin policy using a policy contract
 func AddPolicyFactory(
 	enf *casbin.Enforcer,
-) func(cnf Contract) (bool, error) {
-	return func(cnf Contract) (bool, error) {
+) func(cfg Contract) (bool, error) {
+	return func(cfg Contract) (bool, error) {
 		return enf.AddPolicy(
-			cnf.accessID.String(),
-			cnf.resourceID.String(),
-			cnf.resourceType.String(),
-			cnf.accessType.String(),
+			cfg.accessID.String(),
+			cfg.resourceID.String(),
+			cfg.resourceType.String(),
+			cfg.accessType.String(),
 		)
 	}
 }

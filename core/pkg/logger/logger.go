@@ -21,9 +21,9 @@ type Config struct {
 	Verbose bool
 }
 
-func New(cnf Config) *Logger {
+func New(cfg Config) *Logger {
 	var logger zerolog.Logger
-	if cnf.Verbose {
+	if cfg.Verbose {
 		logger = zerolog.New(
 			zerolog.ConsoleWriter{Out: os.Stderr},
 		)

@@ -11,8 +11,8 @@ type Config struct {
 }
 
 // Setup init casbin policy interface
-func Setup(cnf Config) (*Policy, error) {
-	adapter, err := pgadapter.NewAdapter(cnf.PGConnStr)
+func Setup(cfg Config) (*Policy, error) {
+	adapter, err := pgadapter.NewAdapter(cfg.PGConnStr)
 	if err != nil {
 		return nil, err
 	}

@@ -17,15 +17,15 @@ type Config struct {
 }
 
 // New establishes a new pqx connection pool
-func New(cnf Config) (*pgxpool.Pool, error) {
-	poolConfig, err := pgxpool.ParseConfig(cnf.ConnStr)
+func New(cfg Config) (*pgxpool.Pool, error) {
+	poolConfig, err := pgxpool.ParseConfig(cfg.ConnStr)
 	if err != nil {
 		return nil, err
 	}
 
-	if cnf.Verbose {
-		poolConfig.ConnConfig.Logger = zerologadapter.NewLogger(*cnf.Log)
+	if cfg.Verbose {
+		poolConfig.ConnConfig.Logger = zerologadapter.NewLogger(*cfg.Log)
 	}
 
-	return pgxpool.ConnectConfig(cnf.Ctx, poolConfig)
+	return pgxpool.ConnectConfig(cfg.Ctx, poolConfig)
 }

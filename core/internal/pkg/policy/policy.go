@@ -7,6 +7,6 @@ import (
 // Policy casbin interface
 type Policy struct {
 	Enforcer      *casbin.Enforcer
-	EnforcePolicy func(cnf Contract) (bool, error)
-	AddPolicy     func(cnf Contract) (bool, error)
+	EnforcePolicy func(cfg Contract) (bool, error)
+	AddPolicy     func(cfg Contract) (bool, error)
 }

@@ -21,17 +21,17 @@ type Config struct {
 }
 
 // Setup init services that make up app-context
-func Setup(cnf Config) (*Ctx, error) {
+func Setup(cfg Config) (*Ctx, error) {
 	// setup: logger
 	logInst := logger.New(logger.Config{
-		Verbose: cnf.Verbose,
+		Verbose: cfg.Verbose,
 	})
 
 	// setup DB
 	dbInst, err := db.New(db.Config{
-		Ctx:     cnf.Ctx,
-		ConnStr: cnf.PGConnStr,
-		Verbose: cnf.Verbose,
+		Ctx:     cfg.Ctx,
+		ConnStr: cfg.PGConnStr,
+		Verbose: cfg.Verbose,
 		Log:     logInst.Logger,
 	})
 	if err != nil {
@@ -40,7 +40,7 @@ func Setup(cnf Config) (*Ctx, error) {
 
 	// setup policy
 	policyInst, err := policy.Setup(
-		policy.Config{PGConnStr: cnf.PGConnStr},
+		policy.Config{PGConnStr: cfg.PGConnStr},
 	)
 	if err != nil {
 		return nil, err
@@ -48,9 +48,9 @@ func Setup(cnf Config) (*Ctx, error) {
 
 	// setup cache
 	cacheInst := cache.New(cache.Config{
-		Addr:     cnf.RedisAddr,
-		Password: cnf.RedisPassword,
-		DB:       cnf.RedisDB,
+		Addr:     cfg.RedisAddr,
+		Password: cfg.RedisPassword,
+		DB:       cfg.RedisDB,
 	})
 	if cacheInst == nil {
 		return nil, errors.New("unable to connect to redis")

@@ -16,17 +16,17 @@ type StreamerConfig struct {
 }
 
 // StartStreamer start streamer
-func StartStreamer(cnf StreamerConfig) {
-	if !cnf.Verbose {
+func StartStreamer(cfg StreamerConfig) {
+	if !cfg.Verbose {
 		log.SetOutput(ioutil.Discard)
 		logrus.SetOutput(ioutil.Discard)
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"host":     cnf.Host,
-		"httpPort": cnf.StreamerPort,
-		"dbURL":    cnf.PGConnStr,
-		"verbose":  cnf.Verbose,
+		"host":     cfg.Host,
+		"httpPort": cfg.StreamerPort,
+		"dbURL":    cfg.PGConnStr,
+		"verbose":  cfg.Verbose,
 	}).Info("Starting Streamer")
 
 	logrus.Warn("Streamer has not been implemented yet.")

@@ -8,11 +8,11 @@ import (
 type Config redis.Options
 
 // New init a new redis client
-func New(cnf Config) *redis.Client {
+func New(cfg Config) *redis.Client {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     cnf.Addr,
-		Password: cnf.Password,
-		DB:       cnf.DB,
+		Addr:     cfg.Addr,
+		Password: cfg.Password,
+		DB:       cfg.DB,
 	})
 	return rdb
 }

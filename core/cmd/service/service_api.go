@@ -23,29 +23,29 @@ type APIConfig struct {
 }
 
 // StartAPI start API
-func StartAPI(cnf APIConfig) {
-	if !cnf.Verbose {
+func StartAPI(cfg APIConfig) {
+	if !cfg.Verbose {
 		log.SetOutput(ioutil.Discard)
 		logrus.SetOutput(ioutil.Discard)
 	}
 
 	logrus.WithFields(logrus.Fields{
-		"host":    cnf.Host,
-		"apiPort": cnf.APIPort,
-		"dbURL":   cnf.PGConnStr,
-		"verbose": cnf.Verbose,
+		"host":    cfg.Host,
+		"apiPort": cfg.APIPort,
+		"dbURL":   cfg.PGConnStr,
+		"verbose": cfg.Verbose,
 	}).Info("Starting API")
 
-	if err := db.NewPool(context.Background(), cnf.PGConnStr, cnf.Verbose); err != nil {
+	if err := db.NewPool(context.Background(), cfg.PGConnStr, cfg.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		runtime.Goexit()
 	}
 	defer db.Pool.Close()
 
-	if err := policy.NewEnforcer(cnf.PGConnStr); err != nil {
+	if err := policy.NewEnforcer(cfg.PGConnStr); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
 		runtime.Goexit()
 	}
 
-	api.NewServer(cnf.Host, strconv.Itoa(cnf.APIPort), cnf.Verbose)
+	api.NewServer(cfg.Host, strconv.Itoa(cfg.APIPort), cfg.Verbose)
 }
