@@ -16,10 +16,10 @@ import (
 
 // APIConfig API service configuration
 type APIConfig struct {
-	Host    string
-	APIPort int
-	DBURL   string
-	Verbose bool
+	Host      string
+	APIPort   int
+	PGConnStr string
+	Verbose   bool
 }
 
 // StartAPI start API
@@ -32,17 +32,17 @@ func StartAPI(cnf APIConfig) {
 	logrus.WithFields(logrus.Fields{
 		"host":    cnf.Host,
 		"apiPort": cnf.APIPort,
-		"dbURL":   cnf.DBURL,
+		"dbURL":   cnf.PGConnStr,
 		"verbose": cnf.Verbose,
 	}).Info("Starting API")
 
-	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
+	if err := db.NewPool(context.Background(), cnf.PGConnStr, cnf.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		runtime.Goexit()
 	}
 	defer db.Pool.Close()
 
-	if err := policy.NewEnforcer(cnf.DBURL); err != nil {
+	if err := policy.NewEnforcer(cnf.PGConnStr); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
 		runtime.Goexit()
 	}

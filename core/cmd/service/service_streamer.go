@@ -11,7 +11,7 @@ import (
 type StreamerConfig struct {
 	Host         string
 	StreamerPort int
-	DBURL        string
+	PGConnStr    string
 	Verbose      bool
 }
 
@@ -25,7 +25,7 @@ func StartStreamer(cnf StreamerConfig) {
 	logrus.WithFields(logrus.Fields{
 		"host":     cnf.Host,
 		"httpPort": cnf.StreamerPort,
-		"dbURL":    cnf.DBURL,
+		"dbURL":    cnf.PGConnStr,
 		"verbose":  cnf.Verbose,
 	}).Info("Starting Streamer")
 

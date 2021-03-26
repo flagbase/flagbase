@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	// DefaultDBURL the default postgres database connection string
-	DefaultDBURL string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
+	// DefaultPGConnStr the default postgres database connection string
+	DefaultPGConnStr string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
 		"db:5432/flagbase" +
 		"?sslmode=disable"
 	// DefaultAPIPort default HTTP API server port

@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	// DBURLFlag Postgres URL Flag
-	DBURLFlag = "db-url"
+	// PGConnStrFlag Postgres URL Flag
+	PGConnStrFlag = "pg-url"
 	// VerboseFlag Verbose flag (show debug logging)
 	VerboseFlag = "verbose"
 )
@@ -16,9 +16,9 @@ const (
 // GlobalFlags global app level flags
 var GlobalFlags []cli.Flag = []cli.Flag{
 	&cli.StringFlag{
-		Name:  DBURLFlag,
+		Name:  PGConnStrFlag,
 		Usage: "Postgres Connection URL",
-		Value: cons.DefaultDBURL,
+		Value: cons.DefaultPGConnStr,
 	},
 	&cli.BoolFlag{
 		Name:    VerboseFlag,
