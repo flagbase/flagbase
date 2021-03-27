@@ -3,9 +3,9 @@ package access
 import (
 	"context"
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/jwt"
 	srv "core/internal/pkg/server"
 	"core/pkg/crypto"
-	"core/pkg/jwt"
 	res "core/pkg/response"
 	"encoding/json"
 
