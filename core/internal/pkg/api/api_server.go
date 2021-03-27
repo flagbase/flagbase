@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// Config API server configuration
 type Config struct {
 	Host    string
 	APIPort int
