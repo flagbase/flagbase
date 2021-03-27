@@ -1,13 +1,8 @@
 package service
 
 import (
-	"context"
-	"runtime"
-
 	"core/internal/pkg/api"
-	"core/internal/pkg/policy"
 	srv "core/internal/pkg/server"
-	"core/pkg/db"
 )
 
 // APIConfig API service configuration
@@ -30,23 +25,6 @@ func StartAPI(sctx *srv.Ctx, cfg APIConfig) {
 	).Int(
 		"apiPort", cfg.APIPort,
 	).Msg("Starting API")
-
-	// TODO remove global db connection
-	if err := db.NewPool(context.Background(), cfg.PGConnStr, cfg.Verbose); err != nil {
-		sctx.Log.Error.Str(
-			"reason", err.Error(),
-		).Msg("Unable to connect to db")
-		runtime.Goexit()
-	}
-	defer db.Pool.Close()
-
-	// TODO remove global policy
-	if err := policy.NewEnforcer(cfg.PGConnStr); err != nil {
-		sctx.Log.Error.Str(
-			"reason", err.Error(),
-		).Msg("Unable to start enforcer")
-		runtime.Goexit()
-	}
 
 	api.New(sctx, api.Config{
 		Host:    cfg.Host,

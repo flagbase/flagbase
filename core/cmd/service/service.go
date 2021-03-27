@@ -3,14 +3,12 @@ package service
 import (
 	"context"
 	"log"
-	"runtime"
 	"sync"
 
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
 	srv "core/internal/pkg/server"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -72,8 +70,7 @@ var StartCommand cli.Command = cli.Command{
 			Verbose:       ctx.Bool(cmdutil.VerboseFlag),
 		})
 		if err != nil {
-			logrus.Error("Unable to setup app context. Reason: ", err.Error())
-			runtime.Goexit()
+			log.Fatal("Unable to setup app context. Reason: ", err.Error())
 		}
 		defer srv.Cleanup(sctx)
 
@@ -92,7 +89,7 @@ var StartCommand cli.Command = cli.Command{
 
 		startSteamer := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartStreamer(StreamerConfig{
+			StartStreamer(sctx, StreamerConfig{
 				Host:         ctx.String(HostFlag),
 				StreamerPort: ctx.Int(StreamerPortFlag),
 				PGConnStr:    ctx.String(cmdutil.PGConnStrFlag),

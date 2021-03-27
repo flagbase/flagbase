@@ -121,7 +121,7 @@ func Create(
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		if err := auth.AddPolicyV2(
+		if err := auth.AddPolicy(
 			sctx,
 			atk,
 			o.ID,
@@ -159,7 +159,7 @@ func Get(
 	}
 
 	// authorize operation
-	if err := auth.EnforceV2(
+	if err := auth.Enforce(
 		sctx,
 		atk,
 		r.ID,
@@ -203,7 +203,7 @@ func Update(
 	}
 
 	// authorize operation
-	if err := auth.EnforceV2(
+	if err := auth.Enforce(
 		sctx,
 		atk,
 		r.ID,
@@ -267,7 +267,7 @@ func Delete(
 	}
 
 	// authorize operation
-	if err := auth.EnforceV2(
+	if err := auth.Enforce(
 		sctx,
 		atk,
 		r.ID,

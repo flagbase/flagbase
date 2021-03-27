@@ -7,9 +7,8 @@ import (
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
-	"runtime"
+	"log"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -73,8 +72,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 			Verbose:       ctx.Bool(cmdutil.VerboseFlag),
 		})
 		if err != nil {
-			logrus.Error("Unable to setup app context. Reason: ", err.Error())
-			runtime.Goexit()
+			log.Fatal("Unable to setup app context. Reason: ", err.Error())
 		}
 		defer srv.Cleanup(sctx)
 
