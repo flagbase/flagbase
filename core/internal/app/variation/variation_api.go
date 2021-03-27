@@ -2,8 +2,8 @@ package variation
 
 import (
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/httputils"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -14,12 +14,12 @@ import (
 // ApplyRoutes variation route handlers
 func ApplyRoutes(r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteVariation)
-	rootPath := httputils.BuildPath(
+	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,
 		rsc.FlagKey,
 	)
-	resourcePath := httputils.AppendPath(
+	resourcePath := httputil.AppendPath(
 		rootPath,
 		rsc.VariationKey,
 	)
@@ -34,22 +34,22 @@ func ApplyRoutes(r *gin.RouterGroup) {
 func listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := List(
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.FlagKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.FlagKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -61,7 +61,7 @@ func listAPIHandler(ctx *gin.Context) {
 func createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -74,15 +74,15 @@ func createAPIHandler(ctx *gin.Context) {
 	data, _err := Create(
 		atk,
 		i,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.FlagKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.FlagKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusCreated,
 		data,
@@ -94,23 +94,23 @@ func createAPIHandler(ctx *gin.Context) {
 func getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := Get(
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.FlagKey),
-		httputils.GetParam(ctx, rsc.VariationKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.FlagKey),
+		httputil.GetParam(ctx, rsc.VariationKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -123,7 +123,7 @@ func updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -135,16 +135,16 @@ func updateAPIHandler(ctx *gin.Context) {
 	data, _err := Update(
 		atk,
 		i,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.FlagKey),
-		httputils.GetParam(ctx, rsc.VariationKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.FlagKey),
+		httputil.GetParam(ctx, rsc.VariationKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -156,22 +156,22 @@ func updateAPIHandler(ctx *gin.Context) {
 func deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	if err := Delete(
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.FlagKey),
-		httputils.GetParam(ctx, rsc.VariationKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.FlagKey),
+		httputil.GetParam(ctx, rsc.VariationKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusNoContent,
 		&res.Success{},
