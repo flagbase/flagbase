@@ -3,18 +3,19 @@ package segmentrule
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
 func getResource(
+	sctx *srv.Ctx,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
 	segmentRuleKey rsc.Key,
 ) (*SegmentRule, error) {
 	var o SegmentRule
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
     SELECT
       sr.id,
       sr.key,

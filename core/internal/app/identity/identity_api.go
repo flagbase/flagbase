@@ -2,8 +2,9 @@ package identity
 
 import (
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/httputils"
+	srv "core/internal/pkg/server"
 	res "core/pkg/response"
 	"net/http"
 
@@ -11,42 +12,43 @@ import (
 )
 
 // ApplyRoutes identity route handlers
-func ApplyRoutes(r *gin.RouterGroup) {
+func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteIdentity)
-	rootPath := httputils.BuildPath(
+	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,
 		rsc.EnvironmentKey,
 	)
-	resourcePath := httputils.AppendPath(
+	resourcePath := httputil.AppendPath(
 		rootPath,
 		rsc.IdentityKey,
 	)
 
-	routes.GET(rootPath, listAPIHandler)
-	routes.GET(resourcePath, getAPIHandler)
-	routes.DELETE(resourcePath, deleteAPIHandler)
+	routes.GET(rootPath, httputil.Handler(sctx, listAPIHandler))
+	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
+	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
 }
 
-func listAPIHandler(ctx *gin.Context) {
+func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := List(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.EnvironmentKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusCreated,
 		data,
@@ -55,26 +57,27 @@ func listAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(ctx *gin.Context) {
+func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := Get(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.EnvironmentKey),
-		httputils.GetParam(ctx, rsc.IdentityKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
+		httputil.GetParam(ctx, rsc.IdentityKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -83,25 +86,26 @@ func getAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(ctx *gin.Context) {
+func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	if err := Delete(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.EnvironmentKey),
-		httputils.GetParam(ctx, rsc.IdentityKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
+		httputil.GetParam(ctx, rsc.IdentityKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusNoContent,
 		&res.Success{},

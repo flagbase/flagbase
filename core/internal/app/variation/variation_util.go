@@ -3,18 +3,19 @@ package variation
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
 func getResource(
+	sctx *srv.Ctx,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	flagKey rsc.Key,
 	variationKey rsc.Key,
 ) (*Variation, error) {
 	var o Variation
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     v.id, v.key, v.name, v.description, v.tags
   FROM

@@ -5,7 +5,7 @@ import (
 	"core/internal/app/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 )
@@ -13,6 +13,7 @@ import (
 // List returns a list of resource instances
 // (*) atk: access_type <= service
 func List(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
@@ -30,7 +31,7 @@ func List(
 		cancel()
 	}
 
-	rows, err := db.Pool.Query(ctx, `
+	rows, err := sctx.DB.Query(ctx, `
   SELECT
     sr.id,
     sr.key,
@@ -76,6 +77,7 @@ func List(
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= user
 func Create(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	i SegmentRule,
 	workspaceKey rsc.Key,
@@ -95,7 +97,7 @@ func Create(
 	}
 
 	// create root user
-	row := db.Pool.QueryRow(ctx, `
+	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     segment(
       key,
@@ -148,8 +150,13 @@ func Create(
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.SegmentRule, rsc.AccessAdmin)
-		if err != nil {
+		if err := auth.AddPolicy(
+			sctx,
+			atk,
+			o.ID,
+			rsc.SegmentRule,
+			rsc.AccessAdmin,
+		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
 	}
@@ -160,6 +167,7 @@ func Create(
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
 func Get(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
@@ -169,6 +177,7 @@ func Get(
 	var e res.Errors
 
 	o, err := getResource(
+		sctx,
 		workspaceKey,
 		projectKey,
 		segmentKey,
@@ -180,6 +189,7 @@ func Get(
 
 	// authorize operation
 	if err := auth.Enforce(
+		sctx,
 		atk,
 		o.ID,
 		rsc.SegmentRule,
@@ -194,6 +204,7 @@ func Get(
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
 func Update(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	patchDoc patch.Patch,
 	workspaceKey rsc.Key,
@@ -209,6 +220,7 @@ func Update(
 
 	// get original document
 	r, err := getResource(
+		sctx,
 		workspaceKey,
 		projectKey,
 		segmentKey,
@@ -221,6 +233,7 @@ func Update(
 
 	// authorize operation
 	if err := auth.Enforce(
+		sctx,
 		atk,
 		r.ID,
 		rsc.SegmentRule,
@@ -237,7 +250,7 @@ func Update(
 	}
 
 	// update original with patched document
-	if _, err := db.Pool.Exec(ctx, `
+	if _, err := sctx.DB.Exec(ctx, `
   UPDATE
     segment
   SET
@@ -264,6 +277,7 @@ func Update(
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
 func Delete(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
@@ -277,6 +291,7 @@ func Delete(
 
 	// get original document
 	r, err := getResource(
+		sctx,
 		workspaceKey,
 		projectKey,
 		segmentKey,
@@ -289,6 +304,7 @@ func Delete(
 
 	// authorize operation
 	if err := auth.Enforce(
+		sctx,
 		atk,
 		r.ID,
 		rsc.SegmentRule,
@@ -298,7 +314,7 @@ func Delete(
 		cancel()
 	}
 
-	if _, err := db.Pool.Exec(ctx, `
+	if _, err := sctx.DB.Exec(ctx, `
   DELETE FROM
     segment_rule
   WHERE

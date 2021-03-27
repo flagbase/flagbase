@@ -1,7 +1,5 @@
 package response
 
-import "github.com/sirupsen/logrus"
-
 // Errors array of standard errors
 type Errors struct {
 	Errors []*Error `json:"errors"`
@@ -24,9 +22,6 @@ func (e *Errors) Append(c string, m string) {
 		Code:    c,
 		Message: m,
 	})
-	logrus.WithFields(logrus.Fields{
-		"code": c,
-	}).Error(m)
 }
 
 // Extend extend an existing errors response with another errors response

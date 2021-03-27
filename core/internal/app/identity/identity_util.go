@@ -3,18 +3,19 @@ package identity
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
 func getResource(
+	sctx *srv.Ctx,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	environmentKey rsc.Key,
 	identityKey rsc.Key,
 ) (*Identity, error) {
 	var o Identity
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     i.id, i.key
   FROM

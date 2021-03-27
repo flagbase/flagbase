@@ -12,24 +12,24 @@ import (
 	"core/internal/app/trait"
 	"core/internal/app/variation"
 	"core/internal/app/workspace"
-	"core/internal/pkg/server"
+	srv "core/internal/pkg/server"
 
 	"github.com/gin-gonic/gin"
 )
 
 // ApplyRoutes applies route from all packages to root handler
-func ApplyRoutes(sctx *server.Ctx, r *gin.Engine) {
+func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	ApplyMetrics(r)
 	root := r.Group("/")
-	access.ApplyRoutes(root)
-	environment.ApplyRoutes(root)
-	flag.ApplyRoutes(root)
-	healthcheck.ApplyRoutes(root)
-	identity.ApplyRoutes(root)
-	project.ApplyRoutes(root)
-	trait.ApplyRoutes(root)
-	segment.ApplyRoutes(root)
-	segmentrule.ApplyRoutes(root)
-	variation.ApplyRoutes(root)
-	workspace.ApplyRoutes(root)
+	access.ApplyRoutes(sctx, root)
+	environment.ApplyRoutes(sctx, root)
+	flag.ApplyRoutes(sctx, root)
+	healthcheck.ApplyRoutes(sctx, root)
+	identity.ApplyRoutes(sctx, root)
+	project.ApplyRoutes(sctx, root)
+	trait.ApplyRoutes(sctx, root)
+	segment.ApplyRoutes(sctx, root)
+	segmentrule.ApplyRoutes(sctx, root)
+	variation.ApplyRoutes(sctx, root)
+	workspace.ApplyRoutes(sctx, root)
 }

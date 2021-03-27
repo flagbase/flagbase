@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog"
 )
 
+// Logger wrapper around zerolog
 type Logger struct {
 	Logger *zerolog.Logger
 	Panic  *zerolog.Event
@@ -17,10 +18,12 @@ type Logger struct {
 	Debug  *zerolog.Event
 }
 
+// Config logger configuration
 type Config struct {
 	Verbose bool
 }
 
+// New init a new logger instance
 func New(cfg Config) *Logger {
 	var logger zerolog.Logger
 	if cfg.Verbose {

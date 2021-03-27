@@ -1,9 +1,8 @@
 package main
 
 import (
+	"log"
 	"os"
-
-	"github.com/sirupsen/logrus"
 )
 
 // Exec flagbased with args
@@ -12,6 +11,6 @@ func main() {
 
 	err := app.Run(os.Args)
 	if err != nil {
-		logrus.Fatal(err)
+		log.Fatal(err)
 	}
 }

@@ -2,19 +2,17 @@ package healthcheck
 
 import (
 	"context"
-	"core/pkg/db"
-
-	"github.com/sirupsen/logrus"
+	srv "core/internal/pkg/server"
 )
 
 // HealthCheck sends a useless query to the database to see if the connection is working.
-func HealthCheck(ctx context.Context) (string, error) {
+func HealthCheck(sctx *srv.Ctx) (string, error) {
 	var msg string
-	row := db.Pool.QueryRow(ctx, "SELECT 'OK'")
-	err := row.Scan(&msg)
-	if err != nil {
-		logrus.Error(err)
+	row := sctx.DB.QueryRow(context.Background(), "SELECT 'OK'")
+	if err := row.Scan(&msg); err != nil {
+		sctx.Log.Error.Msg(err.Error())
 		return "error", err
 	}
+
 	return msg, nil
 }

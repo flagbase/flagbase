@@ -3,6 +3,7 @@ package auth
 import (
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
+	srv "core/internal/pkg/server"
 	"errors"
 	"fmt"
 )
@@ -31,6 +32,7 @@ func Authorize(
 
 // Enforce enforces a resource policy
 func Enforce(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -42,7 +44,14 @@ func Enforce(
 	}
 
 	// enforce policy
-	ok, err := policy.Enforce(a.ID, resourceID, resourceType, accessType)
+	ok, err := sctx.Policy.EnforcePolicy(
+		policy.Contract{
+			AccessID:     a.ID,
+			ResourceID:   resourceID,
+			ResourceType: resourceType,
+			AccessType:   accessType,
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -55,6 +64,7 @@ func Enforce(
 
 // AddPolicy add casbin policy for a given resource
 func AddPolicy(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -65,7 +75,14 @@ func AddPolicy(
 		return err
 	}
 
-	ok, err := policy.AddPolicy(a.ID, resourceID, resourceType, accessType)
+	ok, err := sctx.Policy.AddPolicy(
+		policy.Contract{
+			AccessID:     a.ID,
+			ResourceID:   resourceID,
+			ResourceType: resourceType,
+			AccessType:   accessType,
+		},
+	)
 	if err != nil {
 		return err
 	}

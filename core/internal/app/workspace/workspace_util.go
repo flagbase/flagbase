@@ -3,13 +3,16 @@ package workspace
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key) (*Workspace, error) {
+func getResource(
+	sctx *srv.Ctx,
+	workspaceKey rsc.Key,
+) (*Workspace, error) {
 	var o Workspace
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     id, key, name, description, tags
   FROM

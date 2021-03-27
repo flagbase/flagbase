@@ -2,8 +2,9 @@ package segment
 
 import (
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/httputils"
+	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -12,42 +13,43 @@ import (
 )
 
 // ApplyRoutes segment route handlers
-func ApplyRoutes(r *gin.RouterGroup) {
+func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteSegment)
-	rootPath := httputils.BuildPath(
+	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,
 	)
-	resourcePath := httputils.AppendPath(
+	resourcePath := httputil.AppendPath(
 		rootPath,
 		rsc.SegmentKey,
 	)
 
-	routes.GET(rootPath, listAPIHandler)
-	routes.POST(rootPath, createAPIHandler)
-	routes.GET(resourcePath, getAPIHandler)
-	routes.PATCH(resourcePath, updateAPIHandler)
-	routes.DELETE(resourcePath, deleteAPIHandler)
+	routes.GET(rootPath, httputil.Handler(sctx, listAPIHandler))
+	routes.POST(rootPath, httputil.Handler(sctx, createAPIHandler))
+	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
+	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
+	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
 }
 
-func listAPIHandler(ctx *gin.Context) {
+func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := List(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -56,10 +58,10 @@ func listAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(ctx *gin.Context) {
+func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -70,16 +72,17 @@ func createAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := Create(
+		sctx,
 		atk,
 		i,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusCreated,
 		data,
@@ -88,25 +91,26 @@ func createAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(ctx *gin.Context) {
+func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	data, _err := Get(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.SegmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -115,11 +119,11 @@ func getAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(ctx *gin.Context) {
+func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
@@ -129,17 +133,18 @@ func updateAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := Update(
+		sctx,
 		atk,
 		i,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.SegmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
 		data,
@@ -148,24 +153,25 @@ func updateAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(ctx *gin.Context) {
+func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputils.ExtractATK(ctx)
+	atk, err := httputil.ExtractATK(ctx)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
 	if err := Delete(
+		sctx,
 		atk,
-		httputils.GetParam(ctx, rsc.WorkspaceKey),
-		httputils.GetParam(ctx, rsc.ProjectKey),
-		httputils.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		httputil.GetParam(ctx, rsc.ProjectKey),
+		httputil.GetParam(ctx, rsc.SegmentKey),
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
 
-	httputils.Send(
+	httputil.Send(
 		ctx,
 		http.StatusNoContent,
 		&res.Success{},

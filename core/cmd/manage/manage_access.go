@@ -5,13 +5,10 @@ import (
 	"core/internal/app/access"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
-	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
-	"errors"
-	"runtime"
+	srv "core/internal/pkg/server"
+	"log"
 
-	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -66,53 +63,30 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
-		cfg := AccessConfig{
-			PGConnStr: ctx.String(cmdutil.PGConnStrFlag),
-			Verbose:   ctx.Bool(cmdutil.VerboseFlag),
+		sctx, err := srv.Setup(srv.Config{
+			Ctx:           context.Background(),
+			PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
+			RedisAddr:     ctx.String(cmdutil.RedisAddr),
+			RedisPassword: ctx.String(cmdutil.RedisPassword),
+			RedisDB:       int(ctx.Uint(cmdutil.RedisDB)),
+			Verbose:       ctx.Bool(cmdutil.VerboseFlag),
+		})
+		if err != nil {
+			log.Fatal("Unable to setup app context. Reason: ", err.Error())
+		}
+		defer srv.Cleanup(sctx)
+
+		if _, err := access.Create(sctx, access.Access{
 			Key:       rsc.Key(ctx.String(KeyFlag)),
 			Secret:    ctx.String(SecretFlag),
 			Type:      ctx.String(TypeFlag),
+			Tags:      []string{},
+			ExpiresAt: cons.MaxUnixTime,
+		}); err.IsEmpty() {
+			// TODO: add error reasons
+			sctx.Log.Error.Msg("Unable to create access")
 		}
-		CreateAccess(cfg)
+
 		return nil
 	},
-}
-
-// CreateAccess create access
-func CreateAccess(cfg AccessConfig) {
-	if err := db.NewPool(context.Background(), cfg.PGConnStr, cfg.Verbose); err != nil {
-		logrus.Error("Unable to connect to db - ", err.Error())
-		runtime.Goexit()
-	}
-	defer db.Pool.Close()
-
-	if err := policy.NewEnforcer(cfg.PGConnStr); err != nil {
-		logrus.Error("Unable to start enforcer - ", err.Error())
-		runtime.Goexit()
-	}
-
-	if err := createAccess(cfg.Key, cfg.Secret, cfg.Type); err != nil {
-		logrus.Error("Unable to create root access. Perhap the access-key already exists.")
-		runtime.Goexit()
-	} else {
-		logrus.WithFields(logrus.Fields{
-			"key":    cfg.Key,
-			"secret": cfg.Secret,
-		}).Info("Created access")
-	}
-}
-
-func createAccess(accessKey rsc.Key, accessSecret string, accessType string) error {
-	_, err := access.Create(access.Access{
-		Key:       accessKey,
-		Secret:    accessSecret,
-		Type:      accessType,
-		Tags:      []string{},
-		ExpiresAt: cons.MaxUnixTime,
-	})
-	if err.Errors != nil {
-		return errors.New("unable to create access - perhaps this resource already exists")
-	}
-
-	return nil
 }

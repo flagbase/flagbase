@@ -3,18 +3,19 @@ package trait
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
 func getResource(
+	sctx *srv.Ctx,
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	environmentKey rsc.Key,
 	traitKey rsc.Key,
 ) (*Trait, error) {
 	var o Trait
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     t.id, t.key, t.is_identifier
   FROM

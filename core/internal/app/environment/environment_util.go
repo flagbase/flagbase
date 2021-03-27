@@ -3,13 +3,18 @@ package environment
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key, environmentKey rsc.Key) (*Environment, error) {
+func getResource(
+	sctx *srv.Ctx,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	environmentKey rsc.Key,
+) (*Environment, error) {
 	var o Environment
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     e.id, e.key, e.name, e.description, e.tags
   FROM

@@ -1,10 +1,7 @@
 package service
 
 import (
-	"io/ioutil"
-	"log"
-
-	"github.com/sirupsen/logrus"
+	srv "core/internal/pkg/server"
 )
 
 // StreamerConfig API service configuration
@@ -16,18 +13,14 @@ type StreamerConfig struct {
 }
 
 // StartStreamer start streamer
-func StartStreamer(cfg StreamerConfig) {
-	if !cfg.Verbose {
-		log.SetOutput(ioutil.Discard)
-		logrus.SetOutput(ioutil.Discard)
-	}
+func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
+	sctx.Log.Info.Str(
+		"host", cfg.Host,
+	).Bool(
+		"verbose", cfg.Verbose,
+	).Int(
+		"streamerPort", cfg.StreamerPort,
+	).Msg("Starting API")
 
-	logrus.WithFields(logrus.Fields{
-		"host":     cfg.Host,
-		"httpPort": cfg.StreamerPort,
-		"dbURL":    cfg.PGConnStr,
-		"verbose":  cfg.Verbose,
-	}).Info("Starting Streamer")
-
-	logrus.Warn("Streamer has not been implemented yet.")
+	sctx.Log.Warn.Msg("Streamer has not been implemented yet.")
 }
