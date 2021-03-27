@@ -7,6 +7,7 @@ require (
 	github.com/casbin/casbin/v2 v2.7.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/evanphx/json-patch v4.5.0+incompatible
+	github.com/gin-contrib/logger v0.0.2
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/strfmt v0.19.5
@@ -21,7 +22,7 @@ require (
 	github.com/lib/pq v1.2.0
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.7.1
-	github.com/rs/zerolog v1.15.0
+	github.com/rs/zerolog v1.16.0
 	github.com/sirupsen/logrus v1.6.0
 	github.com/toorop/gin-logrus v0.0.0-20190701131413-6c374ad36b67
 	github.com/urfave/cli/v2 v2.2.0

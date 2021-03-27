@@ -62,10 +62,13 @@ var StartCommand cli.Command = cli.Command{
 		startAPI := func(wg *sync.WaitGroup) {
 			defer wg.Done()
 			StartAPI(APIConfig{
-				Host:      ctx.String(HostFlag),
-				APIPort:   ctx.Int(APIPortFlag),
-				PGConnStr: ctx.String(cmdutil.PGConnStrFlag),
-				Verbose:   ctx.Bool(cmdutil.VerboseFlag),
+				Host:          ctx.String(HostFlag),
+				APIPort:       ctx.Int(APIPortFlag),
+				PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
+				RedisAddr:     ctx.String(cmdutil.RedisAddr),
+				RedisPassword: ctx.String(cmdutil.RedisPassword),
+				RedisDB:       int(ctx.Uint(cmdutil.RedisDB)),
+				Verbose:       ctx.Bool(cmdutil.VerboseFlag),
 			})
 		}
 

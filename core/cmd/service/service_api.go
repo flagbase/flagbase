@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"runtime"
-	"strconv"
 
 	"core/internal/pkg/api"
+	"core/internal/pkg/appcontext"
 	"core/internal/pkg/policy"
 	"core/pkg/db"
 
@@ -16,10 +16,13 @@ import (
 
 // APIConfig API service configuration
 type APIConfig struct {
-	Host      string
-	APIPort   int
-	PGConnStr string
-	Verbose   bool
+	Host          string
+	APIPort       int
+	Verbose       bool
+	PGConnStr     string
+	RedisAddr     string
+	RedisPassword string
+	RedisDB       int
 }
 
 // StartAPI start API
@@ -32,7 +35,6 @@ func StartAPI(cfg APIConfig) {
 	logrus.WithFields(logrus.Fields{
 		"host":    cfg.Host,
 		"apiPort": cfg.APIPort,
-		"dbURL":   cfg.PGConnStr,
 		"verbose": cfg.Verbose,
 	}).Info("Starting API")
 
@@ -47,5 +49,22 @@ func StartAPI(cfg APIConfig) {
 		runtime.Goexit()
 	}
 
-	api.NewServer(cfg.Host, strconv.Itoa(cfg.APIPort), cfg.Verbose)
+	actx, err := appcontext.Setup(appcontext.Config{
+		Ctx:           context.Background(),
+		PGConnStr:     cfg.PGConnStr,
+		RedisAddr:     cfg.RedisAddr,
+		RedisPassword: cfg.RedisPassword,
+		RedisDB:       cfg.RedisDB,
+		Verbose:       cfg.Verbose,
+	})
+	if err != nil {
+		logrus.Error("Unable to setup app context. Reason: ", err.Error())
+		runtime.Goexit()
+	}
+
+	api.New(actx, api.Config{
+		Host:    cfg.Host,
+		APIPort: cfg.APIPort,
+		Verbose: cfg.Verbose,
+	})
 }
