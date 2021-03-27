@@ -28,7 +28,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	identity.ApplyRoutes(sctx, root)
 	project.ApplyRoutes(sctx, root)
 	trait.ApplyRoutes(sctx, root)
-	segment.ApplyRoutes(root)
+	segment.ApplyRoutes(sctx, root)
 	segmentrule.ApplyRoutes(root)
 	variation.ApplyRoutes(root)
 	workspace.ApplyRoutes(sctx, root)

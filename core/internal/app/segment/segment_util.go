@@ -3,13 +3,18 @@ package segment
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key, segmentKey rsc.Key) (*Segment, error) {
+func getResource(
+	sctx *srv.Ctx,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+	segmentKey rsc.Key,
+) (*Segment, error) {
 	var o Segment
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     s.id, s.key, s.name, s.description, s.tags
   FROM
