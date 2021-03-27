@@ -3,8 +3,8 @@ package access
 import (
 	"context"
 	cons "core/internal/pkg/constants"
+	srv "core/internal/pkg/server"
 	"core/pkg/crypto"
-	"core/pkg/db"
 	"core/pkg/jwt"
 	res "core/pkg/response"
 	"encoding/json"
@@ -13,7 +13,7 @@ import (
 )
 
 // GenerateToken generate an access token via an access pair
-func GenerateToken(i KeySecretPair) (
+func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	*res.Success,
 	*res.Errors,
 ) {
@@ -21,7 +21,7 @@ func GenerateToken(i KeySecretPair) (
 	var a Access
 
 	var encryptedSecret string
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
 	SELECT
     id,
     key,
@@ -72,7 +72,7 @@ func GenerateToken(i KeySecretPair) (
 }
 
 // Create creates new access resource.
-func Create(i Access) (
+func Create(sctx *srv.Ctx, i Access) (
 	*res.Success,
 	*res.Errors,
 ) {
@@ -89,7 +89,7 @@ func Create(i Access) (
 	}
 
 	// create root user
-	row := db.Pool.QueryRow(ctx, `
+	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     access(
       key,

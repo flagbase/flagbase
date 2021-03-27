@@ -1,12 +1,16 @@
 package service
 
 import (
+	"context"
 	"log"
+	"runtime"
 	"sync"
 
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
+	srv "core/internal/pkg/server"
 
+	"github.com/sirupsen/logrus"
 	"github.com/urfave/cli/v2"
 )
 
@@ -59,9 +63,23 @@ var StartCommand cli.Command = cli.Command{
 	Action: func(ctx *cli.Context) error {
 		var wg sync.WaitGroup
 
+		sctx, err := srv.Setup(srv.Config{
+			Ctx:           context.Background(),
+			PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
+			RedisAddr:     ctx.String(cmdutil.RedisAddr),
+			RedisPassword: ctx.String(cmdutil.RedisPassword),
+			RedisDB:       int(ctx.Uint(cmdutil.RedisDB)),
+			Verbose:       ctx.Bool(cmdutil.VerboseFlag),
+		})
+		if err != nil {
+			logrus.Error("Unable to setup app context. Reason: ", err.Error())
+			runtime.Goexit()
+		}
+		defer srv.Cleanup(sctx)
+
 		startAPI := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartAPI(APIConfig{
+			StartAPI(sctx, APIConfig{
 				Host:          ctx.String(HostFlag),
 				APIPort:       ctx.Int(APIPortFlag),
 				PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
