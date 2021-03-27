@@ -10,12 +10,14 @@ This folder contains everything that makes up [Flagbase UI](https://flagbase.com
 * **electron**: electron related setup files
 * **webpack**: webpack related configuration files
 
-## Installation
+## Quick Start
+
+### Installation
 ```bash
 npm install
 ```
 
-## Usage
+### Usage
 In order to run this project 2 scripts will need to be executed `dev:react` and `dev:electron`, run each one in a different terminal and always run `dev:react` before `dev:electron`, or `dev` to run them in order automatically
 
 ```bash
@@ -31,7 +33,7 @@ or
 npm run dev
 ```
 
-## Storybooks
+### Storybooks
 Run storybook locally using:
 
 ```bash
@@ -41,12 +43,15 @@ npm run storybook
 You can view it here: [http://localhost:6006/](http://localhost:6006/)
 
 
-## Packaging
+### Packaging
 To generate a project package run `package`
 
 ```bash
 npm run package
 ```
+
+## Contributing
+We encourage community contributions via pull requests. Before contributing, please checkout our [guidelines](https://flagbase.com/dev/intro/workflow#contributing) for instructions on how to contribute to flagbase.
 
 ## Resources
 Check out these pages that'll help you get started, if you want to contribute to the UI:
