@@ -3,6 +3,7 @@ package access
 import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
+	"core/pkg/httputils"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -11,7 +12,7 @@ import (
 // ApplyRoutes access route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteAccess)
-	routes.POST("/token", func(gctx *gin.Context) { generateTokenAPIHandler(sctx, gctx) })
+	routes.POST("/token", httputils.Handler(sctx, generateTokenAPIHandler))
 }
 
 func generateTokenAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
