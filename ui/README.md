@@ -1,6 +1,6 @@
-# Flagbase UI
+# ui
 
-This folder contains everything that makes up Flagbase UI. It contains reusable UI components and app-specific code.
+This folder contains everything that makes up [Flagbase UI](https://flagbase.com/dev/ui/getting-started). It contains reusable UI components and app-specific code.
 
 ## Directories
 * **components**: dumb UI components (purely functional)
@@ -10,7 +10,7 @@ This folder contains everything that makes up Flagbase UI. It contains reusable 
 * **electron**: electron related setup files
 * **webpack**: webpack related configuration files
 
-# Installation
+## Installation
 ```bash
 npm install
 ```
@@ -47,3 +47,8 @@ To generate a project package run `package`
 ```bash
 npm run package
 ```
+
+## Resources
+Check out these pages that'll help you get started, if you want to contribute to the UI:
+* [UI Dev Guides](https://flagbase.com/dev/ui/getting-started): Building & running locally / Architecture etc
+* [UI RFCs](https://flagbase.atlassian.net/wiki/spaces/OSS/pages/695566385/UI+-+RFCs): Technical RFCs / Proposals etc

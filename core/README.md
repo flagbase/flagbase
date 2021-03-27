@@ -30,5 +30,5 @@ docker-compose down -v
 
 ## Resources
 Check out these pages that'll help you get started, if you want to contribute to the core:
-* [Core Dev Guides](https://flagbase.com/dev/core/getting-started): Building & running locally  / Architecture / Data models etc
+* [Core Dev Guides](https://flagbase.com/dev/core/getting-started): Building & running locally / Architecture / Data models etc
 * [Core RFCs](https://flagbase.atlassian.net/wiki/spaces/OSS/pages/258539521/Core+-+RFCs): Technical RFCs / Proposals etc
