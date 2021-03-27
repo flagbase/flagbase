@@ -26,11 +26,11 @@ const (
 
 // AccessConfig server config
 type AccessConfig struct {
-	DBURL   string
-	Verbose bool
-	Key     rsc.Key
-	Secret  string
-	Type    string
+	PGConnStr string
+	Verbose   bool
+	Key       rsc.Key
+	Secret    string
+	Type      string
 }
 
 // ManageAccessCommand manage access command entry
@@ -66,38 +66,38 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
-		cnf := AccessConfig{
-			DBURL:   ctx.String(cmdutil.DBURLFlag),
-			Verbose: ctx.Bool(cmdutil.VerboseFlag),
-			Key:     rsc.Key(ctx.String(KeyFlag)),
-			Secret:  ctx.String(SecretFlag),
-			Type:    ctx.String(TypeFlag),
+		cfg := AccessConfig{
+			PGConnStr: ctx.String(cmdutil.PGConnStrFlag),
+			Verbose:   ctx.Bool(cmdutil.VerboseFlag),
+			Key:       rsc.Key(ctx.String(KeyFlag)),
+			Secret:    ctx.String(SecretFlag),
+			Type:      ctx.String(TypeFlag),
 		}
-		CreateAccess(cnf)
+		CreateAccess(cfg)
 		return nil
 	},
 }
 
 // CreateAccess create access
-func CreateAccess(cnf AccessConfig) {
-	if err := db.NewPool(context.Background(), cnf.DBURL, cnf.Verbose); err != nil {
+func CreateAccess(cfg AccessConfig) {
+	if err := db.NewPool(context.Background(), cfg.PGConnStr, cfg.Verbose); err != nil {
 		logrus.Error("Unable to connect to db - ", err.Error())
 		runtime.Goexit()
 	}
 	defer db.Pool.Close()
 
-	if err := policy.NewEnforcer(cnf.DBURL); err != nil {
+	if err := policy.NewEnforcer(cfg.PGConnStr); err != nil {
 		logrus.Error("Unable to start enforcer - ", err.Error())
 		runtime.Goexit()
 	}
 
-	if err := createAccess(cnf.Key, cnf.Secret, cnf.Type); err != nil {
+	if err := createAccess(cfg.Key, cfg.Secret, cfg.Type); err != nil {
 		logrus.Error("Unable to create root access. Perhap the access-key already exists.")
 		runtime.Goexit()
 	} else {
 		logrus.WithFields(logrus.Fields{
-			"key":    cnf.Key,
-			"secret": cnf.Secret,
+			"key":    cfg.Key,
+			"secret": cfg.Secret,
 		}).Info("Created access")
 	}
 }

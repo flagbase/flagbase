@@ -12,12 +12,13 @@ import (
 	"core/internal/app/trait"
 	"core/internal/app/variation"
 	"core/internal/app/workspace"
+	"core/internal/pkg/server"
 
 	"github.com/gin-gonic/gin"
 )
 
 // ApplyRoutes applies route from all packages to root handler
-func ApplyRoutes(r *gin.Engine) {
+func ApplyRoutes(sctx *server.Ctx, r *gin.Engine) {
 	ApplyMetrics(r)
 	root := r.Group("/")
 	access.ApplyRoutes(root)

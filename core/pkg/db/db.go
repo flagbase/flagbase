@@ -3,31 +3,29 @@ package db
 import (
 	"context"
 
-	"github.com/jackc/pgx/v4/log/logrusadapter"
+	"github.com/jackc/pgx/v4/log/zerologadapter"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/sirupsen/logrus"
+	"github.com/rs/zerolog"
 )
 
-var (
-	// Pool postgresql connection pool
-	Pool *pgxpool.Pool
-)
+// Config db connection configuration
+type Config struct {
+	Ctx     context.Context
+	Verbose bool
+	Log     *zerolog.Logger
+	ConnStr string
+}
 
-// NewPool establishes a new pqx connection pool
-func NewPool(ctx context.Context, connStr string, debug bool) error {
-	poolConfig, err := pgxpool.ParseConfig(connStr)
+// New establishes a new pqx connection pool
+func New(cfg Config) (*pgxpool.Pool, error) {
+	poolConfig, err := pgxpool.ParseConfig(cfg.ConnStr)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	if debug {
-		poolConfig.ConnConfig.Logger = logrusadapter.NewLogger(logrus.New())
+	if cfg.Verbose {
+		poolConfig.ConnConfig.Logger = zerologadapter.NewLogger(*cfg.Log)
 	}
 
-	Pool, err = pgxpool.ConnectConfig(ctx, poolConfig)
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return pgxpool.ConnectConfig(cfg.Ctx, poolConfig)
 }
