@@ -28,6 +28,9 @@ curl -P GET http://localhost:5051/healthcheck
 docker-compose down -v
 ```
 
+## Contributing
+We encourage community contributions via pull requests. Before contributing, please checkout our [guidelines](https://flagbase.com/dev/intro/workflow#contributing) for instructions on how to contribute to flagbase.
+
 ## Resources
 Check out these pages that'll help you get started, if you want to contribute to the core:
 * [Core Dev Guides](https://flagbase.com/dev/core/getting-started): Building & running locally / Architecture / Data models etc
