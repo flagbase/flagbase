@@ -119,8 +119,12 @@ func Create(
 
 	// Add policy for requesting user, after resource creation
 	if e.IsEmpty() {
-		err := auth.AddPolicy(atk, o.ID, rsc.Trait, rsc.AccessAdmin)
-		if err != nil {
+		if err := auth.AddPolicy(
+			atk,
+			o.ID,
+			rsc.Trait,
+			rsc.AccessAdmin,
+		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
 	}
