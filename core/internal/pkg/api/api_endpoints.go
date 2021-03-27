@@ -31,5 +31,5 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	segment.ApplyRoutes(root)
 	segmentrule.ApplyRoutes(root)
 	variation.ApplyRoutes(root)
-	workspace.ApplyRoutes(root)
+	workspace.ApplyRoutes(sctx, root)
 }

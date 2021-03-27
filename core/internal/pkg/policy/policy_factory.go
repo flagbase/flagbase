@@ -8,10 +8,10 @@ import (
 
 // Contract consist of policy identifiers
 type Contract struct {
-	accessID     rsc.ID
-	resourceID   rsc.ID
-	resourceType rsc.Type
-	accessType   rsc.AccessType
+	AccessID     rsc.ID
+	ResourceID   rsc.ID
+	ResourceType rsc.Type
+	AccessType   rsc.AccessType
 }
 
 // EnforcePolicyFactory return a function that enforces a casbin policy using a policy contract
@@ -20,10 +20,10 @@ func EnforcePolicyFactory(
 ) func(cfg Contract) (bool, error) {
 	return func(cfg Contract) (bool, error) {
 		return enf.Enforce(
-			cfg.accessID.String(),
-			cfg.resourceID.String(),
-			cfg.resourceType.String(),
-			cfg.accessType.String(),
+			cfg.AccessID.String(),
+			cfg.ResourceID.String(),
+			cfg.ResourceType.String(),
+			cfg.AccessType.String(),
 		)
 	}
 }
@@ -34,10 +34,10 @@ func AddPolicyFactory(
 ) func(cfg Contract) (bool, error) {
 	return func(cfg Contract) (bool, error) {
 		return enf.AddPolicy(
-			cfg.accessID.String(),
-			cfg.resourceID.String(),
-			cfg.resourceType.String(),
-			cfg.accessType.String(),
+			cfg.AccessID.String(),
+			cfg.ResourceID.String(),
+			cfg.ResourceType.String(),
+			cfg.AccessType.String(),
 		)
 	}
 }

@@ -3,13 +3,13 @@ package auth
 import (
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
+	srv "core/internal/pkg/server"
 	"errors"
 	"fmt"
 )
 
-// Authorize checks if an access token is of a desired type
-// TODO remove and replace with V2 methods
-func Authorize(
+// AuthorizeV2 checks if an access token is of a desired type
+func AuthorizeV2(
 	atk rsc.Token,
 	accessType rsc.AccessType,
 ) error {
@@ -30,9 +30,9 @@ func Authorize(
 	return nil
 }
 
-// Enforce enforces a resource policy
-// TODO remove and replace with V2 methods
-func Enforce(
+// EnforceV2 enforces a resource policy
+func EnforceV2(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -44,7 +44,14 @@ func Enforce(
 	}
 
 	// enforce policy
-	ok, err := policy.Enforce(a.ID, resourceID, resourceType, accessType)
+	ok, err := sctx.Policy.EnforcePolicy(
+		policy.Contract{
+			AccessID:     a.ID,
+			ResourceID:   resourceID,
+			ResourceType: resourceType,
+			AccessType:   accessType,
+		},
+	)
 	if err != nil {
 		return err
 	}
@@ -55,9 +62,9 @@ func Enforce(
 	return nil
 }
 
-// AddPolicy add casbin policy for a given resource
-// TODO remove and replace with V2 methods
-func AddPolicy(
+// AddPolicyV2 add casbin policy for a given resource
+func AddPolicyV2(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -68,7 +75,14 @@ func AddPolicy(
 		return err
 	}
 
-	ok, err := policy.AddPolicy(a.ID, resourceID, resourceType, accessType)
+	ok, err := sctx.Policy.AddPolicy(
+		policy.Contract{
+			AccessID:     a.ID,
+			ResourceID:   resourceID,
+			ResourceType: resourceType,
+			AccessType:   accessType,
+		},
+	)
 	if err != nil {
 		return err
 	}
