@@ -1,10 +1,12 @@
-# Flagbase Core
+# core
 
-The core is the primary microservice feature flag clients interact with when making requests.
+[Flagbase Core](https://flagbase.com/oss#core) is the main service responsible for streaming feature flags to our SDKs via SSE (Server-Sent Events). It provides a REST API, used to manage key resources (i.e. workspaces, projects, environments, flags etc).
 
-## Getting started
+The core has multiple modes of operation (i.e. `all (default)`, `api`, `streamer`). The service can be run on multiple nodes (i.e. it is horizontally scalable).
 
-In order to run the service locally, you will need to have [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/) installed on your machine.
+## Quick Start
+
+The quickest way to get the service running locally will require you to have [docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/) installed on your machine. If you want help compiling the binary and running locally, please use the [Core Dev Guides](https://flagbase.com/dev/core/getting-started).
 
 ### Starting up services
 ```sh
@@ -26,15 +28,7 @@ curl -P GET http://localhost:5051/healthcheck
 docker-compose down -v
 ```
 
-
-## Metrics
-
-To view metrics about the whole my app container use:
-```
-http://localhost:8080/docker/flagbase-core
-```
-
-To view metrics using prometheus' query use:
-```
-http://localhost:9090/graph
-```
+## Resources
+Check out these pages that'll help you get started, if you want to contribute to the core:
+* [Core Dev Guides](https://flagbase.com/dev/core/getting-started): Building & running locally  / Architecture / Data models etc
+* [Core RFCs](https://flagbase.atlassian.net/wiki/spaces/OSS/pages/258539521/Core+-+RFCs): Technical RFCs / Proposals etc
