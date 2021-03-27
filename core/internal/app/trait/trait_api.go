@@ -4,6 +4,7 @@ import (
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
+	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -12,7 +13,7 @@ import (
 )
 
 // ApplyRoutes trait route handlers
-func ApplyRoutes(r *gin.RouterGroup) {
+func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteTrait)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -24,14 +25,14 @@ func ApplyRoutes(r *gin.RouterGroup) {
 		rsc.TraitKey,
 	)
 
-	routes.GET(rootPath, listAPIHandler)
-	routes.POST(rootPath, createAPIHandler)
-	routes.GET(resourcePath, getAPIHandler)
-	routes.PATCH(resourcePath, updateAPIHandler)
-	routes.DELETE(resourcePath, deleteAPIHandler)
+	routes.GET(rootPath, httputil.Handler(sctx, listAPIHandler))
+	routes.POST(rootPath, httputil.Handler(sctx, createAPIHandler))
+	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
+	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
+	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
 }
 
-func listAPIHandler(ctx *gin.Context) {
+func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -40,6 +41,7 @@ func listAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := List(
+		sctx,
 		atk,
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
@@ -58,7 +60,7 @@ func listAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(ctx *gin.Context) {
+func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -72,6 +74,7 @@ func createAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := Create(
+		sctx,
 		atk,
 		i,
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -91,7 +94,7 @@ func createAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(ctx *gin.Context) {
+func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -100,6 +103,7 @@ func getAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := Get(
+		sctx,
 		atk,
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
@@ -119,7 +123,7 @@ func getAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(ctx *gin.Context) {
+func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -133,6 +137,7 @@ func updateAPIHandler(ctx *gin.Context) {
 	}
 
 	data, _err := Update(
+		sctx,
 		atk,
 		i,
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -153,7 +158,7 @@ func updateAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(ctx *gin.Context) {
+func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -162,6 +167,7 @@ func deleteAPIHandler(ctx *gin.Context) {
 	}
 
 	if err := Delete(
+		sctx,
 		atk,
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),

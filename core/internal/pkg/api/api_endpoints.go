@@ -27,7 +27,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	healthcheck.ApplyRoutes(sctx, root)
 	identity.ApplyRoutes(sctx, root)
 	project.ApplyRoutes(sctx, root)
-	trait.ApplyRoutes(root)
+	trait.ApplyRoutes(sctx, root)
 	segment.ApplyRoutes(root)
 	segmentrule.ApplyRoutes(root)
 	variation.ApplyRoutes(root)
