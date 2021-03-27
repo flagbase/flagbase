@@ -1,7 +1,7 @@
 package api
 
 import (
-	"core/internal/pkg/appcontext"
+	"core/internal/pkg/server"
 	"strconv"
 
 	"github.com/gin-contrib/logger"
@@ -15,7 +15,7 @@ type Config struct {
 }
 
 // New initialize a new gin-based HTTP server
-func New(actx *appcontext.Ctx, cfg Config) {
+func New(sctx *server.Ctx, cfg Config) {
 	if !cfg.Verbose {
 		gin.SetMode(gin.ReleaseMode)
 	}
@@ -24,14 +24,14 @@ func New(actx *appcontext.Ctx, cfg Config) {
 
 	if cfg.Verbose {
 		r.Use(logger.SetLogger(logger.Config{
-			Logger: actx.Log.Logger,
+			Logger: sctx.Log.Logger,
 		}))
 	}
 
-	ApplyRoutes(actx, r)
+	ApplyRoutes(sctx, r)
 
 	err := r.Run(cfg.Host + ":" + strconv.Itoa(cfg.APIPort))
 	if err != nil {
-		actx.Log.Error.Str("reason", err.Error()).Msg("Unable to start HTTP server")
+		sctx.Log.Error.Str("reason", err.Error()).Msg("Unable to start HTTP server")
 	}
 }

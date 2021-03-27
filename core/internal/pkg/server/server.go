@@ -1,4 +1,4 @@
-package appcontext
+package server
 
 import (
 	"core/internal/pkg/policy"
