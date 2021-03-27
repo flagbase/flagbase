@@ -22,7 +22,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	ApplyMetrics(r)
 	root := r.Group("/")
 	access.ApplyRoutes(sctx, root)
-	environment.ApplyRoutes(root)
+	environment.ApplyRoutes(sctx, root)
 	flag.ApplyRoutes(root)
 	healthcheck.ApplyRoutes(root)
 	identity.ApplyRoutes(root)
