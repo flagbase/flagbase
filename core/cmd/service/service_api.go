@@ -8,7 +8,7 @@ import (
 
 	"core/internal/pkg/api"
 	"core/internal/pkg/policy"
-	"core/internal/pkg/server"
+	srv "core/internal/pkg/server"
 	"core/pkg/db"
 
 	"github.com/sirupsen/logrus"
@@ -49,7 +49,7 @@ func StartAPI(cfg APIConfig) {
 		runtime.Goexit()
 	}
 
-	sctx, err := server.Setup(server.Config{
+	sctx, err := srv.Setup(srv.Config{
 		Ctx:           context.Background(),
 		PGConnStr:     cfg.PGConnStr,
 		RedisAddr:     cfg.RedisAddr,

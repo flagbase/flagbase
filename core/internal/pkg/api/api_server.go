@@ -1,7 +1,7 @@
 package api
 
 import (
-	"core/internal/pkg/server"
+	srv "core/internal/pkg/server"
 	"strconv"
 
 	"github.com/gin-contrib/logger"
@@ -15,7 +15,7 @@ type Config struct {
 }
 
 // New initialize a new gin-based HTTP server
-func New(sctx *server.Ctx, cfg Config) {
+func New(sctx *srv.Ctx, cfg Config) {
 	if !cfg.Verbose {
 		gin.SetMode(gin.ReleaseMode)
 	}
