@@ -61,6 +61,7 @@ func StartAPI(cfg APIConfig) {
 		logrus.Error("Unable to setup app context. Reason: ", err.Error())
 		runtime.Goexit()
 	}
+	defer srv.Cleanup(sctx)
 
 	api.New(sctx, api.Config{
 		Host:    cfg.Host,
