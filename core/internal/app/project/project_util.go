@@ -3,13 +3,17 @@ package project
 import (
 	"context"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/db"
+	srv "core/internal/pkg/server"
 	"fmt"
 )
 
-func getResource(workspaceKey rsc.Key, projectKey rsc.Key) (*Project, error) {
+func getResource(
+	sctx *srv.Ctx,
+	workspaceKey rsc.Key,
+	projectKey rsc.Key,
+) (*Project, error) {
 	var o Project
-	row := db.Pool.QueryRow(context.Background(), `
+	row := sctx.DB.QueryRow(context.Background(), `
   SELECT
     p.id, p.key, p.name, p.description, p.tags
   FROM
