@@ -6,7 +6,7 @@ This directory contains all [Flagbase SDKs](https://flagbase.com/oss#sdk). For S
 * more to come...
 
 ## Contributing
-We encourage community contributions via pull requests. Before contributing, please checkout our [guidelines](https://flagbase.com/dev/intro/workflow#contributing) for instructions on how to contribute to flagbase.
+We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](https://flagbase.com/dev/intro/workflow#contributing).
 
 ## Resources
 Check out these pages that'll help you get started, if you want to contribute to the SDKs:
