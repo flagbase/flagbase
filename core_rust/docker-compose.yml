@@ -1,0 +1,77 @@
+version: "3"
+
+services:
+  core_rust:
+    container_name: flagbase-core_rust
+    build: .
+    command: cargo watch -x 'run --bin flagbase_core'
+    ports:
+      - 5051:5051
+    volumes:
+      - ./:/usr/flagbase
+    depends_on:
+      - db_rust
+      - redis_rust
+
+    links:
+      - db_rust
+
+  redis_rust:
+    container_name: flagbase-cache_rust
+    image: redis:latest
+    ports:
+      - 6379:6379
+
+  db_rust:
+    container_name: flagbase-db_rust
+    image: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: flagbase
+      POSTGRES_USER: flagbase
+      POSTGRES_PASSWORD: BjrvWmjQ3dykPu
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+        #  migrations:
+        #    container_name: flagbase-migrations
+        #    image: migrate/migrate
+        #    entrypoint: ["/bin/sh"]
+        #    command: ["/scripts/wait-for.sh", "db:5432", "--", "./migrate", "-path", "/migrations", "-database",  "postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable", "up"]
+        #    volumes:
+        #      - ./scripts/wait-for.sh:/scripts/wait-for.sh
+        #      - ./migrations:/migrations
+        #    depends_on:
+        #      - db
+        #    links:
+        #      - db
+        #
+        #  prometheus:
+        #    container_name: flagbase-metrics
+        #    image: prom/prometheus:latest
+        #    ports:
+        #    - 9090:9090
+        #    command:
+        #    - --config.file=/etc/prometheus/prometheus.yml
+        #    volumes:
+        #    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+        #    depends_on:
+        #    - cadvisor
+        #
+        #  cadvisor:
+        #    container_name: flagbase-cadvisor
+        #    image: gcr.io/google-containers/cadvisor:latest
+        #    ports:
+        #      - 8080:8080
+        #    volumes:
+        #      - /:/rootfs:ro
+        #      - /var/run:/var/run:rw
+        #      - /sys:/sys:ro
+        #      - /var/lib/docker/:/var/lib/docker:ro
+        #    depends_on:
+        #      - redis
+
+volumes:
+  pgdata:
