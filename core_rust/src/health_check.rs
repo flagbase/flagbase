@@ -1,2 +1,1 @@
-fn register_routes() {
-}
+fn register_routes() {}

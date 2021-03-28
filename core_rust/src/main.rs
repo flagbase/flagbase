@@ -1,8 +1,8 @@
-use actix_web::{get, post, web, App, middleware::Logger, HttpResponse, HttpServer, Responder};
+use actix_web::{get, middleware::Logger, post, web, App, HttpResponse, HttpServer, Responder};
 use log::LevelFilter;
 
-use env_logger::Env;
 use env_logger::Builder;
+use env_logger::Env;
 
 mod health_check;
 
@@ -15,12 +15,8 @@ async fn hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
 
-    HttpServer::new(|| {
-        App::new()
-            .wrap(Logger::default())
-            .service(hello)
-    })
-    .bind("0.0.0.0:5051")?
-    .run()
-    .await
+    HttpServer::new(|| App::new().wrap(Logger::default()).service(hello))
+        .bind("0.0.0.0:5051")?
+        .run()
+        .await
 }

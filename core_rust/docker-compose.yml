@@ -8,7 +8,7 @@ services:
     ports:
       - 5051:5051
     volumes:
-      - ./:/usr/flagbase
+      - ./src:/usr/flagbase/src
     depends_on:
       - db_rust
       - redis_rust
