@@ -1,0 +1,17 @@
+[package]
+name = "flagbase_core"
+version = "0.1.0"
+authors = ["Anuj"]
+edition = "2018"
+license = "MPL-2.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+actix-web = "3"
+actix-casbin-auth = { version = "0.4.4", default-features = false, features = ["runtime-tokio"] }
+casbin = { version = "2.0.6", default-features = false, features = ["runtime-tokio", "logging", "incremental"] }
+clap = "3.0.0-beta.2"
+prometheus = "0.12.0"
+redis = { version = "0.20.0", features = ["tokio-native-tls-comp"] }
+sqlx = { version = "0.5", features = [ "runtime-tokio-native-tls", "postgres" ] }
