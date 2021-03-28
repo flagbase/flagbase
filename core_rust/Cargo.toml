@@ -9,7 +9,6 @@ license = "MPL-2.0"
 
 [dependencies]
 actix-web = "3"
-actix-casbin-auth = { version = "0.4.4", default-features = false, features = ["runtime-tokio"] }
 casbin = { version = "2.0.6", default-features = false, features = ["runtime-tokio", "logging", "incremental"] }
 clap = "3.0.0-beta.2"
 env_logger = "0.8.3"
