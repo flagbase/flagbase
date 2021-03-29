@@ -1,4 +1,4 @@
-# Javascript
+# js-client-sdk
 
 This client-side SDK is intended to be used in browser environments. To get started using this SDK, please refer to the [JS SDK User Guides](https://flagbase.com/docs/sdk/javascript).
 
