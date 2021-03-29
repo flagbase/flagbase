@@ -1,5 +1,5 @@
 ---
-id: js
+id: javascript
 title: Javascript SDK
 sidebar_label: Javascript
 ---

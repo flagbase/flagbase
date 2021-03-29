@@ -35,7 +35,7 @@ Join us on [Github Dicussions](https://github.com/flagbase/flagbase/discussions)
 * [Announcements](https://github.com/flagbase/flagbase/discussions/categories/announcements):  General PSAs & feature updates
 
 ## Contributing
-Refer to [dev/contributing](./www/dev/contributing/1_overview.md).
+We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](https://flagbase.com/dev/intro/workflow#contributing).
 
 ## License
 Mozilla Public License Version 2.0, see [LICENSE](./LICENSE)

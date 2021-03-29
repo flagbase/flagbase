@@ -4,4 +4,7 @@ title: Setting Up
 sidebar_label: Setting Up
 ---
 
-TODO
+## via Docker
+
+
+## via Make
