@@ -20,7 +20,7 @@ type PollingConfig struct {
 
 // StartPolling start polling
 func StartPolling(sctx *srv.Ctx, cfg PollingConfig) {
-	sctx.Log.Logger.Info().Str(
+	sctx.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,

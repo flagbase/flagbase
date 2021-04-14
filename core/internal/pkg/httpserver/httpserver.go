@@ -37,6 +37,6 @@ func New(
 
 	err := r.Run(cfg.Host + ":" + strconv.Itoa(cfg.HTTPPort))
 	if err != nil {
-		sctx.Log.Error.Str("reason", err.Error()).Msg("Unable to start HTTP server")
+		sctx.Log.Error().Str("reason", err.Error()).Msg("Unable to start HTTP server")
 	}
 }

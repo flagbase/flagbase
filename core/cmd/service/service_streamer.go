@@ -16,7 +16,7 @@ type StreamerConfig struct {
 
 // StartStreamer start streamer
 func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
-	sctx.Log.Logger.Info().Str(
+	sctx.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,
@@ -24,5 +24,5 @@ func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
 		StreamerPortFlag, cfg.StreamerPort,
 	).Msg("Starting Streamer Service")
 
-	sctx.Log.Warn.Msg("Streamer has not been implemented yet.")
+	sctx.Log.Warn().Msg("Streamer has not been implemented yet.")
 }

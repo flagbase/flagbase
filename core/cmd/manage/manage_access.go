@@ -84,7 +84,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 			ExpiresAt: cons.MaxUnixTime,
 		}); err.IsEmpty() {
 			// TODO: add error reasons
-			sctx.Log.Error.Msg("Unable to create access")
+			sctx.Log.Error().Msg("Unable to create access")
 		}
 
 		return nil

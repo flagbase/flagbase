@@ -20,7 +20,7 @@ type APIConfig struct {
 
 // StartAPI start API
 func StartAPI(sctx *srv.Ctx, cfg APIConfig) {
-	sctx.Log.Logger.Info().Str(
+	sctx.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,
