@@ -12,6 +12,7 @@ func getResource(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 	segmentRuleKey rsc.Key,
 ) (*SegmentRule, error) {
 	var o SegmentRule
@@ -27,19 +28,23 @@ func getResource(
       workspace w,
       project p,
       segment s,
+      environment e,
       segment_rule sr
     WHERE
       w.key = $1 AND
       p.key = $2 AND
       s.key = $3 AND
-      sr.key = $4 AND
+      e.key = $4 AND
+      sr.key = $5 AND
       p.workspace_id = w.id AND
       s.project_id = p.id AND
+      sr.environment_id = e.id AND
       sr.segment_id = s.id
     `,
 		workspaceKey,
 		projectKey,
 		segmentKey,
+		environmentKey,
 		segmentRuleKey,
 	)
 	if err := row.Scan(

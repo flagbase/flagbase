@@ -19,6 +19,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,
 		rsc.SegmentKey,
+		rsc.EnvironmentKey,
 	)
 	resourcePath := httputil.AppendPath(
 		rootPath,
@@ -46,6 +47,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
 		httputil.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -80,6 +82,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
 		httputil.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -108,6 +111,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
 		httputil.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 		httputil.GetParam(ctx, rsc.RuleKey),
 	)
 	if !_err.IsEmpty() {
@@ -143,6 +147,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
 		httputil.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 		httputil.GetParam(ctx, rsc.RuleKey),
 	)
 	if !_err.IsEmpty() {
@@ -172,6 +177,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		httputil.GetParam(ctx, rsc.WorkspaceKey),
 		httputil.GetParam(ctx, rsc.ProjectKey),
 		httputil.GetParam(ctx, rsc.SegmentKey),
+		httputil.GetParam(ctx, rsc.EnvironmentKey),
 		httputil.GetParam(ctx, rsc.RuleKey),
 	); !err.IsEmpty() {
 		e.Extend(err)

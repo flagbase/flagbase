@@ -18,6 +18,7 @@ func List(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var o []SegmentRule
 	var e res.Errors
@@ -42,16 +43,19 @@ func List(
   FROM
     workspace w,
     project p,
+    environment e,
     segment s,
     segment_rule sr
   WHERE
     w.key = $1 AND
     p.key = $2 AND
     s.key = $3 AND
+    e.key = $4 AND
     p.workspace_id = w.id AND
     s.project_id = p.id AND
+    s.environment_id = e.id AND
     sr.segment_id = s.id
-  `, workspaceKey, projectKey, segmentKey)
+  `, workspaceKey, projectKey, segmentKey, environmentKey)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -83,6 +87,7 @@ func Create(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var o SegmentRule
 	var e res.Errors
@@ -105,7 +110,8 @@ func Create(
       trait_value,
       operator,
       negate,
-      project_id
+      project_id,
+      environment_id,
     )
   VALUES
     ($1, $2, $3, $4, $5, (
@@ -119,6 +125,17 @@ func Create(
           s.key = $8 AND
           p.workspace_id = w.id AND
           s.project_id = p.id
+      ), (
+        SELECT
+          e.id
+        FROM
+          workspace w, project p, environment e
+        WHERE
+          w.key = $6 AND
+          p.key = $7 AND
+          e.key = $9 AND
+          p.workspace_id = w.id AND
+          e.project_id = p.id
       )
     )
   RETURNING
@@ -136,6 +153,7 @@ func Create(
 		workspaceKey,
 		projectKey,
 		segmentKey,
+		environmentKey,
 	)
 	if err := row.Scan(
 		&o.ID,
@@ -172,6 +190,7 @@ func Get(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 	segmentRuleKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
@@ -181,6 +200,7 @@ func Get(
 		workspaceKey,
 		projectKey,
 		segmentKey,
+		environmentKey,
 		segmentRuleKey,
 	)
 	if err != nil {
@@ -210,6 +230,7 @@ func Update(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 	segmentRuleKey rsc.Key,
 ) (*res.Success, *res.Errors) {
 	var o SegmentRule
@@ -224,6 +245,7 @@ func Update(
 		workspaceKey,
 		projectKey,
 		segmentKey,
+		environmentKey,
 		segmentRuleKey,
 	)
 	if err != nil {
@@ -282,6 +304,7 @@ func Delete(
 	workspaceKey rsc.Key,
 	projectKey rsc.Key,
 	segmentKey rsc.Key,
+	environmentKey rsc.Key,
 	segmentRuleKey rsc.Key,
 ) *res.Errors {
 	var e res.Errors
@@ -295,6 +318,7 @@ func Delete(
 		workspaceKey,
 		projectKey,
 		segmentKey,
+		environmentKey,
 		segmentRuleKey,
 	)
 	if err != nil {
