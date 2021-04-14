@@ -12,7 +12,7 @@ type Config struct {
 	Verbose bool
 }
 
-// New initialize a new gin-based HTTP server
+// New initialize a new HTTP server for the API
 func New(sctx *srv.Ctx, cfg Config) {
 	httpserver.New(sctx, httpserver.Config{
 		Host:     cfg.Host,
