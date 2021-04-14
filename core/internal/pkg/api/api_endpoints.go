@@ -12,6 +12,7 @@ import (
 	"core/internal/app/trait"
 	"core/internal/app/variation"
 	"core/internal/app/workspace"
+	"core/internal/pkg/httpmetrics"
 	srv "core/internal/pkg/server"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +20,7 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
-	ApplyMetrics(r)
+	httpmetrics.ApplyMetrics(r, "api")
 	root := r.Group("/")
 	access.ApplyRoutes(sctx, root)
 	environment.ApplyRoutes(sctx, root)

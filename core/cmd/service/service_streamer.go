@@ -1,6 +1,8 @@
 package service
 
 import (
+	"core/internal/pkg/cmdutil"
+
 	srv "core/internal/pkg/server"
 )
 
@@ -14,13 +16,13 @@ type StreamerConfig struct {
 
 // StartStreamer start streamer
 func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
-	sctx.Log.Info.Str(
-		"host", cfg.Host,
+	sctx.Log.Info().Str(
+		HostFlag, cfg.Host,
 	).Bool(
-		"verbose", cfg.Verbose,
+		cmdutil.VerboseFlag, cfg.Verbose,
 	).Int(
-		"streamerPort", cfg.StreamerPort,
-	).Msg("Starting API")
+		StreamerPortFlag, cfg.StreamerPort,
+	).Msg("Starting Streamer Service")
 
-	sctx.Log.Warn.Msg("Streamer has not been implemented yet.")
+	sctx.Log.Warn().Msg("Streamer has not been implemented yet.")
 }

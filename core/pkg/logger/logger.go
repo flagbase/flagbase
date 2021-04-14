@@ -10,12 +10,12 @@ import (
 // Logger wrapper around zerolog
 type Logger struct {
 	Logger *zerolog.Logger
-	Panic  *zerolog.Event
-	Fatal  *zerolog.Event
-	Error  *zerolog.Event
-	Warn   *zerolog.Event
-	Info   *zerolog.Event
-	Debug  *zerolog.Event
+	Panic  func() *zerolog.Event
+	Fatal  func() *zerolog.Event
+	Error  func() *zerolog.Event
+	Warn   func() *zerolog.Event
+	Info   func() *zerolog.Event
+	Debug  func() *zerolog.Event
 }
 
 // Config logger configuration
@@ -36,11 +36,11 @@ func New(cfg Config) *Logger {
 
 	return &Logger{
 		Logger: &logger,
-		Panic:  logger.Panic(),
-		Fatal:  logger.Fatal(),
-		Error:  logger.Error(),
-		Warn:   logger.Warn(),
-		Info:   logger.Info(),
-		Debug:  logger.Debug(),
+		Panic:  logger.Panic,
+		Fatal:  logger.Fatal,
+		Error:  logger.Error,
+		Warn:   logger.Warn,
+		Info:   logger.Info,
+		Debug:  logger.Debug,
 	}
 }

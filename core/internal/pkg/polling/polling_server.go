@@ -1,4 +1,4 @@
-package api
+package polling
 
 import (
 	"core/internal/pkg/httpserver"
@@ -7,16 +7,16 @@ import (
 
 // Config API server configuration
 type Config struct {
-	Host    string
-	APIPort int
-	Verbose bool
+	Host        string
+	PollingPort int
+	Verbose     bool
 }
 
-// New initialize a new HTTP server for the API
+// New initialize a new HTTP server for polling
 func New(sctx *srv.Ctx, cfg Config) {
 	httpserver.New(sctx, httpserver.Config{
 		Host:     cfg.Host,
-		HTTPPort: cfg.APIPort,
+		HTTPPort: cfg.PollingPort,
 		Verbose:  cfg.Verbose,
 	}, ApplyRoutes)
 }
