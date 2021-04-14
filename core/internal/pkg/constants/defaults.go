@@ -19,6 +19,8 @@ var (
 	DefaultAPIPort int = 5051
 	// DefaultStreamerPort default streamer server port
 	DefaultStreamerPort int = 7051
+	// DefaultPollingPort default polling server port
+	DefaultPollingPort int = 9051
 	// DefaultVerbose should log verbosely by default
 	DefaultVerbose bool = false
 	// DefaultRootKey default root access key

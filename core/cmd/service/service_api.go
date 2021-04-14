@@ -2,6 +2,8 @@ package service
 
 import (
 	"core/internal/pkg/api"
+	"core/internal/pkg/cmdutil"
+
 	srv "core/internal/pkg/server"
 )
 
@@ -18,13 +20,13 @@ type APIConfig struct {
 
 // StartAPI start API
 func StartAPI(sctx *srv.Ctx, cfg APIConfig) {
-	sctx.Log.Info.Str(
-		"host", cfg.Host,
+	sctx.Log.Logger.Info().Str(
+		HostFlag, cfg.Host,
 	).Bool(
-		"verbose", cfg.Verbose,
+		cmdutil.VerboseFlag, cfg.Verbose,
 	).Int(
-		"apiPort", cfg.APIPort,
-	).Msg("Starting API")
+		APIPortFlag, cfg.APIPort,
+	).Msg("Starting API Service")
 
 	api.New(sctx, api.Config{
 		Host:    cfg.Host,

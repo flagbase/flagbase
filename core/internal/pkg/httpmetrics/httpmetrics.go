@@ -6,7 +6,7 @@ import (
 )
 
 // ApplyMetrics apply metrics to routes
-func ApplyMetrics(r *gin.Engine) {
-	p := ginprometheus.NewPrometheus("gin")
+func ApplyMetrics(r *gin.Engine, name string) {
+	p := ginprometheus.NewPrometheus(name)
 	p.Use(r)
 }

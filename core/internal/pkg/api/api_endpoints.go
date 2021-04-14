@@ -20,7 +20,7 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
-	httpmetrics.ApplyMetrics(r)
+	httpmetrics.ApplyMetrics(r, "api")
 	root := r.Group("/")
 	access.ApplyRoutes(sctx, root)
 	environment.ApplyRoutes(sctx, root)

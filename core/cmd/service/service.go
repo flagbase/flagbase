@@ -21,6 +21,8 @@ const (
 	APIPortFlag string = "api-port"
 	// StreamerPortFlag Port streamer will operate wihtin
 	StreamerPortFlag string = "streamer-port"
+	// PollingPortFlag Port streamer will operate wihtin
+	PollingPortFlag string = "polling-port"
 )
 
 // Command service command entry
@@ -37,11 +39,11 @@ var Command cli.Command = cli.Command{
 var StartCommand cli.Command = cli.Command{
 	Name:        "start",
 	Usage:       "Start service workers",
-	Description: "Manage flagbase service workers (API, Streamer)",
+	Description: "Manage flagbase service workers (API, Streamer, Polling)",
 	Flags: append([]cli.Flag{
 		&cli.StringFlag{
 			Name:  ModeFlag,
-			Usage: "Type of worker to run (i.e. all (default), api, streamer)",
+			Usage: "Type of worker to run (i.e. all (default), api, streamer, polling)",
 			Value: "all",
 		},
 		&cli.StringFlag{
@@ -56,6 +58,10 @@ var StartCommand cli.Command = cli.Command{
 		&cli.IntFlag{
 			Name:  StreamerPortFlag,
 			Value: cons.DefaultStreamerPort,
+		},
+		&cli.IntFlag{
+			Name:  PollingPortFlag,
+			Value: cons.DefaultPollingPort,
 		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
@@ -97,12 +103,24 @@ var StartCommand cli.Command = cli.Command{
 			})
 		}
 
+		startPolling := func(wg *sync.WaitGroup) {
+			defer wg.Done()
+			StartPolling(sctx, PollingConfig{
+				Host:        ctx.String(HostFlag),
+				PollingPort: ctx.Int(PollingPortFlag),
+				PGConnStr:   ctx.String(cmdutil.PGConnStrFlag),
+				Verbose:     ctx.Bool(cmdutil.VerboseFlag),
+			})
+		}
+
 		switch mode := ctx.String("mode"); mode {
 		case "all":
 			wg.Add(1)
 			go startAPI(&wg)
 			wg.Add(1)
 			go startSteamer(&wg)
+			wg.Add(1)
+			go startPolling(&wg)
 			wg.Wait()
 		case "api":
 			wg.Add(1)
@@ -110,6 +128,9 @@ var StartCommand cli.Command = cli.Command{
 		case "streamer":
 			wg.Add(1)
 			startSteamer(&wg)
+		case "polling":
+			wg.Add(1)
+			startPolling(&wg)
 		default:
 			log.Fatal("Unknown mode '", mode, "'. Please choose either `api` OR `streamer`")
 		}

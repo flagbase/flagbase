@@ -10,7 +10,7 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
-	httpmetrics.ApplyMetrics(r)
+	httpmetrics.ApplyMetrics(r, "polling")
 	routes := r.Group("")
 	routes.GET("/flags/raw", httputil.Handler(sctx, getRawFlags))
 	routes.POST("/flags/evaluated", httputil.Handler(sctx, evaluateFlags))
