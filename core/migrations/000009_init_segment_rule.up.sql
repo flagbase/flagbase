@@ -18,8 +18,9 @@ CREATE TABLE segment_rule (
   negate BOOLEAN DEFAULT FALSE,
   -- references
   segment_id resource_id REFERENCES segment (id),
+  environment_id resource_id REFERENCES environment (id),
   -- contraints
-  CONSTRAINT segment_rule_key UNIQUE(key, segment_id)
+  CONSTRAINT segment_rule_key UNIQUE(key, segment_id, environment_id)
 );
 
 END;

@@ -1962,7 +1962,7 @@ paths:
       tags:
         - segments
       description: Delete an existing user segment.
-  '/segment-rules/{workspaceKey}/{projectKey}/{segmentKey}':
+  '/segment-rules/{workspaceKey}/{projectKey}/{segmentKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1982,6 +1982,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: List segment rules
       tags:
@@ -2026,7 +2032,7 @@ paths:
             schema:
               $ref: '#/components/schemas/SegmentRule'
         description: Segment Rules
-  '/segment-rules/{workspaceKey}/{projectKey}/{segmentKey}/{ruleKey}':
+  '/segment-rules/{workspaceKey}/{projectKey}/{segmentKey}/{envKey}/{ruleKey}':
     parameters:
       - name: projectKey
         in: path
@@ -2052,6 +2058,11 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
     get:
       summary: Get segment rule
       tags:
