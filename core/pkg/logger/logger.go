@@ -36,11 +36,11 @@ func New(cfg Config) *Logger {
 
 	return &Logger{
 		Logger: &logger,
-		Panic:  func() *zerolog.Event { return logger.Panic() },
-		Fatal:  func() *zerolog.Event { return logger.Fatal() },
-		Error:  func() *zerolog.Event { return logger.Error() },
-		Warn:   func() *zerolog.Event { return logger.Warn() },
-		Info:   func() *zerolog.Event { return logger.Info() },
-		Debug:  func() *zerolog.Event { return logger.Debug() },
+		Panic:  logger.Panic,
+		Fatal:  logger.Fatal,
+		Error:  logger.Error,
+		Warn:   logger.Warn,
+		Info:   logger.Info,
+		Debug:  logger.Debug,
 	}
 }
