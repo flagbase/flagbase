@@ -5,11 +5,12 @@ BEGIN;
 -- --------------------------
 -- matches (TRUE, FALSE)
 --  TRUE  ->
---    if type (identity || segment) matches user context -> variation
+--    if type (trait || identity || segment) matches user context -> variation
 -- FALSE  -> ignore rule
 --
 
 CREATE TYPE targeting_rule_type AS ENUM (
+  'trait',
   'identity',
   'segment'
 );
@@ -19,7 +20,14 @@ CREATE TABLE targeting_rule (
   -- attributes
   key resource_key,
   type targeting_rule_type NOT NULL,
-  matches BOOLEAN DEFAULT TRUE NOT NULL,
+  trait_key VARCHAR(40),
+  trait_value VARCHAR(40),
+  operator rule_operand,
+  negate BOOLEAN DEFAULT TRUE NOT NULL,
+  -- meta-data
+  name resource_name,
+  description resource_description,
+  tags resource_tags,
   -- references
   identity_id UUID REFERENCES identity (id),
   segment_id UUID REFERENCES segment (id),

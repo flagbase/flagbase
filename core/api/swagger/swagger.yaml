@@ -20,14 +20,14 @@ info:
   version: 1.0.0
   contact:
     name: Flagbase
-    url: 'https://flagbase.com/oss'
+    url: 'https://flagbase.com'
     email: info@flagbase.com
   license:
     name: MPL 2.0
     url: 'https://flagbase.com/legal/license'
   x-logo:
     altText: Flagbase Core API
-  termsOfService: 'https://flagbase.com/legal/terms'
+  termsOfService: 'https://flagbase.com/legal/privacy'
 tags:
   - name: auth
     x-displayName: Access Token
@@ -2211,7 +2211,7 @@ components:
     Identity:
       title: Identity
       type: object
-      description: A identity refers to a user who has evaluated a flag.
+      description: An identity (aka user) refers to a flag observer/consumer who requests to evaluate a flag. An identity consists of a set of traits. These traits are used as the context which is used during evaluation.
       properties:
         key:
           type: string
@@ -2221,7 +2221,7 @@ components:
     Access:
       title: Access
       type: object
-      description: 'Access is used to represent the relationship between the API user and the service. Access objects are attached to the resources, which are used to authorise users.'
+      description: 'Access is a key/secret pair used to restrict operations on a particular resource via the policy enforcer. You can create and attach access to workspace, project and environment resources.'
       properties:
         id:
           type: string
@@ -2335,6 +2335,7 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
+      description: "A project can have multiple environments (e.g. staging, production) which correspond to different targeting states. This means if you modify a flag's targeting or a segment's rules in one environment, your changes will be scoped to that particular environment. This allows you to have different targeting rules for flags and segments in each environment."
     EnvironmentInput:
       title: EnvironmentInput
       type: object
@@ -2367,7 +2368,7 @@ components:
     Flag:
       title: Flag
       type: object
-      description: "A flag (aka feature flag) refers to a software toggle used to define a particular module's state. Flags can belong to multiple environments."
+      description: 'A flag (aka feature flag, toggle, switch etc) represents a particular point in code which when evaluated determines the state of a feature. Flags hold different variations (i.e. on/off, true/false, A/B/C), which are only revealed upon evaluation.'
       properties:
         key:
           $ref: '#/components/schemas/ResourceKey'
@@ -2427,7 +2428,7 @@ components:
     Segment:
       title: Segment
       type: object
-      description: A segment is a collection of identities with similar traits.
+      description: A segment is used to group users based on their characteristics (i.e. traits). Segments are made up of one or more rules that is used to filter out a portion of your users. Segments provide a method to capture common targeting rules - allowing you to reuse these rules across different flags.
       properties:
         key:
           $ref: '#/components/schemas/ResourceKey'
@@ -2491,3 +2492,4 @@ components:
         - id
         - key
         - isIdentifier
+      description: A trait (aka attribute) represents a particular characteristic of a identity (aka user).
