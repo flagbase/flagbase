@@ -14,7 +14,7 @@ The quickest way to get the service running locally will require you to have [do
 
 1. Getting the source code
 ```sh
-git clone git@github.com/flagbase/flagbase
+git clone git@github.com:flagbase/flagbase.git
 cd flagbase/core
 ```
 2. Starting up services
@@ -36,7 +36,7 @@ docker-compose down -v
 ```
 
 ## Contributing
-We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](https://flagbase.com/dev/intro/workflow#contributing).
+We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](/dev/intro/workflow#contributing).
 
 ## Resources
 Check out these pages that'll help you get started, if you want to contribute to the core:
