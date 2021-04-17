@@ -1,5 +1,7 @@
 BEGIN;
 
+DELETE DOMAIN rule_operand;
+
 DELETE DOMAIN resource_tags;
 
 DELETE DOMAIN resource_description;

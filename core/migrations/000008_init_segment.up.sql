@@ -4,6 +4,7 @@ CREATE TABLE segment (
   id resource_id_default PRIMARY KEY,
   -- attributes
   key resource_key,
+  -- meta-data
   name resource_name,
   description resource_description,
   tags resource_tags,

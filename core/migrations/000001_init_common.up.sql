@@ -16,4 +16,12 @@ CREATE DOMAIN resource_description as TEXT;
 
 CREATE DOMAIN resource_tags as VARCHAR(30)[] NOT NULL DEFAULT '{}'::VARCHAR(30)[];
 
+CREATE TYPE rule_operand AS ENUM (
+  'equal',
+  'greater_than',
+  'greater_than_or_equal',
+  'contains',
+  'regex'
+);
+
 END;
