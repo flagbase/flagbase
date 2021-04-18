@@ -88,7 +88,7 @@ func Create(sctx *srv.Ctx, i Access) (
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     access(

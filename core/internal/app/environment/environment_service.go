@@ -85,7 +85,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     environment(key, name, description, tags, project_id)

@@ -13,14 +13,14 @@ If you can't see the diagram above, your browser may not support iframes. You ca
 
 
 ## Layers
-As illustrated in the diagram components that make up the core can be categorised into three layers (i.e. [interfaces](#interfaces), [services](#services), [dependencies](#dependencies)). In order to prevent [circular dependencies](https://en.wikipedia.org/wiki/Circular_dependency), each component is split into tiny packages. Each flagbase package (`pkg`) is responsible for a single task (or operation).
+As illustrated in the diagram components that make up the core can be categorized into three layers (i.e. [interfaces](#interfaces), [services](#services), [dependencies](#dependencies)). In order to prevent [circular dependencies](https://en.wikipedia.org/wiki/Circular_dependency), each component is split into tiny packages. Each flagbase package (`pkg`) is responsible for a single task (or operation).
 
 ### Interfaces
 Interfaces are the top-most layer, in terms of dealing with interactions from service consumers (i.e. SDKs and UI). Interfaces are responsible for establishing the contract between consumers and the service. They essentially allow consumers to access components in the service layer in a safe way. Below we will go into the three key interfaces provided by the core.
 
 #### API
 
-The [API (Application Programming Interface)](https://en.wikipedia.org/wiki/API), is the primary consumable interface for accessing resources. It is essentially a server which processes HTTP requests. In terms of the contract, the API follows the [JSON:API specificiations](https://jsonapi.org/format/). Please visit the [API docs](/docs/api) for more info regarding actual usage.
+The [API (Application Programming Interface)](https://en.wikipedia.org/wiki/API), is the primary consumable interface for accessing resources. It is essentially a server which processes HTTP requests. In terms of the contract, the API follows the [JSON:API spec](https://jsonapi.org/format/). Please visit the [API docs](/docs/api) for more info regarding actual usage.
 
 #### Polling
 Polling interface is responsible for providing the contract for SDK consumers who choose to use polling as the primary mechanism to retrieve raw or evaluated flagsets. It is essentially a HTTP-based server (similar to the [API](#api)), that provides a state-less transport mechanism. State related info is maintained implicitly via the polling contract. We recommend consumers using unreliable networks (e.g. mobile networks), rely on polling instead of streaming. You can read more about polling and its use cases [here](https://javascript.info/long-polling).
@@ -32,19 +32,19 @@ The streamer is responsible for providing SDK consumers with push-based transpor
 Components in the service layer are responsible for majority of the business logic. Services are heavily-reliant on dependencies and provide functionality used by interfaces. Services deal with authorization (/ policy enforcement) responsible for managing entities in the datastore.
 
 #### Resources
-One of the primary service-types are resource services. Resource services help manage entities in a safe way, providing operation authorisation (via [casbin policies](https://casbin.org/)). If you want more details about specific resources, see the [data-models page](/dev/core/data-models#resources).
+One of the primary service-types are resource services. Resource services help manage entities in a safe way, providing operation authorization (via [casbin policies](https://casbin.org/)). If you want more details about specific resources, see the [data-models page](/dev/core/data-models#resources).
 
 #### Evaluation
 Evaluation services are dependant on by the streamer and polling interfaces to provide evaluated flagsets to consumers. Evaluation is highly reliant on the targeting, segment and flag resource services. Evaluation also relies on cached resources for better performance. For more context about the actual evaluation process, please take a look at our [targeting RFC](https://flagbase.atlassian.net/wiki/spaces/OSS/pages/556367945/RFC+-+Targeting).
 
 ### Dependencies
-The dependencies layer provide a high-level abstraction on-top of official libraries used to communicate with external resources. Providing a wrapper around exisiting libraries may seem quite redundant, however this extra layer of abstract can beneficial in terms of providing additional safety mechanism. In the long-run, we can also switch to using another external resource (e.g. switching from postgres -> some other [DBMS](https://en.wikipedia.org/wiki/Database)).
+The dependencies layer provide a high-level abstraction on-top of official libraries used to communicate with external resources. Providing a wrapper around existing libraries may seem quite redundant, however this extra layer of abstract can beneficial in terms of providing additional safety mechanism. In the long-run, we can also switch to using another external resource (e.g. switching from postgres -> some other [DBMS](https://en.wikipedia.org/wiki/Database)).
 
 #### Database
-The database dependency is a wrapper on top of other DBMS libraries, offering query and excution handlers on a given connection (or connection pool). It is **NOT** an ORM, rather an interface which takes in standard SQL queries and translates these requests to be handled by the underlying DBMS provider. Please note that we currently only support [Postgres](https://www.postgresql.org/).
+The database dependency is a wrapper on top of other DBMS libraries, offering query and execution handlers on a given connection (or connection pool). It is **NOT** an ORM, rather an interface which takes in standard SQL queries and translates these requests to be handled by the underlying DBMS provider. Please note that we currently only support [Postgres](https://www.postgresql.org/).
 
 #### Cache
-Similiarly to the database dependency, the cache dependency offers a wrapper ontop of existing cache providers. It provides common cache handlers (i.e. `GET`, `SET`, `DEL` etc) used to communicate with a key-value datastore. Currently, the only cache provider we support is [Redis](https://redis.io/).
+Similar to the database dependency, the cache dependency offers a wrapper on top of existing cache providers. It provides common cache handlers (i.e. `GET`, `SET`, `DEL` etc) used to communicate with a key-value datastore. Currently, the only cache provider we support is [Redis](https://redis.io/).
 
 #### Metrics
-For service telemetry, the metrics dependency is relied upon by components in the service layer. For example, if you want to time a particular operation, you can use the metrics client to capture the execution time period. The metrics dependency is a wrapper ontop of the prometheus client, providing easy to use handlers.
+For service telemetry, the metrics dependency is relied upon by components in the service layer. For example, if you want to time a particular operation, you can use the metrics client to capture the execution time period. The metrics dependency is a wrapper on top of the prometheus client, providing easy to use handlers.
