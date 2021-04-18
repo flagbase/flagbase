@@ -88,7 +88,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     variation(key, name, description, tags, flag_id)

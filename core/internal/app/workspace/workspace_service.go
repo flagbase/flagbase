@@ -74,7 +74,7 @@ func Create(
 		cancel()
 	}
 
-	// create root user
+	// create resource
 	row := sctx.DB.QueryRow(ctx, `
   INSERT INTO
     workspace(key, name, description, tags)
