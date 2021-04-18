@@ -6,7 +6,7 @@ sidebar_label: Getting Started
 
 [Flagbase Core](https://flagbase.com/oss#core) is the main service responsible for streaming feature flags to our SDKs via SSE (Server-Sent Events). It provides a REST API, used to manage key resources (i.e. workspaces, projects, environments, flags etc).
 
-The core has multiple modes of operation (i.e. `all (default)`, `api`, `streamer`). The service can be run on multiple nodes (i.e. it is horizontally scalable).
+The core has multiple modes of operation (i.e. `all (default)`, `api`, `streamer`, `polling`). The service can be run on multiple nodes (i.e. it is horizontally scalable).
 
 ## Quick Start
 

@@ -5,7 +5,7 @@ import (
 	srv "core/internal/pkg/server"
 )
 
-// Config API server configuration
+// Config polling server configuration
 type Config struct {
 	Host        string
 	PollingPort int
