@@ -8,8 +8,6 @@ import (
 	"core/pkg/crypto"
 	res "core/pkg/response"
 	"encoding/json"
-
-	"github.com/lib/pq"
 )
 
 // GenerateToken generate an access token via an access pair
@@ -18,55 +16,37 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	*res.Errors,
 ) {
 	var e res.Errors
-	var a Access
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	var encryptedSecret string
-	row := sctx.DB.QueryRow(context.Background(), `
-	SELECT
-    id,
-    key,
-    name,
-    description,
-    tags,
-    type,
-    expires_at,
-    encrypted_secret
-	FROM
-	  access
-	WHERE
-	  key = $1
-	`, i.Key)
-	if err := row.Scan(
-		&a.ID,
-		&a.Key,
-		&a.Name,
-		&a.Description,
-		&a.Tags,
-		&a.Type,
-		&a.ExpiresAt,
-		&encryptedSecret,
-	); err != nil {
-		e.Append(cons.ErrorAuth, "Can't find access pair")
+	r, err := getResource(
+		sctx,
+		ctx,
+		KeySecretPair{Key: i.Key, Secret: "******"},
+	)
+	if err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
+		cancel()
 	}
 
-	if err := crypto.Compare(encryptedSecret, i.Secret); err != nil {
-		e.Append(cons.ErrorAuth, "Mismatching access key-secret pair")
+	if err := crypto.Compare(r.Secret, i.Secret); err != nil {
+		e.Append(cons.ErrorAuth, "mismatching access key-secret pair")
 	}
 
-	ma, err := json.Marshal(a)
+	ma, err := json.Marshal(r)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
 	atk, err := jwt.Sign(ma)
 	if err != nil {
-		e.Append(cons.ErrorAuth, "Unable to sign JWT")
+		e.Append(cons.ErrorAuth, "unable to sign token")
 	}
 
 	return &res.Success{
 		Data: &Token{
 			Token:  atk,
-			Access: &a,
+			Access: &r,
 		},
 	}, &e
 }
@@ -77,54 +57,29 @@ func Create(sctx *srv.Ctx, i Access) (
 	*res.Errors,
 ) {
 	var e res.Errors
-	var a Access
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// encrypt secret
-	encryptedSecret, err := crypto.Encrypt(i.Secret)
+	encrypted_secret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
 		e.Append(cons.ErrorCrypto, err.Error())
 		cancel()
 	}
 
-	// create resource
-	row := sctx.DB.QueryRow(ctx, `
-  INSERT INTO
-    access(
-      key,
-      encrypted_secret,
-      type,
-      expires_at,
-      name,
-      description,
-      tags
-    )
-  VALUES
-    ($1, $2, $3, $4, $5, $6, $7)
-  RETURNING
-    key, type, expires_at, name, description, tags;`,
-		i.Key,
-		encryptedSecret,
-		i.Type,
-		i.ExpiresAt,
-		i.Name,
-		i.Description,
-		pq.Array(i.Tags),
+	original_secret := i.Secret
+	i.Secret = encrypted_secret
+
+	r, err := createResource(
+		sctx,
+		ctx,
+		i,
 	)
-	if err := row.Scan(
-		&a.Key,
-		&a.Type,
-		&a.ExpiresAt,
-		&a.Name,
-		&a.Description,
-		&a.Tags,
-	); err != nil {
+	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
-	// display unencrypted secret one time upon creation
-	a.Secret = i.Secret
+	// display un-encrypted secret one time upon creation
+	r.Secret = original_secret
 
-	return &res.Success{Data: a}, &e
+	return &res.Success{Data: r}, &e
 }
