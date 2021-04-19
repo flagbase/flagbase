@@ -10,3 +10,9 @@ type Workspace struct {
 	Description rsc.Description `json:"description,omitempty"`
 	Tags        rsc.Tags        `json:"tags,omitempty"`
 }
+
+type RootArgs struct{}
+
+type ResourceArgs struct {
+	WorkspaceKey rsc.Key
+}

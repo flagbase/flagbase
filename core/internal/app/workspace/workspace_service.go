@@ -8,8 +8,6 @@ import (
 	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
-
-	"github.com/lib/pq"
 )
 
 // List returns a list of resource instances
@@ -17,8 +15,8 @@ import (
 func List(
 	sctx *srv.Ctx,
 	atk rsc.Token,
+	a RootArgs,
 ) (*res.Success, *res.Errors) {
-	var o []Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -29,31 +27,12 @@ func List(
 		cancel()
 	}
 
-	rows, err := sctx.DB.Query(ctx, `
-  SELECT
-    id, key, name, description, tags
-  FROM
-    workspace
-  `)
+	r, err := listResource(sctx, ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	for rows.Next() {
-		var _o Workspace
-		if err = rows.Scan(
-			&_o.ID,
-			&_o.Key,
-			&_o.Name,
-			&_o.Description,
-			&_o.Tags,
-		); err != nil {
-			e.Append(cons.ErrorNotFound, err.Error())
-		}
-		o = append(o, _o)
-	}
-
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Create creates a new resource instance given the resource instance
@@ -62,38 +41,19 @@ func Create(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	i Workspace,
+	a RootArgs,
 ) (*res.Success, *res.Errors) {
-	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// authorize operation
 	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	// create resource
-	row := sctx.DB.QueryRow(ctx, `
-  INSERT INTO
-    workspace(key, name, description, tags)
-  VALUES
-    ($1, $2, $3, $4)
-  RETURNING
-    id, key, name, description, tags;`,
-		i.Key,
-		i.Name,
-		i.Description,
-		pq.Array(i.Tags),
-	)
-	if err := row.Scan(
-		&o.ID,
-		&o.Key,
-		&o.Name,
-		&o.Description,
-		&o.Tags,
-	); err != nil {
+	r, err := createResource(sctx, ctx, i, a)
+	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
@@ -101,7 +61,7 @@ func Create(
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
 			sctx,
-			atk, o.ID,
+			atk, r.ID,
 			rsc.Workspace,
 			rsc.AccessAdmin,
 		); err != nil {
@@ -109,7 +69,7 @@ func Create(
 		}
 	}
 
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Get gets a resource instance given an atk & workspaceKey
@@ -117,11 +77,13 @@ func Create(
 func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	workspaceKey rsc.Key,
+	a ResourceArgs,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	r, err := getResource(sctx, workspaceKey)
+	r, err := getResource(sctx, ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -146,15 +108,14 @@ func Update(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	workspaceKey rsc.Key,
+	a ResourceArgs,
 ) (*res.Success, *res.Errors) {
 	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// get original document
-	r, err := getResource(sctx, workspaceKey)
+	r, err := getResource(sctx, ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -179,23 +140,12 @@ func Update(
 	}
 
 	// update original with patched document
-	if _, err := sctx.DB.Exec(ctx, `
-  UPDATE
-    workspace
-  SET
-    key = $2, name = $3, description = $4, tags = $5
-  WHERE
-    key = $1`,
-		workspaceKey,
-		o.Key,
-		o.Name,
-		o.Description,
-		pq.Array(o.Tags),
-	); err != nil && err != context.Canceled {
+	r, err = updateResource(sctx, ctx, o, a)
+	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Delete deletes a resource instance given an atk & workspaceKey
@@ -203,14 +153,13 @@ func Update(
 func Delete(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	workspaceKey rsc.Key,
+	a ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// get original document
-	r, err := getResource(sctx, workspaceKey)
+	r, err := getResource(sctx, ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -228,14 +177,7 @@ func Delete(
 		cancel()
 	}
 
-	if _, err := sctx.DB.Exec(ctx, `
-  DELETE FROM
-    workspace
-  WHERE
-    key = $1
-  `,
-		workspaceKey,
-	); err != nil {
+	if deleteResource(sctx, ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

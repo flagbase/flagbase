@@ -46,7 +46,7 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	return &res.Success{
 		Data: &Token{
 			Token:  atk,
-			Access: &r,
+			Access: r,
 		},
 	}, &e
 }
