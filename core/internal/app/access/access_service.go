@@ -19,11 +19,7 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(
-		sctx,
-		ctx,
-		KeySecretPair{Key: i.Key, Secret: "******"},
-	)
+	r, err := getResource(ctx, sctx, KeySecretPair{Key: i.Key, Secret: "******"})
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -69,11 +65,7 @@ func Create(sctx *srv.Ctx, i Access) (
 	original_secret := i.Secret
 	i.Secret = encrypted_secret
 
-	r, err := createResource(
-		sctx,
-		ctx,
-		i,
-	)
+	r, err := createResource(ctx, sctx, i)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}

@@ -10,8 +10,8 @@ import (
 )
 
 func listResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	a RootArgs,
 ) (*[]Workspace, error) {
 	var o []Workspace
@@ -47,8 +47,8 @@ FROM workspace`
 }
 
 func createResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	i Workspace,
 	a RootArgs,
 ) (*Workspace, error) {
@@ -99,8 +99,8 @@ RETURNING
 }
 
 func getResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	a ResourceArgs,
 ) (*Workspace, error) {
 	var o Workspace
@@ -133,8 +133,8 @@ WHERE key = $1`
 }
 
 func updateResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	i Workspace,
 	a ResourceArgs,
 ) (*Workspace, error) {
@@ -165,8 +165,8 @@ WHERE key = $1`
 }
 
 func deleteResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `

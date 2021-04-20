@@ -26,7 +26,7 @@ func List(
 		cancel()
 	}
 
-	r, err := listResource(sctx, ctx, a)
+	r, err := listResource(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -51,7 +51,7 @@ func Create(
 		cancel()
 	}
 
-	r, err := createResource(sctx, ctx, i, a)
+	r, err := createResource(ctx, sctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
@@ -82,7 +82,7 @@ func Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(sctx, ctx, a)
+	r, err := getResource(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -113,7 +113,7 @@ func Update(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(sctx, ctx, a)
+	r, err := getResource(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -135,7 +135,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(sctx, ctx, o, a)
+	r, err = updateResource(ctx, sctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -154,7 +154,7 @@ func Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(sctx, ctx, a)
+	r, err := getResource(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -171,7 +171,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(sctx, ctx, a); err != nil {
+	if err := deleteResource(ctx, sctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

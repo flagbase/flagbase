@@ -10,8 +10,8 @@ import (
 )
 
 func createResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	i Access,
 ) (*Access, error) {
 	var o Access
@@ -58,8 +58,8 @@ func createResource(
 }
 
 func getResource(
-	sctx *srv.Ctx,
 	ctx context.Context,
+	sctx *srv.Ctx,
 	i KeySecretPair,
 ) (*Access, error) {
 	var o Access
