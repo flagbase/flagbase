@@ -56,14 +56,14 @@ func Create(sctx *srv.Ctx, i Access) (
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	encrypted_secret, err := crypto.Encrypt(i.Secret)
+	encryptedSecret, err := crypto.Encrypt(i.Secret)
 	if err != nil {
 		e.Append(cons.ErrorCrypto, err.Error())
 		cancel()
 	}
 
-	original_secret := i.Secret
-	i.Secret = encrypted_secret
+	originalSecret := i.Secret
+	i.Secret = encryptedSecret
 
 	r, err := createResource(ctx, sctx, i)
 	if err != nil {
@@ -71,7 +71,7 @@ func Create(sctx *srv.Ctx, i Access) (
 	}
 
 	// display un-encrypted secret one time upon creation
-	r.Secret = original_secret
+	r.Secret = originalSecret
 
 	return &res.Success{Data: r}, &e
 }
