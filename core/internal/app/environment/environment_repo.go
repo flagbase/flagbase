@@ -16,21 +16,26 @@ func listResource(
 ) (*[]Environment, error) {
 	var o []Environment
 
-	rows, err := sctx.DB.Query(ctx, `
-  SELECT
-    e.id,
-    e.key,
-    e.name,
-    e.description,
-    e.tags
-  FROM environment e
-  LEFT JOIN project p
-    ON e.project_id = p.id
-  LEFT JOIN workspace w
-    ON p.workspace_id = w.id
-  WHERE w.key = $1
-    AND p.key = $2
-  `, a.WorkspaceKey, a.ProjectKey)
+	sqlStatement := `
+SELECT
+  e.id,
+  e.key,
+  e.name,
+  e.description,
+  e.tags
+FROM environment e
+LEFT JOIN project p
+  ON e.project_id = p.id
+LEFT JOIN workspace w
+  ON p.workspace_id = w.id
+WHERE w.key = $1
+  AND p.key = $2`
+	rows, err := sctx.DB.Query(
+		ctx,
+		sqlStatement,
+		a.WorkspaceKey,
+		a.ProjectKey,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -61,36 +66,35 @@ func createResource(
 	var o Environment
 
 	sqlStatement := `
-  INSERT INTO
-    environment(
-      key,
-      name,
-      description,
-      tags,
-      project_id
-    )
-  VALUES
-    (
-      $1,
-      $2,
-      $3,
-      $4,
-      (
-        SELECT p.id
-        FROM project p
-        LEFT JOIN workspace w
-          ON p.workspace_id = w.id
-        WHERE w.key = $5
-          AND p.key = $6
-      )
-    )
-  RETURNING
-    id,
+INSERT INTO
+  environment(
     key,
     name,
     description,
-    tags;
-	`
+    tags,
+    project_id
+  )
+VALUES
+  (
+    $1,
+    $2,
+    $3,
+    $4,
+    (
+      SELECT p.id
+      FROM project p
+      LEFT JOIN workspace w
+        ON p.workspace_id = w.id
+      WHERE w.key = $5
+        AND p.key = $6
+    )
+  )
+RETURNING
+  id,
+  key,
+  name,
+  description,
+  tags;`
 	err := dbutil.ParseError(
 		rsc.Environment.String(),
 		ResourceArgs{
@@ -126,21 +130,20 @@ func getResource(
 	var o Environment
 
 	sqlStatement := `
-  SELECT
-    e.id,
-    e.key,
-    e.name,
-    e.description,
-    e.tags
-  FROM environment e
-  LEFT JOIN project p
-    ON e.project_id = p.id
-  LEFT JOIN workspace w
-    ON p.workspace_id = w.id
-  WHERE w.key = $1
-    AND p.key = $2
-    AND e.key = $3
-	`
+SELECT
+  e.id,
+  e.key,
+  e.name,
+  e.description,
+  e.tags
+FROM environment e
+LEFT JOIN project p
+  ON e.project_id = p.id
+LEFT JOIN workspace w
+  ON p.workspace_id = w.id
+WHERE w.key = $1
+  AND p.key = $2
+  AND e.key = $3`
 	err := dbutil.ParseError(
 		rsc.Environment.String(),
 		a,
@@ -168,14 +171,13 @@ func updateResource(
 	a ResourceArgs,
 ) (*Environment, error) {
 	sqlStatement := `
-  UPDATE environment
-  SET
-    key = $2,
-    name = $3,
-    description = $4,
-    tags = $5
-  WHERE id = $1
-	`
+UPDATE environment
+SET
+  key = $2,
+  name = $3,
+  description = $4,
+  tags = $5
+WHERE id = $1`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
@@ -200,17 +202,16 @@ func deleteResource(
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
-  DELETE FROM environment
-  WHERE key = $3
-    AND project_id = (
-      SELECT p.id
-      FROM project p
-      LEFT JOIN workspace w
-        ON p.workspace_id = w.id
-      WHERE w.key = $1
-        AND p.key = $2
-    )
-	`
+DELETE FROM environment
+WHERE key = $3
+  AND project_id = (
+    SELECT p.id
+    FROM project p
+    LEFT JOIN workspace w
+      ON p.workspace_id = w.id
+    WHERE w.key = $1
+      AND p.key = $2
+  )`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,

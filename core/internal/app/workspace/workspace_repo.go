@@ -16,15 +16,15 @@ func listResource(
 ) (*[]Workspace, error) {
 	var o []Workspace
 
-	rows, err := sctx.DB.Query(ctx, `
-  SELECT
-    id,
-    key,
-    name,
-    description,
-    tags
-  FROM workspace
-  `)
+	sqlStatement := `
+SELECT
+  id,
+  key,
+  name,
+  description,
+  tags
+FROM workspace`
+	rows, err := sctx.DB.Query(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
@@ -55,27 +55,26 @@ func createResource(
 	var o Workspace
 
 	sqlStatement := `
-  INSERT INTO
-    workspace(
-      key,
-      name,
-      description,
-      tags
-    )
-  VALUES
-    (
-      $1,
-      $2,
-      $3,
-      $4
-    )
-  RETURNING
-    id,
+INSERT INTO
+  workspace(
     key,
     name,
     description,
-    tags;
-	`
+    tags
+  )
+VALUES
+  (
+    $1,
+    $2,
+    $3,
+    $4
+  )
+RETURNING
+  id,
+  key,
+  name,
+  description,
+  tags;`
 	err := dbutil.ParseError(
 		rsc.Workspace.String(),
 		ResourceArgs{
@@ -107,15 +106,14 @@ func getResource(
 	var o Workspace
 
 	sqlStatement := `
-  SELECT
-    id,
-    key,
-    name,
-    description,
-    tags
-  FROM workspace
-  WHERE key = $1
-	`
+SELECT
+  id,
+  key,
+  name,
+  description,
+  tags
+FROM workspace
+WHERE key = $1`
 	err := dbutil.ParseError(
 		rsc.Workspace.String(),
 		a,
@@ -141,14 +139,13 @@ func updateResource(
 	a ResourceArgs,
 ) (*Workspace, error) {
 	sqlStatement := `
-  UPDATE workspace
-  SET
-    key = $2,
-    name = $3,
-    description = $4,
-    tags = $5
-  WHERE key = $1
-	`
+UPDATE workspace
+SET
+  key = $2,
+  name = $3,
+  description = $4,
+  tags = $5
+WHERE key = $1`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
@@ -173,9 +170,8 @@ func deleteResource(
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
-  DELETE FROM workspace
-  WHERE key = $1
-	`
+DELETE FROM workspace
+WHERE key = $1`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,

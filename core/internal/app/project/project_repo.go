@@ -16,18 +16,22 @@ func listResource(
 ) (*[]Project, error) {
 	var o []Project
 
-	rows, err := sctx.DB.Query(ctx, `
-  SELECT
-    p.id,
-    p.key,
-    p.name,
-    p.description,
-    p.tags
-  FROM project p
-  LEFT JOIN workspace w
-    ON p.workspace_id = w.id
-  WHERE w.key = $1
-  `, a.WorkspaceKey)
+	sqlStatement := `
+SELECT
+  p.id,
+  p.key,
+  p.name,
+  p.description,
+  p.tags
+FROM project p
+LEFT JOIN workspace w
+  ON p.workspace_id = w.id
+WHERE w.key = $1`
+	rows, err := sctx.DB.Query(
+		ctx,
+		sqlStatement,
+		a.WorkspaceKey,
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -58,33 +62,32 @@ func createResource(
 	var o Project
 
 	sqlStatement := `
-  INSERT INTO
-    project(
-      key,
-      name,
-      description,
-      tags,
-      workspace_id
-    )
-  VALUES
-    (
-      $1,
-      $2,
-      $3,
-      $4,
-      (
-        SELECT id
-        FROM workspace
-        WHERE key = $5
-      )
-    )
-  RETURNING
-    id,
+INSERT INTO
+  project(
     key,
     name,
     description,
-    tags;
-	`
+    tags,
+    workspace_id
+  )
+VALUES
+  (
+    $1,
+    $2,
+    $3,
+    $4,
+    (
+      SELECT id
+      FROM workspace
+      WHERE key = $5
+    )
+  )
+RETURNING
+  id,
+  key,
+  name,
+  description,
+  tags;`
 	err := dbutil.ParseError(
 		rsc.Project.String(),
 		ResourceArgs{
@@ -118,18 +121,17 @@ func getResource(
 	var o Project
 
 	sqlStatement := `
-  SELECT
-    p.id,
-    p.key,
-    p.name,
-    p.description,
-    p.tags
-  FROM      project p
-  LEFT JOIN workspace w
-    ON p.workspace_id = w.id
-  WHERE w.key = $1
-  AND   p.key = $2
-	`
+SELECT
+  p.id,
+  p.key,
+  p.name,
+  p.description,
+  p.tags
+FROM      project p
+LEFT JOIN workspace w
+  ON p.workspace_id = w.id
+WHERE w.key = $1
+  AND p.key = $2`
 	err := dbutil.ParseError(
 		rsc.Project.String(),
 		a,
@@ -156,14 +158,13 @@ func updateResource(
 	a ResourceArgs,
 ) (*Project, error) {
 	sqlStatement := `
-  UPDATE project
-  SET
-    key = $2,
-    name = $3,
-    description = $4,
-    tags = $5
-  WHERE id = $1
-	`
+UPDATE project
+SET
+  key = $2,
+  name = $3,
+  description = $4,
+  tags = $5
+WHERE id = $1`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
@@ -188,13 +189,13 @@ func deleteResource(
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
-  DELETE FROM project
-  WHERE workspace_id = (
+DELETE FROM project
+WHERE key = $2
+  AND workspace_id = (
     SELECT id
     FROM workspace
     WHERE key = $1
-  ) AND key = $2
-	`
+  )`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
