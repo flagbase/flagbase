@@ -11,8 +11,10 @@ type Workspace struct {
 	Tags        rsc.Tags        `json:"tags,omitempty"`
 }
 
+// RootArgs arguments for selecting root resource
 type RootArgs struct{}
 
+// ResourceArgs arguments for selecting specific resource
 type ResourceArgs struct {
 	WorkspaceKey rsc.Key
 }
