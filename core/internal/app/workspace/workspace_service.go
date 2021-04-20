@@ -21,7 +21,6 @@ func List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// authorize operation
 	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -57,11 +56,12 @@ func Create(
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
-	// Add policy for requesting user, after resource creation
+	// add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
 			sctx,
-			atk, r.ID,
+			atk,
+			r.ID,
 			rsc.Workspace,
 			rsc.AccessAdmin,
 		); err != nil {
@@ -88,7 +88,6 @@ func Get(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	// authorize operation
 	if err := auth.Enforce(
 		sctx,
 		atk,
@@ -121,7 +120,6 @@ func Update(
 		cancel()
 	}
 
-	// authorize operation
 	if err := auth.Enforce(
 		sctx,
 		atk,
@@ -133,13 +131,11 @@ func Update(
 		cancel()
 	}
 
-	// apply patch and get modified document
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 		cancel()
 	}
 
-	// update original with patched document
 	r, err = updateResource(sctx, ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
@@ -165,7 +161,6 @@ func Delete(
 		cancel()
 	}
 
-	// authorize operation
 	if err := auth.Enforce(
 		sctx,
 		atk,
@@ -177,7 +172,7 @@ func Delete(
 		cancel()
 	}
 
-	if deleteResource(sctx, ctx, a); err != nil {
+	if err := deleteResource(sctx, ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
