@@ -126,7 +126,7 @@ func getResource(
     p.tags
   FROM      project p
   LEFT JOIN workspace w
-  ON  p.workspace_id = w.id
+  ON    p.workspace_id = w.id
   WHERE w.key = $1
   AND   p.key = $2
 	`
