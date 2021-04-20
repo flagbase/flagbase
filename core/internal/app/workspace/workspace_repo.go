@@ -77,7 +77,7 @@ func createResource(
     tags;
 	`
 	err := dbutil.ParseError(
-		rsc.Access.String(),
+		rsc.Workspace.String(),
 		ResourceArgs{
 			WorkspaceKey: i.Key,
 		},
@@ -114,11 +114,10 @@ func getResource(
     description,
     tags
   FROM workspace
-  WHERE
-    key = $1
+  WHERE key = $1
 	`
 	err := dbutil.ParseError(
-		rsc.Access.String(),
+		rsc.Workspace.String(),
 		a,
 		sctx.DB.QueryRow(
 			ctx,

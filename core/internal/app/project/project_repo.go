@@ -25,7 +25,7 @@ func listResource(
     p.tags
   FROM project p
   LEFT JOIN workspace w
-  ON    p.workspace_id = w.id
+    ON p.workspace_id = w.id
   WHERE w.key = $1
   `, a.WorkspaceKey)
 	if err != nil {
@@ -126,12 +126,12 @@ func getResource(
     p.tags
   FROM      project p
   LEFT JOIN workspace w
-  ON    p.workspace_id = w.id
+    ON p.workspace_id = w.id
   WHERE w.key = $1
   AND   p.key = $2
 	`
 	err := dbutil.ParseError(
-		rsc.Access.String(),
+		rsc.Project.String(),
 		a,
 		sctx.DB.QueryRow(
 			ctx,
