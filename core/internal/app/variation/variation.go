@@ -10,3 +10,18 @@ type Variation struct {
 	Description rsc.Description `json:"description,omitempty"`
 	Tags        rsc.Tags        `json:"tags,omitempty"`
 }
+
+// RootArgs arguments for selecting root resource
+type RootArgs struct {
+	WorkspaceKey rsc.Key
+	ProjectKey   rsc.Key
+	FlagKey      rsc.Key
+}
+
+// ResourceArgs arguments for selecting specific resource
+type ResourceArgs struct {
+	WorkspaceKey rsc.Key
+	ProjectKey   rsc.Key
+	FlagKey      rsc.Key
+	VariationKey rsc.Key
+}

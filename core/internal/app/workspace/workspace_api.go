@@ -34,7 +34,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	data, _err := List(sctx, atk)
+	data, _err := List(sctx, atk, RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -61,7 +61,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Create(sctx, atk, i)
+	data, _err := Create(sctx, atk, i, RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -86,7 +86,9 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	data, _err := Get(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		ResourceArgs{
+			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -118,7 +120,9 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		i,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		ResourceArgs{
+			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -144,7 +148,9 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	if err := Delete(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
+		ResourceArgs{
+			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
+		},
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
