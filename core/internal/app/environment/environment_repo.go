@@ -15,7 +15,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Environment, error) {
 	var o []Environment
-
 	sqlStatement := `
 SELECT
   e.id,
@@ -39,7 +38,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Environment
 		if err = rows.Scan(
@@ -53,7 +51,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -64,7 +61,6 @@ func createResource(
 	a RootArgs,
 ) (*Environment, error) {
 	var o Environment
-
 	sqlStatement := `
 INSERT INTO
   environment(
@@ -128,7 +124,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Environment, error) {
 	var o Environment
-
 	sqlStatement := `
 SELECT
   e.id,

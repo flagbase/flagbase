@@ -13,7 +13,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Trait, error) {
 	var o []Trait
-
 	sqlStatement := `
 SELECT
   t.id,
@@ -39,7 +38,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Trait
 		if err = rows.Scan(
@@ -51,7 +49,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -62,7 +59,6 @@ func createResource(
 	a RootArgs,
 ) (*Trait, error) {
 	var o Trait
-
 	sqlStatement := `
 INSERT INTO
   trait(
@@ -121,7 +117,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Trait, error) {
 	var o Trait
-
 	sqlStatement := `
 SELECT
   t.id,

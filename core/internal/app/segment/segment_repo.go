@@ -15,7 +15,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Segment, error) {
 	var o []Segment
-
 	sqlStatement := `
 SELECT
   s.id,
@@ -39,7 +38,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Segment
 		if err = rows.Scan(
@@ -53,7 +51,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -64,7 +61,6 @@ func createResource(
 	a RootArgs,
 ) (*Segment, error) {
 	var o Segment
-
 	sqlStatement := `
 INSERT INTO
   segment(
@@ -128,7 +124,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Segment, error) {
 	var o Segment
-
 	sqlStatement := `
 SELECT
   s.id,

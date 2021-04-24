@@ -15,7 +15,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Project, error) {
 	var o []Project
-
 	sqlStatement := `
 SELECT
   p.id,
@@ -35,7 +34,6 @@ WHERE w.key = $1`
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Project
 		if err = rows.Scan(
@@ -49,7 +47,6 @@ WHERE w.key = $1`
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -60,7 +57,6 @@ func createResource(
 	a RootArgs,
 ) (*Project, error) {
 	var o Project
-
 	sqlStatement := `
 INSERT INTO
   project(
@@ -119,7 +115,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Project, error) {
 	var o Project
-
 	sqlStatement := `
 SELECT
   p.id,

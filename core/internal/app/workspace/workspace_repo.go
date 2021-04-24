@@ -15,7 +15,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Workspace, error) {
 	var o []Workspace
-
 	sqlStatement := `
 SELECT
   id,
@@ -28,7 +27,6 @@ FROM workspace`
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Workspace
 		if err = rows.Scan(
@@ -42,7 +40,6 @@ FROM workspace`
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -53,7 +50,6 @@ func createResource(
 	a RootArgs,
 ) (*Workspace, error) {
 	var o Workspace
-
 	sqlStatement := `
 INSERT INTO
   workspace(
@@ -104,7 +100,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Workspace, error) {
 	var o Workspace
-
 	sqlStatement := `
 SELECT
   id,

@@ -13,7 +13,6 @@ func listResource(
 	a RootArgs,
 ) (*[]SegmentRule, error) {
 	var o []SegmentRule
-
 	sqlStatement := `
 SELECT
   sr.id,
@@ -46,7 +45,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o SegmentRule
 		if err = rows.Scan(
@@ -61,7 +59,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -72,7 +69,6 @@ func createResource(
 	a RootArgs,
 ) (*SegmentRule, error) {
 	var o SegmentRule
-
 	sqlStatement := `
 INSERT INTO
   segment_rule(
@@ -160,7 +156,6 @@ func getResource(
 	a ResourceArgs,
 ) (*SegmentRule, error) {
 	var o SegmentRule
-
 	sqlStatement := `
 SELECT
   sr.id,

@@ -15,7 +15,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Variation, error) {
 	var o []Variation
-
 	sqlStatement := `
 SELECT
   v.id,
@@ -41,7 +40,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Variation
 		if err = rows.Scan(
@@ -55,7 +53,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -66,7 +63,6 @@ func createResource(
 	a RootArgs,
 ) (*Variation, error) {
 	var o Variation
-
 	sqlStatement := `
 INSERT INTO
   variation(
@@ -135,7 +131,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Variation, error) {
 	var o Variation
-
 	sqlStatement := `
 SELECT
   v.id,

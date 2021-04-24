@@ -13,7 +13,6 @@ func listResource(
 	a RootArgs,
 ) (*[]Identity, error) {
 	var o []Identity
-
 	sqlStatement := `
 SELECT
   i.id,
@@ -38,7 +37,6 @@ WHERE w.key = $1
 	if err != nil {
 		return nil, err
 	}
-
 	for rows.Next() {
 		var _o Identity
 		if err = rows.Scan(
@@ -49,7 +47,6 @@ WHERE w.key = $1
 		}
 		o = append(o, _o)
 	}
-
 	return &o, nil
 }
 
@@ -60,7 +57,6 @@ func createResource(
 	a RootArgs,
 ) (*Identity, error) {
 	var o Identity
-
 	sqlStatement := `
 INSERT INTO
   identity(
@@ -115,7 +111,6 @@ func getResource(
 	a ResourceArgs,
 ) (*Identity, error) {
 	var o Identity
-
 	sqlStatement := `
 SELECT
   i.id,

@@ -15,7 +15,6 @@ func createResource(
 	i Access,
 ) (*Access, error) {
 	var o Access
-
 	sqlStatement := `
 INSERT INTO
   access(
@@ -76,7 +75,6 @@ func getResource(
 	i KeySecretPair,
 ) (*Access, error) {
 	var o Access
-
 	sqlStatement := `
 SELECT
   id,
