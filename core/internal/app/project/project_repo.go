@@ -127,7 +127,7 @@ SELECT
   p.name,
   p.description,
   p.tags
-FROM      project p
+FROM project p
 LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1
