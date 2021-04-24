@@ -18,7 +18,6 @@ func List(
 	a RootArgs,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -111,7 +110,6 @@ func Update(
 ) (*res.Success, *res.Errors) {
 	var o Trait
 	var e res.Errors
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -153,7 +151,6 @@ func Delete(
 	a ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
