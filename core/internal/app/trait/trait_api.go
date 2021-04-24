@@ -43,9 +43,11 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	data, _err := List(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
+		RootArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -77,9 +79,11 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		i,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
+		RootArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -105,10 +109,12 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	data, _err := Get(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
-		httputil.GetParam(ctx, rsc.TraitKey),
+		ResourceArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			TraitKey:       httputil.GetParam(ctx, rsc.TraitKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -140,10 +146,12 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		i,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
-		httputil.GetParam(ctx, rsc.TraitKey),
+		ResourceArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			TraitKey:       httputil.GetParam(ctx, rsc.TraitKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -169,10 +177,12 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	if err := Delete(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
-		httputil.GetParam(ctx, rsc.TraitKey),
+		ResourceArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			TraitKey:       httputil.GetParam(ctx, rsc.TraitKey),
+		},
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}
