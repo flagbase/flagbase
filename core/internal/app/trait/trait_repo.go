@@ -75,8 +75,7 @@ VALUES
     $1,
     $2,
     (
-      SELECT
-        e.id
+      SELECT e.id
       FROM environment e
       LEFT JOIN project p
         ON p.id = e.project_id

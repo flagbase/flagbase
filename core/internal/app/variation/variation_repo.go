@@ -83,8 +83,7 @@ VALUES
     $3,
     $4,
     (
-      SELECT
-        f.id
+      SELECT f.id
       FROM flag f
       LEFT JOIN project p
         ON p.id = f.project_id

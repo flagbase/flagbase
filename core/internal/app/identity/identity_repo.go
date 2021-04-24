@@ -72,8 +72,7 @@ VALUES
     $1,
     $2,
     (
-      SELECT
-        e.id
+      SELECT e.id
       FROM environment e
       LEFT JOIN project p
         ON p.id = e.project_id
@@ -185,8 +184,7 @@ func deleteResource(
 DELETE FROM identity
 WHERE key = $4
   AND environment_id = (
-    SELECT
-      e.id,
+    SELECT e.id
     FROM environment e
     LEFT JOIN project p
       ON p.id = e.project_id
