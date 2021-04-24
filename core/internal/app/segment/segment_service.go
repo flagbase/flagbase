@@ -144,7 +144,7 @@ func Update(
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	return &res.Success{Data: o}, &e
+	return &res.Success{Data: r}, &e
 }
 
 // Delete deletes a resource instance given an atk & key
