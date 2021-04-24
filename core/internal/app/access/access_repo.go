@@ -17,20 +17,33 @@ func createResource(
 	var o Access
 
 	sqlStatement := `
-	INSERT INTO
-		access(
-		key,
-		encrypted_secret,
-		type,
-		expires_at,
-		name,
-		description,
-		tags
-		)
-	VALUES
-		($1, $2, $3, $4, $5, $6, $7)
-	RETURNING
-		key, type, expires_at, name, description, tags;
+INSERT INTO
+  access(
+    key,
+    encrypted_secret,
+    type,
+    expires_at,
+    name,
+    description,
+    tags
+  )
+VALUES
+  (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    $7
+  )
+RETURNING
+  key,
+  type,
+  expires_at,
+  name,
+  description,
+  tags;
 	`
 	err := dbutil.ParseError(
 		rsc.Access.String(),
@@ -65,19 +78,19 @@ func getResource(
 	var o Access
 
 	sqlStatement := `
-	SELECT
-		id,
-		key,
-		name,
-		description,
-		tags,
-		type,
-		expires_at,
-		encrypted_secret
-	FROM
-		access
-	WHERE
-		key = $1
+SELECT
+  id,
+  key,
+  name,
+  description,
+  tags,
+  type,
+  expires_at,
+  encrypted_secret
+FROM
+  access
+WHERE
+  key = $1
 	`
 	err := dbutil.ParseError(
 		rsc.Access.String(),

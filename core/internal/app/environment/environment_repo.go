@@ -25,9 +25,9 @@ SELECT
   e.tags
 FROM environment e
 LEFT JOIN project p
-  ON e.project_id = p.id
+  ON p.id = e.project_id
 LEFT JOIN workspace w
-  ON p.workspace_id = w.id
+  ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2`
 	rows, err := sctx.DB.Query(
@@ -84,7 +84,7 @@ VALUES
       SELECT p.id
       FROM project p
       LEFT JOIN workspace w
-        ON p.workspace_id = w.id
+        ON w.id = p.workspace_id
       WHERE w.key = $5
         AND p.key = $6
     )
@@ -138,9 +138,9 @@ SELECT
   e.tags
 FROM environment e
 LEFT JOIN project p
-  ON e.project_id = p.id
+  ON p.id = e.project_id
 LEFT JOIN workspace w
-  ON p.workspace_id = w.id
+  ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3`
@@ -208,7 +208,7 @@ WHERE key = $3
     SELECT p.id
     FROM project p
     LEFT JOIN workspace w
-      ON p.workspace_id = w.id
+      ON w.id = p.workspace_id
     WHERE w.key = $1
       AND p.key = $2
   )`

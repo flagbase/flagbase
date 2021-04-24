@@ -39,6 +39,9 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 		e.Append(cons.ErrorAuth, "unable to sign token")
 	}
 
+	// hide secret
+	r.Secret = "**************"
+
 	return &res.Success{
 		Data: &Token{
 			Token:  atk,

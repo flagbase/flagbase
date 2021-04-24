@@ -40,9 +40,11 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	data, _err := List(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
+		RootArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -50,7 +52,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 
 	httputil.Send(
 		ctx,
-		http.StatusCreated,
+		http.StatusOK,
 		data,
 		http.StatusInternalServerError,
 		e,
@@ -68,10 +70,12 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	data, _err := Get(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
-		httputil.GetParam(ctx, rsc.IdentityKey),
+		ResourceArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			IdentityKey:    httputil.GetParam(ctx, rsc.IdentityKey),
+		},
 	)
 	if !_err.IsEmpty() {
 		e.Extend(_err)
@@ -97,10 +101,12 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	if err := Delete(
 		sctx,
 		atk,
-		httputil.GetParam(ctx, rsc.WorkspaceKey),
-		httputil.GetParam(ctx, rsc.ProjectKey),
-		httputil.GetParam(ctx, rsc.EnvironmentKey),
-		httputil.GetParam(ctx, rsc.IdentityKey),
+		ResourceArgs{
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			IdentityKey:    httputil.GetParam(ctx, rsc.IdentityKey),
+		},
 	); !err.IsEmpty() {
 		e.Extend(err)
 	}

@@ -25,7 +25,7 @@ SELECT
   p.tags
 FROM project p
 LEFT JOIN workspace w
-  ON p.workspace_id = w.id
+  ON w.id = p.workspace_id
 WHERE w.key = $1`
 	rows, err := sctx.DB.Query(
 		ctx,
@@ -129,7 +129,7 @@ SELECT
   p.tags
 FROM      project p
 LEFT JOIN workspace w
-  ON p.workspace_id = w.id
+  ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2`
 	err := dbutil.ParseError(
