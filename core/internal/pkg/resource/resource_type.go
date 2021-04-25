@@ -30,4 +30,6 @@ const (
 	Trait Type = "trait"
 	// Targeting represents a targeting resource
 	Targeting Type = "targeting"
+	// FallthroughVariation represents a weighted fallthough variation
+	FallthroughVariation Type = "fallthrough_variation"
 )

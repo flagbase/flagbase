@@ -62,9 +62,6 @@ tags:
   - name: targeting-rules
     x-displayName: Targeting Rules
     description: Targeting rules allow you to explicity define how you want to target feature flags to users. You are required to specify logical statements which are evaluated when serving flags to users.
-  - name: targeting-percentages
-    x-displayName: Targeting Percentages
-    description: Targeting percentages are used when you want to conduct a incremental rollouts on a certain percentage of users. It allows you to rollout variations to explicit percentages of your whole cohort base.
   - name: traits
     x-displayName: Trait Management
     description: Traits represent a particular characteristic of a particular identity (aka users). You can create segments using these traits. Traits can also be used to target variations to specific users.
@@ -104,7 +101,6 @@ x-tagGroups:
     tags:
       - targeting
       - targeting-rules
-      - targeting-percentages
   - name: Segments
     tags:
       - segments
@@ -1321,7 +1317,7 @@ paths:
       tags:
         - identities
       description: Delete an environment specific identity.
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}':
+  '/targeting/{workspaceKey}/{projectKey}/{envKey}/{flagKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1341,6 +1337,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: Get targeting
       responses:
@@ -1360,13 +1362,7 @@ paths:
       description: "Get a specific flag's targeting configuration. "
       tags:
         - targeting
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
     patch:
       summary: Update targeting
       operationId: update-tageting
@@ -1384,13 +1380,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Update a targeting configuration of a existing feature flag.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting
       requestBody:
@@ -1399,7 +1389,42 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules':
+    post:
+      summary: Create targeting
+      operationId: create-targeting
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples: {}
+      description: Create a targeting configuration for a particular flag per environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Targeting'
+        description: Targeting configuration
+      tags:
+        - targeting
+    delete:
+      summary: Delete targeting
+      operationId: delete-targeting
+      responses:
+        '200':
+          description: OK
+      description: Delete a targeting configuration for a particular flag per environment
+      tags:
+        - targeting
+  '/targeting-rules/{workspaceKey}/{projectKey}/{envKey}/{flagKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1419,6 +1444,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: List targeting rules
       tags:
@@ -1438,13 +1469,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: list-target-rules
       description: List the targeting rules of an existing flag in a specific environment.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
     post:
       summary: Create targeting rule
       operationId: create-targeting-rule
@@ -1464,14 +1489,14 @@ paths:
       tags:
         - targeting-rules
       description: Create a new targeting rule for a feature flag in a specific environment.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules/{ruleKey}':
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TargetingRule'
+        description: Targeting Rule
+  '/targeting-rules/{workspaceKey}/{projectKey}/{envKey}/{flagKey}/{ruleKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1497,6 +1522,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: Get targeting rule
       tags:
@@ -1515,13 +1546,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: get-targeting-rule
-      parameters:
-        - in: query
-          name: env
-          required: true
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       description: Get a targeting rule for a specfic flag and its environment.
     patch:
       summary: Update targeting rule
@@ -1540,13 +1565,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Update an existing target rule.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting-rules
       requestBody:
@@ -1571,85 +1590,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       description: Delete an existing targeting rule.
-      parameters:
-        - in: query
-          name: env
-          required: true
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       tags:
         - targeting-rules
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/percentages':
-    parameters:
-      - name: projectKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: workspaceKey
-        in: path
-        required: true
-        description: The workspace key
-    get:
-      summary: List targeting percentages
-      tags:
-        - targeting-percentages
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      operationId: list-targeting-percentages
-      description: Provide new targeting percentages for each variations.
-    patch:
-      summary: Update targeting percentages
-      operationId: update-targeting-percentages
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      description: Update targeting percentages.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          schema:
-            type: string
-      tags:
-        - targeting-percentages
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchDocument'
-        description: Patch Document (RFC 6902)
   '/traits/{workspaceKey}/{projectKey}/{envKey}/{traitKey}':
     parameters:
       - name: projectKey
@@ -1742,7 +1685,7 @@ paths:
       description: Delete an existing trait.
       tags:
         - traits
-  '/trait/{workspaceKey}/{projectKey}/{envKey}':
+  '/traits/{workspaceKey}/{projectKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -2450,14 +2393,7 @@ components:
         traitKey:
           type: string
         operator:
-          type: string
-          enum:
-            - equal
-            - greater_than
-            - greater_than_or_equal
-            - contains
-            - regex
-          example: equal
+          $ref: '#/components/schemas/RuleOperand'
         traitValue:
           type: string
     Error:
@@ -2493,3 +2429,78 @@ components:
         - key
         - isIdentifier
       description: A trait (aka attribute) represents a particular characteristic of a identity (aka user).
+    Targeting:
+      title: Targeting
+      type: object
+      description: "Targeting is a spec used to determine a flag's variation. This spec consists of a set of rules which when evaluated using a user's context (i.e. traits), determines which variation of a flag that particular user will receive. So essentially you could say targeting rules are conditions mapped to a variation. A flag's targeting rules are scoped to a particular project environment."
+      x-tags:
+        - targeting
+      properties:
+        id:
+          type: string
+        enabled:
+          type: boolean
+        fallthroughVariations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TargetingVariation'
+    TargetingVariation:
+      title: TargetingVariation
+      type: object
+      description: 'Contains a variation and an associated rollout weight, used for targeting.'
+      x-tags:
+        - targeting
+      properties:
+        variationKey:
+          type: string
+        weight:
+          type: number
+          description: Rollout weight to be applied for this variation (0-100)
+    TargetingRule:
+      title: TargetingRule
+      type: object
+      description: 'A condition which when satisfied outputs the variation during evaluation. '
+      x-tags:
+        - targeting-rules
+        - targeting
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+          enum:
+            - trait
+            - identity
+            - segment
+        traitKey:
+          type: string
+        traitValue:
+          type: string
+        operator:
+          $ref: '#/components/schemas/RuleOperand'
+        negate:
+          type: boolean
+        name:
+          $ref: '#/components/schemas/ResouceName'
+        description:
+          $ref: '#/components/schemas/ResourceDescription'
+        tags:
+          $ref: '#/components/schemas/ResourceTags'
+        identityKey:
+          $ref: '#/components/schemas/ResourceKey'
+        segmentKey:
+          $ref: '#/components/schemas/ResourceKey'
+        ruleVariations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TargetingVariation'
+    RuleOperand:
+      type: string
+      title: RuleOperand
+      description: Comporator operand used for rules
+      enum:
+        - equal
+        - greater_than
+        - greater_than_or_equal
+        - contains
+        - regex
