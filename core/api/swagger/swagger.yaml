@@ -2433,35 +2433,36 @@ components:
       title: Targeting
       type: object
       description: "Targeting is a spec used to determine a flag's variation. This spec consists of a set of rules which when evaluated using a user's context (i.e. traits), determines which variation of a flag that particular user will receive. So essentially you could say targeting rules are conditions mapped to a variation. A flag's targeting rules are scoped to a particular project environment."
+      x-tags:
+        - targeting
       properties:
         id:
           type: string
         enabled:
           type: boolean
-        fallthroughTargetingVariations:
+        fallthroughVariations:
           type: array
           items:
             $ref: '#/components/schemas/TargetingVariation'
-      x-tags:
-        - targeting
     TargetingVariation:
       title: TargetingVariation
       type: object
       description: 'Contains a variation and an associated rollout weight, used for targeting.'
+      x-tags:
+        - targeting
       properties:
-        id:
-          type: string
         variationKey:
           type: string
         weight:
           type: number
           description: Rollout weight to be applied for this variation (0-100)
-      x-tags:
-        - targeting
     TargetingRule:
       title: TargetingRule
       type: object
       description: 'A condition which when satisfied outputs the variation during evaluation. '
+      x-tags:
+        - targeting-rules
+        - targeting
       properties:
         id:
           type: string
@@ -2489,13 +2490,10 @@ components:
           $ref: '#/components/schemas/ResourceKey'
         segmentKey:
           $ref: '#/components/schemas/ResourceKey'
-        targetingVariations:
+        ruleVariations:
           type: array
           items:
             $ref: '#/components/schemas/TargetingVariation'
-      x-tags:
-        - targeting-rules
-        - targeting
     RuleOperand:
       type: string
       title: RuleOperand

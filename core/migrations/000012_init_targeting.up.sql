@@ -14,9 +14,19 @@ CREATE TABLE targeting (
   -- attributes
   enabled BOOLEAN DEFAULT FALSE NOT NULL,
   -- references
-  fallthrough_targeting_variation_id UUID REFERENCES targeting_variation (id),
   flag_id UUID REFERENCES flag (id),
   environment_id UUID REFERENCES environment (id)
+);
+
+CREATE TABLE targeting_fallthrough_variation (
+  PRIMARY KEY (variation_id, targeting_id),
+  -- attributes
+  weight INT DEFAULT 100  NOT NULL,
+  -- references
+  variation_id UUID REFERENCES variation (id) NOT NULL,
+  targeting_id UUID REFERENCES targeting (id) NOT NULL,
+  -- constraints
+  CHECK (weight BETWEEN 0 AND 100)
 );
 
 END;
