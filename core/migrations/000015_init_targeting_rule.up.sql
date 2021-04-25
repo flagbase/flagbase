@@ -31,8 +31,8 @@ CREATE TABLE targeting_rule (
   -- references
   identity_id UUID REFERENCES identity (id),
   segment_id UUID REFERENCES segment (id),
-  variation_id UUID REFERENCES variation (id),
   targeting_id UUID REFERENCES targeting (id),
+  targeting_variation_id UUID REFERENCES targeting_variation (id),
   -- contraints
   CONSTRAINT targeting_rule_key UNIQUE(key, targeting_id)
 );

@@ -1321,7 +1321,7 @@ paths:
       tags:
         - identities
       description: Delete an environment specific identity.
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}':
+  '/targeting/{workspaceKey}/{projectKey}/{envKey}/{flagKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1341,6 +1341,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: Get targeting
       responses:
@@ -1360,13 +1366,7 @@ paths:
       description: "Get a specific flag's targeting configuration. "
       tags:
         - targeting
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
     patch:
       summary: Update targeting
       operationId: update-tageting
@@ -1399,7 +1399,21 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules':
+    post:
+      summary: ''
+      operationId: create-targeting
+      responses:
+        '200':
+          description: OK
+      description: Create a targeting configuration for a particular flag per environment
+    delete:
+      summary: ''
+      operationId: delete-targeting
+      responses:
+        '200':
+          description: OK
+      description: Delete a targeting configuration for a particular flag per environment
+  '/targeting-rules/{workspaceKey}/{projectKey}/{envKey}/{flagKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1419,6 +1433,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
     get:
       summary: List targeting rules
       tags:
@@ -1438,13 +1458,7 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: list-target-rules
       description: List the targeting rules of an existing flag in a specific environment.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
     post:
       summary: Create targeting rule
       operationId: create-targeting-rule
@@ -1471,7 +1485,7 @@ paths:
           required: true
           schema:
             type: string
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/rules/{ruleKey}':
+  '/targeting-rules/{workspaceKey}/{projectKey}/{flagKey}/{ruleKey}':
     parameters:
       - name: projectKey
         in: path
@@ -1580,7 +1594,7 @@ paths:
             type: string
       tags:
         - targeting-rules
-  '/targeting/{workspaceKey}/{projectKey}/{flagKey}/percentages':
+  '/targeting-rule/{workspaceKey}/{projectKey}/{flagKey}/{ruleKey}/weights':
     parameters:
       - name: projectKey
         in: path
@@ -1600,6 +1614,12 @@ paths:
         in: path
         required: true
         description: The workspace key
+      - schema:
+          type: string
+        name: ruleKey
+        in: path
+        required: true
+        description: The targeting rule key
     get:
       summary: List targeting percentages
       tags:
@@ -1742,7 +1762,7 @@ paths:
       description: Delete an existing trait.
       tags:
         - traits
-  '/trait/{workspaceKey}/{projectKey}/{envKey}':
+  '/traits/{workspaceKey}/{projectKey}/{envKey}':
     parameters:
       - name: projectKey
         in: path
