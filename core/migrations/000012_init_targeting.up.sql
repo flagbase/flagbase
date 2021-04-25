@@ -15,7 +15,9 @@ CREATE TABLE targeting (
   enabled BOOLEAN DEFAULT FALSE NOT NULL,
   -- references
   flag_id UUID REFERENCES flag (id),
-  environment_id UUID REFERENCES environment (id)
+  environment_id UUID REFERENCES environment (id),
+  -- contraints
+  CONSTRAINT uq_flag_environment UNIQUE(flag_id, environment_id)
 );
 
 CREATE TABLE targeting_fallthrough_variation (

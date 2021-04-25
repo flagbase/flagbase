@@ -11,8 +11,8 @@ type Targeting struct {
 
 // FallthroughVariation represents the fallthrough variation for a particular targeting configuration
 type FallthroughVariation struct {
-	VariationKey rsc.Key
-	Weight       int8
+	VariationKey rsc.Key `json:"variationKey"`
+	Weight       int8    `json:"weight"`
 }
 
 // RootArgs arguments for selecting root resource
