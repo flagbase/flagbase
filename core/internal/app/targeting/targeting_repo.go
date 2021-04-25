@@ -5,7 +5,6 @@ import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
-	"fmt"
 )
 
 func createResource(
@@ -279,27 +278,24 @@ func deleteResource(
 	sctx *srv.Ctx,
 	a RootArgs,
 ) error {
-	targetingIdSqlStatement := `
-SELECT t.id
-FROM targeting t
-LEFT JOIN flag f
-  ON f.id = t.flag_id
-LEFT JOIN environment e
-  ON e.id = t.environment_id
-LEFT JOIN project p
-  ON p.id = e.project_id
-LEFT JOIN workspace w
-  ON w.id = p.workspace_id
-WHERE w.key = $1
-  AND p.key = $2
-  AND e.key = $3
-  AND f.key = $4`
-
-	sqlStatement := fmt.Sprintf(`
+	sqlStatement := `
 DELETE FROM targeting_fallthrough_variation
-WHERE targeting_id = (%s)`,
-		targetingIdSqlStatement,
-	)
+WHERE targeting_id = (
+  SELECT t.id
+  FROM targeting t
+  LEFT JOIN flag f
+    ON f.id = t.flag_id
+  LEFT JOIN environment e
+    ON e.id = t.environment_id
+  LEFT JOIN project p
+    ON p.id = e.project_id
+  LEFT JOIN workspace w
+    ON w.id = p.workspace_id
+  WHERE w.key = $1
+    AND p.key = $2
+    AND e.key = $3
+    AND f.key = $4
+)`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
@@ -315,11 +311,24 @@ WHERE targeting_id = (%s)`,
 		)
 	}
 
-	sqlStatement = fmt.Sprintf(`
+	sqlStatement = `
 DELETE FROM targeting
-WHERE id = (%s)`,
-		targetingIdSqlStatement,
-	)
+WHERE id = (
+  SELECT t.id
+  FROM targeting t
+  LEFT JOIN flag f
+    ON f.id = t.flag_id
+  LEFT JOIN environment e
+    ON e.id = t.environment_id
+  LEFT JOIN project p
+    ON p.id = e.project_id
+  LEFT JOIN workspace w
+    ON w.id = p.workspace_id
+  WHERE w.key = $1
+    AND p.key = $2
+    AND e.key = $3
+    AND f.key = $4
+)`
 	if _, err := sctx.DB.Exec(
 		ctx,
 		sqlStatement,
