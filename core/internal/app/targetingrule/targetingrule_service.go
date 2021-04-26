@@ -1,4 +1,4 @@
-package targeting
+package targetingrule
 
 import (
 	"context"
@@ -10,12 +10,37 @@ import (
 	res "core/pkg/response"
 )
 
+// List returns a list of resource instances
+// (*) atk: access_type <= service
+func List(
+	sctx *srv.Ctx,
+	atk rsc.Token,
+	a RootArgs,
+) (*res.Success, *res.Errors) {
+	var e res.Errors
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	if err := auth.Authorize(atk, rsc.AccessService); err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
+		cancel()
+	}
+
+	r, err := listResource(ctx, sctx, a)
+	if err != nil {
+		e.Append(cons.ErrorNotFound, err.Error())
+	}
+
+	return &res.Success{Data: r}, &e
+}
+
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= user
 func Create(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	i Targeting,
+	i TargetingRule,
 	a RootArgs,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
@@ -38,8 +63,8 @@ func Create(
 			sctx,
 			atk,
 			r.ID,
-			rsc.Targeting,
-			rsc.AccessAdmin,
+			rsc.TargetingRule,
+			rsc.AccessUser,
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
@@ -53,7 +78,7 @@ func Create(
 func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	a RootArgs,
+	a ResourceArgs,
 ) (*res.Success, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -68,7 +93,7 @@ func Get(
 		sctx,
 		atk,
 		r.ID,
-		rsc.Targeting,
+		rsc.TargetingRule,
 		rsc.AccessService,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
@@ -83,9 +108,9 @@ func Update(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a RootArgs,
+	a ResourceArgs,
 ) (*res.Success, *res.Errors) {
-	var o Targeting
+	var o TargetingRule
 	var e res.Errors
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -126,7 +151,7 @@ func Update(
 func Delete(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	a RootArgs,
+	a ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -143,7 +168,7 @@ func Delete(
 		atk,
 		r.ID,
 		rsc.Targeting,
-		rsc.AccessAdmin,
+		rsc.AccessUser,
 	); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()

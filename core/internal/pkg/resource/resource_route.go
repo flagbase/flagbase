@@ -23,4 +23,6 @@ const (
 	RouteTrait string = "traits"
 	// RouteTargeting points to the targeting resource
 	RouteTargeting string = "targeting"
+	// RouteTargetingRule points to the targeting rule resource
+	RouteTargetingRule string = "targeting-rules"
 )

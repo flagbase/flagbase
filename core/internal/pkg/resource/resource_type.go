@@ -31,5 +31,9 @@ const (
 	// Targeting represents a targeting resource
 	Targeting Type = "targeting"
 	// FallthroughVariation represents a weighted fallthough variation
-	FallthroughVariation Type = "fallthrough_variation"
+	FallthroughVariation Type = "targeting_fallthrough_variation"
+	// TargetingRule represents a targeting rule resource
+	TargetingRule Type = "targeting_rule"
+	// RuleVariation represents a targeting rule variation
+	RuleVariation Type = "targeting_rule_variation"
 )

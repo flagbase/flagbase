@@ -338,7 +338,7 @@ WHERE id = (
 		a.FlagKey,
 	); err != nil {
 		return dbutil.ParseError(
-			rsc.FallthroughVariation.String(),
+			rsc.Targeting.String(),
 			a,
 			err,
 		)

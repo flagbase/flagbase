@@ -13,11 +13,13 @@ type TargetingRule struct {
 	Description    rsc.Description      `json:"description,omitempty"`
 	Tags           rsc.Tags             `json:"tags,omitempty"`
 	Type           string               `json:"type"`
-	TraitKey       string               `json:"traitKey"`
-	TraitValue     string               `json:"traitValue"`
-	Operator       ruleoperand.Operator `json:"operator"`
-	Negate         bool                 `json:"negate"`
+	TraitKey       string               `json:"traitKey,omitempty"`
+	TraitValue     string               `json:"traitValue,omitempty"`
+	Operator       ruleoperand.Operator `json:"operator,omitempty"`
+	Negate         bool                 `json:"negate,omitempty"`
 	RuleVariations []RuleVariation      `json:"ruleVariations"`
+	IdentityKey    rsc.Key              `json:"identityKey,omitempty"`
+	SegmentKey     rsc.Key              `json:"segmentKey,omitempty"`
 }
 
 type RuleVariation struct {
