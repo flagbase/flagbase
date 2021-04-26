@@ -114,13 +114,6 @@ func createResource(
 	i TargetingRule,
 	a RootArgs,
 ) (*TargetingRule, error) {
-	if &i.IdentityKey == nil {
-		i.IdentityKey = ""
-	}
-	if &i.SegmentKey == nil {
-		i.SegmentKey = ""
-	}
-
 	var o TargetingRule
 	sqlStatement := `
 INSERT INTO
