@@ -1032,7 +1032,7 @@ paths:
       tags:
         - flags
       description: Delete an existing flag.
-  '/variations/{workspaceKey}/{projectKey}/{flagKey}':
+  '/flags/{workspaceKey}/{projectKey}/{flagKey}/variations':
     parameters:
       - name: flagKey
         in: path
@@ -1100,7 +1100,7 @@ paths:
       description: Create a flag variation.
       requestBody:
         $ref: '#/components/requestBodies/Variation'
-  '/variations/{workspaceKey}/{projectKey}/{flagKey}/{variationKey}':
+  '/flags/{workspaceKey}/{projectKey}/{flagKey}/variations/{variationKey}':
     parameters:
       - name: projectKey
         in: path
