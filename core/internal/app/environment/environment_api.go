@@ -14,10 +14,13 @@ import (
 
 // ApplyRoutes environment route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
-	routes := r.Group(rsc.RouteEnvironment)
-	rootPath := httputil.BuildPath(
-		rsc.WorkspaceKey,
-		rsc.ProjectKey,
+	routes := r.Group("/")
+	rootPath := httputil.BuildRoute(
+		httputil.BuildPath(
+			rsc.WorkspaceKey,
+			rsc.ProjectKey,
+		),
+		rsc.RouteEnvironment,
 	)
 	resourcePath := httputil.AppendPath(
 		rootPath,
