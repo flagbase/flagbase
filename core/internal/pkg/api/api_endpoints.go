@@ -10,7 +10,6 @@ import (
 	"core/internal/app/segment"
 	"core/internal/app/targeting"
 	"core/internal/app/trait"
-	"core/internal/app/variation"
 	"core/internal/app/workspace"
 	"core/internal/pkg/httpmetrics"
 	srv "core/internal/pkg/server"
@@ -31,6 +30,5 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	targeting.ApplyRoutes(sctx, root)
 	trait.ApplyRoutes(sctx, root)
 	segment.ApplyRoutes(sctx, root)
-	variation.ApplyRoutes(sctx, root)
 	workspace.ApplyRoutes(sctx, root)
 }

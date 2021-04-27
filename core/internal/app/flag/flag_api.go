@@ -1,6 +1,7 @@
 package flag
 
 import (
+	"core/internal/app/variation"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -29,6 +30,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
 	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
 	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
+	variation.ApplyRoutes(sctx, routes)
 }
 
 func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {

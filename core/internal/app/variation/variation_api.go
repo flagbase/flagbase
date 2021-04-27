@@ -14,11 +14,14 @@ import (
 
 // ApplyRoutes variation route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
-	routes := r.Group(rsc.RouteVariation)
-	rootPath := httputil.BuildPath(
-		rsc.WorkspaceKey,
-		rsc.ProjectKey,
-		rsc.FlagKey,
+	routes := r.Group("")
+	rootPath := httputil.AppendRoute(
+		httputil.BuildPath(
+			rsc.WorkspaceKey,
+			rsc.ProjectKey,
+			rsc.FlagKey,
+		),
+		rsc.RouteVariation,
 	)
 	resourcePath := httputil.AppendPath(
 		rootPath,
