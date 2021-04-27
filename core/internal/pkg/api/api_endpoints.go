@@ -8,7 +8,6 @@ import (
 	"core/internal/app/identity"
 	"core/internal/app/project"
 	"core/internal/app/segment"
-	"core/internal/app/segmentrule"
 	"core/internal/app/targeting"
 	"core/internal/app/targetingrule"
 	"core/internal/app/trait"
@@ -34,7 +33,6 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	targetingrule.ApplyRoutes(sctx, root)
 	trait.ApplyRoutes(sctx, root)
 	segment.ApplyRoutes(sctx, root)
-	segmentrule.ApplyRoutes(sctx, root)
 	variation.ApplyRoutes(sctx, root)
 	workspace.ApplyRoutes(sctx, root)
 }

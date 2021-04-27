@@ -25,4 +25,6 @@ const (
 	RouteTargeting string = "targeting"
 	// RouteTargetingRule points to the targeting rule resource
 	RouteTargetingRule string = "targeting-rules"
+	// RouteRule points to the rule resource
+	RouteRule string = "rules"
 )
