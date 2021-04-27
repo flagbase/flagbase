@@ -14,7 +14,7 @@ import (
 
 // ApplyRoutes variation route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
-	routes := r.Group("")
+	routes := r.Group("/")
 	rootPath := httputil.AppendRoute(
 		httputil.BuildPath(
 			rsc.WorkspaceKey,

@@ -272,7 +272,7 @@ paths:
       tags:
         - projects
       description: Delete an existing project.
-  '/environments/{workspaceKey}/{projectKey}/{envKey}':
+  '/projects/{workspaceKey}/{projectKey}/environments/{envKey}':
     parameters:
       - name: projectKey
         in: path
@@ -786,7 +786,7 @@ paths:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - project-access
-  '/environments/{workspaceKey}/{projectKey}/{envKey}/access':
+  '/projects/{workspaceKey}/{projectKey}/environments/{envKey}/access':
     parameters:
       - name: envKey
         in: path
@@ -869,7 +869,7 @@ paths:
       description: Delete an existing environment access link.
       requestBody:
         $ref: '#/components/requestBodies/AccessPairInput'
-  '/environments/{workspaceKey}/{projectKey}':
+  '/projects/{workspaceKey}/{projectKey}/environments':
     parameters:
       - name: projectKey
         in: path
