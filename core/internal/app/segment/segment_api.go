@@ -17,8 +17,6 @@ import (
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteSegment)
 
-	segmentrule.ApplyRoutes(sctx, routes)
-
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,
@@ -33,6 +31,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
 	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
 	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
+	segmentrule.ApplyRoutes(sctx, routes)
 }
 
 func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {

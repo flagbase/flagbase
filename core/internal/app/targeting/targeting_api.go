@@ -1,6 +1,7 @@
 package targeting
 
 import (
+	"core/internal/app/targetingrule"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -26,6 +27,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes.GET(rootPath, httputil.Handler(sctx, getAPIHandler))
 	routes.PATCH(rootPath, httputil.Handler(sctx, updateAPIHandler))
 	routes.DELETE(rootPath, httputil.Handler(sctx, deleteAPIHandler))
+	targetingrule.ApplyRoutes(sctx, routes)
 }
 
 func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
