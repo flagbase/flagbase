@@ -26,3 +26,19 @@ func AppendPath(rootPath string, params ...rsc.Key) string {
 		params...,
 	)
 }
+
+// BuildRoute constructs a path given the respective routes
+func BuildRoute(routes ...string) string {
+	if len(routes) == 1 {
+		return routes[0]
+	}
+
+	return routes[0] + "/" + BuildRoute(routes[1:]...)
+}
+
+// AppendRoute helper which appends extra route to an existing path
+func AppendRoute(rootPath string, routes ...string) string {
+	return rootPath + "/" + BuildRoute(
+		routes...,
+	)
+}

@@ -1,6 +1,7 @@
 package segment
 
 import (
+	"core/internal/app/segmentrule"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -15,6 +16,9 @@ import (
 // ApplyRoutes segment route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteSegment)
+
+	segmentrule.ApplyRoutes(sctx, routes)
+
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 		rsc.ProjectKey,

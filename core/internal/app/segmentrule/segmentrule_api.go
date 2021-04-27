@@ -14,12 +14,17 @@ import (
 
 // ApplyRoutes segment route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
-	routes := r.Group(rsc.RouteSegmentRule)
-	rootPath := httputil.BuildPath(
-		rsc.WorkspaceKey,
-		rsc.ProjectKey,
+	routes := r.Group("/")
+	rootPath := httputil.AppendPath(
+		httputil.AppendRoute(
+			httputil.BuildPath(
+				rsc.WorkspaceKey,
+				rsc.ProjectKey,
+				rsc.SegmentKey,
+			),
+			rsc.RouteRule,
+		),
 		rsc.EnvironmentKey,
-		rsc.SegmentKey,
 	)
 	resourcePath := httputil.AppendPath(
 		rootPath,
