@@ -109,9 +109,6 @@ x-tagGroups:
     tags:
       - identities
       - traits
-  - name: Auditing
-    tags:
-      - auditlog
 paths:
   '/workspaces/{workspaceKey}':
     get:
@@ -587,55 +584,6 @@ paths:
       tags:
         - auth
     parameters: []
-  /auditlog:
-    get:
-      summary: List audit logs
-      tags:
-        - auditlog
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Auditlog'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      operationId: list-auditlog
-      description: Retrieve a segment of audit logs within a particular time-peroid.
-      parameters:
-        - in: query
-          name: after
-          description: Unix timestamp denoting the start time to filter logs.
-          schema:
-            type: string
-        - in: query
-          name: before
-          description: Unix timestamp denoting the end time to filter logs.
-          schema:
-            type: string
-        - in: query
-          name: q
-          description: Search query param
-          schema:
-            type: string
-        - in: query
-          name: limit
-          description: Number of log items to fetch. Useful for pagination.
-          schema:
-            type: number
-        - in: query
-          name: skip
-          description: Number of log items to skip. Useful for pagination.
-          schema:
-            type: string
   '/workspaces/{workspaceKey}/access':
     parameters:
       - name: workspaceKey
@@ -2216,27 +2164,6 @@ components:
           type: integer
           description: Unix time stating when this access expires.
           format: int64
-    Auditlog:
-      title: Auditlog
-      type: object
-      properties:
-        time:
-          type: string
-          format: date-time
-        description:
-          type: string
-        urn:
-          type: string
-        action:
-          type: string
-        data:
-          oneOf:
-            - type: string
-            - type: object
-      required:
-        - time
-        - urn
-        - action
     ResourceKey:
       type: string
       title: Resource Key
