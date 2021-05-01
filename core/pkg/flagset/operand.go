@@ -1,4 +1,4 @@
-package ruleoperand
+package flagset
 
 // Operator represents an conditional operator (i.e. <operand> <operator> <operand>)
 type Operator string

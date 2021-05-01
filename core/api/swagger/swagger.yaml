@@ -924,12 +924,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: get-flag
-      parameters:
-        - in: query
-          name: env
-          required: true
-          schema:
-            type: string
+      parameters: []
       description: Get a single feature flag using its key.
     patch:
       summary: Update feature flag
@@ -953,12 +948,7 @@ paths:
       tags:
         - flags
       description: Update an existing flag.
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -2019,6 +2009,39 @@ paths:
       description: Delete an existing segment rule
       tags:
         - segment-rules
+  '/evaluation/{workspaceKey}/{projectKey}/{envKey}':
+    get:
+      summary: Get evaluation details
+      tags: []
+      responses: {}
+      operationId: get-evaluation
+      description: 'Get non-evaluated flagset rules, used for evaluation.'
+    parameters:
+      - schema:
+          type: string
+        name: workspaceKey
+        in: path
+        required: true
+        description: The workspace key
+      - schema:
+          type: string
+        name: projectKey
+        in: path
+        required: true
+        description: The project key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
+    post:
+      summary: Evaluate flags
+      operationId: evaluate-flags
+      responses:
+        '200':
+          description: OK
+      description: Evaluate flags given a particular context.
 servers:
   - url: 'https://api.flagbase.io'
     description: Flagbase Cloud

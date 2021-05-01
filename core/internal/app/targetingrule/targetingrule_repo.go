@@ -5,6 +5,7 @@ import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
+	"core/pkg/flagset"
 
 	"github.com/lib/pq"
 )
@@ -26,7 +27,9 @@ SELECT
   tr.trait_key,
   tr.trait_value,
   tr.operator,
-  tr.negate
+  tr.negate,
+  COALESCE(s.key, '') as segmentKey,
+  COALESCE(i.key, '') as identityKey
 FROM targeting_rule tr
 LEFT JOIN targeting t
   ON t.id = tr.targeting_id
@@ -70,6 +73,8 @@ WHERE w.key = $1
 			&_o.TraitValue,
 			&_o.Operator,
 			&_o.Negate,
+			&_o.SegmentKey,
+			&_o.IdentityKey,
 		); err != nil {
 			return nil, err
 		}
@@ -93,7 +98,7 @@ WHERE tr.id = $1`
 			return &o, err
 		}
 		for _rows.Next() {
-			var _v RuleVariation
+			var _v flagset.Variation
 			if err = _rows.Scan(
 				&_v.Weight,
 				&_v.VariationKey,
@@ -380,7 +385,7 @@ WHERE w.key = $1
 		return &o, err
 	}
 	for rows.Next() {
-		var _o RuleVariation
+		var _o flagset.Variation
 		if err = rows.Scan(
 			&_o.Weight,
 			&_o.VariationKey,
