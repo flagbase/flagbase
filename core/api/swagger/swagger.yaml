@@ -47,6 +47,9 @@ tags:
   - name: environments
     x-displayName: Environment Management
     description: 'Environments are used to maintain isolated contexts for project resources (such as feature flags, rollout rules etc). For example, you can have Test and Production environments, which contain completely separate rollout rules etc.'
+  - name: evaluation
+    x-displayName: Flag Evaluation
+    description: 'Evaluation is the process of deriving the variation of a flag / set of flags, given a particular context (i.e. user traits)'
   - name: environment-access
     x-displayName: Environment Access
     description: A new environment-access link should be created in order to enable the appropriate acess permissions to this resource and its children.
@@ -97,6 +100,7 @@ x-tagGroups:
     tags:
       - flags
       - variations
+      - evaluation
   - name: Targeting
     tags:
       - targeting
@@ -392,13 +396,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: list-flags
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          required: true
-          schema:
-            type: string
+      parameters: []
       description: List feature flags in the project.
     post:
       summary: Create feature flag
@@ -422,12 +420,7 @@ paths:
       tags:
         - flags
       description: Create a new feature flag in the specified project
-      parameters:
-        - in: query
-          name: env
-          description: The environment key
-          schema:
-            type: string
+      parameters: []
       requestBody:
         content:
           application/json:
@@ -2012,8 +2005,21 @@ paths:
   '/evaluation/{workspaceKey}/{projectKey}/{envKey}':
     get:
       summary: Get evaluation details
-      tags: []
-      responses: {}
+      tags:
+        - evaluation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       operationId: get-evaluation
       description: 'Get non-evaluated flagset rules, used for evaluation.'
     parameters:
@@ -2041,7 +2047,25 @@ paths:
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
       description: Evaluate flags given a particular context.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EvaluationContext'
+        description: The evaluation context is required when evaluating a flagset.
+      tags:
+        - evaluation
 servers:
   - url: 'https://api.flagbase.io'
     description: Flagbase Cloud
@@ -2454,3 +2478,19 @@ components:
         - greater_than_or_equal
         - contains
         - regex
+    EvaluationContext:
+      title: EvaluationContext
+      type: object
+      description: evaluation context is essentially the data required to evaluate a flag
+      properties:
+        identifier:
+          type: string
+          description: Unique identifier for the user
+        traits:
+          type: object
+          description: User attributes that will be used during evaluation
+      required:
+        - identifier
+        - traits
+      x-tags:
+        - evaluation
