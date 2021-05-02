@@ -10,7 +10,7 @@ var (
 		"db:5432/flagbase" +
 		"?sslmode=disable"
 	// DefaultRedisAddr default redis address
-	DefaultRedisAddr string = "localhost:6379"
+	DefaultRedisAddr string = "redis:6379"
 	// DefaultRedisPassword default redis password
 	DefaultRedisPassword string = ""
 	// DefaultRedisDB default redis database number
@@ -34,6 +34,8 @@ var (
 	JWTKey string = "bad_secret"
 	// JWTExpiryMinutes default JWT lifetime (in minutes)
 	JWTExpiryMinutes time.Duration = 5000
+	// DefaultCacheExpiry default Cache lifetime (in seconds)
+	DefaultCacheExpiry time.Duration = 300000000000
 	// DefaultPrometheus for if prometheus is setup
 	DefaultPrometheus bool = false
 )

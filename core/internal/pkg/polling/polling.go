@@ -1,4 +1,4 @@
-package evaluation
+package polling
 
 import rsc "core/internal/pkg/resource"
 

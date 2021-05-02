@@ -7,6 +7,8 @@ services:
     command: ["air"]
     ports:
       - 5051:5051
+      - 7051:7051
+      - 9051:9051
     volumes:
       - ./:/go/src/github.com/flagbase/flagbase/core
     depends_on:
