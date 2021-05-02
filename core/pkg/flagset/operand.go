@@ -4,14 +4,14 @@ package flagset
 type Operator string
 
 const (
-	// Equal exact match
-	Equal Operator = "equal"
-	// GreaterThan > (numeric comparisons)
-	GreaterThan Operator = "greater_than"
-	// GreaterThanOrEqual >= (numeric comparisons)
-	GreaterThanOrEqual Operator = "greater_than_or_equal"
-	// Contains is a substring
-	Contains Operator = "contains"
-	// Regex regular expression match
-	Regex Operator = "regex"
+	// OPEqual exact match
+	OPEqual Operator = "equal"
+	// OPGreaterThan > (numeric comparisons)
+	OPGreaterThan Operator = "greater_than"
+	// OPGreaterThanOrEqual >= (numeric comparisons)
+	OPGreaterThanOrEqual Operator = "greater_than_or_equal"
+	// OPContains is a substring
+	OPContains Operator = "contains"
+	// OPRegex regular expression match
+	OPRegex Operator = "regex"
 )
