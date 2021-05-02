@@ -2,6 +2,7 @@ package api
 
 import (
 	"core/internal/app/access"
+	"core/internal/app/evaluation"
 	"core/internal/app/flag"
 	"core/internal/app/healthcheck"
 	"core/internal/app/identity"
@@ -22,6 +23,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	root := r.Group("/")
 	access.ApplyRoutes(sctx, root)
 	flag.ApplyRoutes(sctx, root)
+	evaluation.ApplyRoutes(sctx, root)
 	healthcheck.ApplyRoutes(sctx, root)
 	identity.ApplyRoutes(sctx, root)
 	project.ApplyRoutes(sctx, root)

@@ -5,6 +5,7 @@ import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
+	"core/pkg/flagset"
 )
 
 func createResource(
@@ -195,7 +196,7 @@ WHERE w.key = $1
 		return &o, err
 	}
 	for rows.Next() {
-		var _o FallthroughVariation
+		var _o flagset.Variation
 		if err = rows.Scan(
 			&_o.Weight,
 			&_o.VariationKey,
