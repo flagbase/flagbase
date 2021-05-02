@@ -1,7 +1,7 @@
 package hashutil
 
 import (
-	"crypto/md5"
+	"crypto/sha256"
 	"fmt"
 	"io"
 )
@@ -16,8 +16,10 @@ func HashKeys(keys ...string) string {
 }
 
 func hashKey(key string) string {
-	w := md5.New()
-	io.WriteString(w, key)
+	w := sha256.New()
+	if _, err := io.WriteString(w, key); err != nil {
+		panic("unable to hash key")
+	}
 	md5str := fmt.Sprintf("%x", w.Sum(nil))
 	return md5str
 }

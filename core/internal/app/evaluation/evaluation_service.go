@@ -62,7 +62,8 @@ func Get(
 		o[string(f.Key)].Rules = []flagset.Rule{}
 
 		for _, _tr := range *tr.Data.(*[]targetingrule.TargetingRule) {
-			if _tr.Type == string(rsc.Trait) {
+			switch _tr.Type {
+			case string(rsc.Trait):
 				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
 					RuleType:       _tr.Type,
 					TraitKey:       _tr.TraitKey,
@@ -71,29 +72,30 @@ func Get(
 					Negate:         _tr.Negate,
 					RuleVariations: _tr.RuleVariations,
 				})
-			} else if _tr.Type == string(rsc.Segment) && string(_tr.SegmentKey) != "" {
-				sr, err := segmentrule.List(sctx, atk, segmentrule.RootArgs{
-					WorkspaceKey:   a.WorkspaceKey,
-					ProjectKey:     a.ProjectKey,
-					EnvironmentKey: a.EnvironmentKey,
-					SegmentKey:     _tr.SegmentKey,
-				})
-				if !err.IsEmpty() {
-					e.Extend(err)
-				}
-
-				for _, _sr := range *sr.Data.(*[]segmentrule.SegmentRule) {
-					o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
-						RuleType:       _tr.Type,
-						TraitKey:       _sr.TraitKey,
-						TraitValue:     _sr.TraitValue,
-						Operator:       _sr.Operator,
-						Negate:         _sr.Negate,
-						RuleVariations: _tr.RuleVariations,
+			case string(rsc.Segment):
+				if string(_tr.SegmentKey) != "" {
+					sr, err := segmentrule.List(sctx, atk, segmentrule.RootArgs{
+						WorkspaceKey:   a.WorkspaceKey,
+						ProjectKey:     a.ProjectKey,
+						EnvironmentKey: a.EnvironmentKey,
+						SegmentKey:     _tr.SegmentKey,
 					})
+					if !err.IsEmpty() {
+						e.Extend(err)
+					}
+
+					for _, _sr := range *sr.Data.(*[]segmentrule.SegmentRule) {
+						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
+							RuleType:       _tr.Type,
+							TraitKey:       _sr.TraitKey,
+							TraitValue:     _sr.TraitValue,
+							Operator:       _sr.Operator,
+							Negate:         _sr.Negate,
+							RuleVariations: _tr.RuleVariations,
+						})
+					}
 				}
-			} else if _tr.Type == string(rsc.Identity) {
-				// TODO match identity
+				// TODO match identity ~ case string(rsc.Identity):
 			}
 		}
 	}
@@ -125,8 +127,8 @@ func Evaluate(
 			string(a.WorkspaceKey),
 			string(a.ProjectKey),
 			string(a.EnvironmentKey),
-			string(flag.FlagKey),
-			string(ectx.Identifier),
+			flag.FlagKey,
+			ectx.Identifier,
 		)
 		o[flag.FlagKey] = evaluator.Evaluate(*flag, salt, ectx)
 	}

@@ -16,7 +16,7 @@ func Evaluate(
 		FlagKey: flag.FlagKey,
 	}
 
-	if len(flag.Rules) > 0 && flag.UseFallthrough == false {
+	if len(flag.Rules) > 0 && !flag.UseFallthrough {
 		eval := evaluateRules(flag.Rules, salt, ectx)
 		o.Reason = eval.Reason
 		o.VariationKey = eval.VariationKey
