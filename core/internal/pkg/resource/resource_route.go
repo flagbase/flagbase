@@ -27,6 +27,6 @@ const (
 	RouteTargetingRule string = "targeting-rules"
 	// RouteRule points to the rule resource
 	RouteRule string = "rules"
-	// Evaluation points to the evaluation resource
+	// RouteEvaluation points to the evaluation resource
 	RouteEvaluation string = "evaluation"
 )

@@ -7,8 +7,10 @@ import (
 	"strings"
 )
 
+// EvalMapper map containing comparators for all valid operands
 type EvalMapper map[flagset.Operator](func(input interface{}, rule string) bool)
 
+// Matcher instance of EvalMapper, used to select the appropriate comparator given the operand
 var Matcher EvalMapper = EvalMapper{
 	(flagset.OPEqual): func(i interface{}, r string) bool {
 		iS, ok := i.(string)

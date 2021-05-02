@@ -6,6 +6,7 @@ import (
 	"errors"
 )
 
+// Evaluate the variation for a single flag
 func Evaluate(
 	flag flagset.Flag,
 	salt string,
@@ -22,9 +23,9 @@ func Evaluate(
 	}
 
 	if o.VariationKey == "" {
-		o.Reason = Fallthrough
+		o.Reason = ReasonFallthrough
 		if len(flag.FallthroughVariations) > 1 {
-			o.Reason = FallthroughWeighted
+			o.Reason = ReasonFallthroughWeighted
 		}
 		o.VariationKey = deriveVariation(
 			salt,
@@ -50,7 +51,7 @@ func evaluateRules(
 			if _, ok := variationVotes[eval.VariationKey]; !ok {
 				variationVotes[eval.VariationKey] = 0
 			}
-			variationVotes[eval.VariationKey] += 1
+			variationVotes[eval.VariationKey]++
 			if variationVotes[eval.VariationKey] > maxVotes {
 				maxVotes = variationVotes[eval.VariationKey]
 				o = eval
@@ -84,9 +85,9 @@ func evaluateRule(
 		return o, errors.New("rule does not match")
 	}
 
-	o.Reason = Targeted
+	o.Reason = ReasonTargeted
 	if len(rule.RuleVariations) > 1 {
-		o.Reason = TargetedWeighted
+		o.Reason = ReasonTargetedWeighted
 	}
 	o.VariationKey = deriveVariation(
 		salt,

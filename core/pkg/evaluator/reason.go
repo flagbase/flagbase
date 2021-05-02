@@ -1,5 +1,6 @@
 package evaluator
 
+// Reason evaluation reason
 type Reason string
 
 func (r Reason) String() string {
@@ -7,8 +8,12 @@ func (r Reason) String() string {
 }
 
 const (
-	Fallthrough         Reason = "FALLTHROUGH"
-	FallthroughWeighted Reason = "FALLTHROUGH_WEIGHTED"
-	Targeted            Reason = "TARGETED"
-	TargetedWeighted    Reason = "TARGETED_WEIGHTED"
+	// ReasonFallthrough used a single fallthrough variation
+	ReasonFallthrough Reason = "FALLTHROUGH"
+	// ReasonFallthroughWeighted used a weighted fallthrough variation
+	ReasonFallthroughWeighted Reason = "FALLTHROUGH_WEIGHTED"
+	// ReasonTargeted used a single targeted variation
+	ReasonTargeted Reason = "TARGETED"
+	// ReasonTargetedWeighted used a weighted targeted variation
+	ReasonTargetedWeighted Reason = "TARGETED_WEIGHTED"
 )
