@@ -20,6 +20,8 @@ const (
 	Flag Type = "flag"
 	// Variation represents a variation resource
 	Variation Type = "variation"
+	// SDKKey represents a SDK key resource
+	SDKKey Type = "sdk_key"
 	// Segment represents a segment resource
 	Segment Type = "segment"
 	// SegmentRule represents a segment rule resource

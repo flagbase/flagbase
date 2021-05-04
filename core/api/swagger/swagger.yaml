@@ -68,6 +68,9 @@ tags:
   - name: traits
     x-displayName: Trait Management
     description: Traits represent a particular characteristic of a particular identity (aka users). You can create segments using these traits. Traits can also be used to target variations to specific users.
+  - name: sdk-keys
+    x-displayName: SDK Key Management
+    description: SDK keys are used by client and server-side SDKs and help identify a flagset in a particular project environment.
   - name: segments
     x-displayName: Segment Management
     description: Segments represent a specific group of users based on their attributes. You can define a specific user segments using a set rules. Rules contain conditions that are applied to attributes.
@@ -92,10 +95,8 @@ x-tagGroups:
     tags:
       - projects
       - project-access
-  - name: Environments
-    tags:
       - environments
-      - environment-access
+      - sdk-keys
   - name: Feature Flags
     tags:
       - flags
@@ -114,7 +115,7 @@ x-tagGroups:
       - identities
       - traits
 paths:
-  '/workspaces/{workspaceKey}':
+  '/workspaces/{wsKey}':
     get:
       operationId: get-workspace
       summary: Get workspace
@@ -138,7 +139,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
     parameters:
-      - name: workspaceKey
+      - name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -190,9 +191,9 @@ paths:
       description: Delete an existing workspace. This operation can not be undone. Please proceed with caution.
       tags:
         - workspaces
-  '/projects/{workspaceKey}/{projectKey}':
+  '/projects/{wsKey}/{projKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -200,7 +201,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: |
@@ -273,9 +274,9 @@ paths:
       tags:
         - projects
       description: Delete an existing project.
-  '/projects/{workspaceKey}/{projectKey}/environments/{envKey}':
+  '/projects/{wsKey}/{projKey}/environments/{envKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -289,7 +290,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -359,9 +360,9 @@ paths:
       tags:
         - environments
       description: Delete an existing environment.
-  '/flags/{workspaceKey}/{projectKey}':
+  '/flags/{wsKey}/{projKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -369,7 +370,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -477,7 +478,7 @@ paths:
       requestBody:
         $ref: '#/components/requestBodies/Workspace'
     parameters: []
-  '/projects/{workspaceKey}':
+  '/projects/{wsKey}':
     post:
       summary: Create project
       operationId: create-project
@@ -509,7 +510,7 @@ paths:
     parameters:
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -577,9 +578,9 @@ paths:
       tags:
         - auth
     parameters: []
-  '/workspaces/{workspaceKey}/access':
+  '/workspaces/{wsKey}/access':
     parameters:
-      - name: workspaceKey
+      - name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -650,7 +651,7 @@ paths:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - workspace-access
-  '/projects/{workspaceKey}/{projectKey}/access':
+  '/projects/{wsKey}/{projKey}/access':
     get:
       summary: List project access
       responses:
@@ -674,7 +675,7 @@ paths:
       tags:
         - project-access
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -682,7 +683,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -727,15 +728,9 @@ paths:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - project-access
-  '/projects/{workspaceKey}/{projectKey}/environments/{envKey}/access':
+  '/projects/{wsKey}/{projKey}/environments':
     parameters:
-      - name: envKey
-        in: path
-        required: true
-        description: The environment key
-        schema:
-          type: string
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -743,84 +738,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
-        in: path
-        required: true
-        description: The workspace key
-    get:
-      summary: List environment access
-      tags:
-        - environment-access
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Access'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      operationId: list-environment-access
-      description: List access keys that are currently in use for a particular environment.
-    post:
-      summary: Create environment access
-      operationId: create-environment-access
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Access'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-        - environment-access
-      description: Create a new environment access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
-    delete:
-      summary: Delete environment access
-      operationId: delete-environment-access
-      responses:
-        '204':
-          description: No Content
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-      tags:
-        - environment-access
-      description: Delete an existing environment access link.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessPairInput'
-  '/projects/{workspaceKey}/{projectKey}/environments':
-    parameters:
-      - name: projectKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -876,9 +794,9 @@ paths:
             schema:
               $ref: '#/components/schemas/EnvironmentInput'
         description: Environmnet Object
-  '/flags/{workspaceKey}/{projectKey}/{flagKey}':
+  '/flags/{wsKey}/{projKey}/{flagKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -892,7 +810,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -963,7 +881,7 @@ paths:
       tags:
         - flags
       description: Delete an existing flag.
-  '/flags/{workspaceKey}/{projectKey}/{flagKey}/variations':
+  '/flags/{wsKey}/{projKey}/{flagKey}/variations':
     parameters:
       - name: flagKey
         in: path
@@ -971,7 +889,7 @@ paths:
         description: The flag key
         schema:
           type: string
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -979,7 +897,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1031,9 +949,9 @@ paths:
       description: Create a flag variation.
       requestBody:
         $ref: '#/components/requestBodies/Variation'
-  '/flags/{workspaceKey}/{projectKey}/{flagKey}/variations/{variationKey}':
+  '/flags/{wsKey}/{projKey}/{flagKey}/variations/{variationKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1053,7 +971,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1122,9 +1040,9 @@ paths:
       tags:
         - variations
       description: Delete a single flag variation
-  '/identities/{workspaceKey}/{projectKey}/{envKey}':
+  '/identities/{wsKey}/{projKey}/{envKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1138,7 +1056,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1182,9 +1100,9 @@ paths:
           description: Number of identities to skip. Useful for pagination.
           schema:
             type: number
-  '/identities/{workspaceKey}/{projectKey}/{envKey}/{identityKey}':
+  '/identities/{wsKey}/{projKey}/{envKey}/{identityKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1204,7 +1122,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1248,7 +1166,7 @@ paths:
       tags:
         - identities
       description: Delete an environment specific identity.
-  '/targeting/{workspaceKey}/{projectKey}/{envKey}/{flagKey}':
+  '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}':
     parameters:
       - name: flagKey
         in: path
@@ -1256,7 +1174,7 @@ paths:
         description: The flag key
         schema:
           type: string
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1264,7 +1182,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1355,9 +1273,9 @@ paths:
       description: Delete a targeting configuration for a particular flag per environment
       tags:
         - targeting
-  '/targeting/{workspaceKey}/{projectKey}/{envKey}/{flagKey}/rules':
+  '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}/rules':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1371,7 +1289,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1427,9 +1345,9 @@ paths:
             schema:
               $ref: '#/components/schemas/TargetingRule'
         description: Targeting Rule
-  '/targeting/{workspaceKey}/{projectKey}/{envKey}/{flagKey}/rules/{ruleKey}':
+  '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}/rules/{ruleKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1449,7 +1367,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1524,9 +1442,9 @@ paths:
       parameters: []
       tags:
         - targeting-rules
-  '/traits/{workspaceKey}/{projectKey}/{envKey}/{traitKey}':
+  '/traits/{wsKey}/{projKey}/{envKey}/{traitKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1540,7 +1458,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1616,9 +1534,9 @@ paths:
       description: Delete an existing trait.
       tags:
         - traits
-  '/traits/{workspaceKey}/{projectKey}/{envKey}':
+  '/traits/{wsKey}/{projKey}/{envKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1626,7 +1544,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1688,9 +1606,9 @@ paths:
             schema:
               $ref: '#/components/schemas/Trait'
         description: Environmnet Object
-  '/segments/{workspaceKey}/{projectKey}':
+  '/segments/{wsKey}/{projKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
@@ -1698,7 +1616,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1757,15 +1675,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Segment'
-  '/segments/{workspaceKey}/{projectKey}/{segmentKey}':
+  '/segments/{wsKey}/{projKey}/{segKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
         schema:
           type: string
-      - name: segmentKey
+      - name: segKey
         in: path
         required: true
         description: The segment key
@@ -1773,7 +1691,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1836,15 +1754,15 @@ paths:
       tags:
         - segments
       description: Delete an existing user segment.
-  '/segments/{workspaceKey}/{projectKey}/{segmentKey}/rules/{envKey}':
+  '/segments/{wsKey}/{projKey}/{segKey}/rules/{envKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
         schema:
           type: string
-      - name: segmentKey
+      - name: segKey
         in: path
         required: true
         description: The segment key
@@ -1852,7 +1770,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -1906,15 +1824,15 @@ paths:
             schema:
               $ref: '#/components/schemas/SegmentRule'
         description: Segment Rules
-  '/segments/{workspaceKey}/{projectKey}/{segmentKey}/rules/{envKey}/{ruleKey}':
+  '/segments/{wsKey}/{projKey}/{segKey}/rules/{envKey}/{ruleKey}':
     parameters:
-      - name: projectKey
+      - name: projKey
         in: path
         required: true
         description: The project key
         schema:
           type: string
-      - name: segmentKey
+      - name: segKey
         in: path
         required: true
         description: The segment key
@@ -1928,7 +1846,7 @@ paths:
           type: string
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
@@ -2002,7 +1920,7 @@ paths:
       description: Delete an existing segment rule
       tags:
         - segment-rules
-  '/evaluation/{workspaceKey}/{projectKey}/{envKey}':
+  '/evaluation/{wsKey}/{projKey}/{envKey}':
     get:
       summary: Get evaluation details
       tags:
@@ -2025,13 +1943,13 @@ paths:
     parameters:
       - schema:
           type: string
-        name: workspaceKey
+        name: wsKey
         in: path
         required: true
         description: The workspace key
       - schema:
           type: string
-        name: projectKey
+        name: projKey
         in: path
         required: true
         description: The project key
@@ -2066,6 +1984,155 @@ paths:
         description: The evaluation context is required when evaluating a flagset.
       tags:
         - evaluation
+  '/projects/{wsKey}/{projKey}/environments/{envKey}/sdk-keys':
+    parameters:
+      - schema:
+          type: string
+        name: wsKey
+        in: path
+        required: true
+        description: The workspace key
+      - schema:
+          type: string
+        name: projKey
+        in: path
+        required: true
+        description: The project key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
+    get:
+      summary: List SDK keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: list-sdk-keys
+      description: Retrieve a list of sdk keys for that particular environment
+      tags:
+        - sdk-keys
+    post:
+      summary: Create SDK key
+      operationId: create-sdk-key
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Create a sdk key for a particular project environment
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SDKKeyRequest'
+        description: SDK Key request body
+      tags:
+        - sdk-keys
+  '/projects/{wsKey}/{projKey}/environments/{envKey}/sdk-keys/{id}':
+    parameters:
+      - schema:
+          type: string
+        name: wsKey
+        in: path
+        required: true
+        description: The workspace key
+      - schema:
+          type: string
+        name: projKey
+        in: path
+        required: true
+        description: The project key
+      - schema:
+          type: string
+        name: envKey
+        in: path
+        required: true
+        description: The environment key
+      - schema:
+          type: string
+        name: id
+        in: path
+        required: true
+        description: The SDK key id
+    get:
+      summary: List SDK keys
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      operationId: get-sdk-key
+      description: Retrieve a list of sdk keys for that particular environment
+      tags:
+        - sdk-keys
+    patch:
+      summary: Update SDK Key
+      operationId: update-sdk-key
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Update SDK Key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchDocument'
+        description: Update sdk key
+      tags:
+        - sdk-keys
+    delete:
+      summary: Delete SDK Key
+      operationId: delete-sdk-key
+      responses:
+        '204':
+          description: No Content
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      description: Delete SDK key
+      tags:
+        - sdk-keys
 servers:
   - url: 'https://api.flagbase.io'
     description: Flagbase Cloud
@@ -2462,7 +2529,7 @@ components:
           $ref: '#/components/schemas/ResourceTags'
         identityKey:
           $ref: '#/components/schemas/ResourceKey'
-        segmentKey:
+        segKey:
           $ref: '#/components/schemas/ResourceKey'
         ruleVariations:
           type: array
@@ -2494,3 +2561,47 @@ components:
         - traits
       x-tags:
         - evaluation
+    SDKKeyRequest:
+      title: SDKKeyRequest
+      type: object
+      description: SDK key request body
+      properties:
+        enabled:
+          type: boolean
+          description: Whether or not this SDK key is active
+        expiresAt:
+          type: number
+          description: 'Time this key is no longer valid (unix timestamp) '
+        name:
+          $ref: '#/components/schemas/ResouceName'
+        tags:
+          $ref: '#/components/schemas/ResourceTags'
+        description:
+          $ref: '#/components/schemas/ResourceDescription'
+      x-tags:
+        - sdk-keys
+    SDKKeyResponse:
+      title: SDKKeyResponse
+      type: object
+      description: SDK key response body
+      x-tags:
+        - sdk-keys
+      properties:
+        enabled:
+          type: boolean
+          description: Whether or not this SDK key is active
+        expiresAt:
+          type: number
+          description: 'Time this key is no longer valid (unix timestamp) '
+        name:
+          $ref: '#/components/schemas/ResouceName'
+        tags:
+          $ref: '#/components/schemas/ResourceTags'
+        description:
+          $ref: '#/components/schemas/ResourceDescription'
+        serverKey:
+          type: string
+          description: Used for server-side SDKs (keep private)
+        clientKey:
+          type: string
+          description: Used for client-side SDKs (public)

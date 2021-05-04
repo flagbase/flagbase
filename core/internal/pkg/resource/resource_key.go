@@ -28,4 +28,6 @@ const (
 	TraitKey Key = "traitKey"
 	// AccessKey represents a access key
 	AccessKey Key = "accessKey"
+	// ResourceID represents a generic resource identifier (hacky)
+	ResourceID Key = "id"
 )

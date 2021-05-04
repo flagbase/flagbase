@@ -1,7 +1,6 @@
-package environment
+package sdkkey
 
 import (
-	"core/internal/app/sdkkey"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -13,19 +12,25 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// ApplyRoutes environment route handlers
+// ApplyRoutes identity route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes := r.Group("/")
 	rootPath := httputil.BuildRoute(
-		httputil.BuildPath(
-			rsc.WorkspaceKey,
-			rsc.ProjectKey,
+		httputil.AppendPath(
+			httputil.AppendRoute(
+				httputil.BuildPath(
+					rsc.WorkspaceKey,
+					rsc.ProjectKey,
+				),
+				rsc.RouteEnvironment,
+			),
+			rsc.EnvironmentKey,
 		),
-		rsc.RouteEnvironment,
+		rsc.RouteSDKKey,
 	)
 	resourcePath := httputil.AppendPath(
 		rootPath,
-		rsc.EnvironmentKey,
+		rsc.ResourceID,
 	)
 
 	routes.GET(rootPath, httputil.Handler(sctx, listAPIHandler))
@@ -33,8 +38,6 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
 	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
 	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
-
-	sdkkey.ApplyRoutes(sctx, routes)
 }
 
 func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
@@ -49,8 +52,9 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		RootArgs{
-			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
-			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
 		},
 	)
 	if !_err.IsEmpty() {
@@ -74,7 +78,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i Environment
+	var i SDKKey
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -84,8 +88,9 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		atk,
 		i,
 		RootArgs{
-			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
-			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
+			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
+			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
+			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
 		},
 	)
 	if !_err.IsEmpty() {
@@ -116,6 +121,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			ID:             httputil.GetParam(ctx, rsc.ResourceID),
 		},
 	)
 	if !_err.IsEmpty() {
@@ -152,6 +158,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			ID:             httputil.GetParam(ctx, rsc.ResourceID),
 		},
 	)
 	if !_err.IsEmpty() {
@@ -182,6 +189,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+			ID:             httputil.GetParam(ctx, rsc.ResourceID),
 		},
 	); !err.IsEmpty() {
 		e.Extend(err)

@@ -13,6 +13,8 @@ const (
 	RouteFlag string = "flags"
 	// RouteVariation points to the variation resource
 	RouteVariation string = "variations"
+	// RouteSDKKey points to an SDK key resource
+	RouteSDKKey string = "sdk-keys"
 	// RouteSegment points to the segment resource
 	RouteSegment string = "segments"
 	// RouteSegmentRule points to the segment rule resource
@@ -29,6 +31,6 @@ const (
 	RouteRule string = "rules"
 	// RouteEvaluation points to the evaluation resource
 	RouteEvaluation string = "evaluation"
-	// Polling points to the polling worker
+	// RoutePolling points to the polling worker
 	RoutePolling string = "polling"
 )
