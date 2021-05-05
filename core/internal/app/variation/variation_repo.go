@@ -30,12 +30,14 @@ LEFT JOIN project p
 LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1
-  AND p.key = $2`
+  AND p.key = $2
+  AND f.key = $3`
 	rows, err := sctx.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
 		a.ProjectKey,
+		a.FlagKey,
 	)
 	if err != nil {
 		return nil, err
