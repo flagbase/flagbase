@@ -21,7 +21,7 @@ func List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
+	if err := auth.Authorize(sctx, atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -46,7 +46,7 @@ func Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(atk, rsc.AccessRoot); err != nil {
+	if err := auth.Authorize(sctx, atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}

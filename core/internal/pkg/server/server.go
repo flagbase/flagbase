@@ -10,9 +10,10 @@ import (
 
 // Ctx primary app context structure
 type Ctx struct {
-	Cache  *redis.Client
-	DB     *pgxpool.Pool
-	Log    *logger.Logger
-	Policy *policy.Policy
-	Metric string // TODO: add metric interface
+	Cache             *redis.Client
+	DB                *pgxpool.Pool
+	Log               *logger.Logger
+	Policy            *policy.Policy
+	Metric            string // TODO: add metric interface
+	SecureRuntimeHash string
 }

@@ -5,6 +5,7 @@ import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
+	"errors"
 
 	"github.com/lib/pq"
 )
@@ -234,4 +235,88 @@ WHERE id = $1`
 		)
 	}
 	return nil
+}
+
+// -------- Custom Repository Handlers -------- //
+
+func getRootArgsFromSDKKeyResource(
+	ctx context.Context,
+	sctx *srv.Ctx,
+	sdkKey string,
+) (*RootArgs, error) {
+	var o RootArgs
+	sqlStatement := `
+SELECT
+  w.key,
+  p.key,
+  e.key
+FROM sdk_key sk
+LEFT JOIN environment e
+  ON e.id = sk.environment_id
+LEFT JOIN project p
+  ON p.id = e.project_id
+LEFT JOIN workspace w
+  ON w.id = p.workspace_id
+WHERE sk.client_key = $1
+   OR sk.server_key = $1`
+	err := dbutil.ParseError(
+		rsc.SDKKey.String(),
+		SDKKey{
+			ClientKey: sdkKey,
+			ServerKey: sdkKey,
+		},
+		sctx.DB.QueryRow(
+			ctx,
+			sqlStatement,
+			sdkKey,
+		).Scan(
+			&o.WorkspaceKey,
+			&o.ProjectKey,
+			&o.EnvironmentKey,
+		),
+	)
+	if (RootArgs{}) == o {
+		return &o, errors.New("cannot find SDK key")
+	}
+	return &o, err
+}
+
+func getRootArgsFromServerKeyResource(
+	ctx context.Context,
+	sctx *srv.Ctx,
+	serverKey string,
+) (*RootArgs, error) {
+	var o RootArgs
+	sqlStatement := `
+SELECT
+  w.key,
+  p.key,
+  e.key
+FROM workspace w
+LEFT JOIN project p
+  ON p.workspace_id = w.id
+LEFT JOIN environment e
+  ON e.project_id = p.id
+LEFT JOIN sdk_key sk
+  ON sk.environment_id = e.id
+WHERE sk.server_key = $1`
+	err := dbutil.ParseError(
+		rsc.SDKKey.String(),
+		SDKKey{
+			ServerKey: serverKey,
+		},
+		sctx.DB.QueryRow(
+			ctx,
+			sqlStatement,
+			serverKey,
+		).Scan(
+			&o.WorkspaceKey,
+			&o.ProjectKey,
+			&o.EnvironmentKey,
+		),
+	)
+	if (RootArgs{}) == o {
+		return &o, errors.New("cannot find SDK key - make sure your using the correct type of SDK key (i.e. server)")
+	}
+	return &o, err
 }

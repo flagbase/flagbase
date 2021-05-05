@@ -1,18 +1,29 @@
 package auth
 
 import (
+	"core/internal/pkg/httputil"
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"errors"
 	"fmt"
+	"reflect"
 )
 
 // Authorize checks if an access token is of a desired type
 func Authorize(
+	sctx *srv.Ctx,
 	atk rsc.Token,
 	accessType rsc.AccessType,
 ) error {
+	// bypass auth for internal operations using secure runtime hash
+	if reflect.DeepEqual(
+		atk,
+		httputil.SecureOverideATK(sctx),
+	) {
+		return nil
+	}
+
 	a, err := getAccessFromToken(atk)
 	if err != nil {
 		return err
@@ -38,6 +49,14 @@ func Enforce(
 	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) error {
+	// bypass auth for internal operations using secure runtime hash
+	if reflect.DeepEqual(
+		atk,
+		httputil.SecureOverideATK(sctx),
+	) {
+		return nil
+	}
+
 	a, err := getAccessFromToken(atk)
 	if err != nil {
 		return err
