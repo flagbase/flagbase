@@ -14,7 +14,8 @@ CREATE TABLE sdk_key (
   -- references
   environment_id resource_id REFERENCES environment (id),
   -- contraints
-  CONSTRAINT sdk_client_server_key UNIQUE(client_key, server_key, environment_id)
+  CONSTRAINT sdk_server_key UNIQUE(server_key, environment_id),
+  CONSTRAINT sdk_client_key UNIQUE(client_key, environment_id)
 );
 
 END;

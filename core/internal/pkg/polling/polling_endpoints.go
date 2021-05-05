@@ -17,12 +17,7 @@ import (
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	httpmetrics.ApplyMetrics(r, "polling")
 	routes := r.Group(rsc.RoutePolling)
-	rootPath := httputil.BuildPath(
-		rsc.WorkspaceKey,
-		rsc.ProjectKey,
-		rsc.EnvironmentKey,
-	)
-
+	rootPath := ""
 	routes.GET(rootPath, httputil.Handler(sctx, getEvaluationAPIHandler))
 	routes.POST(rootPath, httputil.Handler(sctx, evaluateAPIHandler))
 }
@@ -30,30 +25,23 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputil.ExtractATK(ctx)
-	if err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
-	}
-
 	etag := ctx.Request.Header.Get("ETag")
 
-	data, retag, _err := Get(
+	data, retag, _e := Get(
 		sctx,
-		atk,
+		httputil.SecureOverideATK(sctx),
 		etag,
-		RootArgs{
-			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
-			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
-			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+		RootHeaders{
+			SDKKey: ctx.Request.Header.Get("x-sdk-key"),
 		},
 	)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
+	if !_e.IsEmpty() {
+		e.Extend(_e)
 	}
 
 	ctx.Header("ETag", retag)
 	statusCode := http.StatusOK
-	if _err.IsEmpty() && retag == etag {
+	if e.IsEmpty() && retag == etag {
 		statusCode = http.StatusNotModified
 	}
 
@@ -69,36 +57,29 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	var e res.Errors
 
-	atk, err := httputil.ExtractATK(ctx)
-	if err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
-	}
-
 	etag := ctx.Request.Header.Get("ETag")
 
-	var i evaluator.Context
-	if err := ctx.BindJSON(&i); err != nil {
+	var ectx evaluator.Context
+	if err := ctx.BindJSON(&ectx); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, retag, _err := Evaluate(
+	data, retag, _e := Evaluate(
 		sctx,
-		atk,
+		httputil.SecureOverideATK(sctx),
 		etag,
-		i,
-		RootArgs{
-			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
-			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
-			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
+		ectx,
+		RootHeaders{
+			SDKKey: ctx.Request.Header.Get("x-sdk-key"),
 		},
 	)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
+	if !_e.IsEmpty() {
+		e.Extend(_e)
 	}
 
 	ctx.Header("ETag", retag)
 	statusCode := http.StatusOK
-	if _err.IsEmpty() && retag == etag {
+	if e.IsEmpty() && retag == etag {
 		statusCode = http.StatusNotModified
 	}
 

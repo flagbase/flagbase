@@ -15,7 +15,7 @@ func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	etag string,
-	a RootArgs,
+	a RootHeaders,
 ) (*res.Success, string, *res.Errors) {
 	var e res.Errors
 	var o *res.Success
@@ -24,19 +24,17 @@ func Get(
 	retag := etag
 	cacheKey := hashutil.HashKeys(
 		"polling-get-raw-ruleset",
-		string(a.WorkspaceKey),
-		string(a.ProjectKey),
-		string(a.EnvironmentKey),
+		a.SDKKey,
 	)
 	otag, _ := sctx.Cache.Get(ctx, cacheKey).Result()
 
 	if etag == "" || etag != otag {
-		r, _e, newETag := getAndSetCache(GetAndSetCacheArgs{
-			Sctx:     sctx,
-			Atk:      atk,
-			Ctx:      ctx,
-			RootArgs: a,
-			CacheKey: cacheKey,
+		r, _e, newETag := getAndSetCache(CachedServiceArgs{
+			Sctx:        sctx,
+			Ctx:         ctx,
+			Atk:         atk,
+			RootHeaders: a,
+			CacheKey:    cacheKey,
 		})
 		if !_e.IsEmpty() {
 			e.Extend(&_e)
@@ -44,12 +42,12 @@ func Get(
 		o = &r
 		retag = newETag
 	} else {
-		go getAndSetCache(GetAndSetCacheArgs{
-			Sctx:     sctx,
-			Atk:      atk,
-			Ctx:      ctx,
-			RootArgs: a,
-			CacheKey: cacheKey,
+		go getAndSetCache(CachedServiceArgs{
+			Sctx:        sctx,
+			Ctx:         ctx,
+			Atk:         atk,
+			RootHeaders: a,
+			CacheKey:    cacheKey,
 		})
 	}
 
@@ -63,7 +61,7 @@ func Evaluate(
 	atk rsc.Token,
 	etag string,
 	ectx evaluator.Context,
-	a RootArgs,
+	a RootHeaders,
 ) (*res.Success, string, *res.Errors) {
 	var e res.Errors
 	var o *res.Success
@@ -72,20 +70,18 @@ func Evaluate(
 	retag := etag
 	cacheKey := hashutil.HashKeys(
 		"polling-get-evaluated-ruleset",
-		string(a.WorkspaceKey),
-		string(a.ProjectKey),
-		string(a.EnvironmentKey),
+		a.SDKKey,
 	)
 	otag, _ := sctx.Cache.Get(ctx, cacheKey).Result()
 
 	if etag == "" || etag != otag {
-		r, _e, newETag := evaluateAndSetCache(EvaluateAndSetCacheArgs{
-			Sctx:     sctx,
-			Atk:      atk,
-			Ctx:      ctx,
-			Ectx:     ectx,
-			RootArgs: a,
-			CacheKey: cacheKey,
+		r, _e, newETag := evaluateAndSetCache(CachedServiceArgs{
+			Sctx:        sctx,
+			Ctx:         ctx,
+			Atk:         atk,
+			Ectx:        ectx,
+			RootHeaders: a,
+			CacheKey:    cacheKey,
 		})
 		if !_e.IsEmpty() {
 			e.Extend(&_e)
@@ -93,13 +89,13 @@ func Evaluate(
 		o = &r
 		retag = newETag
 	} else {
-		go evaluateAndSetCache(EvaluateAndSetCacheArgs{
-			Sctx:     sctx,
-			Atk:      atk,
-			Ctx:      ctx,
-			Ectx:     ectx,
-			RootArgs: a,
-			CacheKey: cacheKey,
+		go evaluateAndSetCache(CachedServiceArgs{
+			Sctx:        sctx,
+			Ctx:         ctx,
+			Atk:         atk,
+			Ectx:        ectx,
+			RootHeaders: a,
+			CacheKey:    cacheKey,
 		})
 	}
 

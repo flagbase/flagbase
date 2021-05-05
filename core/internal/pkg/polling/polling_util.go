@@ -1,26 +1,15 @@
 package polling
 
 import (
-	"context"
 	"core/internal/app/evaluation"
+	"core/internal/app/sdkkey"
 	cons "core/internal/pkg/constants"
-	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
-	"core/pkg/evaluator"
 	"core/pkg/hashutil"
 	res "core/pkg/response"
 	"encoding/json"
 )
 
-type GetAndSetCacheArgs struct {
-	Sctx     *srv.Ctx
-	Atk      rsc.Token
-	Ctx      context.Context
-	RootArgs RootArgs
-	CacheKey string
-}
-
-func getAndSetCache(args GetAndSetCacheArgs) (
+func getAndSetCache(args CachedServiceArgs) (
 	res.Success,
 	res.Errors,
 	string,
@@ -28,13 +17,21 @@ func getAndSetCache(args GetAndSetCacheArgs) (
 	var e res.Errors
 	var o *res.Success
 
+	a, _err := sdkkey.GetRootArgsFromServerKey(
+		args.Sctx,
+		args.RootHeaders.SDKKey,
+	)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
+	}
+
 	r, err := evaluation.Get(
 		args.Sctx,
 		args.Atk,
 		evaluation.RootArgs{
-			WorkspaceKey:   args.RootArgs.WorkspaceKey,
-			ProjectKey:     args.RootArgs.ProjectKey,
-			EnvironmentKey: args.RootArgs.EnvironmentKey,
+			WorkspaceKey:   a.WorkspaceKey,
+			ProjectKey:     a.ProjectKey,
+			EnvironmentKey: a.EnvironmentKey,
 		},
 	)
 	if !err.IsEmpty() {
@@ -62,16 +59,7 @@ func getAndSetCache(args GetAndSetCacheArgs) (
 	return *o, e, retag
 }
 
-type EvaluateAndSetCacheArgs struct {
-	Sctx     *srv.Ctx
-	Atk      rsc.Token
-	Ctx      context.Context
-	Ectx     evaluator.Context
-	RootArgs RootArgs
-	CacheKey string
-}
-
-func evaluateAndSetCache(args EvaluateAndSetCacheArgs) (
+func evaluateAndSetCache(args CachedServiceArgs) (
 	res.Success,
 	res.Errors,
 	string,
@@ -79,14 +67,22 @@ func evaluateAndSetCache(args EvaluateAndSetCacheArgs) (
 	var e res.Errors
 	var o *res.Success
 
+	a, _err := sdkkey.GetRootArgsFromSDKKey(
+		args.Sctx,
+		args.RootHeaders.SDKKey,
+	)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
+	}
+
 	r, err := evaluation.Evaluate(
 		args.Sctx,
 		args.Atk,
 		args.Ectx,
 		evaluation.RootArgs{
-			WorkspaceKey:   args.RootArgs.WorkspaceKey,
-			ProjectKey:     args.RootArgs.ProjectKey,
-			EnvironmentKey: args.RootArgs.EnvironmentKey,
+			WorkspaceKey:   a.WorkspaceKey,
+			ProjectKey:     a.ProjectKey,
+			EnvironmentKey: a.EnvironmentKey,
 		},
 	)
 	if !err.IsEmpty() {

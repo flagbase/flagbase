@@ -8,6 +8,8 @@ import (
 	"core/pkg/cache"
 	"core/pkg/db"
 	"core/pkg/logger"
+
+	"github.com/google/uuid"
 )
 
 // Config app context configuration
@@ -22,6 +24,9 @@ type Config struct {
 
 // Setup init services that make up app-context
 func Setup(cfg Config) (*Ctx, error) {
+	// setup: secure runtime hash
+	secureRuntimeHash := uuid.New().String()
+
 	// setup: logger
 	logInst := logger.New(logger.Config{
 		Verbose: cfg.Verbose,
@@ -57,9 +62,10 @@ func Setup(cfg Config) (*Ctx, error) {
 	}
 
 	return &Ctx{
-		Cache:  cacheInst,
-		DB:     dbInst,
-		Log:    logInst,
-		Policy: policyInst,
+		Cache:             cacheInst,
+		DB:                dbInst,
+		Log:               logInst,
+		Policy:            policyInst,
+		SecureRuntimeHash: secureRuntimeHash,
 	}, nil
 }

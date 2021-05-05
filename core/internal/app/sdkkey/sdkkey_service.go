@@ -22,7 +22,7 @@ func List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(sctx, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -47,7 +47,7 @@ func Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(atk, rsc.AccessAdmin); err != nil {
+	if err := auth.Authorize(sctx, atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -175,4 +175,34 @@ func Delete(
 	}
 
 	return &e
+}
+
+// -------- Custom Service Methods -------- //
+
+// GetRootArgsFromSDKKey get root args from sdk key
+func GetRootArgsFromSDKKey(
+	sctx *srv.Ctx,
+	clientKey string,
+) (*RootArgs, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	return getRootArgsFromSDKKeyResource(
+		ctx,
+		sctx,
+		clientKey,
+	)
+}
+
+// GetRootArgsFromSDKKey get root args from server key
+func GetRootArgsFromServerKey(
+	sctx *srv.Ctx,
+	serverKey string,
+) (*RootArgs, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	return getRootArgsFromServerKeyResource(
+		ctx,
+		sctx,
+		serverKey,
+	)
 }
