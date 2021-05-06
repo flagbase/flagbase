@@ -7,6 +7,7 @@ require (
 	github.com/casbin/casbin/v2 v2.7.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/evanphx/json-patch v4.5.0+incompatible
+	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.0.2
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-openapi/errors v0.19.6
