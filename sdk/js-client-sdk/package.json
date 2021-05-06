@@ -14,12 +14,25 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:es": "tsc -p tsconfig.es.json",
     "build:umd": "tsc -p tsconfig.umd.json",
-    "test": "jest"
+    "test": "jest",
+    "storybook": "start-storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "author": "Flagbase",
   "license": "Mozilla Public License 2.0",
   "devDependencies": {
+    "@babel/core": "^7.14.0",
+    "@storybook/addon-actions": "^6.2.9",
+    "@storybook/addon-essentials": "^6.2.9",
+    "@storybook/addon-links": "^6.2.9",
+    "@storybook/react": "^6.2.9",
+    "@types/axios": "^0.14.0",
+    "babel-loader": "^8.2.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "typescript": "^3.9.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "axios": "^0.21.1"
+  }
 }

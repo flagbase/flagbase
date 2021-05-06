@@ -4,6 +4,7 @@ import (
 	srv "core/internal/pkg/server"
 	"strconv"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,13 @@ func New(
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.New()
+	r := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowAllOrigins = true
+	corsConfig.AllowHeaders = []string{"*"}
+	corsConfig.ExposeHeaders = []string{"x-sdk-key", "Authorization", "ETag"}
+	r.Use(cors.New(corsConfig))
 
 	if cfg.Verbose {
 		r.Use(logger.SetLogger(logger.Config{

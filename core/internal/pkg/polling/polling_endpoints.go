@@ -4,7 +4,6 @@ import (
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/httputil"
-	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/evaluator"
 	res "core/pkg/response"
@@ -16,8 +15,8 @@ import (
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
 	httpmetrics.ApplyMetrics(r, "polling")
-	routes := r.Group(rsc.RoutePolling)
 	rootPath := ""
+	routes := r.Group(rootPath)
 	routes.GET(rootPath, httputil.Handler(sctx, getEvaluationAPIHandler))
 	routes.POST(rootPath, httputil.Handler(sctx, evaluateAPIHandler))
 }
