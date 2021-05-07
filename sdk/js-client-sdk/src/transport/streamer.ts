@@ -1,16 +1,13 @@
-import Context from "../context";
+import { IContext } from "../context";
 import { ITransport } from "./transport";
 
-class Streamer implements ITransport {
-  private context: Context;
+export default function Streamer(context: IContext): ITransport {
+  const start = () => console.warn("Streamer not implemented yet.");
 
-  constructor(context: Context) {
-    this.context = context;
-  }
+  const stop = () => console.warn("Streamer not implemented yet.");
 
-  public start = () => console.warn('Streamer not implemented yet.')
-
-  public stop = () => console.warn('Streamer not implemented yet.')
+  return {
+    start,
+    stop,
+  };
 }
-
-export default Streamer;

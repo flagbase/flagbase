@@ -1,49 +1,40 @@
 import { fetchFlagsViaPoller } from "../fetcher";
-import Context from "../context";
-import { Config, IConfigPolling } from "../context/config";
+import { IContext, IConfigPolling } from "../context";
 import { ITransport } from "./transport";
 
-class Poller implements ITransport {
-  private context: Context;
-  private config: IConfigPolling;
-  private endpointUri: Config["endpointUri"];
-  private clientKey: Config["clientKey"];
-  private etag: string;
-  private interval: NodeJS.Timer;
+export default function Poller(context: IContext): ITransport {
+  const config = context.getConfig() as IConfigPolling;
+  const endpointUri = config.endpointUri;
+  const clientKey = config.clientKey;
 
-  constructor(
-    context: Context
-  ) {
-    this.context = context;
-    this.config = context.getConfig() as IConfigPolling;
-    this.endpointUri = this.config.endpointUri;
-    this.clientKey = this.config.clientKey;
-    this.etag = 'initial'
-    this.interval = setInterval(() => {});
-  }
+  let interval = setInterval(() => {});
+  let etag = "initial";
 
-  public start = async () => {
+  const start = async () => {
     await fetchFlagsViaPoller(
-      this.endpointUri,
-      this.clientKey,
-      this.context.getIdentity(),
-      this.etag,
+      endpointUri,
+      clientKey,
+      context.getIdentity(),
+      etag
     );
-    this.interval = setInterval(async () => {
+    interval = setInterval(async () => {
       const [retag, evaluation] = await fetchFlagsViaPoller(
-        this.endpointUri,
-        this.clientKey,
-        this.context.getIdentity(),
-        this.etag
+        endpointUri,
+        clientKey,
+        context.getIdentity(),
+        etag
       );
-      Object.keys(evaluation).forEach(
-        (flagKey) => this.context.setFlag(flagKey, evaluation[flagKey])
+      Object.keys(evaluation).forEach((flagKey) =>
+        context.setFlag(flagKey, evaluation[flagKey])
       );
-      this.etag = retag;
-    }, this.config.pollIntervalMilliseconds);
+      etag = retag;
+    }, config.pollIntervalMilliseconds);
   };
 
-  public stop = async () => clearInterval(this.interval)
-}
+  const stop = async () => clearInterval(interval);
 
-export default Poller;
+  return {
+    start,
+    stop,
+  };
+}

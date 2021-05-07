@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import FlagbaseClient, { ClientOptions, Flagset, Identity } from "../src/index";
+import FlagbaseClient, {
+  IClient,
+  ClientOptions,
+  Flagset,
+  IConfigPolling,
+  Identity,
+} from "../src/index";
 
 export type PollingAppProps = {
   clientKey: string;
@@ -13,10 +19,10 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
 
   let interval;
 
-  let flagbaseClient: FlagbaseClient;
+  let flagbaseClient: IClient;
 
   useEffect(() => {
-    flagbaseClient = new FlagbaseClient(
+    flagbaseClient = FlagbaseClient(
       props.clientKey,
       props.identity,
       props.opts
@@ -31,7 +37,7 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     interval = setInterval(() => {
       setFlagKey(flagbaseClient.variation("test-flag", "some-random-value"));
       setFlagset(flagbaseClient.getAllFlags());
-    }, 100);
+    }, (props.opts as IConfigPolling)?.pollIntervalMilliseconds || 1000);
 
     return function cleanup() {
       clearInterval(interval);
@@ -42,22 +48,26 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     <>
       <h3>Flagset</h3>
       <table style={{ border: "1px solid black" }}>
-        <tr>
+        <thead>
           <th>Flag</th>
           <th>Variation</th>
           <th>Reason</th>
-        </tr>
-        {Object.values(flagset).map((flag) => {
-          return (
-            <tr style={{ border: "1px solid black" }}>
-              <td style={{ border: "1px solid black" }}>{flag.flagKey}</td>
-              <td style={{ border: "1px solid black" }}>{flag.variationKey}</td>
-              <td style={{ border: "1px solid black" }}>
-                <code>{flag.reason}</code>
-              </td>
-            </tr>
-          );
-        })}
+        </thead>
+        <tbody>
+          {Object.values(flagset).map((flag) => {
+            return (
+              <tr key={flag.flagKey} style={{ border: "1px solid black" }}>
+                <td style={{ border: "1px solid black" }}>{flag.flagKey}</td>
+                <td style={{ border: "1px solid black" }}>
+                  {flag.variationKey}
+                </td>
+                <td style={{ border: "1px solid black" }}>
+                  <code>{flag.reason}</code>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
       </table>
     </>
   );
