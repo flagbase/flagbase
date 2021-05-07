@@ -5,6 +5,7 @@ import FlagbaseClient, {
   Flagset,
   IConfigPolling,
   Identity,
+  InternalData,
 } from "../src/index";
 
 const BORDER_STYLE = { border: "1px solid black" };
@@ -17,6 +18,10 @@ export type PollingAppProps = {
 
 const PollingApp: React.FC<PollingAppProps> = (props) => {
   const [flagset, setFlagset] = useState<Flagset>({});
+  const [internalData, setInternalData] = useState<InternalData>({
+    numConsecutiveCachedRequests: 0,
+    numConsecutiveFailedRequests: 0,
+  });
 
   let interval;
 
@@ -37,6 +42,7 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
   useEffect(() => {
     interval = setInterval(() => {
       setFlagset(flagbaseClient.getAllFlags());
+      setInternalData(flagbaseClient.getInternalData());
     }, (props.opts as IConfigPolling)?.pollIntervalMilliseconds || 1000);
 
     return function cleanup() {
@@ -46,15 +52,17 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
 
   return (
     <>
-      <h3>Flagset</h3>
+      <h3>Evaluated Flagset</h3>
       <table style={BORDER_STYLE}>
         <thead>
-          <th style={BORDER_STYLE}>Flag</th>
-          <th style={BORDER_STYLE}>Variation</th>
-          <th style={BORDER_STYLE}>Reason</th>
+          <tr>
+            <th style={BORDER_STYLE}>Flag</th>
+            <th style={BORDER_STYLE}>Variation</th>
+            <th style={BORDER_STYLE}>Reason</th>
+          </tr>
         </thead>
         <tbody>
-          {Object.keys(flagset).length > 0 ? Object.values(flagset).map((flag) => {
+          {Object.values(flagset).map((flag) => {
             return (
               <tr key={flag.flagKey} style={BORDER_STYLE}>
                 <td style={BORDER_STYLE}>{flag.flagKey}</td>
@@ -64,7 +72,28 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
                 </td>
               </tr>
             );
-          }) : (<code>No flags</code>)}
+          })}
+        </tbody>
+      </table>
+      <h3>Evaluation Context</h3>
+      <h3>Configuration</h3>
+      <h3>Internal Data</h3>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Key</th>
+            <th style={BORDER_STYLE}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(internalData).map((key) => {
+            return (
+              <tr key={key} style={BORDER_STYLE}>
+                <td style={BORDER_STYLE}>{key}</td>
+                <td style={BORDER_STYLE}>{internalData[key]}</td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
     </>

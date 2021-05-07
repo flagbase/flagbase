@@ -10,6 +10,33 @@ export default function Poller(context: IContext): ITransport {
   let interval = setInterval(() => {});
   let etag = "initial";
 
+  const onFullRequest = () => {
+    context.setInternalData({
+      numConsecutiveCachedRequests: 0,
+      numConsecutiveFailedRequests: 0,
+    });
+  };
+
+  const onCachedRequest = () => {
+    const {
+      numConsecutiveCachedRequests: prevNumConsecutiveCachedRequests,
+    } = context.getInternalData();
+    context.setInternalData({
+      numConsecutiveCachedRequests: prevNumConsecutiveCachedRequests + 1,
+      numConsecutiveFailedRequests: 0,
+    });
+  };
+
+  const onErrorRequest = () => {
+    const {
+      numConsecutiveFailedRequests: prevNumConsecutiveFailedRequests,
+    } = context.getInternalData();
+    context.setInternalData({
+      numConsecutiveCachedRequests: 0,
+      numConsecutiveFailedRequests: prevNumConsecutiveFailedRequests + 1,
+    });
+  };
+
   const start = async () => {
     await fetchFlagsViaPoller(
       endpointUri,
@@ -22,9 +49,12 @@ export default function Poller(context: IContext): ITransport {
         endpointUri,
         clientKey,
         context.getIdentity(),
-        etag
+        etag,
+        onFullRequest,
+        onCachedRequest,
+        onErrorRequest
       );
-      Object.keys(evaluation).forEach((flagKey) =>
+      evaluation && Object.keys(evaluation).forEach((flagKey) =>
         context.setFlag(flagKey, evaluation[flagKey])
       );
       etag = retag;

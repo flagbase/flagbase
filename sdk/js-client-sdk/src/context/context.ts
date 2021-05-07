@@ -1,6 +1,7 @@
 import { Config, DEFAULT_CONFIG } from "./config";
 import { Identity, DEFAULT_IDENTITY } from "./identity";
 import { Flagset, Flag } from "./flags";
+import { DEFAULT_INTERNAL_DATA, InternalData } from "./internal-data";
 
 export interface IContext {
   // config
@@ -15,6 +16,9 @@ export interface IContext {
   getAllFlags: () => Flagset;
   getFlag: (flagKey: string) => Flag;
   setFlag: (flagKey: string, flag: Flag) => void;
+  // internal data
+  getInternalData: () => InternalData;
+  setInternalData: (i: Partial<InternalData>) => void;
 }
 
 export default function Context(
@@ -30,6 +34,9 @@ export default function Context(
     ...userIdentity,
   };
   let flagset: Flagset = {};
+  let internalData: InternalData = {
+    ...DEFAULT_INTERNAL_DATA,
+  };
 
   /**
    * Config methods
@@ -80,6 +87,17 @@ export default function Context(
     flagset[flagKey] = flag;
   };
 
+  /**
+   * Internal data methods
+   */
+  const getInternalData: IContext["getInternalData"] = () => ({
+    ...internalData,
+  });
+
+  const setInternalData: IContext["setInternalData"] = (userInternalData) => {
+    internalData = { ...internalData, ...userInternalData };
+  };
+
   return {
     // config
     getConfig,
@@ -93,5 +111,8 @@ export default function Context(
     getAllFlags,
     getFlag,
     setFlag,
+    // internal data
+    getInternalData,
+    setInternalData,
   };
 }

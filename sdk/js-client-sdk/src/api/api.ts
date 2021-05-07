@@ -1,4 +1,4 @@
-import Context, { Flagset, Flag, IContext } from "../context";
+import Context, { Flagset, Flag, IContext, InternalData } from "../context";
 
 export interface IApi {
   variation: (
@@ -6,6 +6,7 @@ export interface IApi {
     defaultVariationKey: string
   ) => Flag["variationKey"];
   getAllFlags: () => Flagset;
+  getInternalData: () => InternalData;
 }
 
 export default function Api(context: IContext): IApi {
@@ -13,10 +14,14 @@ export default function Api(context: IContext): IApi {
     return context.getFlag(flagKey)?.variationKey || defaultVariationKey;
   };
 
-  const getAllFlags: IApi["getAllFlags"] = (): Flagset => context.getAllFlags();
+  const getAllFlags: IApi["getAllFlags"] = () => context.getAllFlags();
+
+  const getInternalData: IApi["getInternalData"] = () =>
+    context.getInternalData();
 
   return {
     variation,
     getAllFlags,
+    getInternalData,
   };
 }
