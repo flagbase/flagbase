@@ -1,4 +1,4 @@
-import { fetchFlagsViaPoller } from "../api";
+import { fetchFlagsViaPoller } from "../fetcher";
 import Context from "../context";
 import { Config, IConfigPolling } from "../context/config";
 import { ITransport } from "./transport";
@@ -9,6 +9,7 @@ class Poller implements ITransport {
   private endpointUri: Config["endpointUri"];
   private clientKey: Config["clientKey"];
   private etag: string;
+  private interval: NodeJS.Timer;
 
   constructor(
     context: Context
@@ -18,16 +19,17 @@ class Poller implements ITransport {
     this.endpointUri = this.config.endpointUri;
     this.clientKey = this.config.clientKey;
     this.etag = 'initial'
+    this.interval = setInterval(() => {});
   }
 
-  start = async () => {
+  public start = async () => {
     await fetchFlagsViaPoller(
       this.endpointUri,
       this.clientKey,
       this.context.getIdentity(),
       this.etag,
     );
-    setInterval(async () => {
+    this.interval = setInterval(async () => {
       const [retag, evaluation] = await fetchFlagsViaPoller(
         this.endpointUri,
         this.clientKey,
@@ -40,6 +42,8 @@ class Poller implements ITransport {
       this.etag = retag;
     }, this.config.pollIntervalMilliseconds);
   };
+
+  public stop = async () => clearInterval(this.interval)
 }
 
 export default Poller;

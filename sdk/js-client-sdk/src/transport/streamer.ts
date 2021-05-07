@@ -8,7 +8,9 @@ class Streamer implements ITransport {
     this.context = context;
   }
 
-  start = () => console.warn('Streamer not implemented yet.')
+  public start = () => console.warn('Streamer not implemented yet.')
+
+  public stop = () => console.warn('Streamer not implemented yet.')
 }
 
 export default Streamer;

@@ -4,6 +4,7 @@ import Poller from './poller';
 
 export interface ITransport {
   start: () => void
+  stop: () => void
 }
 
 class Transport implements ITransport {
@@ -17,12 +18,14 @@ class Transport implements ITransport {
     this.worker = new Poller(this.context);
   }
 
-  start = () => {
+  public start = () => {
     if (this.mode === Mode.STREAMING) {
       this.worker = new Streamer(this.context);
     }
     this.worker.start();
   }
+
+  public stop = () => this.worker.stop();
 }
 
 export default Transport;

@@ -26,17 +26,20 @@ func New(
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	r := gin.Default()
+	r := gin.New()
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowAllOrigins = true
-	corsConfig.AllowHeaders = []string{"*"}
-	corsConfig.ExposeHeaders = []string{"x-sdk-key", "Authorization", "ETag"}
-	r.Use(cors.New(corsConfig))
+	r.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowHeaders:    []string{"*"},
+		ExposeHeaders:   []string{"x-sdk-key", "Authorization", "ETag"},
+	}))
+
+	r.Use(gin.Recovery())
 
 	if cfg.Verbose {
 		r.Use(logger.SetLogger(logger.Config{
 			Logger: sctx.Log.Logger,
+			UTC:    true,
 		}))
 	}
 

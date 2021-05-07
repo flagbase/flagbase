@@ -7,7 +7,7 @@ class Context {
   private flagset: Flagset;
   private identity: Identity;
 
-  constructor(config: Config, identity?: Identity) {
+  constructor(config: Config, identity: Identity) {
     this.config = {
       ...DEFAULT_CONFIG,
       ...config

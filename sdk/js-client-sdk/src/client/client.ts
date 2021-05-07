@@ -1,32 +1,43 @@
-import Context, { Config, Flag, Identity, REASONS } from "../context";
+import Context, { Config, Flag, Flagset, Identity, Mode } from "../context";
 import Transport from "../transport";
 
-function Client(config: Config, identity?: Identity) {
-  const context = new Context(config, identity);
-  const transport = new Transport(context);
-  transport.start();
+export type ClientOptions = Config;
 
-  return {
-    GetFlag: (
-      flagKey: string,
-      defaultVariationKey: string
-    ): Flag["variationKey"] => {
-      const defaultVariationValue = {
-        flagKey,
-        variationKey: defaultVariationKey,
-        reason: REASONS.DEFAULT_FALLTHROUGH,
-      };
-      if (!!context.getFlag(flagKey)) {
-        context.setFlag(flagKey, defaultVariationValue);
-      } else if (
-        context.getFlag(flagKey)?.reason === REASONS.DEFAULT_FALLTHROUGH
-      ) {
-        context.setFlag(flagKey, defaultVariationValue);
-        return defaultVariationKey;
-      }
-      return context.getFlag(flagKey)?.variationKey || defaultVariationKey;
-    },
+export interface IClient {
+  variation: (
+    flagKey: string,
+    defaultVariationKey: string
+  ) => Flag["variationKey"];
+}
+
+class Client implements IClient {
+  private context: Context;
+  private transport: Transport;
+
+  constructor(clientKey: string, identity: Identity, opts?: ClientOptions) {
+    const config: Config = {
+      mode: Mode.POLLING,
+      ...opts,
+      clientKey,
+    };
+    this.context = new Context(config, identity);
+    this.transport = new Transport(this.context);
+    this.transport.start();
+  }
+
+  public destroy = () => this.transport.stop();
+
+  /**
+   * Get flag variation
+   * @param flagKey the flag key
+   * @param defaultVariation default fallthrough variation key
+   * @returns variation key (or default fallthrough variation if flag not recognized)
+   */
+  public variation: IClient["variation"] = (flagKey, defaultVariationKey) => {
+    return this.context.getFlag(flagKey)?.variationKey || defaultVariationKey;
   };
+
+  public getAllFlags = (): Flagset => this.context.getAllFlags();
 }
 
 export default Client;
