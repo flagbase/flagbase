@@ -4,18 +4,20 @@ import (
 	"core/internal/app/evaluation"
 	"core/internal/app/sdkkey"
 	cons "core/internal/pkg/constants"
+	"core/pkg/evaluator"
+	"core/pkg/flagset"
 	"core/pkg/hashutil"
 	res "core/pkg/response"
 	"encoding/json"
 )
 
 func getAndSetCache(args CachedServiceArgs) (
-	res.Success,
+	*flagset.Flagset,
 	res.Errors,
 	string,
 ) {
 	var e res.Errors
-	var o *res.Success
+	var o *flagset.Flagset
 
 	a, _err := sdkkey.GetRootArgsFromServerKey(
 		args.Sctx,
@@ -56,16 +58,16 @@ func getAndSetCache(args CachedServiceArgs) (
 		panic(err)
 	}
 
-	return *o, e, retag
+	return o, e, retag
 }
 
 func evaluateAndSetCache(args CachedServiceArgs) (
-	res.Success,
+	*evaluator.Evaluations,
 	res.Errors,
 	string,
 ) {
 	var e res.Errors
-	var o *res.Success
+	var o *evaluator.Evaluations
 
 	a, _err := sdkkey.GetRootArgsFromSDKKey(
 		args.Sctx,
@@ -107,5 +109,5 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 		panic(err)
 	}
 
-	return *o, e, retag
+	return o, e, retag
 }

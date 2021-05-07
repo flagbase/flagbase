@@ -42,7 +42,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	data, _err := List(
+	r, _err := List(
 		sctx,
 		atk,
 		RootArgs{
@@ -57,7 +57,9 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusOK,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -76,7 +78,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Create(
+	r, _err := Create(
 		sctx,
 		atk,
 		i,
@@ -92,7 +94,9 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusCreated,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -106,7 +110,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	data, _err := Get(
+	r, _err := Get(
 		sctx,
 		atk,
 		ResourceArgs{
@@ -122,7 +126,9 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusOK,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -141,7 +147,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Update(
+	r, _err := Update(
 		sctx,
 		atk,
 		i,
@@ -158,7 +164,9 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusOK,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)

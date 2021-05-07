@@ -5,6 +5,7 @@ import (
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/evaluator"
+	"core/pkg/flagset"
 	"core/pkg/hashutil"
 	res "core/pkg/response"
 )
@@ -16,9 +17,9 @@ func Get(
 	atk rsc.Token,
 	etag string,
 	a RootHeaders,
-) (*res.Success, string, *res.Errors) {
+) (*flagset.Flagset, string, *res.Errors) {
 	var e res.Errors
-	var o *res.Success
+	var o *flagset.Flagset
 	ctx := context.Background()
 
 	retag := etag
@@ -39,7 +40,7 @@ func Get(
 		if !_e.IsEmpty() {
 			e.Extend(&_e)
 		}
-		o = &r
+		o = r
 		retag = newETag
 	} else {
 		go getAndSetCache(CachedServiceArgs{
@@ -62,15 +63,16 @@ func Evaluate(
 	etag string,
 	ectx evaluator.Context,
 	a RootHeaders,
-) (*res.Success, string, *res.Errors) {
+) (*evaluator.Evaluations, string, *res.Errors) {
 	var e res.Errors
-	var o *res.Success
+	var o *evaluator.Evaluations
 	ctx := context.Background()
 
 	retag := etag
 	cacheKey := hashutil.HashKeys(
 		"polling-get-evaluated-ruleset",
 		a.SDKKey,
+		ectx.Identifier,
 	)
 	otag, _ := sctx.Cache.Get(ctx, cacheKey).Result()
 
@@ -86,7 +88,7 @@ func Evaluate(
 		if !_e.IsEmpty() {
 			e.Extend(&_e)
 		}
-		o = &r
+		o = r
 		retag = newETag
 	} else {
 		go evaluateAndSetCache(CachedServiceArgs{

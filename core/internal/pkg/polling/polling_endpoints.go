@@ -26,7 +26,7 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 
 	etag := ctx.Request.Header.Get("ETag")
 
-	data, retag, _e := Get(
+	r, retag, _e := Get(
 		sctx,
 		httputil.SecureOverideATK(sctx),
 		etag,
@@ -47,7 +47,9 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		statusCode,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -63,7 +65,7 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, retag, _e := Evaluate(
+	r, retag, _e := Evaluate(
 		sctx,
 		httputil.SecureOverideATK(sctx),
 		etag,
@@ -85,7 +87,9 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		statusCode,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)

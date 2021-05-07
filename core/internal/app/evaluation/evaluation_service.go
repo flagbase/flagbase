@@ -19,12 +19,12 @@ func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	a RootArgs,
-) (*res.Success, *res.Errors) {
+) (*flagset.Flagset, *res.Errors) {
 	var e res.Errors
 
 	o := make(flagset.Flagset)
 
-	r, err := flag.List(sctx, atk, flag.RootArgs{
+	fl, err := flag.List(sctx, atk, flag.RootArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
@@ -32,7 +32,7 @@ func Get(
 		e.Extend(err)
 	}
 
-	for _, f := range *r.Data.(*[]flag.Flag) {
+	for _, f := range *fl {
 		t, err := targeting.Get(sctx, atk, targeting.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
@@ -55,13 +55,13 @@ func Get(
 
 		o[string(f.Key)] = &flagset.Flag{
 			FlagKey:               string(f.Key),
-			UseFallthrough:        !t.Data.(*targeting.Targeting).Enabled,
-			FallthroughVariations: t.Data.(*targeting.Targeting).FallthroughVariations,
+			UseFallthrough:        !t.Enabled,
+			FallthroughVariations: t.FallthroughVariations,
 		}
 
 		o[string(f.Key)].Rules = []flagset.Rule{}
 
-		for _, _tr := range *tr.Data.(*[]targetingrule.TargetingRule) {
+		for _, _tr := range *tr {
 			switch _tr.Type {
 			case string(rsc.Trait):
 				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
@@ -84,7 +84,7 @@ func Get(
 						e.Extend(err)
 					}
 
-					for _, _sr := range *sr.Data.(*[]segmentrule.SegmentRule) {
+					for _, _sr := range *sr {
 						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
 							RuleType:       _tr.Type,
 							TraitKey:       _sr.TraitKey,
@@ -100,9 +100,7 @@ func Get(
 		}
 	}
 
-	return &res.Success{
-		Data: o,
-	}, &e
+	return &o, &e
 }
 
 // Evaluate returns an evaluated flagset given the user context
@@ -112,7 +110,7 @@ func Evaluate(
 	atk rsc.Token,
 	ectx evaluator.Context,
 	a RootArgs,
-) (*res.Success, *res.Errors) {
+) (*evaluator.Evaluations, *res.Errors) {
 	var e res.Errors
 
 	r, err := Get(sctx, atk, a)
@@ -122,7 +120,7 @@ func Evaluate(
 
 	o := make(evaluator.Evaluations)
 
-	for _, flag := range r.Data.(flagset.Flagset) {
+	for _, flag := range *r {
 		salt := hashutil.HashKeys(
 			string(a.WorkspaceKey),
 			string(a.ProjectKey),
@@ -133,7 +131,5 @@ func Evaluate(
 		o[flag.FlagKey] = evaluator.Evaluate(*flag, salt, ectx)
 	}
 
-	return &res.Success{
-		Data: o,
-	}, &e
+	return &o, &e
 }
