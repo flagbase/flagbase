@@ -1,4 +1,4 @@
-import { fetchFlagsViaPoller } from "../fetcher";
+import { fetchFlagsViaPoller } from "../fetch";
 import { IContext, IConfigPolling } from "../context";
 import { ITransport } from "./transport";
 

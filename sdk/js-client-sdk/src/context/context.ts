@@ -17,7 +17,10 @@ export interface IContext {
   setFlag: (flagKey: string, flag: Flag) => void;
 }
 
-export default function Context(userConfig: Config, userIdentity: Identity): IContext {
+export default function Context(
+  userConfig: Config,
+  userIdentity: Identity
+): IContext {
   let config: Config = {
     ...DEFAULT_CONFIG,
     ...userConfig,
@@ -31,7 +34,7 @@ export default function Context(userConfig: Config, userIdentity: Identity): ICo
   /**
    * Config methods
    */
-  const getConfig: IContext["getConfig"] = () => config;
+  const getConfig: IContext["getConfig"] = () => ({ ...config });
 
   const setConfig: IContext["setConfig"] = (userConfig) => {
     config = {
@@ -43,7 +46,7 @@ export default function Context(userConfig: Config, userIdentity: Identity): ICo
   /**
    * Identity methods
    */
-  const getIdentity: IContext["getIdentity"] = () => identity;
+  const getIdentity: IContext["getIdentity"] = () => ({ ...identity });
 
   const setIdentity: IContext["setIdentity"] = (userIdentity) => {
     identity = {
@@ -52,8 +55,9 @@ export default function Context(userConfig: Config, userIdentity: Identity): ICo
     };
   };
 
-  const getIdentityTraits: IContext["getIdentityTraits"] = () =>
-    identity.traits;
+  const getIdentityTraits: IContext["getIdentityTraits"] = () => ({
+    ...identity.traits,
+  });
 
   const setIdentityTraits: IContext["setIdentityTraits"] = (identityTraits) => {
     identity = {
@@ -68,9 +72,9 @@ export default function Context(userConfig: Config, userIdentity: Identity): ICo
   /**
    * Flagset methods
    */
-  const getAllFlags: IContext["getAllFlags"] = () => flagset;
+  const getAllFlags: IContext["getAllFlags"] = () => ({ ...flagset });
 
-  const getFlag: IContext["getFlag"] = (flagKey) => flagset[flagKey];
+  const getFlag: IContext["getFlag"] = (flagKey) => ({ ...flagset[flagKey] });
 
   const setFlag: IContext["setFlag"] = (flagKey, flag) => {
     flagset[flagKey] = flag;
