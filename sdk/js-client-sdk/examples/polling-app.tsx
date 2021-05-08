@@ -43,7 +43,6 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
       message: eventMessage,
     };
     setDebugLog((prevDebugLog) => [...prevDebugLog, newEntry]);
-    console.log(newEntry, debugLog.length);
   };
 
   useEffect(() => {
