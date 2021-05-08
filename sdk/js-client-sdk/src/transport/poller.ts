@@ -84,7 +84,8 @@ export default function Poller(
       );
       if (
         evaluation &&
-        JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation)
+        JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation) &&
+        Object.keys(evaluation).length !== 0
       ) {
         Object.keys(evaluation).forEach((flagKey) =>
           context.setFlag(flagKey, evaluation[flagKey])
