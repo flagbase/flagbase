@@ -6,9 +6,12 @@ import FlagbaseClient, {
   IConfigPolling,
   Identity,
   InternalData,
+  EventType,
 } from "../src/index";
 
 const BORDER_STYLE = { border: "1px solid black" };
+
+const FLAGBASE_EVENT_PREFIX = "Flagbase: "
 
 export type PollingAppProps = {
   clientKey: string;
@@ -23,8 +26,6 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     numConsecutiveFailedRequests: 0,
   });
 
-  let interval;
-
   let flagbaseClient: IClient;
 
   useEffect(() => {
@@ -34,19 +35,22 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
       props.opts
     );
 
+    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
+    })
+
+    flagbaseClient.on(EventType.FLAG_CHANGE, (eventMessage) => {
+      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
+      setFlagset(flagbaseClient.getAllFlags());
+    })
+
+    flagbaseClient.on(EventType.NETWORK_FETCH, (eventMessage) => {
+      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
+      setInternalData(flagbaseClient.getInternalData());
+    })
+
     return function cleanup() {
       flagbaseClient.destroy();
-    };
-  }, []);
-
-  useEffect(() => {
-    interval = setInterval(() => {
-      setFlagset(flagbaseClient.getAllFlags());
-      setInternalData(flagbaseClient.getInternalData());
-    }, (props.opts as IConfigPolling)?.pollIntervalMilliseconds || 1000);
-
-    return function cleanup() {
-      clearInterval(interval);
     };
   }, []);
 
