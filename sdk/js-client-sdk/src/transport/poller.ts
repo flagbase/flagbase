@@ -4,6 +4,8 @@ import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
 
+const INITIAL_ETAG = "initial";
+
 export default function Poller(
   context: IContext,
   events: EventProducer
@@ -13,12 +15,12 @@ export default function Poller(
   const clientKey = config.clientKey;
 
   let interval = setInterval(() => {});
-  let etag = "initial";
+  let etag = INITIAL_ETAG;
 
   const onFullRequest = () => {
     context.setInternalData({
-      numConsecutiveCachedRequests: 0,
-      numConsecutiveFailedRequests: 0,
+      consecutiveCachedRequests: 0,
+      consecutiveFailedRequests: 0,
     });
     events.emit(
       EventType.NETWORK_FETCH_FULL,
@@ -29,11 +31,11 @@ export default function Poller(
 
   const onCachedRequest = () => {
     const {
-      numConsecutiveCachedRequests: prevNumConsecutiveCachedRequests,
+      consecutiveCachedRequests: prevConsecutiveCachedRequests,
     } = context.getInternalData();
     context.setInternalData({
-      numConsecutiveCachedRequests: prevNumConsecutiveCachedRequests + 1,
-      numConsecutiveFailedRequests: 0,
+      consecutiveCachedRequests: prevConsecutiveCachedRequests + 1,
+      consecutiveFailedRequests: 0,
     });
     events.emit(
       EventType.NETWORK_FETCH_CACHED,
@@ -44,11 +46,11 @@ export default function Poller(
 
   const onErrorRequest = () => {
     const {
-      numConsecutiveFailedRequests: prevNumConsecutiveFailedRequests,
+      consecutiveFailedRequests: prevConsecutiveFailedRequests,
     } = context.getInternalData();
     context.setInternalData({
-      numConsecutiveCachedRequests: 0,
-      numConsecutiveFailedRequests: prevNumConsecutiveFailedRequests + 1,
+      consecutiveCachedRequests: 0,
+      consecutiveFailedRequests: prevConsecutiveFailedRequests + 1,
     });
     events.emit(
       EventType.NETWORK_FETCH_ERROR,
@@ -80,14 +82,23 @@ export default function Poller(
         onCachedRequest,
         onErrorRequest
       );
-      if (JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation) && evaluation !== undefined) {
+      if (
+        evaluation &&
+        JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation)
+      ) {
         Object.keys(evaluation).forEach((flagKey) =>
           context.setFlag(flagKey, evaluation[flagKey])
         );
-        events.emit(EventType.FLAG_CHANGE, "Flagset has changed")
+        const {
+          flagsetChanges: prevFlagsetChanges,
+        } = context.getInternalData();
+        context.setInternalData({
+          flagsetChanges: prevFlagsetChanges + 1,
+        });
+        events.emit(EventType.FLAG_CHANGE, "Flagset has changed");
       }
 
-      if (etag === "initial" && retag !== etag) {
+      if (etag === INITIAL_ETAG && retag !== etag) {
         events.emit(
           EventType.CLIENT_READY,
           "Client is ready! Initial flagset has been retrieved.",
@@ -99,7 +110,7 @@ export default function Poller(
 
       events.emit(
         EventType.NETWORK_FETCH,
-        "Fetched flags from service.",
+        "Fetched flags from service via polling.",
         context.getInternalData()
       );
     }, config.pollIntervalMilliseconds);

@@ -1,9 +1,11 @@
 export type InternalData = {
-  numConsecutiveCachedRequests: number;
-  numConsecutiveFailedRequests: number;
-}
+  consecutiveCachedRequests: number;
+  consecutiveFailedRequests: number;
+  flagsetChanges: number;
+};
 
 export const DEFAULT_INTERNAL_DATA: InternalData = {
-  numConsecutiveCachedRequests: 0,
-  numConsecutiveFailedRequests: 0,
-}
+  consecutiveCachedRequests: 0,
+  consecutiveFailedRequests: 0,
+  flagsetChanges: 0,
+};

@@ -3,7 +3,6 @@ import FlagbaseClient, {
   IClient,
   ClientOptions,
   Flagset,
-  IConfigPolling,
   Identity,
   InternalData,
   EventType,
@@ -11,7 +10,7 @@ import FlagbaseClient, {
 
 const BORDER_STYLE = { border: "1px solid black" };
 
-const FLAGBASE_EVENT_PREFIX = "Flagbase: "
+const FLAGBASE_EVENT_PREFIX = "Flagbase: ";
 
 export type PollingAppProps = {
   clientKey: string;
@@ -19,14 +18,33 @@ export type PollingAppProps = {
   opts: ClientOptions;
 };
 
+type DebugLog = {
+  time: Date;
+  type: EventType;
+  message: string;
+};
+
 const PollingApp: React.FC<PollingAppProps> = (props) => {
+  const [debugLog, setDebugLog] = useState<DebugLog[]>([]);
+
   const [flagset, setFlagset] = useState<Flagset>({});
   const [internalData, setInternalData] = useState<InternalData>({
-    numConsecutiveCachedRequests: 0,
-    numConsecutiveFailedRequests: 0,
+    consecutiveCachedRequests: 0,
+    consecutiveFailedRequests: 0,
+    flagsetChanges: 0,
   });
 
   let flagbaseClient: IClient;
+
+  const addDebugLog = (eventType: EventType, eventMessage: string) => {
+    const newEntry: DebugLog = {
+      time: new Date(),
+      type: eventType,
+      message: eventMessage,
+    };
+    setDebugLog((prevDebugLog) => [...prevDebugLog, newEntry]);
+    console.log(newEntry, debugLog.length);
+  };
 
   useEffect(() => {
     flagbaseClient = FlagbaseClient(
@@ -36,18 +54,33 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     );
 
     flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
-      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
-    })
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
 
     flagbaseClient.on(EventType.FLAG_CHANGE, (eventMessage) => {
-      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
+      addDebugLog(EventType.FLAG_CHANGE, eventMessage);
       setFlagset(flagbaseClient.getAllFlags());
-    })
+    });
 
-    flagbaseClient.on(EventType.NETWORK_FETCH, (eventMessage) => {
-      console.debug(FLAGBASE_EVENT_PREFIX, eventMessage)
+    flagbaseClient.on(EventType.NETWORK_FETCH, () => {
       setInternalData(flagbaseClient.getInternalData());
-    })
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_FULL, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_FULL, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_CACHED, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_CACHED, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_ERROR, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_ERROR, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
 
     return function cleanup() {
       flagbaseClient.destroy();
@@ -79,9 +112,7 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
           })}
         </tbody>
       </table>
-      <h3>Evaluation Context</h3>
-      <h3>Configuration</h3>
-      <h3>Internal Data</h3>
+      <h3>Internal Stats</h3>
       <table style={BORDER_STYLE}>
         <thead>
           <tr>
@@ -98,6 +129,29 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
               </tr>
             );
           })}
+        </tbody>
+      </table>
+      <h3>Debug logs</h3>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Timestamp</th>
+            <th style={BORDER_STYLE}>Type</th>
+            <th style={BORDER_STYLE}>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {debugLog
+            .sort((a, b) => b.time.getTime() - a.time.getTime())
+            .map(({ time, type, message }) => {
+              return (
+                <tr key={time.toISOString()} style={BORDER_STYLE}>
+                  <td style={BORDER_STYLE}>{time.getTime()}</td>
+                  <td style={BORDER_STYLE}>{type}</td>
+                  <td style={BORDER_STYLE}>{message}</td>
+                </tr>
+              );
+            })}
         </tbody>
       </table>
     </>
