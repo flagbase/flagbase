@@ -16,7 +16,7 @@ func List(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	a RootArgs,
-) (*res.Success, *res.Errors) {
+) (*[]Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -31,7 +31,7 @@ func List(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	return &res.Success{Data: r}, &e
+	return r, &e
 }
 
 // Create creates a new resource instance given the resource instance
@@ -41,7 +41,7 @@ func Create(
 	atk rsc.Token,
 	i Workspace,
 	a RootArgs,
-) (*res.Success, *res.Errors) {
+) (*Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -69,7 +69,7 @@ func Create(
 		}
 	}
 
-	return &res.Success{Data: r}, &e
+	return r, &e
 }
 
 // Get gets a resource instance given an atk & workspaceKey
@@ -78,7 +78,7 @@ func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	a ResourceArgs,
-) (*res.Success, *res.Errors) {
+) (*Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -98,7 +98,7 @@ func Get(
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	return &res.Success{Data: r}, &e
+	return r, &e
 }
 
 // Update updates resource instance given an atk, workspaceKey & patch object
@@ -108,7 +108,7 @@ func Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
 	a ResourceArgs,
-) (*res.Success, *res.Errors) {
+) (*Workspace, *res.Errors) {
 	var o Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -141,7 +141,7 @@ func Update(
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	return &res.Success{Data: r}, &e
+	return r, &e
 }
 
 // Delete deletes a resource instance given an atk & workspaceKey

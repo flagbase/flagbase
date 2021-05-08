@@ -1,1 +1,2 @@
-export * from './fetch';
+export { default } from './api'
+export * from './api';

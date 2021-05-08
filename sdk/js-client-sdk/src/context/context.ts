@@ -1,71 +1,118 @@
 import { Config, DEFAULT_CONFIG } from "./config";
 import { Identity, DEFAULT_IDENTITY } from "./identity";
 import { Flagset, Flag } from "./flags";
+import { DEFAULT_INTERNAL_DATA, InternalData } from "./internal-data";
 
-class Context {
-  private config: Config;
-  private flagset: Flagset;
-  private identity: Identity;
+export interface IContext {
+  // config
+  getConfig: () => Config;
+  setConfig: (c: Partial<Config>) => void;
+  // identity
+  getIdentity: () => Identity;
+  setIdentity: (i: Partial<Identity>) => void;
+  getIdentityTraits: () => Identity["traits"];
+  setIdentityTraits: (identityTraits: Identity["traits"]) => void;
+  // flagset
+  getAllFlags: () => Flagset;
+  getFlag: (flagKey: string) => Flag;
+  setFlag: (flagKey: string, flag: Flag) => void;
+  // internal data
+  getInternalData: () => InternalData;
+  setInternalData: (i: Partial<InternalData>) => void;
+}
 
-  constructor(config: Config, identity?: Identity) {
-    this.config = {
-      ...DEFAULT_CONFIG,
-      ...config
-    };
-    this.identity = {
-      ...DEFAULT_IDENTITY,
-      ...identity
-    };
-    this.flagset = {};
-  }
+export default function Context(
+  userConfig: Config,
+  userIdentity: Identity
+): IContext {
+  let config: Config = {
+    ...DEFAULT_CONFIG,
+    ...userConfig,
+  };
+  let identity: Identity = {
+    ...DEFAULT_IDENTITY,
+    ...userIdentity,
+  };
+  let flagset: Flagset = {};
+  let internalData: InternalData = {
+    ...DEFAULT_INTERNAL_DATA,
+  };
 
   /**
    * Config methods
    */
-  public getConfig = (): Config => this.config;
+  const getConfig: IContext["getConfig"] = () => ({ ...config });
 
-  public setConfig = (config: Partial<Config>): void => {
-    this.config = {
-      ...this.config,
+  const setConfig: IContext["setConfig"] = (userConfig) => {
+    config = {
       ...config,
+      ...userConfig,
     };
   };
-
 
   /**
-   * Config methods
+   * Identity methods
    */
-  public getIdentity = (): Identity => this.identity;
+  const getIdentity: IContext["getIdentity"] = () => ({ ...identity });
 
-  public setIdentity = (identity: Partial<Identity>): void => {
-    this.identity = {
-    ...this.identity,
-    ...identity,
+  const setIdentity: IContext["setIdentity"] = (userIdentity) => {
+    identity = {
+      ...identity,
+      ...userIdentity,
     };
   };
 
-  public getIdentityTraits = (): Identity['traits'] => this.identity.traits;
+  const getIdentityTraits: IContext["getIdentityTraits"] = () => ({
+    ...identity.traits,
+  });
 
-  public setIdentityTraits = (identityTraits: Identity['traits']): void => {
-    this.identity = {
-    ...this.identity,
+  const setIdentityTraits: IContext["setIdentityTraits"] = (identityTraits) => {
+    identity = {
+      ...identity,
       traits: {
-        ...this.identity.traits,
+        ...identity.traits,
         ...identityTraits,
-      }
+      },
     };
   };
 
   /**
    * Flagset methods
    */
-  public getAllFlags = (): Flagset => this.flagset;
+  const getAllFlags: IContext["getAllFlags"] = () => ({ ...flagset });
 
-  public getFlag = (flagKey: string): Flag => this.flagset[flagKey];
+  const getFlag: IContext["getFlag"] = (flagKey) => ({ ...flagset[flagKey] });
 
-  public setFlag = (flagKey: string, flag: Flag): void => {
-    this.flagset[flagKey] = flag;
+  const setFlag: IContext["setFlag"] = (flagKey, flag) => {
+    flagset[flagKey] = flag;
+  };
+
+  /**
+   * Internal data methods
+   */
+  const getInternalData: IContext["getInternalData"] = () => ({
+    ...internalData,
+  });
+
+  const setInternalData: IContext["setInternalData"] = (userInternalData) => {
+    internalData = { ...internalData, ...userInternalData };
+  };
+
+  return {
+    // config
+    getConfig,
+    setConfig,
+    // identity
+    getIdentity,
+    setIdentity,
+    getIdentityTraits,
+    setIdentityTraits,
+    // flagset
+    getAllFlags,
+    getFlag,
+    setFlag,
+    // internal data
+    getInternalData,
+    setInternalData,
   };
 }
-
-export default Context;

@@ -1,31 +1,161 @@
 import React, { useEffect, useState } from "react";
-import FlagbaseClient, { Mode } from "../src/index";
+import FlagbaseClient, {
+  IClient,
+  ClientOptions,
+  Flagset,
+  Identity,
+  InternalData,
+  EventType,
+} from "../src/index";
 
-const PollingApp: React.FC = () => {
-  const [flagValue, setFlagValue] = useState("some-test");
+const BORDER_STYLE = { border: "1px solid black" };
 
-  const flagbase = FlagbaseClient(
-    {
-      mode: Mode.POLLING,
-      endpointUri: "http://127.0.0.1:9051",
-      clientKey: "sdk-client_4fbb5464-0a71-4fb0-9268-b426d6b710e5",
-      pollIntervalMilliseconds: 5000
-    },
-    {
-      identifier: "cool-user",
-      traits: {
-        "some-trait-key": "aaaa",
-      },
-    }
-  );
+const FLAGBASE_EVENT_PREFIX = "Flagbase: ";
+
+export type PollingAppProps = {
+  clientKey: string;
+  identity: Identity;
+  opts: ClientOptions;
+};
+
+type DebugLog = {
+  time: Date;
+  type: EventType;
+  message: string;
+};
+
+const PollingApp: React.FC<PollingAppProps> = (props) => {
+  const [debugLog, setDebugLog] = useState<DebugLog[]>([]);
+
+  const [flagset, setFlagset] = useState<Flagset>({});
+  const [internalData, setInternalData] = useState<InternalData>({
+    consecutiveCachedRequests: 0,
+    consecutiveFailedRequests: 0,
+    flagsetChanges: 0,
+  });
+
+  let flagbaseClient: IClient;
+
+  const addDebugLog = (eventType: EventType, eventMessage: string) => {
+    const newEntry: DebugLog = {
+      time: new Date(),
+      type: eventType,
+      message: eventMessage,
+    };
+    setDebugLog((prevDebugLog) => [...prevDebugLog, newEntry]);
+    console.log(newEntry, debugLog.length);
+  };
 
   useEffect(() => {
-    setTimeout(() => {
-      setFlagValue(flagbase.GetFlag("test-flag", "some-random-value"));
-    }, 2000);
+    flagbaseClient = FlagbaseClient(
+      props.clientKey,
+      props.identity,
+      props.opts
+    );
+
+    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.FLAG_CHANGE, (eventMessage) => {
+      addDebugLog(EventType.FLAG_CHANGE, eventMessage);
+      setFlagset(flagbaseClient.getAllFlags());
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH, () => {
+      setInternalData(flagbaseClient.getInternalData());
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_FULL, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_FULL, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_CACHED, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_CACHED, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.NETWORK_FETCH_ERROR, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_ERROR, eventMessage);
+    });
+
+    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
+
+    return function cleanup() {
+      flagbaseClient.destroy();
+    };
   }, []);
 
-  return <>Test: {flagValue}</>;
+  return (
+    <>
+      <h3>Evaluated Flagset</h3>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Flag</th>
+            <th style={BORDER_STYLE}>Variation</th>
+            <th style={BORDER_STYLE}>Reason</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.values(flagset).map((flag) => {
+            return (
+              <tr key={flag.flagKey} style={BORDER_STYLE}>
+                <td style={BORDER_STYLE}>{flag.flagKey}</td>
+                <td style={BORDER_STYLE}>{flag.variationKey}</td>
+                <td style={BORDER_STYLE}>
+                  <code>{flag.reason}</code>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <h3>Internal Stats</h3>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Key</th>
+            <th style={BORDER_STYLE}>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(internalData).map((key) => {
+            return (
+              <tr key={key} style={BORDER_STYLE}>
+                <td style={BORDER_STYLE}>{key}</td>
+                <td style={BORDER_STYLE}>{internalData[key]}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      <h3>Debug logs</h3>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Timestamp</th>
+            <th style={BORDER_STYLE}>Type</th>
+            <th style={BORDER_STYLE}>Message</th>
+          </tr>
+        </thead>
+        <tbody>
+          {debugLog
+            .sort((a, b) => b.time.getTime() - a.time.getTime())
+            .map(({ time, type, message }) => {
+              return (
+                <tr key={time.toISOString()} style={BORDER_STYLE}>
+                  <td style={BORDER_STYLE}>{time.getTime()}</td>
+                  <td style={BORDER_STYLE}>{type}</td>
+                  <td style={BORDER_STYLE}>{message}</td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+    </>
+  );
 };
 
 export default PollingApp;

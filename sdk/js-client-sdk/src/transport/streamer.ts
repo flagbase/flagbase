@@ -1,14 +1,17 @@
-import Context from "../context";
+import { IContext } from "../context";
+import { EventProducer } from "../events";
+import { EventType } from "../events/event-type";
 import { ITransport } from "./transport";
 
-class Streamer implements ITransport {
-  private context: Context;
+export default function Streamer(context: IContext, events: EventProducer): ITransport {
+  const NOT_IMPL_MSG = "Streamer not implemented yet."
 
-  constructor(context: Context) {
-    this.context = context;
-  }
+  const start = () => events.emit(EventType.DEBUG, NOT_IMPL_MSG)
 
-  start = () => console.warn('Streamer not implemented yet.')
+  const stop = () => events.emit(EventType.DEBUG, NOT_IMPL_MSG)
+
+  return {
+    start,
+    stop,
+  };
 }
-
-export default Streamer;

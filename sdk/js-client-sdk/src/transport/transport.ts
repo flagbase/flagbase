@@ -1,28 +1,15 @@
-import Context, { Mode } from "../context";
-import Streamer from './poller';
-import Poller from './poller';
+import { Mode, IContext } from "../context";
+import Streamer from "./streamer";
+import Poller from "./poller";
+import { EventProducer } from "../events";
 
 export interface ITransport {
-  start: () => void
+  start: () => void;
+  stop: () => void;
 }
 
-class Transport implements ITransport {
-  private context: Context;
-  private mode: Mode;
-  private worker: ITransport;
-
-  constructor(context: Context) {
-    this.context = context;
-    this.mode = this.context.getConfig().mode
-    this.worker = new Poller(this.context);
-  }
-
-  start = () => {
-    if (this.mode === Mode.STREAMING) {
-      this.worker = new Streamer(this.context);
-    }
-    this.worker.start();
-  }
+export default function Transport(context: IContext, events: EventProducer): ITransport {
+  return context.getConfig().mode === Mode.STREAMING
+    ? Streamer(context, events)
+    : Poller(context, events);
 }
-
-export default Transport;

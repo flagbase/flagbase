@@ -33,7 +33,7 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	data, _err := Get(
+	r, _err := Get(
 		sctx,
 		atk,
 		RootArgs{
@@ -49,7 +49,9 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusOK,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -68,7 +70,7 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	data, _err := Evaluate(
+	r, _err := Evaluate(
 		sctx,
 		atk,
 		i,
@@ -85,7 +87,9 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	httputil.Send(
 		ctx,
 		http.StatusOK,
-		data,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)

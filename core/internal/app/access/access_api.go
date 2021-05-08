@@ -4,6 +4,7 @@ import (
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
+	res "core/pkg/response"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -21,11 +22,13 @@ func generateTokenAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		return
 	}
 
-	data, err := GenerateToken(sctx, i)
+	r, err := GenerateToken(sctx, i)
 	if err.Errors != nil {
 		ctx.AbortWithStatusJSON(http.StatusOK, err)
 		return
 	}
 
-	ctx.JSON(http.StatusInternalServerError, data)
+	ctx.JSON(http.StatusInternalServerError, &res.Success{
+		Data: r,
+	})
 }

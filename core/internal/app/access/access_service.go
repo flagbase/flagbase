@@ -12,7 +12,7 @@ import (
 
 // GenerateToken generate an access token via an access pair
 func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
-	*res.Success,
+	*Token,
 	*res.Errors,
 ) {
 	var e res.Errors
@@ -42,17 +42,15 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	// hide secret
 	r.Secret = "**************"
 
-	return &res.Success{
-		Data: &Token{
-			Token:  atk,
-			Access: r,
-		},
+	return &Token{
+		Token:  atk,
+		Access: r,
 	}, &e
 }
 
 // Create creates new access resource.
 func Create(sctx *srv.Ctx, i Access) (
-	*res.Success,
+	*Access,
 	*res.Errors,
 ) {
 	var e res.Errors
@@ -76,5 +74,5 @@ func Create(sctx *srv.Ctx, i Access) (
 	// display un-encrypted secret one time upon creation
 	r.Secret = originalSecret
 
-	return &res.Success{Data: r}, &e
+	return r, &e
 }

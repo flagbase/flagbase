@@ -1,45 +1,125 @@
-import { fetchFlagsViaPoller } from "../api";
-import Context from "../context";
-import { Config, IConfigPolling } from "../context/config";
+import { fetchFlagsViaPoller } from "../fetch";
+import { IContext, IConfigPolling } from "../context";
 import { ITransport } from "./transport";
+import { EventProducer } from "../events";
+import { EventType } from "../events/event-type";
 
-class Poller implements ITransport {
-  private context: Context;
-  private config: IConfigPolling;
-  private endpointUri: Config["endpointUri"];
-  private clientKey: Config["clientKey"];
-  private etag: string;
+const INITIAL_ETAG = "initial";
 
-  constructor(
-    context: Context
-  ) {
-    this.context = context;
-    this.config = context.getConfig() as IConfigPolling;
-    this.endpointUri = this.config.endpointUri;
-    this.clientKey = this.config.clientKey;
-    this.etag = 'initial'
-  }
+export default function Poller(
+  context: IContext,
+  events: EventProducer
+): ITransport {
+  const config = context.getConfig() as IConfigPolling;
+  const endpointUri = config.endpointUri;
+  const clientKey = config.clientKey;
 
-  start = async () => {
-    await fetchFlagsViaPoller(
-      this.endpointUri,
-      this.clientKey,
-      this.context.getIdentity(),
-      this.etag,
+  let interval = setInterval(() => {});
+  let etag = INITIAL_ETAG;
+
+  const onFullRequest = () => {
+    context.setInternalData({
+      consecutiveCachedRequests: 0,
+      consecutiveFailedRequests: 0,
+    });
+    events.emit(
+      EventType.NETWORK_FETCH_FULL,
+      "Retrieved full flagset from service.",
+      context.getInternalData()
     );
-    setInterval(async () => {
+  };
+
+  const onCachedRequest = () => {
+    const {
+      consecutiveCachedRequests: prevConsecutiveCachedRequests,
+    } = context.getInternalData();
+    context.setInternalData({
+      consecutiveCachedRequests: prevConsecutiveCachedRequests + 1,
+      consecutiveFailedRequests: 0,
+    });
+    events.emit(
+      EventType.NETWORK_FETCH_CACHED,
+      "Retrieved cached flagset from service.",
+      context.getInternalData()
+    );
+  };
+
+  const onErrorRequest = () => {
+    const {
+      consecutiveFailedRequests: prevConsecutiveFailedRequests,
+    } = context.getInternalData();
+    context.setInternalData({
+      consecutiveCachedRequests: 0,
+      consecutiveFailedRequests: prevConsecutiveFailedRequests + 1,
+    });
+    events.emit(
+      EventType.NETWORK_FETCH_ERROR,
+      "Unable to retrieved flagset from service.",
+      context.getInternalData()
+    );
+  };
+
+  const start = async () => {
+    await fetchFlagsViaPoller(
+      endpointUri,
+      clientKey,
+      context.getIdentity(),
+      etag
+    );
+    events.emit(
+      EventType.NETWORK_FETCH,
+      "Initial flags from service.",
+      context.getInternalData()
+    );
+
+    interval = setInterval(async () => {
       const [retag, evaluation] = await fetchFlagsViaPoller(
-        this.endpointUri,
-        this.clientKey,
-        this.context.getIdentity(),
-        this.etag
+        endpointUri,
+        clientKey,
+        context.getIdentity(),
+        etag,
+        onFullRequest,
+        onCachedRequest,
+        onErrorRequest
       );
-      Object.keys(evaluation).forEach(
-        (flagKey) => this.context.setFlag(flagKey, evaluation[flagKey])
+      if (
+        evaluation &&
+        JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation)
+      ) {
+        Object.keys(evaluation).forEach((flagKey) =>
+          context.setFlag(flagKey, evaluation[flagKey])
+        );
+        const {
+          flagsetChanges: prevFlagsetChanges,
+        } = context.getInternalData();
+        context.setInternalData({
+          flagsetChanges: prevFlagsetChanges + 1,
+        });
+        events.emit(EventType.FLAG_CHANGE, "Flagset has changed");
+      }
+
+      if (etag === INITIAL_ETAG && retag !== etag) {
+        events.emit(
+          EventType.CLIENT_READY,
+          "Client is ready! Initial flagset has been retrieved.",
+          context.getAllFlags()
+        );
+      }
+
+      etag = retag;
+
+      events.emit(
+        EventType.NETWORK_FETCH,
+        "Fetched flags from service via polling.",
+        context.getInternalData()
       );
-      this.etag = retag;
-    }, this.config.pollIntervalMilliseconds);
+    }, config.pollIntervalMilliseconds);
+  };
+
+  const stop = async () => clearInterval(interval);
+
+  return {
+    start,
+    stop,
   };
 }
-
-export default Poller;

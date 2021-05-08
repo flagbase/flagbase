@@ -1,32 +1,41 @@
-import Context, { Config, Flag, Identity, REASONS } from "../context";
+import Api, { IApi } from "../api";
+import Context, { Config, Identity, Mode } from "../context";
+import Events, { EventConsumer } from "../events";
 import Transport from "../transport";
 
-function Client(config: Config, identity?: Identity) {
-  const context = new Context(config, identity);
-  const transport = new Transport(context);
-  transport.start();
+export type ClientOptions = Config;
 
-  return {
-    GetFlag: (
-      flagKey: string,
-      defaultVariationKey: string
-    ): Flag["variationKey"] => {
-      const defaultVariationValue = {
-        flagKey,
-        variationKey: defaultVariationKey,
-        reason: REASONS.DEFAULT_FALLTHROUGH,
-      };
-      if (!!context.getFlag(flagKey)) {
-        context.setFlag(flagKey, defaultVariationValue);
-      } else if (
-        context.getFlag(flagKey)?.reason === REASONS.DEFAULT_FALLTHROUGH
-      ) {
-        context.setFlag(flagKey, defaultVariationValue);
-        return defaultVariationKey;
-      }
-      return context.getFlag(flagKey)?.variationKey || defaultVariationKey;
-    },
-  };
+export interface IClient extends IApi, EventConsumer {
+  destroy: () => void;
 }
 
-export default Client;
+export default function Client(
+  clientKey: string,
+  identity: Identity,
+  opts?: ClientOptions
+): IClient {
+  const config: Config = {
+    mode: Mode.POLLING,
+    ...opts,
+    clientKey,
+  };
+  const events = Events();
+  const context = Context(config, identity);
+  const transport = Transport(context, events);
+  const api = Api(context);
+
+  transport.start();
+
+  const destroy = () => {
+    events.clear();
+    transport.stop();
+  }
+
+  return {
+    ...api,
+    destroy,
+    on: events.on,
+    off: events.off,
+    clear: events.clear,
+  };
+}
