@@ -3,6 +3,8 @@ package flag
 import (
 	"context"
 	"core/internal/app/auth"
+	flagmodel "core/internal/app/flag/model"
+	flagrepo "core/internal/app/flag/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
@@ -10,24 +12,28 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Sctx *srv.Ctx
+	Repo *flagrepo.Repo
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(
-	sctx *srv.Ctx,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]Flag, *res.Errors) {
+	a flagmodel.ResourceArgs,
+) (*[]flagmodel.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	// authorize operation
-	if err := auth.Authorize(sctx, atk, rsc.AccessService); err != nil {
+	if err := auth.Authorize(s.Sctx, atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, sctx, a)
+	r, err := s.Repo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -40,9 +46,9 @@ func List(
 func Create(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	i Flag,
-	a RootArgs,
-) (*Flag, *res.Errors) {
+	i flagmodel.Flag,
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -52,7 +58,7 @@ func Create(
 		cancel()
 	}
 
-	r, err := createResource(ctx, sctx, i, a)
+	r, err := flagrepo.Create(ctx, sctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
@@ -77,13 +83,13 @@ func Create(
 func Get(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	a ResourceArgs,
-) (*Flag, *res.Errors) {
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	o, err := getResource(ctx, sctx, a)
+	o, err := flagrepo.Get(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -107,14 +113,14 @@ func Update(
 	sctx *srv.Ctx,
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*Flag, *res.Errors) {
-	var o Flag
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, *res.Errors) {
+	var o flagmodel.Flag
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, a)
+	r, err := flagrepo.Get(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -136,7 +142,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, sctx, o, a)
+	r, err = flagrepo.Update(ctx, sctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -149,13 +155,13 @@ func Update(
 func Delete(
 	sctx *srv.Ctx,
 	atk rsc.Token,
-	a ResourceArgs,
+	a flagmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, a)
+	r, err := flagrepo.Get(ctx, sctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -172,7 +178,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, sctx, a); err != nil {
+	if err := flagrepo.Delete(ctx, sctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

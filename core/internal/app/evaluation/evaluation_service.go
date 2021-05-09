@@ -1,10 +1,13 @@
 package evaluation
 
 import (
-	"core/internal/app/flag"
+	"context"
+	flagmodel "core/internal/app/flag/model"
+	flagrepo "core/internal/app/flag/repository"
 	"core/internal/app/segmentrule"
 	"core/internal/app/targeting"
 	"core/internal/app/targetingrule"
+	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/evaluator"
@@ -24,12 +27,16 @@ func Get(
 
 	o := make(flagset.Flagset)
 
-	fl, err := flag.List(sctx, atk, flag.RootArgs{
+	fr := flagrepo.Repo{
+		DB: sctx.DB,
+	}
+
+	fl, _e := fr.List(context.Background(), flagmodel.ResourceArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
-	if !err.IsEmpty() {
-		e.Extend(err)
+	if _e != nil {
+		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
 	for _, f := range *fl {

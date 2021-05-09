@@ -1,20 +1,25 @@
-package flag
+package repository
 
 import (
 	"context"
+	flagmodel "core/internal/app/flag/model"
 	rsc "core/internal/pkg/resource"
 	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	sctx *srv.Ctx,
-	a RootArgs,
-) (*[]Flag, error) {
-	var o []Flag
+	a flagmodel.ResourceArgs,
+) (*[]flagmodel.Flag, error) {
+	var o []flagmodel.Flag
 	sqlStatement := `
 SELECT
   f.id,
@@ -29,7 +34,7 @@ LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2`
-	rows, err := sctx.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -39,7 +44,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Flag
+		var _o flagmodel.Flag
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -54,13 +59,13 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func Create(
 	ctx context.Context,
 	sctx *srv.Ctx,
-	i Flag,
-	a RootArgs,
-) (*Flag, error) {
-	var o Flag
+	i flagmodel.Flag,
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, error) {
+	var o flagmodel.Flag
 	sqlStatement := `
 INSERT INTO
   flag(
@@ -93,7 +98,7 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Flag.String(),
-		ResourceArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			FlagKey:      i.Key,
 		},
@@ -117,12 +122,12 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func Get(
 	ctx context.Context,
 	sctx *srv.Ctx,
-	a ResourceArgs,
-) (*Flag, error) {
-	var o Flag
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, error) {
+	var o flagmodel.Flag
 	sqlStatement := `
 SELECT
   f.id,
@@ -158,12 +163,12 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func Update(
 	ctx context.Context,
 	sctx *srv.Ctx,
-	i Flag,
-	a ResourceArgs,
-) (*Flag, error) {
+	i flagmodel.Flag,
+	a flagmodel.ResourceArgs,
+) (*flagmodel.Flag, error) {
 	sqlStatement := `
 UPDATE
   flag
@@ -191,10 +196,10 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func Delete(
 	ctx context.Context,
 	sctx *srv.Ctx,
-	a ResourceArgs,
+	a flagmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM flag

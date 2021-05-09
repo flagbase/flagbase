@@ -1,6 +1,8 @@
 package flag
 
 import (
+	flagmodel "core/internal/app/flag/model"
+	flagrepo "core/internal/app/flag/repository"
 	"core/internal/app/variation"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
@@ -12,6 +14,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+type APIHandler struct {
+	sctx    *srv.Ctx
+	service *Service
+}
 
 // ApplyRoutes flag route handlers
 func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
@@ -25,7 +32,17 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 		rsc.FlagKey,
 	)
 
-	routes.GET(rootPath, httputil.Handler(sctx, listAPIHandler))
+	h := APIHandler{
+		sctx: sctx,
+		service: &Service{
+			Sctx: sctx,
+			Repo: &flagrepo.Repo{
+				DB: sctx.DB,
+			},
+		},
+	}
+
+	routes.GET(rootPath, h.listAPIHandler)
 	routes.POST(rootPath, httputil.Handler(sctx, createAPIHandler))
 	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
 	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
@@ -33,7 +50,7 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 	variation.ApplyRoutes(sctx, routes)
 }
 
-func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -41,10 +58,9 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := List(
-		sctx,
+	r, _err := h.service.List(
 		atk,
-		RootArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 		},
@@ -72,7 +88,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i Flag
+	var i flagmodel.Flag
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -81,7 +97,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		i,
-		RootArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 		},
@@ -112,7 +128,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	r, _err := Get(
 		sctx,
 		atk,
-		ResourceArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 			FlagKey:      httputil.GetParam(ctx, rsc.FlagKey),
@@ -150,7 +166,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		sctx,
 		atk,
 		i,
-		ResourceArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 			FlagKey:      httputil.GetParam(ctx, rsc.FlagKey),
@@ -182,7 +198,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	if err := Delete(
 		sctx,
 		atk,
-		ResourceArgs{
+		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 			FlagKey:      httputil.GetParam(ctx, rsc.FlagKey),
