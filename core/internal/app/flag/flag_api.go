@@ -2,7 +2,6 @@ package flag
 
 import (
 	flagmodel "core/internal/app/flag/model"
-	flagrepo "core/internal/app/flag/repository"
 	"core/internal/app/variation"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
@@ -21,22 +20,16 @@ type APIHandler struct {
 	Service *Service
 }
 
-// NewHandler create new API handler
-func NewHandler(senv *srvenv.Env) *APIHandler {
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
 	return &APIHandler{
-		Senv: senv,
-		Service: &Service{
-			Senv: senv,
-			Repo: &flagrepo.Repo{
-				DB: senv.DB,
-			},
-		},
+		Senv:    senv,
+		Service: NewService(senv),
 	}
 }
 
 // ApplyRoutes flag route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
-	h := NewHandler(senv)
+	h := newAPIHandler(senv)
 	routes := r.Group(rsc.RouteFlag)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,

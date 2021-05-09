@@ -4,6 +4,7 @@ import (
 	"context"
 	flagmodel "core/internal/app/flag/model"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -12,6 +13,12 @@ import (
 
 type Repo struct {
 	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
 }
 
 func (r *Repo) List(

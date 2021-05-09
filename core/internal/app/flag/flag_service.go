@@ -13,8 +13,15 @@ import (
 )
 
 type Service struct {
-	Senv *srvenv.Env
-	Repo *flagrepo.Repo
+	Senv     *srvenv.Env
+	FlagRepo *flagrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:     senv,
+		FlagRepo: flagrepo.NewRepo(senv),
+	}
 }
 
 // List returns a list of resource instances
@@ -32,7 +39,7 @@ func (s *Service) List(
 		cancel()
 	}
 
-	r, err := s.Repo.List(ctx, a)
+	r, err := s.FlagRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -56,7 +63,7 @@ func (s *Service) Create(
 		cancel()
 	}
 
-	r, err := s.Repo.Create(ctx, i, a)
+	r, err := s.FlagRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
@@ -95,7 +102,7 @@ func (s *Service) Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	o, err := s.Repo.Get(ctx, a)
+	o, err := s.FlagRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -125,7 +132,7 @@ func (s *Service) Update(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := s.Repo.Get(ctx, a)
+	r, err := s.FlagRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -147,7 +154,7 @@ func (s *Service) Update(
 		cancel()
 	}
 
-	r, err = s.Repo.Update(ctx, o, a)
+	r, err = s.FlagRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -165,7 +172,7 @@ func (s *Service) Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := s.Repo.Get(ctx, a)
+	r, err := s.FlagRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
@@ -182,7 +189,7 @@ func (s *Service) Delete(
 		cancel()
 	}
 
-	if err := s.Repo.Delete(ctx, a); err != nil {
+	if err := s.FlagRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
