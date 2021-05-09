@@ -71,8 +71,7 @@ func (s *Service) Create(
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 
-			err := createDefaultChildren(
-				s.Senv,
+			err := s.createChildren(
 				atk,
 				i,
 				a,
