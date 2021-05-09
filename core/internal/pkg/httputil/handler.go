@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// TODO REMOVE
 // Handler passes the server context into a HTTP handler fn
 func Handler(
 	senv *srvenv.Env,

@@ -1,20 +1,31 @@
-package variation
+package repository
 
 import (
 	"context"
+	variationmodel "core/internal/app/variation/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Variation, error) {
-	var o []Variation
+	a variationmodel.RootArgs,
+) (*[]variationmodel.Variation, error) {
+	var o []variationmodel.Variation
 	sqlStatement := `
 SELECT
   v.id,
@@ -32,7 +43,7 @@ LEFT JOIN workspace w
 WHERE w.key = $1
   AND p.key = $2
   AND f.key = $3`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -43,7 +54,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Variation
+		var _o variationmodel.Variation
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -58,13 +69,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Variation,
-	a RootArgs,
-) (*Variation, error) {
-	var o Variation
+	i variationmodel.Variation,
+	a variationmodel.RootArgs,
+) (*variationmodel.Variation, error) {
+	var o variationmodel.Variation
 	sqlStatement := `
 INSERT INTO
   variation(
@@ -100,13 +110,13 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Variation.String(),
-		ResourceArgs{
+		variationmodel.ResourceArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
 			FlagKey:      a.FlagKey,
 			VariationKey: i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -127,12 +137,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Variation, error) {
-	var o Variation
+	a variationmodel.ResourceArgs,
+) (*variationmodel.Variation, error) {
+	var o variationmodel.Variation
 	sqlStatement := `
 SELECT
   v.id,
@@ -154,7 +163,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Variation.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -172,12 +181,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Variation,
-	a ResourceArgs,
-) (*Variation, error) {
+	i variationmodel.Variation,
+	a variationmodel.ResourceArgs,
+) (*variationmodel.Variation, error) {
 	sqlStatement := `
 UPDATE variation
 SET
@@ -186,7 +194,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -204,10 +212,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a variationmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM variation
@@ -223,7 +230,7 @@ WHERE key = $4
       AND p.key = $2
       AND f.key = $3
     )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

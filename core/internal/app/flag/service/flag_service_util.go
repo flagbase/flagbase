@@ -1,10 +1,13 @@
 package service
 
 import (
+	"context"
 	"core/internal/app/environment"
 	flagmodel "core/internal/app/flag/model"
 	"core/internal/app/targeting"
-	"core/internal/app/variation"
+	variationmodel "core/internal/app/variation/model"
+	variationrepo "core/internal/app/variation/repository"
+	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/pkg/flagset"
 	res "core/pkg/response"
@@ -16,6 +19,10 @@ func (s *Service) createChildren(
 	a flagmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	vr := variationrepo.NewRepo(s.Senv)
 
 	envs, _err := environment.List(
 		s.Senv,
@@ -29,41 +36,40 @@ func (s *Service) createChildren(
 		e.Extend(_err)
 	}
 
-	cVar, _err := variation.Create(
-		s.Senv,
-		atk,
-		variation.Variation{
+	cVar, _e := vr.Create(
+		ctx,
+		variationmodel.Variation{
 			Key:         "control",
 			Name:        "Control",
 			Description: "Baseline feature variation",
 			Tags:        rsc.Tags{"generated"},
 		},
-		variation.RootArgs{
+		variationmodel.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
 			FlagKey:      i.Key,
 		},
 	)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
+	if _e != nil {
+		e.Append(cons.ErrorInternal, _e.Error())
 	}
-	_, _err = variation.Create(
-		s.Senv,
-		atk,
-		variation.Variation{
+
+	_, _e = vr.Create(
+		ctx,
+		variationmodel.Variation{
 			Key:         "treatment",
 			Name:        "Treatment",
 			Description: "Treatment feature variation",
 			Tags:        rsc.Tags{"generated"},
 		},
-		variation.RootArgs{
+		variationmodel.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
 			FlagKey:      i.Key,
 		},
 	)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
+	if _e != nil {
+		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
 	for _, env := range *envs {

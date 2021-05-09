@@ -3,7 +3,7 @@ package transport
 import (
 	flagmodel "core/internal/app/flag/model"
 	flagservice "core/internal/app/flag/service"
-	"core/internal/app/variation"
+	variationtransport "core/internal/app/variation/transport"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -46,7 +46,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes.GET(resourcePath, h.getAPIHandler)
 	routes.PATCH(resourcePath, h.updateAPIHandler)
 	routes.DELETE(resourcePath, h.deleteAPIHandler)
-	variation.ApplyRoutes(senv, routes)
+	variationtransport.ApplyRoutes(senv, routes)
 }
 
 func (h *APIHandler) listAPIHandler(ctx *gin.Context) {

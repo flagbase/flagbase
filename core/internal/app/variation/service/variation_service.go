@@ -1,8 +1,10 @@
-package variation
+package service
 
 import (
 	"context"
 	"core/internal/app/auth"
+	variationmodel "core/internal/app/variation/model"
+	variationrepo "core/internal/app/variation/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,23 +12,34 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv          *srvenv.Env
+	VariationRepo *variationrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:          senv,
+		VariationRepo: variationrepo.NewRepo(senv),
+	}
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(
-	senv *srvenv.Env,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]Variation, *res.Errors) {
+	a variationmodel.RootArgs,
+) (*[]variationmodel.Variation, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessService); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, senv, a)
+	r, err := s.VariationRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -36,29 +49,28 @@ func List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i Variation,
-	a RootArgs,
-) (*Variation, *res.Errors) {
+	i variationmodel.Variation,
+	a variationmodel.RootArgs,
+) (*variationmodel.Variation, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.VariationRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Variation,
@@ -73,22 +85,21 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a ResourceArgs,
-) (*Variation, *res.Errors) {
+	a variationmodel.ResourceArgs,
+) (*variationmodel.Variation, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.VariationRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Variation,
@@ -102,24 +113,23 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*Variation, *res.Errors) {
-	var o Variation
+	a variationmodel.ResourceArgs,
+) (*variationmodel.Variation, *res.Errors) {
+	var o variationmodel.Variation
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.VariationRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Variation,
@@ -134,7 +144,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.VariationRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -144,22 +154,21 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a ResourceArgs,
+	a variationmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.VariationRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Variation,
@@ -169,7 +178,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.VariationRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
