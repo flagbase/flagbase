@@ -3,10 +3,10 @@ package manage
 import (
 	"context"
 	"core/internal/app/access"
+	srv "core/internal/infra/server"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"log"
 
 	"github.com/urfave/cli/v2"

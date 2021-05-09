@@ -1,8 +1,8 @@
-package polling
+package poller
 
 import (
+	srv "core/internal/infra/server"
 	"core/internal/pkg/httpserver"
-	srv "core/internal/pkg/server"
 )
 
 // Config polling server configuration

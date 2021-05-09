@@ -5,8 +5,8 @@ import (
 	flagmodel "core/internal/app/flag/model"
 	"core/internal/app/targeting"
 	"core/internal/app/variation"
+	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/flagset"
 	res "core/pkg/response"
 )

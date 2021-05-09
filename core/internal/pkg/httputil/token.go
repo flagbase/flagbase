@@ -1,8 +1,8 @@
 package httputil
 
 import (
+	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"errors"
 	"strings"
 

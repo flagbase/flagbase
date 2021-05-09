@@ -5,9 +5,9 @@ import (
 	"core/internal/app/auth"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 )

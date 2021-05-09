@@ -5,9 +5,9 @@ import (
 	"log"
 	"sync"
 
+	srv "core/internal/infra/server"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
-	srv "core/internal/pkg/server"
 
 	"github.com/urfave/cli/v2"
 )
@@ -22,7 +22,7 @@ const (
 	// StreamerPortFlag Port streamer will operate wihtin
 	StreamerPortFlag string = "streamer-port"
 	// PollingPortFlag Port streamer will operate wihtin
-	PollingPortFlag string = "polling-port"
+	PollerPortFlag string = "poller-port"
 )
 
 // Command service command entry
@@ -60,7 +60,7 @@ var StartCommand cli.Command = cli.Command{
 			Value: cons.DefaultStreamerPort,
 		},
 		&cli.IntFlag{
-			Name:  PollingPortFlag,
+			Name:  PollerPortFlag,
 			Value: cons.DefaultPollingPort,
 		},
 	}, cmdutil.GlobalFlags...),
@@ -103,11 +103,11 @@ var StartCommand cli.Command = cli.Command{
 			})
 		}
 
-		startPolling := func(wg *sync.WaitGroup) {
+		startPoller := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartPolling(sctx, PollingConfig{
+			StartPoller(sctx, PollingConfig{
 				Host:        ctx.String(HostFlag),
-				PollingPort: ctx.Int(PollingPortFlag),
+				PollingPort: ctx.Int(PollerPortFlag),
 				PGConnStr:   ctx.String(cmdutil.PGConnStrFlag),
 				Verbose:     ctx.Bool(cmdutil.VerboseFlag),
 			})
@@ -120,7 +120,7 @@ var StartCommand cli.Command = cli.Command{
 			wg.Add(1)
 			go startSteamer(&wg)
 			wg.Add(1)
-			go startPolling(&wg)
+			go startPoller(&wg)
 			wg.Wait()
 		case "api":
 			wg.Add(1)
@@ -128,9 +128,9 @@ var StartCommand cli.Command = cli.Command{
 		case "streamer":
 			wg.Add(1)
 			startSteamer(&wg)
-		case "polling":
+		case "poller":
 			wg.Add(1)
-			startPolling(&wg)
+			startPoller(&wg)
 		default:
 			log.Fatal("Unknown mode '", mode, "'. Please choose either `api` OR `streamer`")
 		}

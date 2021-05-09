@@ -1,4 +1,4 @@
-package polling
+package poller
 
 import (
 	"core/internal/app/evaluation"

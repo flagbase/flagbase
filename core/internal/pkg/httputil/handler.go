@@ -1,7 +1,7 @@
 package httputil
 
 import (
-	srv "core/internal/pkg/server"
+	srv "core/internal/infra/server"
 
 	"github.com/gin-gonic/gin"
 )

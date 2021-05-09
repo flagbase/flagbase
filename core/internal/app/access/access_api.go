@@ -1,9 +1,9 @@
 package access
 
 import (
+	srv "core/internal/infra/server"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	res "core/pkg/response"
 	"net/http"
 

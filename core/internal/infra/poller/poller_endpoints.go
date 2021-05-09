@@ -1,10 +1,10 @@
-package polling
+package poller
 
 import (
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/httputil"
-	srv "core/internal/pkg/server"
 	"core/pkg/evaluator"
 	res "core/pkg/response"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
-	httpmetrics.ApplyMetrics(r, "polling")
+	httpmetrics.ApplyMetrics(r, "poller")
 	rootPath := ""
 	routes := r.Group(rootPath)
 	routes.GET(rootPath, httputil.Handler(sctx, getEvaluationAPIHandler))

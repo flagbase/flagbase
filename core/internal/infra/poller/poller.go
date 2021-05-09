@@ -1,9 +1,9 @@
-package polling
+package poller
 
 import (
 	"context"
+	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/evaluator"
 )
 

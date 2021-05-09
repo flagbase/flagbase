@@ -1,10 +1,10 @@
 package auth
 
 import (
+	srv "core/internal/infra/server"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"errors"
 	"fmt"
 	"reflect"

@@ -1,7 +1,7 @@
 package httpserver
 
 import (
-	srv "core/internal/pkg/server"
+	srv "core/internal/infra/server"
 	"strconv"
 
 	"github.com/gin-contrib/cors"

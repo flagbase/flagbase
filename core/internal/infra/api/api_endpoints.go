@@ -11,8 +11,8 @@ import (
 	"core/internal/app/targeting"
 	"core/internal/app/trait"
 	"core/internal/app/workspace"
+	srv "core/internal/infra/server"
 	"core/internal/pkg/httpmetrics"
-	srv "core/internal/pkg/server"
 
 	"github.com/gin-gonic/gin"
 )

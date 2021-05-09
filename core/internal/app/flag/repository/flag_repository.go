@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 	flagmodel "core/internal/app/flag/model"
+	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
 
 	"github.com/jackc/pgx/v4/pgxpool"

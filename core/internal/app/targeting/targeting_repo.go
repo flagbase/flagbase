@@ -2,8 +2,8 @@ package targeting
 
 import (
 	"context"
+	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/dbutil"
 	"core/pkg/flagset"
 )

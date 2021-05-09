@@ -3,8 +3,8 @@ package healthcheck
 import (
 	"net/http"
 
+	srv "core/internal/infra/server"
 	"core/internal/pkg/httputil"
-	srv "core/internal/pkg/server"
 
 	"github.com/gin-gonic/gin"
 )

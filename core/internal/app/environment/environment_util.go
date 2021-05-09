@@ -2,9 +2,9 @@ package environment
 
 import (
 	"core/internal/app/sdkkey"
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	res "core/pkg/response"
 )
 

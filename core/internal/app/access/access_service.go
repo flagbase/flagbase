@@ -2,9 +2,9 @@ package access
 
 import (
 	"context"
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/jwt"
-	srv "core/internal/pkg/server"
 	"core/pkg/crypto"
 	res "core/pkg/response"
 	"encoding/json"

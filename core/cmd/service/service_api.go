@@ -1,10 +1,10 @@
 package service
 
 import (
-	"core/internal/pkg/api"
+	"core/internal/infra/api"
 	"core/internal/pkg/cmdutil"
 
-	srv "core/internal/pkg/server"
+	srv "core/internal/infra/server"
 )
 
 // APIConfig API service configuration

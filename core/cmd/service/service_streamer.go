@@ -3,7 +3,7 @@ package service
 import (
 	"core/internal/pkg/cmdutil"
 
-	srv "core/internal/pkg/server"
+	srv "core/internal/infra/server"
 )
 
 // StreamerConfig API service configuration

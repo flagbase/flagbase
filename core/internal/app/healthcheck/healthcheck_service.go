@@ -2,7 +2,7 @@ package healthcheck
 
 import (
 	"context"
-	srv "core/internal/pkg/server"
+	srv "core/internal/infra/server"
 )
 
 // HealthCheck sends a useless query to the database to see if the connection is working.

@@ -2,10 +2,10 @@ package targeting
 
 import (
 	"core/internal/app/targetingrule"
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"

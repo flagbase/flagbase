@@ -1,10 +1,10 @@
 package identity
 
 import (
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	res "core/pkg/response"
 	"net/http"
 

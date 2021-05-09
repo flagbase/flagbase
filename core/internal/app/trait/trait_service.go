@@ -3,9 +3,9 @@ package trait
 import (
 	"context"
 	"core/internal/app/auth"
+	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"core/pkg/patch"
 	res "core/pkg/response"
 )
