@@ -10,7 +10,7 @@ import (
 	"core/internal/app/segment"
 	"core/internal/app/targeting"
 	"core/internal/app/trait"
-	"core/internal/app/workspace"
+	workspacetransport "core/internal/app/workspace/transport"
 	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/srvenv"
 
@@ -30,5 +30,5 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	targeting.ApplyRoutes(senv, root)
 	trait.ApplyRoutes(senv, root)
 	segment.ApplyRoutes(senv, root)
-	workspace.ApplyRoutes(senv, root)
+	workspacetransport.ApplyRoutes(senv, root)
 }

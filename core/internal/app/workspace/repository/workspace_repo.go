@@ -1,20 +1,31 @@
-package workspace
+package repository
 
 import (
 	"context"
+	workspacemodel "core/internal/app/workspace/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Workspace, error) {
-	var o []Workspace
+	a workspacemodel.RootArgs,
+) (*[]workspacemodel.Workspace, error) {
+	var o []workspacemodel.Workspace
 	sqlStatement := `
 SELECT
   id,
@@ -23,12 +34,12 @@ SELECT
   description,
   tags
 FROM workspace`
-	rows, err := senv.DB.Query(ctx, sqlStatement)
+	rows, err := r.DB.Query(ctx, sqlStatement)
 	if err != nil {
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Workspace
+		var _o workspacemodel.Workspace
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -43,13 +54,12 @@ FROM workspace`
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Workspace,
-	a RootArgs,
-) (*Workspace, error) {
-	var o Workspace
+	i workspacemodel.Workspace,
+	a workspacemodel.RootArgs,
+) (*workspacemodel.Workspace, error) {
+	var o workspacemodel.Workspace
 	sqlStatement := `
 INSERT INTO
   workspace(
@@ -73,10 +83,10 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Workspace.String(),
-		ResourceArgs{
+		workspacemodel.ResourceArgs{
 			WorkspaceKey: i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -94,12 +104,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Workspace, error) {
-	var o Workspace
+	a workspacemodel.ResourceArgs,
+) (*workspacemodel.Workspace, error) {
+	var o workspacemodel.Workspace
 	sqlStatement := `
 SELECT
   id,
@@ -112,7 +121,7 @@ WHERE key = $1`
 	err := dbutil.ParseError(
 		rsc.Workspace.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -127,12 +136,11 @@ WHERE key = $1`
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Workspace,
-	a ResourceArgs,
-) (*Workspace, error) {
+	i workspacemodel.Workspace,
+	a workspacemodel.ResourceArgs,
+) (*workspacemodel.Workspace, error) {
 	sqlStatement := `
 UPDATE workspace
 SET
@@ -141,7 +149,7 @@ SET
   description = $4,
   tags = $5
 WHERE key = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey.String(),
@@ -159,15 +167,14 @@ WHERE key = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a workspacemodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM workspace
 WHERE key = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

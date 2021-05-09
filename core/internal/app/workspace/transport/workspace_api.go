@@ -1,6 +1,8 @@
-package workspace
+package transport
 
 import (
+	workspacemodel "core/internal/app/workspace/model"
+	workspaceservice "core/internal/app/workspace/service"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -12,21 +14,35 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
+type APIHandler struct {
+	Senv             *srvenv.Env
+	WorkspaceService *workspaceservice.Service
+}
+
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv:             senv,
+		WorkspaceService: workspaceservice.NewService(senv),
+	}
+}
+
 // ApplyRoutes workspace route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := newAPIHandler(senv)
 	routes := r.Group(rsc.RouteWorkspace)
 	resourcePath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 	)
 
-	routes.GET("", httputil.Handler(senv, listAPIHandler))
-	routes.POST("", httputil.Handler(senv, createAPIHandler))
-	routes.GET(resourcePath, httputil.Handler(senv, getAPIHandler))
-	routes.PATCH(resourcePath, httputil.Handler(senv, updateAPIHandler))
-	routes.DELETE(resourcePath, httputil.Handler(senv, deleteAPIHandler))
+	routes.GET("", h.listAPIHandler)
+	routes.POST("", h.createAPIHandler)
+	routes.GET(resourcePath, h.getAPIHandler)
+	routes.PATCH(resourcePath, h.updateAPIHandler)
+	routes.DELETE(resourcePath, h.deleteAPIHandler)
 }
 
-func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -34,7 +50,7 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := List(senv, atk, RootArgs{})
+	r, _err := h.WorkspaceService.List(atk, workspacemodel.RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -50,7 +66,7 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -58,12 +74,12 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i Workspace
+	var i workspacemodel.Workspace
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(senv, atk, i, RootArgs{})
+	r, _err := h.WorkspaceService.Create(atk, i, workspacemodel.RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -79,7 +95,7 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -87,10 +103,9 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		senv,
+	r, _err := h.WorkspaceService.Get(
 		atk,
-		ResourceArgs{
+		workspacemodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 		},
 	)
@@ -109,7 +124,7 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -122,11 +137,10 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Update(
-		senv,
+	r, _err := h.WorkspaceService.Update(
 		atk,
 		i,
-		ResourceArgs{
+		workspacemodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 		},
 	)
@@ -145,7 +159,7 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -153,10 +167,9 @@ func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := Delete(
-		senv,
+	if err := h.WorkspaceService.Delete(
 		atk,
-		ResourceArgs{
+		workspacemodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 		},
 	); !err.IsEmpty() {

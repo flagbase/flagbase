@@ -1,8 +1,10 @@
-package workspace
+package service
 
 import (
 	"context"
 	"core/internal/app/auth"
+	workspacemodel "core/internal/app/workspace/model"
+	workspacerepo "core/internal/app/workspace/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,23 +12,34 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv          *srvenv.Env
+	WorkspaceRepo *workspacerepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:          senv,
+		WorkspaceRepo: workspacerepo.NewRepo(senv),
+	}
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= root
-func List(
-	senv *srvenv.Env,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]Workspace, *res.Errors) {
+	a workspacemodel.RootArgs,
+) (*[]workspacemodel.Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessRoot); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, senv, a)
+	r, err := s.WorkspaceRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -36,22 +49,21 @@ func List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= root
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i Workspace,
-	a RootArgs,
-) (*Workspace, *res.Errors) {
+	i workspacemodel.Workspace,
+	a workspacemodel.RootArgs,
+) (*workspacemodel.Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessRoot); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessRoot); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.WorkspaceRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
@@ -59,7 +71,7 @@ func Create(
 	// add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Workspace,
@@ -74,22 +86,21 @@ func Create(
 
 // Get gets a resource instance given an atk & workspaceKey
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a ResourceArgs,
-) (*Workspace, *res.Errors) {
+	a workspacemodel.ResourceArgs,
+) (*workspacemodel.Workspace, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Workspace,
@@ -103,25 +114,24 @@ func Get(
 
 // Update updates resource instance given an atk, workspaceKey & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*Workspace, *res.Errors) {
-	var o Workspace
+	a workspacemodel.ResourceArgs,
+) (*workspacemodel.Workspace, *res.Errors) {
+	var o workspacemodel.Workspace
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Workspace,
@@ -136,7 +146,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.WorkspaceRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -146,23 +156,22 @@ func Update(
 
 // Delete deletes a resource instance given an atk & workspaceKey
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a ResourceArgs,
+	a workspacemodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Workspace,
@@ -172,7 +181,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.WorkspaceRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

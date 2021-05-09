@@ -1,4 +1,4 @@
-package workspace
+package model
 
 import rsc "core/internal/pkg/resource"
 
@@ -9,12 +9,4 @@ type Workspace struct {
 	Name        rsc.Name        `json:"name,omitempty"`
 	Description rsc.Description `json:"description,omitempty"`
 	Tags        rsc.Tags        `json:"tags,omitempty"`
-}
-
-// RootArgs arguments for selecting root resource
-type RootArgs struct{}
-
-// ResourceArgs arguments for selecting specific resource
-type ResourceArgs struct {
-	WorkspaceKey rsc.Key
 }
