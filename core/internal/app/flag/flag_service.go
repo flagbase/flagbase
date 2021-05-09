@@ -70,6 +70,16 @@ func (s *Service) Create(
 			rsc.AccessAdmin,
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
+
+			err := createDefaultChildren(
+				s.Senv,
+				atk,
+				i,
+				a,
+			)
+			if !err.IsEmpty() {
+				e.Extend(err)
+			}
 		}
 	}
 
