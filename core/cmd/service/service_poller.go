@@ -3,8 +3,7 @@ package service
 import (
 	"core/internal/infra/poller"
 	"core/internal/pkg/cmdutil"
-
-	srv "core/internal/infra/server"
+	"core/internal/pkg/srvenv"
 )
 
 // PollingConfig Polling service configuration
@@ -19,8 +18,8 @@ type PollingConfig struct {
 }
 
 // StartPolling start polling
-func StartPoller(sctx *srv.Ctx, cfg PollingConfig) {
-	sctx.Log.Info().Str(
+func StartPoller(senv *srvenv.Env, cfg PollingConfig) {
+	senv.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,
@@ -28,7 +27,7 @@ func StartPoller(sctx *srv.Ctx, cfg PollingConfig) {
 		PollerPortFlag, cfg.PollingPort,
 	).Msg("Starting Polling Service")
 
-	poller.New(sctx, poller.Config{
+	poller.New(senv, poller.Config{
 		Host:        cfg.Host,
 		PollingPort: cfg.PollingPort,
 		Verbose:     cfg.Verbose,

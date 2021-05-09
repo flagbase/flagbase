@@ -2,14 +2,14 @@ package environment
 
 import (
 	"core/internal/app/sdkkey"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	res "core/pkg/response"
 )
 
 func createDefaultChildren(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	i Environment,
 	a RootArgs,
@@ -17,7 +17,7 @@ func createDefaultChildren(
 	var e res.Errors
 
 	_, _err := sdkkey.Create(
-		sctx,
+		senv,
 		atk,
 		sdkkey.SDKKey{
 			Enabled:     true,

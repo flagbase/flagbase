@@ -2,8 +2,8 @@ package poller
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
 )
 
@@ -21,7 +21,7 @@ type RootArgs struct {
 
 // CachedServiceArgs args used for cached services
 type CachedServiceArgs struct {
-	Sctx        *srv.Ctx
+	Senv        *srvenv.Env
 	Ctx         context.Context
 	Atk         rsc.Token
 	Ectx        evaluator.Context

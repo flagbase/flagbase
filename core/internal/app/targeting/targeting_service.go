@@ -3,9 +3,9 @@ package targeting
 import (
 	"context"
 	"core/internal/app/auth"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
 )
@@ -13,7 +13,7 @@ import (
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= user
 func Create(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	i Targeting,
 	a RootArgs,
@@ -22,19 +22,19 @@ func Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(sctx, atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(senv, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, sctx, i, a)
+	r, err := createResource(ctx, senv, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			sctx,
+			senv,
 			atk,
 			r.ID,
 			rsc.Targeting,
@@ -50,7 +50,7 @@ func Create(
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
 func Get(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	a RootArgs,
 ) (*Targeting, *res.Errors) {
@@ -58,13 +58,13 @@ func Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, a)
+	r, err := getResource(ctx, senv, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -79,7 +79,7 @@ func Get(
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
 func Update(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	patchDoc patch.Patch,
 	a RootArgs,
@@ -89,14 +89,14 @@ func Update(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, a)
+	r, err := getResource(ctx, senv, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -111,7 +111,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, sctx, o, a)
+	r, err = updateResource(ctx, senv, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -122,7 +122,7 @@ func Update(
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
 func Delete(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	a RootArgs,
 ) *res.Errors {
@@ -130,14 +130,14 @@ func Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, a)
+	r, err := getResource(ctx, senv, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -147,7 +147,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, sctx, a); err != nil {
+	if err := deleteResource(ctx, senv, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

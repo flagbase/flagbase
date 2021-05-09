@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	flagmodel "core/internal/app/flag/model"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
 	"core/pkg/dbutil"
 
@@ -59,9 +58,8 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func Create(
+func (r *Repo) Create(
 	ctx context.Context,
-	sctx *srv.Ctx,
 	i flagmodel.Flag,
 	a flagmodel.ResourceArgs,
 ) (*flagmodel.Flag, error) {
@@ -102,7 +100,7 @@ RETURNING
 			WorkspaceKey: a.WorkspaceKey,
 			FlagKey:      i.Key,
 		},
-		sctx.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -122,9 +120,8 @@ RETURNING
 	return &o, err
 }
 
-func Get(
+func (r *Repo) Get(
 	ctx context.Context,
-	sctx *srv.Ctx,
 	a flagmodel.ResourceArgs,
 ) (*flagmodel.Flag, error) {
 	var o flagmodel.Flag
@@ -146,7 +143,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Flag.String(),
 		a,
-		sctx.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -163,9 +160,8 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func Update(
+func (r *Repo) Update(
 	ctx context.Context,
-	sctx *srv.Ctx,
 	i flagmodel.Flag,
 	a flagmodel.ResourceArgs,
 ) (*flagmodel.Flag, error) {
@@ -178,7 +174,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -196,9 +192,8 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func Delete(
+func (r *Repo) Delete(
 	ctx context.Context,
-	sctx *srv.Ctx,
 	a flagmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
@@ -212,7 +207,7 @@ WHERE key = $3
     WHERE w.key = $1
       AND p.key = $2
   )`
-	if _, err := sctx.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

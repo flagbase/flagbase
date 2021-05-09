@@ -1,7 +1,7 @@
 package httpserver
 
 import (
-	srv "core/internal/infra/server"
+	"core/internal/pkg/srvenv"
 	"strconv"
 
 	"github.com/gin-contrib/cors"
@@ -18,9 +18,9 @@ type Config struct {
 
 // New initialize a new gin-based HTTP server
 func New(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	cfg Config,
-	applyRoutes func(*srv.Ctx, *gin.Engine),
+	applyRoutes func(*srvenv.Env, *gin.Engine),
 ) {
 	if !cfg.Verbose {
 		gin.SetMode(gin.ReleaseMode)
@@ -38,15 +38,15 @@ func New(
 
 	if cfg.Verbose {
 		r.Use(logger.SetLogger(logger.Config{
-			Logger: sctx.Log.Logger,
+			Logger: senv.Log.Logger,
 			UTC:    true,
 		}))
 	}
 
-	applyRoutes(sctx, r)
+	applyRoutes(senv, r)
 
 	err := r.Run(cfg.Host + ":" + strconv.Itoa(cfg.HTTPPort))
 	if err != nil {
-		sctx.Log.Error().Str("reason", err.Error()).Msg("Unable to start HTTP server")
+		senv.Log.Error().Str("reason", err.Error()).Msg("Unable to start HTTP server")
 	}
 }

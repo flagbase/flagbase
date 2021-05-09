@@ -11,24 +11,24 @@ import (
 	"core/internal/app/targeting"
 	"core/internal/app/trait"
 	"core/internal/app/workspace"
-	srv "core/internal/infra/server"
 	"core/internal/pkg/httpmetrics"
+	"core/internal/pkg/srvenv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // ApplyRoutes applies route from all packages to root handler
-func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	httpmetrics.ApplyMetrics(r, "api")
 	root := r.Group("/")
-	access.ApplyRoutes(sctx, root)
-	flag.ApplyRoutes(sctx, root)
-	evaluation.ApplyRoutes(sctx, root)
-	healthcheck.ApplyRoutes(sctx, root)
-	identity.ApplyRoutes(sctx, root)
-	project.ApplyRoutes(sctx, root)
-	targeting.ApplyRoutes(sctx, root)
-	trait.ApplyRoutes(sctx, root)
-	segment.ApplyRoutes(sctx, root)
-	workspace.ApplyRoutes(sctx, root)
+	access.ApplyRoutes(senv, root)
+	flag.ApplyRoutes(senv, root)
+	evaluation.ApplyRoutes(senv, root)
+	healthcheck.ApplyRoutes(senv, root)
+	identity.ApplyRoutes(senv, root)
+	project.ApplyRoutes(senv, root)
+	targeting.ApplyRoutes(senv, root)
+	trait.ApplyRoutes(senv, root)
+	segment.ApplyRoutes(senv, root)
+	workspace.ApplyRoutes(senv, root)
 }

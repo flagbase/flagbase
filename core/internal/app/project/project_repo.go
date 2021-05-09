@@ -2,8 +2,8 @@ package project
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
 	"github.com/lib/pq"
@@ -11,7 +11,7 @@ import (
 
 func listResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*[]Project, error) {
 	var o []Project
@@ -26,7 +26,7 @@ FROM project p
 LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -52,7 +52,7 @@ WHERE w.key = $1`
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Project,
 	a RootArgs,
 ) (*Project, error) {
@@ -90,7 +90,7 @@ RETURNING
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   i.Key,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -111,7 +111,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) (*Project, error) {
 	var o Project
@@ -130,7 +130,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Project.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -148,7 +148,7 @@ WHERE w.key = $1
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Project,
 	a ResourceArgs,
 ) (*Project, error) {
@@ -160,7 +160,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -180,7 +180,7 @@ WHERE id = $1`
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
@@ -191,7 +191,7 @@ WHERE key = $2
     FROM workspace
     WHERE key = $1
   )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

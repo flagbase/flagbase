@@ -2,8 +2,8 @@ package access
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
 	"github.com/lib/pq"
@@ -11,7 +11,7 @@ import (
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Access,
 ) (*Access, error) {
 	var o Access
@@ -47,7 +47,7 @@ RETURNING
 	err := dbutil.ParseError(
 		rsc.Access.String(),
 		i,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -71,7 +71,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i KeySecretPair,
 ) (*Access, error) {
 	var o Access
@@ -93,7 +93,7 @@ WHERE
 	err := dbutil.ParseError(
 		rsc.Access.String(),
 		i,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,

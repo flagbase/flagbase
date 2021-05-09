@@ -2,16 +2,16 @@ package access
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/jwt"
+	"core/internal/pkg/srvenv"
 	"core/pkg/crypto"
 	res "core/pkg/response"
 	"encoding/json"
 )
 
 // GenerateToken generate an access token via an access pair
-func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
+func GenerateToken(senv *srvenv.Env, i KeySecretPair) (
 	*Token,
 	*res.Errors,
 ) {
@@ -19,7 +19,7 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, sctx, KeySecretPair{Key: i.Key, Secret: "******"})
+	r, err := getResource(ctx, senv, KeySecretPair{Key: i.Key, Secret: "******"})
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -49,7 +49,7 @@ func GenerateToken(sctx *srv.Ctx, i KeySecretPair) (
 }
 
 // Create creates new access resource.
-func Create(sctx *srv.Ctx, i Access) (
+func Create(senv *srvenv.Env, i Access) (
 	*Access,
 	*res.Errors,
 ) {
@@ -66,7 +66,7 @@ func Create(sctx *srv.Ctx, i Access) (
 	originalSecret := i.Secret
 	i.Secret = encryptedSecret
 
-	r, err := createResource(ctx, sctx, i)
+	r, err := createResource(ctx, senv, i)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}

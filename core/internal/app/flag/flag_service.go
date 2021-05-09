@@ -5,15 +5,15 @@ import (
 	"core/internal/app/auth"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
 )
 
 type Service struct {
-	Sctx *srv.Ctx
+	Senv *srvenv.Env
 	Repo *flagrepo.Repo
 }
 
@@ -27,8 +27,7 @@ func (s *Service) List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	// authorize operation
-	if err := auth.Authorize(s.Sctx, atk, rsc.AccessService); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
@@ -43,8 +42,7 @@ func (s *Service) List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(
-	sctx *srv.Ctx,
+func (s *Service) Create(
 	atk rsc.Token,
 	i flagmodel.Flag,
 	a flagmodel.ResourceArgs,
@@ -53,19 +51,19 @@ func Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(sctx, atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := flagrepo.Create(ctx, sctx, i, a)
+	r, err := s.Repo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			sctx,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Flag,
@@ -80,8 +78,7 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	sctx *srv.Ctx,
+func (s *Service) Get(
 	atk rsc.Token,
 	a flagmodel.ResourceArgs,
 ) (*flagmodel.Flag, *res.Errors) {
@@ -89,13 +86,13 @@ func Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	o, err := flagrepo.Get(ctx, sctx, a)
+	o, err := s.Repo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		s.Senv,
 		atk,
 		o.ID,
 		rsc.Flag,
@@ -109,8 +106,7 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	sctx *srv.Ctx,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
 	a flagmodel.ResourceArgs,
@@ -120,14 +116,14 @@ func Update(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := flagrepo.Get(ctx, sctx, a)
+	r, err := s.Repo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Flag,
@@ -142,7 +138,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = flagrepo.Update(ctx, sctx, o, a)
+	r, err = s.Repo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -152,8 +148,7 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	sctx *srv.Ctx,
+func (s *Service) Delete(
 	atk rsc.Token,
 	a flagmodel.ResourceArgs,
 ) *res.Errors {
@@ -161,14 +156,14 @@ func Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := flagrepo.Get(ctx, sctx, a)
+	r, err := s.Repo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		sctx,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Flag,
@@ -178,7 +173,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := flagrepo.Delete(ctx, sctx, a); err != nil {
+	if err := s.Repo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

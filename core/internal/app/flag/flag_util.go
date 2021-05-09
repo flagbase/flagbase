@@ -5,14 +5,14 @@ import (
 	flagmodel "core/internal/app/flag/model"
 	"core/internal/app/targeting"
 	"core/internal/app/variation"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/flagset"
 	res "core/pkg/response"
 )
 
 func createDefaultChildren(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	i flagmodel.Flag,
 	a flagmodel.ResourceArgs,
@@ -20,7 +20,7 @@ func createDefaultChildren(
 	var e res.Errors
 
 	envs, _err := environment.List(
-		sctx,
+		senv,
 		atk,
 		environment.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
@@ -32,7 +32,7 @@ func createDefaultChildren(
 	}
 
 	cVar, _err := variation.Create(
-		sctx,
+		senv,
 		atk,
 		variation.Variation{
 			Key:         "control",
@@ -50,7 +50,7 @@ func createDefaultChildren(
 		e.Extend(_err)
 	}
 	_, _err = variation.Create(
-		sctx,
+		senv,
 		atk,
 		variation.Variation{
 			Key:         "treatment",
@@ -70,7 +70,7 @@ func createDefaultChildren(
 
 	for _, env := range *envs {
 		_, _err := targeting.Create(
-			sctx,
+			senv,
 			atk,
 			targeting.Targeting{
 				Enabled: false,

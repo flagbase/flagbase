@@ -20,7 +20,7 @@ func getAndSetCache(args CachedServiceArgs) (
 	var o *flagset.Flagset
 
 	a, _err := sdkkey.GetRootArgsFromServerKey(
-		args.Sctx,
+		args.Senv,
 		args.RootHeaders.SDKKey,
 	)
 	if _err != nil {
@@ -28,7 +28,7 @@ func getAndSetCache(args CachedServiceArgs) (
 	}
 
 	r, err := evaluation.Get(
-		args.Sctx,
+		args.Senv,
 		args.Atk,
 		evaluation.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
@@ -49,8 +49,7 @@ func getAndSetCache(args CachedServiceArgs) (
 	retag := hashutil.HashKeys(
 		string(oBytes),
 	)
-	if err := args.Sctx.Cache.Set(
-		args.Ctx,
+	if err := args.Senv.Cache.Set(
 		args.CacheKey,
 		retag,
 		cons.DefaultCacheExpiry,
@@ -70,7 +69,7 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 	var o *evaluator.Evaluations
 
 	a, _err := sdkkey.GetRootArgsFromSDKKey(
-		args.Sctx,
+		args.Senv,
 		args.RootHeaders.SDKKey,
 	)
 	if _err != nil {
@@ -78,7 +77,7 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 	}
 
 	r, err := evaluation.Evaluate(
-		args.Sctx,
+		args.Senv,
 		args.Atk,
 		args.Ectx,
 		evaluation.RootArgs{
@@ -100,8 +99,7 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 	retag := hashutil.HashKeys(
 		string(oBytes),
 	)
-	if err := args.Sctx.Cache.Set(
-		args.Ctx,
+	if err := args.Senv.Cache.Set(
 		args.CacheKey,
 		retag,
 		cons.DefaultCacheExpiry,

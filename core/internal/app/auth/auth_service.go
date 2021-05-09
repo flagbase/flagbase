@@ -1,10 +1,10 @@
 package auth
 
 import (
-	srv "core/internal/infra/server"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/policy"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"errors"
 	"fmt"
 	"reflect"
@@ -12,14 +12,14 @@ import (
 
 // Authorize checks if an access token is of a desired type
 func Authorize(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	accessType rsc.AccessType,
 ) error {
 	// bypass auth for internal operations using secure runtime hash
 	if reflect.DeepEqual(
 		atk,
-		httputil.SecureOverideATK(sctx),
+		httputil.SecureOverideATK(senv),
 	) {
 		return nil
 	}
@@ -43,7 +43,7 @@ func Authorize(
 
 // Enforce enforces a resource policy
 func Enforce(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -52,7 +52,7 @@ func Enforce(
 	// bypass auth for internal operations using secure runtime hash
 	if reflect.DeepEqual(
 		atk,
-		httputil.SecureOverideATK(sctx),
+		httputil.SecureOverideATK(senv),
 	) {
 		return nil
 	}
@@ -63,7 +63,7 @@ func Enforce(
 	}
 
 	// enforce policy
-	ok, err := sctx.Policy.EnforcePolicy(
+	ok, err := senv.Policy.EnforcePolicy(
 		policy.Contract{
 			AccessID:     a.ID,
 			ResourceID:   resourceID,
@@ -83,7 +83,7 @@ func Enforce(
 
 // AddPolicy add casbin policy for a given resource
 func AddPolicy(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	resourceID rsc.ID,
 	resourceType rsc.Type,
@@ -94,7 +94,7 @@ func AddPolicy(
 		return err
 	}
 
-	ok, err := sctx.Policy.AddPolicy(
+	ok, err := senv.Policy.AddPolicy(
 		policy.Contract{
 			AccessID:     a.ID,
 			ResourceID:   resourceID,

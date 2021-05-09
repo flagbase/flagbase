@@ -2,8 +2,8 @@ package poller
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
 	"core/pkg/flagset"
 	"core/pkg/hashutil"
@@ -13,7 +13,7 @@ import (
 // Get returns a set raw (non-evaluated) flagsets
 // (*) atk: access_type <= service
 func Get(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	etag string,
 	a RootHeaders,
@@ -27,11 +27,11 @@ func Get(
 		"polling-get-raw-ruleset",
 		a.SDKKey,
 	)
-	otag, _ := sctx.Cache.Get(ctx, cacheKey).Result()
+	otag, _ := senv.Cache.Get(cacheKey).Result()
 
 	if etag == "" || etag != otag {
 		r, _e, newETag := getAndSetCache(CachedServiceArgs{
-			Sctx:        sctx,
+			Senv:        senv,
 			Ctx:         ctx,
 			Atk:         atk,
 			RootHeaders: a,
@@ -44,7 +44,7 @@ func Get(
 		retag = newETag
 	} else {
 		go getAndSetCache(CachedServiceArgs{
-			Sctx:        sctx,
+			Senv:        senv,
 			Ctx:         ctx,
 			Atk:         atk,
 			RootHeaders: a,
@@ -58,7 +58,7 @@ func Get(
 // Evaluate returns an evaluated flagset given the user context
 // (*) atk: access_type <= service
 func Evaluate(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	etag string,
 	ectx evaluator.Context,
@@ -74,11 +74,11 @@ func Evaluate(
 		a.SDKKey,
 		ectx.Identifier,
 	)
-	otag, _ := sctx.Cache.Get(ctx, cacheKey).Result()
+	otag, _ := senv.Cache.Get(cacheKey).Result()
 
 	if etag == "" || etag != otag {
 		r, _e, newETag := evaluateAndSetCache(CachedServiceArgs{
-			Sctx:        sctx,
+			Senv:        senv,
 			Ctx:         ctx,
 			Atk:         atk,
 			Ectx:        ectx,
@@ -92,7 +92,7 @@ func Evaluate(
 		retag = newETag
 	} else {
 		go evaluateAndSetCache(CachedServiceArgs{
-			Sctx:        sctx,
+			Senv:        senv,
 			Ctx:         ctx,
 			Atk:         atk,
 			Ectx:        ectx,

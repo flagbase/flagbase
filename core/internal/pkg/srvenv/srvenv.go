@@ -1,15 +1,15 @@
-package server
+package srvenv
 
 import (
 	"core/internal/pkg/policy"
 	"core/pkg/logger"
 
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-// Ctx primary app context structure
-type Ctx struct {
+// Env primary app context structure
+type Env struct {
 	Cache             *redis.Client
 	DB                *pgxpool.Pool
 	Log               *logger.Logger

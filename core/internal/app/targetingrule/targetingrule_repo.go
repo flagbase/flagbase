@@ -2,8 +2,8 @@ package targetingrule
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"core/pkg/flagset"
 
@@ -12,7 +12,7 @@ import (
 
 func listResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*[]TargetingRule, error) {
 	var o []TargetingRule
@@ -49,7 +49,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND f.key = $4`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -89,7 +89,7 @@ LEFT JOIN targeting_rule tr
 LEFT JOIN variation v
   ON v.id = trv.variation_id
 WHERE tr.id = $1`
-		_rows, err := sctx.DB.Query(
+		_rows, err := senv.DB.Query(
 			ctx,
 			sqlStatement,
 			_o.ID.String(),
@@ -115,7 +115,7 @@ WHERE tr.id = $1`
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i TargetingRule,
 	a RootArgs,
 ) (*TargetingRule, error) {
@@ -203,7 +203,7 @@ RETURNING
 	if err := dbutil.ParseError(
 		rsc.TargetingRule.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -272,7 +272,7 @@ RETURNING
 		err = dbutil.ParseError(
 			rsc.RuleVariation.String(),
 			a,
-			sctx.DB.QueryRow(
+			senv.DB.QueryRow(
 				ctx,
 				sqlStatement,
 				f.Weight,
@@ -291,7 +291,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) (*TargetingRule, error) {
 	var o TargetingRule
@@ -326,7 +326,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.TargetingRule.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -373,7 +373,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND f.key = $3
   AND tr.id = $4`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -400,7 +400,7 @@ WHERE w.key = $1
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i TargetingRule,
 	a ResourceArgs,
 ) (*TargetingRule, error) {
@@ -442,7 +442,7 @@ SET
       AND s.key = $12
   )
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -488,7 +488,7 @@ WHERE targeting_rule_id = $1
       AND f.key = $5
       AND v.key = $6
   )`
-		if _, err := sctx.DB.Exec(
+		if _, err := senv.DB.Exec(
 			ctx,
 			sqlStatement,
 			i.ID.String(),
@@ -511,7 +511,7 @@ WHERE targeting_rule_id = $1
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
@@ -535,7 +535,7 @@ WHERE targeting_rule_id = (
     AND f.key = $4
     AND tr.key = $5
 )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -572,7 +572,7 @@ WHERE id = (
     AND f.key = $4
     AND tr.key = $5
 )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

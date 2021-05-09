@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"core/internal/pkg/policy"
+	"core/internal/pkg/srvenv"
 	"core/pkg/cache"
 	"core/pkg/db"
 	"core/pkg/logger"
@@ -23,7 +24,7 @@ type Config struct {
 }
 
 // Setup init services that make up app-context
-func Setup(cfg Config) (*Ctx, error) {
+func Setup(cfg Config) (*srvenv.Env, error) {
 	// setup: secure runtime hash
 	secureRuntimeHash := uuid.New().String()
 
@@ -61,7 +62,7 @@ func Setup(cfg Config) (*Ctx, error) {
 		return nil, errors.New("unable to connect to redis")
 	}
 
-	return &Ctx{
+	return &srvenv.Env{
 		Cache:             cacheInst,
 		DB:                dbInst,
 		Log:               logInst,

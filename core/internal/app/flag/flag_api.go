@@ -4,10 +4,10 @@ import (
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
 	"core/internal/app/variation"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -15,13 +15,28 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
 type APIHandler struct {
-	sctx    *srv.Ctx
-	service *Service
+	Senv    *srvenv.Env
+	Service *Service
+}
+
+// NewHandler create new API handler
+func NewHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv: senv,
+		Service: &Service{
+			Senv: senv,
+			Repo: &flagrepo.Repo{
+				DB: senv.DB,
+			},
+		},
+	}
 }
 
 // ApplyRoutes flag route handlers
-func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := NewHandler(senv)
 	routes := r.Group(rsc.RouteFlag)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -32,22 +47,12 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 		rsc.FlagKey,
 	)
 
-	h := APIHandler{
-		sctx: sctx,
-		service: &Service{
-			Sctx: sctx,
-			Repo: &flagrepo.Repo{
-				DB: sctx.DB,
-			},
-		},
-	}
-
 	routes.GET(rootPath, h.listAPIHandler)
-	routes.POST(rootPath, httputil.Handler(sctx, createAPIHandler))
-	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
-	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
-	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
-	variation.ApplyRoutes(sctx, routes)
+	routes.POST(rootPath, h.createAPIHandler)
+	routes.GET(resourcePath, h.getAPIHandler)
+	routes.PATCH(resourcePath, h.updateAPIHandler)
+	routes.DELETE(resourcePath, h.deleteAPIHandler)
+	variation.ApplyRoutes(senv, routes)
 }
 
 func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
@@ -58,7 +63,7 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := h.service.List(
+	r, _err := h.Service.List(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -80,7 +85,7 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -93,8 +98,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(
-		sctx,
+	r, _err := h.Service.Create(
 		atk,
 		i,
 		flagmodel.ResourceArgs{
@@ -117,7 +121,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -125,8 +129,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		sctx,
+	r, _err := h.Service.Get(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -149,7 +152,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -162,8 +165,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Update(
-		sctx,
+	r, _err := h.Service.Update(
 		atk,
 		i,
 		flagmodel.ResourceArgs{
@@ -187,7 +189,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -195,8 +197,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := Delete(
-		sctx,
+	if err := h.Service.Delete(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),

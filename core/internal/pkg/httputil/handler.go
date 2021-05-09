@@ -1,17 +1,17 @@
 package httputil
 
 import (
-	srv "core/internal/infra/server"
+	"core/internal/pkg/srvenv"
 
 	"github.com/gin-gonic/gin"
 )
 
 // Handler passes the server context into a HTTP handler fn
 func Handler(
-	sctx *srv.Ctx,
-	handleFn func(*srv.Ctx, *gin.Context),
+	senv *srvenv.Env,
+	handleFn func(*srvenv.Env, *gin.Context),
 ) func(gctx *gin.Context) {
 	return func(gctx *gin.Context) {
-		handleFn(sctx, gctx)
+		handleFn(senv, gctx)
 	}
 }

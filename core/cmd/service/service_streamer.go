@@ -2,8 +2,7 @@ package service
 
 import (
 	"core/internal/pkg/cmdutil"
-
-	srv "core/internal/infra/server"
+	"core/internal/pkg/srvenv"
 )
 
 // StreamerConfig API service configuration
@@ -15,8 +14,8 @@ type StreamerConfig struct {
 }
 
 // StartStreamer start streamer
-func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
-	sctx.Log.Info().Str(
+func StartStreamer(senv *srvenv.Env, cfg StreamerConfig) {
+	senv.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,
@@ -24,5 +23,5 @@ func StartStreamer(sctx *srv.Ctx, cfg StreamerConfig) {
 		StreamerPortFlag, cfg.StreamerPort,
 	).Msg("Starting Streamer Service")
 
-	sctx.Log.Warn().Msg("Streamer has not been implemented yet.")
+	senv.Log.Warn().Msg("Streamer has not been implemented yet.")
 }

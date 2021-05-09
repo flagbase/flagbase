@@ -2,10 +2,10 @@ package targeting
 
 import (
 	"core/internal/app/targetingrule"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 )
 
 // ApplyRoutes segment route handlers
-func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteTargeting)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -23,14 +23,14 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 		rsc.FlagKey,
 	)
 
-	routes.POST(rootPath, httputil.Handler(sctx, createAPIHandler))
-	routes.GET(rootPath, httputil.Handler(sctx, getAPIHandler))
-	routes.PATCH(rootPath, httputil.Handler(sctx, updateAPIHandler))
-	routes.DELETE(rootPath, httputil.Handler(sctx, deleteAPIHandler))
-	targetingrule.ApplyRoutes(sctx, routes)
+	routes.POST(rootPath, httputil.Handler(senv, createAPIHandler))
+	routes.GET(rootPath, httputil.Handler(senv, getAPIHandler))
+	routes.PATCH(rootPath, httputil.Handler(senv, updateAPIHandler))
+	routes.DELETE(rootPath, httputil.Handler(senv, deleteAPIHandler))
+	targetingrule.ApplyRoutes(senv, routes)
 }
 
-func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -44,7 +44,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Create(
-		sctx,
+		senv,
 		atk,
 		i,
 		RootArgs{
@@ -69,7 +69,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -78,7 +78,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Get(
-		sctx,
+		senv,
 		atk,
 		RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -102,7 +102,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -116,7 +116,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Update(
-		sctx,
+		senv,
 		atk,
 		i,
 		RootArgs{
@@ -141,7 +141,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -150,7 +150,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	if err := Delete(
-		sctx,
+		senv,
 		atk,
 		RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),

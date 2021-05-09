@@ -2,14 +2,14 @@ package trait
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 )
 
 func listResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*[]Trait, error) {
 	var o []Trait
@@ -28,7 +28,7 @@ LEFT JOIN workspace w
 WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -54,7 +54,7 @@ WHERE w.key = $1
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Trait,
 	a RootArgs,
 ) (*Trait, error) {
@@ -94,7 +94,7 @@ RETURNING
 			EnvironmentKey: a.EnvironmentKey,
 			TraitKey:       i.Key,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -113,7 +113,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) (*Trait, error) {
 	var o Trait
@@ -136,7 +136,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Trait.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -154,7 +154,7 @@ WHERE w.key = $1
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Trait,
 	a ResourceArgs,
 ) (*Trait, error) {
@@ -164,7 +164,7 @@ SET
   key = $2,
   is_identifier = $3
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -182,7 +182,7 @@ WHERE id = $1`
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
@@ -199,7 +199,7 @@ WHERE key = $4
       AND p.key = $2
       AND e.key = $3
     )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

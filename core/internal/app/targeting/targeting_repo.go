@@ -2,15 +2,15 @@ package targeting
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"core/pkg/flagset"
 )
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Targeting,
 	a RootArgs,
 ) (*Targeting, error) {
@@ -54,7 +54,7 @@ RETURNING
 	if err := dbutil.ParseError(
 		rsc.Targeting.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Enabled,
@@ -103,7 +103,7 @@ RETURNING
 		err = dbutil.ParseError(
 			rsc.FallthroughVariation.String(),
 			a,
-			sctx.DB.QueryRow(
+			senv.DB.QueryRow(
 				ctx,
 				sqlStatement,
 				f.Weight,
@@ -122,7 +122,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*Targeting, error) {
 	var o Targeting
@@ -146,7 +146,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Targeting.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -184,7 +184,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND f.key = $4`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -211,7 +211,7 @@ WHERE w.key = $1
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i Targeting,
 	a RootArgs,
 ) (*Targeting, error) {
@@ -220,7 +220,7 @@ UPDATE targeting
 SET
   enabled = $2
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -253,7 +253,7 @@ WHERE targeting_id = $1
       AND f.key = $5
       AND v.key = $6
   )`
-		if _, err := sctx.DB.Exec(
+		if _, err := senv.DB.Exec(
 			ctx,
 			sqlStatement,
 			i.ID.String(),
@@ -276,7 +276,7 @@ WHERE targeting_id = $1
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) error {
 	sqlStatement := `
@@ -297,7 +297,7 @@ WHERE targeting_id = (
     AND e.key = $3
     AND f.key = $4
 )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -330,7 +330,7 @@ WHERE id = (
     AND e.key = $3
     AND f.key = $4
 )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

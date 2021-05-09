@@ -1,10 +1,10 @@
 package evaluation
 
 import (
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
 	res "core/pkg/response"
 	"net/http"
@@ -13,7 +13,7 @@ import (
 )
 
 // ApplyRoutes flag route handlers
-func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteEvaluation)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -21,11 +21,11 @@ func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
 		rsc.EnvironmentKey,
 	)
 
-	routes.GET(rootPath, httputil.Handler(sctx, getEvaluationAPIHandler))
-	routes.POST(rootPath, httputil.Handler(sctx, evaluateAPIHandler))
+	routes.GET(rootPath, httputil.Handler(senv, getEvaluationAPIHandler))
+	routes.POST(rootPath, httputil.Handler(senv, evaluateAPIHandler))
 }
 
-func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -34,7 +34,7 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Get(
-		sctx,
+		senv,
 		atk,
 		RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -57,7 +57,7 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -71,7 +71,7 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Evaluate(
-		sctx,
+		senv,
 		atk,
 		i,
 		RootArgs{

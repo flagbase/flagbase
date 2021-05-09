@@ -1,7 +1,7 @@
 package cache
 
 import (
-	"github.com/go-redis/redis/v8"
+	"github.com/go-redis/redis"
 )
 
 // Config redis connection configuration

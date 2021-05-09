@@ -2,14 +2,14 @@ package segmentrule
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 )
 
 func listResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*[]SegmentRule, error) {
 	var o []SegmentRule
@@ -34,7 +34,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND s.key = $4`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -64,7 +64,7 @@ WHERE w.key = $1
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i SegmentRule,
 	a RootArgs,
 ) (*SegmentRule, error) {
@@ -126,7 +126,7 @@ RETURNING
 			SegmentKey:     a.SegmentKey,
 			SegmentRuleKey: i.Key,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -152,7 +152,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) (*SegmentRule, error) {
 	var o SegmentRule
@@ -181,7 +181,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.SegmentRule.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -203,7 +203,7 @@ WHERE w.key = $1
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i SegmentRule,
 	a ResourceArgs,
 ) (*SegmentRule, error) {
@@ -216,7 +216,7 @@ SET
   operator = $5,
   negate = $6
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -237,7 +237,7 @@ WHERE id = $1`
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
@@ -265,7 +265,7 @@ WHERE key = $5
       AND p.key = $2
       AND e.key = $3
   )`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

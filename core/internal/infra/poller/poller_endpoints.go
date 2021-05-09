@@ -1,10 +1,10 @@
 package poller
 
 import (
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/httputil"
+	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
 	res "core/pkg/response"
 	"net/http"
@@ -13,22 +13,22 @@ import (
 )
 
 // ApplyRoutes applies route from all packages to root handler
-func ApplyRoutes(sctx *srv.Ctx, r *gin.Engine) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	httpmetrics.ApplyMetrics(r, "poller")
 	rootPath := ""
 	routes := r.Group(rootPath)
-	routes.GET(rootPath, httputil.Handler(sctx, getEvaluationAPIHandler))
-	routes.POST(rootPath, httputil.Handler(sctx, evaluateAPIHandler))
+	routes.GET(rootPath, httputil.Handler(senv, getEvaluationAPIHandler))
+	routes.POST(rootPath, httputil.Handler(senv, evaluateAPIHandler))
 }
 
-func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	etag := ctx.Request.Header.Get("ETag")
 
 	r, retag, _e := Get(
-		sctx,
-		httputil.SecureOverideATK(sctx),
+		senv,
+		httputil.SecureOverideATK(senv),
 		etag,
 		RootHeaders{
 			SDKKey: ctx.Request.Header.Get("x-sdk-key"),
@@ -55,7 +55,7 @@ func getEvaluationAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	etag := ctx.Request.Header.Get("ETag")
@@ -66,8 +66,8 @@ func evaluateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, retag, _e := Evaluate(
-		sctx,
-		httputil.SecureOverideATK(sctx),
+		senv,
+		httputil.SecureOverideATK(senv),
 		etag,
 		ectx,
 		RootHeaders{

@@ -1,8 +1,8 @@
 package poller
 
 import (
-	srv "core/internal/infra/server"
 	"core/internal/pkg/httpserver"
+	"core/internal/pkg/srvenv"
 )
 
 // Config polling server configuration
@@ -13,8 +13,8 @@ type Config struct {
 }
 
 // New initialize a new HTTP server for polling
-func New(sctx *srv.Ctx, cfg Config) {
-	httpserver.New(sctx, httpserver.Config{
+func New(senv *srvenv.Env, cfg Config) {
+	httpserver.New(senv, httpserver.Config{
 		Host:     cfg.Host,
 		HTTPPort: cfg.PollingPort,
 		Verbose:  cfg.Verbose,

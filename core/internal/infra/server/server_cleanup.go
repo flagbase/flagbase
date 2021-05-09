@@ -1,7 +1,9 @@
 package server
 
+import "core/internal/pkg/srvenv"
+
 // Cleanup close active server connections
-func Cleanup(sctx *Ctx) {
-	sctx.DB.Close()
-	sctx.Cache.Close()
+func Cleanup(senv *srvenv.Env) {
+	senv.DB.Close()
+	senv.Cache.Close()
 }

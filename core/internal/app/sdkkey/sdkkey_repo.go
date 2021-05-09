@@ -2,8 +2,8 @@ package sdkkey
 
 import (
 	"context"
-	srv "core/internal/infra/server"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"errors"
 
@@ -12,7 +12,7 @@ import (
 
 func listResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a RootArgs,
 ) (*[]SDKKey, error) {
 	var o []SDKKey
@@ -36,7 +36,7 @@ LEFT JOIN workspace w
 WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3`
-	rows, err := sctx.DB.Query(
+	rows, err := senv.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -67,7 +67,7 @@ WHERE w.key = $1
 
 func createResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i SDKKey,
 	a RootArgs,
 ) (*SDKKey, error) {
@@ -117,7 +117,7 @@ RETURNING
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Enabled,
@@ -144,7 +144,7 @@ RETURNING
 
 func getResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) (*SDKKey, error) {
 	var o SDKKey
@@ -163,7 +163,7 @@ WHERE sk.id = $1`
 	err := dbutil.ParseError(
 		rsc.SDKKey.String(),
 		a,
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.ID.String(),
@@ -183,7 +183,7 @@ WHERE sk.id = $1`
 
 func updateResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	i SDKKey,
 	a ResourceArgs,
 ) (*SDKKey, error) {
@@ -196,7 +196,7 @@ SET
   description = $5,
   tags = $6
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -217,13 +217,13 @@ WHERE id = $1`
 
 func deleteResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	a ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM sdk_key
 WHERE id = $1`
-	if _, err := sctx.DB.Exec(
+	if _, err := senv.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.ID.String(),
@@ -241,7 +241,7 @@ WHERE id = $1`
 
 func getRootArgsFromSDKKeyResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	sdkKey string,
 ) (*RootArgs, error) {
 	var o RootArgs
@@ -265,7 +265,7 @@ WHERE sk.client_key = $1
 			ClientKey: sdkKey,
 			ServerKey: sdkKey,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			sdkKey,
@@ -283,7 +283,7 @@ WHERE sk.client_key = $1
 
 func getRootArgsFromServerKeyResource(
 	ctx context.Context,
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	serverKey string,
 ) (*RootArgs, error) {
 	var o RootArgs
@@ -305,7 +305,7 @@ WHERE sk.server_key = $1`
 		SDKKey{
 			ServerKey: serverKey,
 		},
-		sctx.DB.QueryRow(
+		senv.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			serverKey,

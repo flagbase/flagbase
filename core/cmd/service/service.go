@@ -67,7 +67,7 @@ var StartCommand cli.Command = cli.Command{
 	Action: func(ctx *cli.Context) error {
 		var wg sync.WaitGroup
 
-		sctx, err := srv.Setup(srv.Config{
+		senv, err := srv.Setup(srv.Config{
 			Ctx:           context.Background(),
 			PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
 			RedisAddr:     ctx.String(cmdutil.RedisAddr),
@@ -78,11 +78,11 @@ var StartCommand cli.Command = cli.Command{
 		if err != nil {
 			log.Fatal("Unable to setup app context. Reason: ", err.Error())
 		}
-		defer srv.Cleanup(sctx)
+		defer srv.Cleanup(senv)
 
 		startAPI := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartAPI(sctx, APIConfig{
+			StartAPI(senv, APIConfig{
 				Host:          ctx.String(HostFlag),
 				APIPort:       ctx.Int(APIPortFlag),
 				PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
@@ -95,7 +95,7 @@ var StartCommand cli.Command = cli.Command{
 
 		startSteamer := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartStreamer(sctx, StreamerConfig{
+			StartStreamer(senv, StreamerConfig{
 				Host:         ctx.String(HostFlag),
 				StreamerPort: ctx.Int(StreamerPortFlag),
 				PGConnStr:    ctx.String(cmdutil.PGConnStrFlag),
@@ -105,7 +105,7 @@ var StartCommand cli.Command = cli.Command{
 
 		startPoller := func(wg *sync.WaitGroup) {
 			defer wg.Done()
-			StartPoller(sctx, PollingConfig{
+			StartPoller(senv, PollingConfig{
 				Host:        ctx.String(HostFlag),
 				PollingPort: ctx.Int(PollerPortFlag),
 				PGConnStr:   ctx.String(cmdutil.PGConnStrFlag),

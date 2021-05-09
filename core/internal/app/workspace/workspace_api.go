@@ -1,10 +1,10 @@
 package workspace
 
 import (
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
 	"net/http"
@@ -13,20 +13,20 @@ import (
 )
 
 // ApplyRoutes workspace route handlers
-func ApplyRoutes(sctx *srv.Ctx, r *gin.RouterGroup) {
+func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes := r.Group(rsc.RouteWorkspace)
 	resourcePath := httputil.BuildPath(
 		rsc.WorkspaceKey,
 	)
 
-	routes.GET("", httputil.Handler(sctx, listAPIHandler))
-	routes.POST("", httputil.Handler(sctx, createAPIHandler))
-	routes.GET(resourcePath, httputil.Handler(sctx, getAPIHandler))
-	routes.PATCH(resourcePath, httputil.Handler(sctx, updateAPIHandler))
-	routes.DELETE(resourcePath, httputil.Handler(sctx, deleteAPIHandler))
+	routes.GET("", httputil.Handler(senv, listAPIHandler))
+	routes.POST("", httputil.Handler(senv, createAPIHandler))
+	routes.GET(resourcePath, httputil.Handler(senv, getAPIHandler))
+	routes.PATCH(resourcePath, httputil.Handler(senv, updateAPIHandler))
+	routes.DELETE(resourcePath, httputil.Handler(senv, deleteAPIHandler))
 }
 
-func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -34,7 +34,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := List(sctx, atk, RootArgs{})
+	r, _err := List(senv, atk, RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -50,7 +50,7 @@ func listAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -63,7 +63,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(sctx, atk, i, RootArgs{})
+	r, _err := Create(senv, atk, i, RootArgs{})
 	if !_err.IsEmpty() {
 		e.Extend(_err)
 	}
@@ -79,7 +79,7 @@ func createAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -88,7 +88,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Get(
-		sctx,
+		senv,
 		atk,
 		ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -109,7 +109,7 @@ func getAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -123,7 +123,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	r, _err := Update(
-		sctx,
+		senv,
 		atk,
 		i,
 		ResourceArgs{
@@ -145,7 +145,7 @@ func updateAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
+func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -154,7 +154,7 @@ func deleteAPIHandler(sctx *srv.Ctx, ctx *gin.Context) {
 	}
 
 	if err := Delete(
-		sctx,
+		senv,
 		atk,
 		ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),

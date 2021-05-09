@@ -7,9 +7,9 @@ import (
 	"core/internal/app/segmentrule"
 	"core/internal/app/targeting"
 	"core/internal/app/targetingrule"
-	srv "core/internal/infra/server"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
+	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
 	"core/pkg/flagset"
 	"core/pkg/hashutil"
@@ -19,7 +19,7 @@ import (
 // Get returns a set raw (non-evaluated) flagsets
 // (*) atk: access_type <= service
 func Get(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	a RootArgs,
 ) (*flagset.Flagset, *res.Errors) {
@@ -28,7 +28,7 @@ func Get(
 	o := make(flagset.Flagset)
 
 	fr := flagrepo.Repo{
-		DB: sctx.DB,
+		DB: senv.DB,
 	}
 
 	fl, _e := fr.List(context.Background(), flagmodel.ResourceArgs{
@@ -40,7 +40,7 @@ func Get(
 	}
 
 	for _, f := range *fl {
-		t, err := targeting.Get(sctx, atk, targeting.RootArgs{
+		t, err := targeting.Get(senv, atk, targeting.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
@@ -50,7 +50,7 @@ func Get(
 			e.Extend(err)
 		}
 
-		tr, err := targetingrule.List(sctx, atk, targetingrule.RootArgs{
+		tr, err := targetingrule.List(senv, atk, targetingrule.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
@@ -81,7 +81,7 @@ func Get(
 				})
 			case string(rsc.Segment):
 				if string(_tr.SegmentKey) != "" {
-					sr, err := segmentrule.List(sctx, atk, segmentrule.RootArgs{
+					sr, err := segmentrule.List(senv, atk, segmentrule.RootArgs{
 						WorkspaceKey:   a.WorkspaceKey,
 						ProjectKey:     a.ProjectKey,
 						EnvironmentKey: a.EnvironmentKey,
@@ -113,14 +113,14 @@ func Get(
 // Evaluate returns an evaluated flagset given the user context
 // (*) atk: access_type <= service
 func Evaluate(
-	sctx *srv.Ctx,
+	senv *srvenv.Env,
 	atk rsc.Token,
 	ectx evaluator.Context,
 	a RootArgs,
 ) (*evaluator.Evaluations, *res.Errors) {
 	var e res.Errors
 
-	r, err := Get(sctx, atk, a)
+	r, err := Get(senv, atk, a)
 	if !err.IsEmpty() {
 		e.Extend(err)
 	}
