@@ -3,7 +3,7 @@ package api
 import (
 	"core/internal/app/access"
 	"core/internal/app/evaluation"
-	"core/internal/app/flag"
+	flagtransport "core/internal/app/flag/transport"
 	"core/internal/app/healthcheck"
 	"core/internal/app/identity"
 	"core/internal/app/project"
@@ -22,7 +22,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	httpmetrics.ApplyMetrics(r, "api")
 	root := r.Group("/")
 	access.ApplyRoutes(senv, root)
-	flag.ApplyRoutes(senv, root)
+	flagtransport.ApplyRoutes(senv, root)
 	evaluation.ApplyRoutes(senv, root)
 	healthcheck.ApplyRoutes(senv, root)
 	identity.ApplyRoutes(senv, root)

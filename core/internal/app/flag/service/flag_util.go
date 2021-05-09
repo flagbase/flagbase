@@ -1,4 +1,4 @@
-package flag
+package service
 
 import (
 	"core/internal/app/environment"

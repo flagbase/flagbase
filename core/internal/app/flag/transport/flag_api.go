@@ -1,7 +1,8 @@
-package flag
+package transport
 
 import (
 	flagmodel "core/internal/app/flag/model"
+	flagservice "core/internal/app/flag/service"
 	"core/internal/app/variation"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
@@ -16,14 +17,14 @@ import (
 
 // APIHandler API handler context
 type APIHandler struct {
-	Senv    *srvenv.Env
-	Service *Service
+	Senv        *srvenv.Env
+	FlagService *flagservice.Service
 }
 
 func newAPIHandler(senv *srvenv.Env) *APIHandler {
 	return &APIHandler{
-		Senv:    senv,
-		Service: NewService(senv),
+		Senv:        senv,
+		FlagService: flagservice.NewService(senv),
 	}
 }
 
@@ -56,7 +57,7 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := h.Service.List(
+	r, _err := h.FlagService.List(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -91,7 +92,7 @@ func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := h.Service.Create(
+	r, _err := h.FlagService.Create(
 		atk,
 		i,
 		flagmodel.ResourceArgs{
@@ -122,7 +123,7 @@ func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := h.Service.Get(
+	r, _err := h.FlagService.Get(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
@@ -158,7 +159,7 @@ func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := h.Service.Update(
+	r, _err := h.FlagService.Update(
 		atk,
 		i,
 		flagmodel.ResourceArgs{
@@ -190,7 +191,7 @@ func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := h.Service.Delete(
+	if err := h.FlagService.Delete(
 		atk,
 		flagmodel.ResourceArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
