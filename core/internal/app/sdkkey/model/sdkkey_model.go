@@ -1,4 +1,4 @@
-package sdkkey
+package model
 
 import rsc "core/internal/pkg/resource"
 
@@ -12,19 +12,4 @@ type SDKKey struct {
 	Name        rsc.Name        `json:"name,omitempty"`
 	Description rsc.Description `json:"description,omitempty"`
 	Tags        rsc.Tags        `json:"tags,omitempty"`
-}
-
-// RootArgs arguments for selecting root resource
-type RootArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-}
-
-// ResourceArgs arguments for selecting specific resource
-type ResourceArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-	ID             rsc.Key
 }

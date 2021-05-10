@@ -1,21 +1,32 @@
-package sdkkey
+package repository
 
 import (
 	"context"
+	sdkkeymodel "core/internal/app/sdkkey/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"errors"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]SDKKey, error) {
-	var o []SDKKey
+	a sdkkeymodel.RootArgs,
+) (*[]sdkkeymodel.SDKKey, error) {
+	var o []sdkkeymodel.SDKKey
 	sqlStatement := `
 SELECT
   sk.id,
@@ -36,7 +47,7 @@ LEFT JOIN workspace w
 WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -47,7 +58,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o SDKKey
+		var _o sdkkeymodel.SDKKey
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Enabled,
@@ -65,13 +76,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i SDKKey,
-	a RootArgs,
-) (*SDKKey, error) {
-	var o SDKKey
+	i sdkkeymodel.SDKKey,
+	a sdkkeymodel.RootArgs,
+) (*sdkkeymodel.SDKKey, error) {
+	var o sdkkeymodel.SDKKey
 	sqlStatement := `
 INSERT INTO
   sdk_key(
@@ -112,12 +122,12 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.SDKKey.String(),
-		ResourceArgs{
+		sdkkeymodel.ResourceArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Enabled,
@@ -142,12 +152,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*SDKKey, error) {
-	var o SDKKey
+	a sdkkeymodel.ResourceArgs,
+) (*sdkkeymodel.SDKKey, error) {
+	var o sdkkeymodel.SDKKey
 	sqlStatement := `
 SELECT
   sk.id,
@@ -163,7 +172,7 @@ WHERE sk.id = $1`
 	err := dbutil.ParseError(
 		rsc.SDKKey.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.ID.String(),
@@ -181,12 +190,11 @@ WHERE sk.id = $1`
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i SDKKey,
-	a ResourceArgs,
-) (*SDKKey, error) {
+	i sdkkeymodel.SDKKey,
+	a sdkkeymodel.ResourceArgs,
+) (*sdkkeymodel.SDKKey, error) {
 	sqlStatement := `
 UPDATE sdk_key
 SET
@@ -196,7 +204,7 @@ SET
   description = $5,
   tags = $6
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -215,15 +223,14 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a sdkkeymodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM sdk_key
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.ID.String(),
@@ -239,12 +246,11 @@ WHERE id = $1`
 
 // -------- Custom Repository Handlers -------- //
 
-func getRootArgsFromSDKKeyResource(
+func (r *Repo) GetRootArgsFromSDKKeyResource(
 	ctx context.Context,
-	senv *srvenv.Env,
 	sdkKey string,
-) (*RootArgs, error) {
-	var o RootArgs
+) (*sdkkeymodel.RootArgs, error) {
+	var o sdkkeymodel.RootArgs
 	sqlStatement := `
 SELECT
   w.key,
@@ -261,11 +267,11 @@ WHERE sk.client_key = $1
    OR sk.server_key = $1`
 	err := dbutil.ParseError(
 		rsc.SDKKey.String(),
-		SDKKey{
+		sdkkeymodel.SDKKey{
 			ClientKey: sdkKey,
 			ServerKey: sdkKey,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			sdkKey,
@@ -275,18 +281,17 @@ WHERE sk.client_key = $1
 			&o.EnvironmentKey,
 		),
 	)
-	if (RootArgs{}) == o {
+	if (sdkkeymodel.RootArgs{}) == o {
 		return &o, errors.New("cannot find SDK key")
 	}
 	return &o, err
 }
 
-func getRootArgsFromServerKeyResource(
+func (r *Repo) GetRootArgsFromServerKeyResource(
 	ctx context.Context,
-	senv *srvenv.Env,
 	serverKey string,
-) (*RootArgs, error) {
-	var o RootArgs
+) (*sdkkeymodel.RootArgs, error) {
+	var o sdkkeymodel.RootArgs
 	sqlStatement := `
 SELECT
   w.key,
@@ -302,10 +307,10 @@ LEFT JOIN sdk_key sk
 WHERE sk.server_key = $1`
 	err := dbutil.ParseError(
 		rsc.SDKKey.String(),
-		SDKKey{
+		sdkkeymodel.SDKKey{
 			ServerKey: serverKey,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			serverKey,
@@ -315,7 +320,7 @@ WHERE sk.server_key = $1`
 			&o.EnvironmentKey,
 		),
 	)
-	if (RootArgs{}) == o {
+	if (sdkkeymodel.RootArgs{}) == o {
 		return &o, errors.New("cannot find SDK key - make sure your using the correct type of SDK key (i.e. server)")
 	}
 	return &o, err

@@ -3,6 +3,8 @@ package sdkkey
 import (
 	"context"
 	"core/internal/app/auth"
+	sdkkeymodel "core/internal/app/sdkkey/model"
+	sdkkeyrepo "core/internal/app/sdkkey/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,23 +12,34 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv       *srvenv.Env
+	SDKKeyRepo *sdkkeyrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:       senv,
+		SDKKeyRepo: sdkkeyrepo.NewRepo(senv),
+	}
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(
-	senv *srvenv.Env,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]SDKKey, *res.Errors) {
+	a sdkkeymodel.RootArgs,
+) (*[]sdkkeymodel.SDKKey, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, senv, a)
+	r, err := s.SDKKeyRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -36,29 +49,28 @@ func List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i SDKKey,
-	a RootArgs,
-) (*SDKKey, *res.Errors) {
+	i sdkkeymodel.SDKKey,
+	a sdkkeymodel.RootArgs,
+) (*sdkkeymodel.SDKKey, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessAdmin); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.SDKKeyRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.SDKKey,
@@ -73,22 +85,21 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a ResourceArgs,
-) (*SDKKey, *res.Errors) {
+	a sdkkeymodel.ResourceArgs,
+) (*sdkkeymodel.SDKKey, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.SDKKeyRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.SDKKey,
@@ -102,24 +113,23 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*SDKKey, *res.Errors) {
-	var o SDKKey
+	a sdkkeymodel.ResourceArgs,
+) (*sdkkeymodel.SDKKey, *res.Errors) {
+	var o sdkkeymodel.SDKKey
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.SDKKeyRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.SDKKey,
@@ -134,7 +144,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.SDKKeyRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -144,22 +154,21 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a ResourceArgs,
+	a sdkkeymodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.SDKKeyRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.SDKKey,
@@ -169,7 +178,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.SDKKeyRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
@@ -179,29 +188,25 @@ func Delete(
 // -------- Custom Service Methods -------- //
 
 // GetRootArgsFromSDKKey get root args from sdk key
-func GetRootArgsFromSDKKey(
-	senv *srvenv.Env,
+func (s *Service) GetRootArgsFromSDKKey(
 	clientKey string,
-) (*RootArgs, error) {
+) (*sdkkeymodel.RootArgs, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	return getRootArgsFromSDKKeyResource(
+	return s.SDKKeyRepo.GetRootArgsFromSDKKeyResource(
 		ctx,
-		senv,
 		clientKey,
 	)
 }
 
 // GetRootArgsFromSDKKey get root args from server key
-func GetRootArgsFromServerKey(
-	senv *srvenv.Env,
+func (s *Service) GetRootArgsFromServerKey(
 	serverKey string,
-) (*RootArgs, error) {
+) (*sdkkeymodel.RootArgs, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	return getRootArgsFromServerKeyResource(
+	return s.SDKKeyRepo.GetRootArgsFromServerKeyResource(
 		ctx,
-		senv,
 		serverKey,
 	)
 }

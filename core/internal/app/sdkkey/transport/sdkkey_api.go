@@ -1,6 +1,8 @@
 package sdkkey
 
 import (
+	sdkkeymodel "core/internal/app/sdkkey/model"
+	sdkkeyservice "core/internal/app/sdkkey/service"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -12,8 +14,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
+type APIHandler struct {
+	Senv          *srvenv.Env
+	SDKKeyService *sdkkeyservice.Service
+}
+
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv:          senv,
+		SDKKeyService: sdkkeyservice.NewService(senv),
+	}
+}
+
 // ApplyRoutes identity route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := newAPIHandler(senv)
 	routes := r.Group("/")
 	rootPath := httputil.BuildRoute(
 		httputil.AppendPath(
@@ -33,14 +49,14 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 		rsc.ResourceID,
 	)
 
-	routes.GET(rootPath, httputil.Handler(senv, listAPIHandler))
-	routes.POST(rootPath, httputil.Handler(senv, createAPIHandler))
-	routes.GET(resourcePath, httputil.Handler(senv, getAPIHandler))
-	routes.PATCH(resourcePath, httputil.Handler(senv, updateAPIHandler))
-	routes.DELETE(resourcePath, httputil.Handler(senv, deleteAPIHandler))
+	routes.GET(rootPath, h.listAPIHandler)
+	routes.POST(rootPath, h.createAPIHandler)
+	routes.GET(resourcePath, h.getAPIHandler)
+	routes.PATCH(resourcePath, h.updateAPIHandler)
+	routes.DELETE(resourcePath, h.deleteAPIHandler)
 }
 
-func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -48,10 +64,9 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := List(
-		senv,
+	r, _err := h.SDKKeyService.List(
 		atk,
-		RootArgs{
+		sdkkeymodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -72,7 +87,7 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -80,16 +95,15 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i SDKKey
+	var i sdkkeymodel.SDKKey
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(
-		senv,
+	r, _err := h.SDKKeyService.Create(
 		atk,
 		i,
-		RootArgs{
+		sdkkeymodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -110,7 +124,7 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -118,10 +132,9 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		senv,
+	r, _err := h.SDKKeyService.Get(
 		atk,
-		ResourceArgs{
+		sdkkeymodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -143,7 +156,7 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -156,11 +169,10 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Update(
-		senv,
+	r, _err := h.SDKKeyService.Update(
 		atk,
 		i,
-		ResourceArgs{
+		sdkkeymodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -182,7 +194,7 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -190,10 +202,9 @@ func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := Delete(
-		senv,
+	if err := h.SDKKeyService.Delete(
 		atk,
-		ResourceArgs{
+		sdkkeymodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),

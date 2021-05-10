@@ -2,7 +2,7 @@ package poller
 
 import (
 	"core/internal/app/evaluation"
-	"core/internal/app/sdkkey"
+	sdkkeyservice "core/internal/app/sdkkey/service"
 	cons "core/internal/pkg/constants"
 	"core/pkg/evaluator"
 	"core/pkg/flagset"
@@ -19,8 +19,9 @@ func getAndSetCache(args CachedServiceArgs) (
 	var e res.Errors
 	var o *flagset.Flagset
 
-	a, _err := sdkkey.GetRootArgsFromServerKey(
-		args.Senv,
+	sks := sdkkeyservice.NewService(args.Senv)
+
+	a, _err := sks.GetRootArgsFromServerKey(
 		args.RootHeaders.SDKKey,
 	)
 	if _err != nil {
@@ -68,8 +69,9 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 	var e res.Errors
 	var o *evaluator.Evaluations
 
-	a, _err := sdkkey.GetRootArgsFromSDKKey(
-		args.Senv,
+	sks := sdkkeyservice.NewService(args.Senv)
+
+	a, _err := sks.GetRootArgsFromSDKKey(
 		args.RootHeaders.SDKKey,
 	)
 	if _err != nil {

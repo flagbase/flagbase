@@ -5,6 +5,7 @@ import (
 	"core/internal/app/auth"
 	environmentmodel "core/internal/app/environment/model"
 	environmentrepo "core/internal/app/environment/repository"
+	sdkkeyrepo "core/internal/app/sdkkey/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -15,12 +16,14 @@ import (
 type Service struct {
 	Senv            *srvenv.Env
 	EnvironmentRepo *environmentrepo.Repo
+	SDKKeyRepo      *sdkkeyrepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
 	return &Service{
 		Senv:            senv,
 		EnvironmentRepo: environmentrepo.NewRepo(senv),
+		SDKKeyRepo:      sdkkeyrepo.NewRepo(senv),
 	}
 }
 

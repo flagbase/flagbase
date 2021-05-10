@@ -3,7 +3,7 @@ package transport
 import (
 	environmentmodel "core/internal/app/environment/model"
 	environmentservice "core/internal/app/environment/service"
-	"core/internal/app/sdkkey"
+	sdkkeytransport "core/internal/app/sdkkey/transport"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -50,8 +50,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes.GET(resourcePath, h.getAPIHandler)
 	routes.PATCH(resourcePath, h.updateAPIHandler)
 	routes.DELETE(resourcePath, h.deleteAPIHandler)
-
-	sdkkey.ApplyRoutes(senv, routes)
+	sdkkeytransport.ApplyRoutes(senv, routes)
 }
 
 func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
