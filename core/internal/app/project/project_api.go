@@ -1,7 +1,7 @@
 package project
 
 import (
-	"core/internal/app/environment"
+	environmenttransport "core/internal/app/environment/transport"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -29,7 +29,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes.GET(resourcePath, httputil.Handler(senv, getAPIHandler))
 	routes.PATCH(resourcePath, httputil.Handler(senv, updateAPIHandler))
 	routes.DELETE(resourcePath, httputil.Handler(senv, deleteAPIHandler))
-	environment.ApplyRoutes(senv, routes)
+	environmenttransport.ApplyRoutes(senv, routes)
 }
 
 func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {

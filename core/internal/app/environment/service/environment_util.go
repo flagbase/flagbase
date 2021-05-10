@@ -1,23 +1,22 @@
-package environment
+package service
 
 import (
+	environmentmodel "core/internal/app/environment/model"
 	"core/internal/app/sdkkey"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	"core/internal/pkg/srvenv"
 	res "core/pkg/response"
 )
 
-func createDefaultChildren(
-	senv *srvenv.Env,
+func (s *Service) createDefaultChildren(
 	atk rsc.Token,
-	i Environment,
-	a RootArgs,
+	i environmentmodel.Environment,
+	a environmentmodel.RootArgs,
 ) *res.Errors {
 	var e res.Errors
 
 	_, _err := sdkkey.Create(
-		senv,
+		s.Senv,
 		atk,
 		sdkkey.SDKKey{
 			Enabled:     true,

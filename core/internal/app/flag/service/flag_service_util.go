@@ -2,7 +2,8 @@ package service
 
 import (
 	"context"
-	"core/internal/app/environment"
+	environmentmodel "core/internal/app/environment/model"
+	environmentrepo "core/internal/app/environment/repository"
 	flagmodel "core/internal/app/flag/model"
 	"core/internal/app/targeting"
 	variationmodel "core/internal/app/variation/model"
@@ -22,18 +23,18 @@ func (s *Service) createChildren(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	er := environmentrepo.NewRepo(s.Senv)
 	vr := variationrepo.NewRepo(s.Senv)
 
-	envs, _err := environment.List(
-		s.Senv,
-		atk,
-		environment.RootArgs{
+	envs, _err := er.List(
+		ctx,
+		environmentmodel.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
 		},
 	)
-	if !_err.IsEmpty() {
-		e.Extend(_err)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
 	}
 
 	cVar, _e := vr.Create(

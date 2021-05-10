@@ -1,20 +1,31 @@
-package environment
+package repository
 
 import (
 	"context"
+	environmentmodel "core/internal/app/environment/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Environment, error) {
-	var o []Environment
+	a environmentmodel.RootArgs,
+) (*[]environmentmodel.Environment, error) {
+	var o []environmentmodel.Environment
 	sqlStatement := `
 SELECT
   e.id,
@@ -29,7 +40,7 @@ LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -39,7 +50,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Environment
+		var _o environmentmodel.Environment
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -54,13 +65,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Environment,
-	a RootArgs,
-) (*Environment, error) {
-	var o Environment
+	i environmentmodel.Environment,
+	a environmentmodel.RootArgs,
+) (*environmentmodel.Environment, error) {
+	var o environmentmodel.Environment
 	sqlStatement := `
 INSERT INTO
   environment(
@@ -93,12 +103,12 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Environment.String(),
-		ResourceArgs{
+		environmentmodel.ResourceArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -118,12 +128,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Environment, error) {
-	var o Environment
+	a environmentmodel.ResourceArgs,
+) (*environmentmodel.Environment, error) {
+	var o environmentmodel.Environment
 	sqlStatement := `
 SELECT
   e.id,
@@ -142,7 +151,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Environment.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -159,12 +168,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Environment,
-	a ResourceArgs,
-) (*Environment, error) {
+	i environmentmodel.Environment,
+	a environmentmodel.ResourceArgs,
+) (*environmentmodel.Environment, error) {
 	sqlStatement := `
 UPDATE environment
 SET
@@ -173,7 +181,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -191,10 +199,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a environmentmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM environment
@@ -207,7 +214,7 @@ WHERE key = $3
     WHERE w.key = $1
       AND p.key = $2
   )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

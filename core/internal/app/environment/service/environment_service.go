@@ -1,8 +1,10 @@
-package environment
+package service
 
 import (
 	"context"
 	"core/internal/app/auth"
+	environmentmodel "core/internal/app/environment/model"
+	environmentrepo "core/internal/app/environment/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,23 +12,34 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv            *srvenv.Env
+	EnvironmentRepo *environmentrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:            senv,
+		EnvironmentRepo: environmentrepo.NewRepo(senv),
+	}
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(
-	senv *srvenv.Env,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]Environment, *res.Errors) {
+	a environmentmodel.RootArgs,
+) (*[]environmentmodel.Environment, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessService); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, senv, a)
+	r, err := s.EnvironmentRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -36,35 +49,38 @@ func List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i Environment,
-	a RootArgs,
-) (*Environment, *res.Errors) {
+	i environmentmodel.Environment,
+	a environmentmodel.RootArgs,
+) (*environmentmodel.Environment, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessAdmin); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.EnvironmentRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Environment,
 			rsc.AccessAdmin,
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
+		}
+		_e := s.createDefaultChildren(atk, i, a)
+		if !_e.IsEmpty() {
+			e.Extend(_e)
 		}
 	}
 
@@ -73,22 +89,21 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a ResourceArgs,
-) (*Environment, *res.Errors) {
+	a environmentmodel.ResourceArgs,
+) (*environmentmodel.Environment, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.EnvironmentRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Environment,
@@ -102,25 +117,24 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*Environment, *res.Errors) {
-	var o Environment
+	a environmentmodel.ResourceArgs,
+) (*environmentmodel.Environment, *res.Errors) {
+	var o environmentmodel.Environment
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.EnvironmentRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Environment,
@@ -135,7 +149,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.EnvironmentRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -145,23 +159,22 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a ResourceArgs,
+	a environmentmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.EnvironmentRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Environment,
@@ -171,7 +184,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.EnvironmentRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
