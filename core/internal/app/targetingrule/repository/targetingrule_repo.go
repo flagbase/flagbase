@@ -1,21 +1,32 @@
-package targetingrule
+package repository
 
 import (
 	"context"
+	targetingrulemodel "core/internal/app/targetingrule/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"core/pkg/flagset"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]TargetingRule, error) {
-	var o []TargetingRule
+	a targetingrulemodel.RootArgs,
+) (*[]targetingrulemodel.TargetingRule, error) {
+	var o []targetingrulemodel.TargetingRule
 	sqlStatement := `
 SELECT
   tr.id,
@@ -49,7 +60,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND f.key = $4`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -61,7 +72,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o TargetingRule
+		var _o targetingrulemodel.TargetingRule
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -89,7 +100,7 @@ LEFT JOIN targeting_rule tr
 LEFT JOIN variation v
   ON v.id = trv.variation_id
 WHERE tr.id = $1`
-		_rows, err := senv.DB.Query(
+		_rows, err := r.DB.Query(
 			ctx,
 			sqlStatement,
 			_o.ID.String(),
@@ -113,13 +124,12 @@ WHERE tr.id = $1`
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i TargetingRule,
-	a RootArgs,
-) (*TargetingRule, error) {
-	var o TargetingRule
+	i targetingrulemodel.TargetingRule,
+	a targetingrulemodel.RootArgs,
+) (*targetingrulemodel.TargetingRule, error) {
+	var o targetingrulemodel.TargetingRule
 	sqlStatement := `
 INSERT INTO
   targeting_rule(
@@ -203,7 +213,7 @@ RETURNING
 	if err := dbutil.ParseError(
 		rsc.TargetingRule.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -272,7 +282,7 @@ RETURNING
 		err = dbutil.ParseError(
 			rsc.RuleVariation.String(),
 			a,
-			senv.DB.QueryRow(
+			r.DB.QueryRow(
 				ctx,
 				sqlStatement,
 				f.Weight,
@@ -289,12 +299,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*TargetingRule, error) {
-	var o TargetingRule
+	a targetingrulemodel.ResourceArgs,
+) (*targetingrulemodel.TargetingRule, error) {
+	var o targetingrulemodel.TargetingRule
 	sqlStatement := `
 SELECT
   tr.id,
@@ -326,7 +335,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.TargetingRule.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -373,7 +382,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND f.key = $3
   AND tr.id = $4`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -398,12 +407,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i TargetingRule,
-	a ResourceArgs,
-) (*TargetingRule, error) {
+	i targetingrulemodel.TargetingRule,
+	a targetingrulemodel.ResourceArgs,
+) (*targetingrulemodel.TargetingRule, error) {
 	sqlStatement := `
 UPDATE targeting_rule
 SET
@@ -442,7 +450,7 @@ SET
       AND s.key = $12
   )
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -488,7 +496,7 @@ WHERE targeting_rule_id = $1
       AND f.key = $5
       AND v.key = $6
   )`
-		if _, err := senv.DB.Exec(
+		if _, err := r.DB.Exec(
 			ctx,
 			sqlStatement,
 			i.ID.String(),
@@ -509,10 +517,9 @@ WHERE targeting_rule_id = $1
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a targetingrulemodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM targeting_rule_variation
@@ -535,7 +542,7 @@ WHERE targeting_rule_id = (
     AND f.key = $4
     AND tr.key = $5
 )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -572,7 +579,7 @@ WHERE id = (
     AND f.key = $4
     AND tr.key = $5
 )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

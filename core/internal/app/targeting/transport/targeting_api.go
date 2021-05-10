@@ -3,7 +3,7 @@ package targeting
 import (
 	targetingmodel "core/internal/app/targeting/model"
 	targetingservice "core/internal/app/targeting/service"
-	"core/internal/app/targetingrule"
+	targetingruletransport "core/internal/app/targetingrule/transport"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -43,7 +43,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes.GET(rootPath, h.getAPIHandler)
 	routes.PATCH(rootPath, h.updateAPIHandler)
 	routes.DELETE(rootPath, h.deleteAPIHandler)
-	targetingrule.ApplyRoutes(senv, routes)
+	targetingruletransport.ApplyRoutes(senv, routes)
 }
 
 func (h *APIHandler) createAPIHandler(ctx *gin.Context) {

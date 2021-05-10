@@ -1,4 +1,4 @@
-package targetingrule
+package model
 
 import (
 	rsc "core/internal/pkg/resource"
@@ -20,21 +20,4 @@ type TargetingRule struct {
 	RuleVariations []flagset.Variation `json:"ruleVariations"`
 	IdentityKey    rsc.Key             `json:"identityKey,omitempty"`
 	SegmentKey     rsc.Key             `json:"segmentKey,omitempty"`
-}
-
-// RootArgs arguments for selecting root resource
-type RootArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-	FlagKey        rsc.Key
-}
-
-// ResourceArgs arguments for selecting specific resource
-type ResourceArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-	FlagKey        rsc.Key
-	RuleKey        rsc.Key
 }

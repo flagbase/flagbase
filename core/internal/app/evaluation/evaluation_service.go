@@ -8,7 +8,8 @@ import (
 	segmentrulerepo "core/internal/app/segmentrule/repository"
 	targetingmodel "core/internal/app/targeting/model"
 	targetingrepo "core/internal/app/targeting/repository"
-	"core/internal/app/targetingrule"
+	targetingrulemodel "core/internal/app/targetingrule/model"
+	targetingrulerepo "core/internal/app/targetingrule/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -31,11 +32,12 @@ func Get(
 
 	o := make(flagset.Flagset)
 
-	fr := flagrepo.NewRepo(senv)
-	srr := segmentrulerepo.NewRepo(senv)
-	tr := targetingrepo.NewRepo(senv)
+	frepo := flagrepo.NewRepo(senv)
+	srrepo := segmentrulerepo.NewRepo(senv)
+	trepo := targetingrepo.NewRepo(senv)
+	trrepo := targetingrulerepo.NewRepo(senv)
 
-	fl, _e := fr.List(context.Background(), flagmodel.ResourceArgs{
+	fl, _e := frepo.List(context.Background(), flagmodel.ResourceArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
@@ -44,7 +46,7 @@ func Get(
 	}
 
 	for _, f := range *fl {
-		t, err := tr.Get(ctx, targetingmodel.RootArgs{
+		t, err := trepo.Get(ctx, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
@@ -54,14 +56,14 @@ func Get(
 			e.Append(cons.ErrorInternal, err.Error())
 		}
 
-		tr, _err := targetingrule.List(senv, atk, targetingrule.RootArgs{
+		tr, _err := trrepo.List(ctx, targetingrulemodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
 			EnvironmentKey: a.EnvironmentKey,
 		})
-		if !_err.IsEmpty() {
-			e.Extend(_err)
+		if _err != nil {
+			e.Append(cons.ErrorInternal, _err.Error())
 		}
 
 		o[string(f.Key)] = &flagset.Flag{
@@ -85,7 +87,7 @@ func Get(
 				})
 			case string(rsc.Segment):
 				if string(_tr.SegmentKey) != "" {
-					sr, err := srr.List(ctx, segmentrulemodel.RootArgs{
+					sr, err := srrepo.List(ctx, segmentrulemodel.RootArgs{
 						WorkspaceKey:   a.WorkspaceKey,
 						ProjectKey:     a.ProjectKey,
 						EnvironmentKey: a.EnvironmentKey,
