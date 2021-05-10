@@ -6,6 +6,7 @@ import (
 	environmentrepo "core/internal/app/environment/repository"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
+	targetingrepo "core/internal/app/targeting/repository"
 	variationrepo "core/internal/app/variation/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -19,6 +20,7 @@ type Service struct {
 	FlagRepo        *flagrepo.Repo
 	EnvironmentRepo *environmentrepo.Repo
 	VariationRepo   *variationrepo.Repo
+	TargetingRepo   *targetingrepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
@@ -27,6 +29,7 @@ func NewService(senv *srvenv.Env) *Service {
 		FlagRepo:        flagrepo.NewRepo(senv),
 		EnvironmentRepo: environmentrepo.NewRepo(senv),
 		VariationRepo:   variationrepo.NewRepo(senv),
+		TargetingRepo:   targetingrepo.NewRepo(senv),
 	}
 }
 

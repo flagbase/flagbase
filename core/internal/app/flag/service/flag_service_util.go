@@ -4,7 +4,7 @@ import (
 	"context"
 	environmentmodel "core/internal/app/environment/model"
 	flagmodel "core/internal/app/flag/model"
-	"core/internal/app/targeting"
+	targetingmodel "core/internal/app/targeting/model"
 	variationmodel "core/internal/app/variation/model"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -69,10 +69,9 @@ func (s *Service) createChildren(
 	}
 
 	for _, env := range *envs {
-		_, _err := targeting.Create(
-			s.Senv,
-			atk,
-			targeting.Targeting{
+		_, _err := s.TargetingRepo.Create(
+			ctx,
+			targetingmodel.Targeting{
 				Enabled: false,
 				FallthroughVariations: []flagset.Variation{
 					{
@@ -81,15 +80,15 @@ func (s *Service) createChildren(
 					},
 				},
 			},
-			targeting.RootArgs{
+			targetingmodel.RootArgs{
 				WorkspaceKey:   a.WorkspaceKey,
 				ProjectKey:     a.ProjectKey,
 				FlagKey:        i.Key,
 				EnvironmentKey: env.Key,
 			},
 		)
-		if !_err.IsEmpty() {
-			e.Extend(_err)
+		if _err != nil {
+			e.Append(cons.ErrorInternal, _e.Error())
 		}
 	}
 

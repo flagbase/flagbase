@@ -6,7 +6,8 @@ import (
 	flagrepo "core/internal/app/flag/repository"
 	segmentrulemodel "core/internal/app/segmentrule/model"
 	segmentrulerepo "core/internal/app/segmentrule/repository"
-	"core/internal/app/targeting"
+	targetingmodel "core/internal/app/targeting/model"
+	targetingrepo "core/internal/app/targeting/repository"
 	"core/internal/app/targetingrule"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -32,6 +33,7 @@ func Get(
 
 	fr := flagrepo.NewRepo(senv)
 	srr := segmentrulerepo.NewRepo(senv)
+	tr := targetingrepo.NewRepo(senv)
 
 	fl, _e := fr.List(context.Background(), flagmodel.ResourceArgs{
 		WorkspaceKey: a.WorkspaceKey,
@@ -42,24 +44,24 @@ func Get(
 	}
 
 	for _, f := range *fl {
-		t, err := targeting.Get(senv, atk, targeting.RootArgs{
+		t, err := tr.Get(ctx, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
 			EnvironmentKey: a.EnvironmentKey,
 		})
-		if !err.IsEmpty() {
-			e.Extend(err)
+		if err != nil {
+			e.Append(cons.ErrorInternal, err.Error())
 		}
 
-		tr, err := targetingrule.List(senv, atk, targetingrule.RootArgs{
+		tr, _err := targetingrule.List(senv, atk, targetingrule.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
 			EnvironmentKey: a.EnvironmentKey,
 		})
-		if !err.IsEmpty() {
-			e.Extend(err)
+		if !_err.IsEmpty() {
+			e.Extend(_err)
 		}
 
 		o[string(f.Key)] = &flagset.Flag{

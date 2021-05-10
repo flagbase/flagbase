@@ -3,6 +3,8 @@ package targeting
 import (
 	"context"
 	"core/internal/app/auth"
+	targetingmodel "core/internal/app/targeting/model"
+	targetingrepo "core/internal/app/targeting/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,31 +12,42 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv          *srvenv.Env
+	TargetingRepo *targetingrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:          senv,
+		TargetingRepo: targetingrepo.NewRepo(senv),
+	}
+}
+
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= user
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i Targeting,
-	a RootArgs,
-) (*Targeting, *res.Errors) {
+	i targetingmodel.Targeting,
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessUser); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.TargetingRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Targeting,
@@ -49,22 +62,21 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a RootArgs,
-) (*Targeting, *res.Errors) {
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.TargetingRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -78,25 +90,24 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a RootArgs,
-) (*Targeting, *res.Errors) {
-	var o Targeting
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, *res.Errors) {
+	var o targetingmodel.Targeting
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.TargetingRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -111,7 +122,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.TargetingRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -121,23 +132,22 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a RootArgs,
+	a targetingmodel.RootArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.TargetingRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Targeting,
@@ -147,7 +157,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.TargetingRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

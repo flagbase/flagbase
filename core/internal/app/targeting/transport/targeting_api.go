@@ -1,6 +1,8 @@
 package targeting
 
 import (
+	targetingmodel "core/internal/app/targeting/model"
+	targetingservice "core/internal/app/targeting/service"
 	"core/internal/app/targetingrule"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
@@ -13,8 +15,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
+type APIHandler struct {
+	Senv             *srvenv.Env
+	TargetingService *targetingservice.Service
+}
+
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv:             senv,
+		TargetingService: targetingservice.NewService(senv),
+	}
+}
+
 // ApplyRoutes segment route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := newAPIHandler(senv)
 	routes := r.Group(rsc.RouteTargeting)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -23,14 +39,14 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 		rsc.FlagKey,
 	)
 
-	routes.POST(rootPath, httputil.Handler(senv, createAPIHandler))
-	routes.GET(rootPath, httputil.Handler(senv, getAPIHandler))
-	routes.PATCH(rootPath, httputil.Handler(senv, updateAPIHandler))
-	routes.DELETE(rootPath, httputil.Handler(senv, deleteAPIHandler))
+	routes.POST(rootPath, h.createAPIHandler)
+	routes.GET(rootPath, h.getAPIHandler)
+	routes.PATCH(rootPath, h.updateAPIHandler)
+	routes.DELETE(rootPath, h.deleteAPIHandler)
 	targetingrule.ApplyRoutes(senv, routes)
 }
 
-func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -38,16 +54,15 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i Targeting
+	var i targetingmodel.Targeting
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(
-		senv,
+	r, _err := h.TargetingService.Create(
 		atk,
 		i,
-		RootArgs{
+		targetingmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -69,7 +84,7 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -77,10 +92,9 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		senv,
+	r, _err := h.TargetingService.Get(
 		atk,
-		RootArgs{
+		targetingmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -102,7 +116,7 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -115,11 +129,10 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Update(
-		senv,
+	r, _err := h.TargetingService.Update(
 		atk,
 		i,
-		RootArgs{
+		targetingmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -141,7 +154,7 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -149,10 +162,9 @@ func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := Delete(
-		senv,
+	if err := h.TargetingService.Delete(
 		atk,
-		RootArgs{
+		targetingmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),

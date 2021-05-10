@@ -1,20 +1,32 @@
-package targeting
+package repository
 
 import (
 	"context"
+	targetingmodel "core/internal/app/targeting/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 	"core/pkg/flagset"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-func createResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Targeting,
-	a RootArgs,
-) (*Targeting, error) {
-	var o Targeting
+	i targetingmodel.Targeting,
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, error) {
+	var o targetingmodel.Targeting
 	sqlStatement := `
 INSERT INTO
   targeting(
@@ -54,7 +66,7 @@ RETURNING
 	if err := dbutil.ParseError(
 		rsc.Targeting.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Enabled,
@@ -103,7 +115,7 @@ RETURNING
 		err = dbutil.ParseError(
 			rsc.FallthroughVariation.String(),
 			a,
-			senv.DB.QueryRow(
+			r.DB.QueryRow(
 				ctx,
 				sqlStatement,
 				f.Weight,
@@ -120,12 +132,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*Targeting, error) {
-	var o Targeting
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, error) {
+	var o targetingmodel.Targeting
 	sqlStatement := `
 SELECT
   t.id,
@@ -146,7 +157,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Targeting.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -184,7 +195,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND f.key = $4`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -209,18 +220,17 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Targeting,
-	a RootArgs,
-) (*Targeting, error) {
+	i targetingmodel.Targeting,
+	a targetingmodel.RootArgs,
+) (*targetingmodel.Targeting, error) {
 	sqlStatement := `
 UPDATE targeting
 SET
   enabled = $2
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -253,7 +263,7 @@ WHERE targeting_id = $1
       AND f.key = $5
       AND v.key = $6
   )`
-		if _, err := senv.DB.Exec(
+		if _, err := r.DB.Exec(
 			ctx,
 			sqlStatement,
 			i.ID.String(),
@@ -274,10 +284,9 @@ WHERE targeting_id = $1
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
+	a targetingmodel.RootArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM targeting_fallthrough_variation
@@ -297,7 +306,7 @@ WHERE targeting_id = (
     AND e.key = $3
     AND f.key = $4
 )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -330,7 +339,7 @@ WHERE id = (
     AND e.key = $3
     AND f.key = $4
 )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
