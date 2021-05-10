@@ -1,4 +1,4 @@
-package segmentrule
+package model
 
 import (
 	rsc "core/internal/pkg/resource"
@@ -13,21 +13,4 @@ type SegmentRule struct {
 	TraitValue string           `json:"traitValue"`
 	Operator   flagset.Operator `json:"operator"`
 	Negate     bool             `json:"negate"`
-}
-
-// RootArgs arguments for selecting root resource
-type RootArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-	SegmentKey     rsc.Key
-}
-
-// ResourceArgs arguments for selecting specific resource
-type ResourceArgs struct {
-	WorkspaceKey   rsc.Key
-	ProjectKey     rsc.Key
-	EnvironmentKey rsc.Key
-	SegmentKey     rsc.Key
-	SegmentRuleKey rsc.Key
 }

@@ -3,7 +3,7 @@ package segment
 import (
 	segmentmodel "core/internal/app/segment/model"
 	segmentservice "core/internal/app/segment/service"
-	"core/internal/app/segmentrule"
+	segmentruletransport "core/internal/app/segmentrule/transport"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -47,7 +47,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 	routes.GET(resourcePath, h.getAPIHandler)
 	routes.PATCH(resourcePath, h.updateAPIHandler)
 	routes.DELETE(resourcePath, h.deleteAPIHandler)
-	segmentrule.ApplyRoutes(senv, routes)
+	segmentruletransport.ApplyRoutes(senv, routes)
 }
 
 func (h *APIHandler) listAPIHandler(ctx *gin.Context) {

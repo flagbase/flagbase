@@ -1,6 +1,8 @@
-package segmentrule
+package transport
 
 import (
+	segmentrulemodel "core/internal/app/segmentrule/model"
+	segmentruleservice "core/internal/app/segmentrule/service"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -12,8 +14,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
+type APIHandler struct {
+	Senv               *srvenv.Env
+	SegmentRuleService *segmentruleservice.Service
+}
+
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv:               senv,
+		SegmentRuleService: segmentruleservice.NewService(senv),
+	}
+}
+
 // ApplyRoutes segment route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := newAPIHandler(senv)
 	routes := r.Group("/")
 	rootPath := httputil.AppendPath(
 		httputil.AppendRoute(
@@ -31,14 +47,14 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 		rsc.RuleKey,
 	)
 
-	routes.GET(rootPath, httputil.Handler(senv, listAPIHandler))
-	routes.POST(rootPath, httputil.Handler(senv, createAPIHandler))
-	routes.GET(resourcePath, httputil.Handler(senv, getAPIHandler))
-	routes.PATCH(resourcePath, httputil.Handler(senv, updateAPIHandler))
-	routes.DELETE(resourcePath, httputil.Handler(senv, deleteAPIHandler))
+	routes.GET(rootPath, h.listAPIHandler)
+	routes.POST(rootPath, h.createAPIHandler)
+	routes.GET(resourcePath, h.getAPIHandler)
+	routes.PATCH(resourcePath, h.updateAPIHandler)
+	routes.DELETE(resourcePath, h.deleteAPIHandler)
 }
 
-func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -46,10 +62,9 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := List(
-		senv,
+	r, _err := h.SegmentRuleService.List(
 		atk,
-		RootArgs{
+		segmentrulemodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -71,7 +86,7 @@ func listAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -79,16 +94,15 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i SegmentRule
+	var i segmentrulemodel.SegmentRule
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Create(
-		senv,
+	r, _err := h.SegmentRuleService.Create(
 		atk,
 		i,
-		RootArgs{
+		segmentrulemodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -110,7 +124,7 @@ func createAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -118,10 +132,9 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		senv,
+	r, _err := h.SegmentRuleService.Get(
 		atk,
-		ResourceArgs{
+		segmentrulemodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -144,7 +157,7 @@ func getAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 	var i patch.Patch
 
@@ -157,11 +170,10 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Update(
-		senv,
+	r, _err := h.SegmentRuleService.Update(
 		atk,
 		i,
-		ResourceArgs{
+		segmentrulemodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -184,7 +196,7 @@ func updateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -192,10 +204,9 @@ func deleteAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	if err := Delete(
-		senv,
+	if err := h.SegmentRuleService.Delete(
 		atk,
-		ResourceArgs{
+		segmentrulemodel.ResourceArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),

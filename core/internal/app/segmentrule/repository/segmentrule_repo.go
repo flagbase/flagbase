@@ -1,18 +1,30 @@
-package segmentrule
+package repository
 
 import (
 	"context"
+	segmentrulemodel "core/internal/app/segmentrule/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]SegmentRule, error) {
-	var o []SegmentRule
+	a segmentrulemodel.RootArgs,
+) (*[]segmentrulemodel.SegmentRule, error) {
+	var o []segmentrulemodel.SegmentRule
 	sqlStatement := `
 SELECT
   sr.id,
@@ -34,7 +46,7 @@ WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3
   AND s.key = $4`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -46,7 +58,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o SegmentRule
+		var _o segmentrulemodel.SegmentRule
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -62,13 +74,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i SegmentRule,
-	a RootArgs,
-) (*SegmentRule, error) {
-	var o SegmentRule
+	i segmentrulemodel.SegmentRule,
+	a segmentrulemodel.RootArgs,
+) (*segmentrulemodel.SegmentRule, error) {
+	var o segmentrulemodel.SegmentRule
 	sqlStatement := `
 INSERT INTO
   segment_rule(
@@ -119,14 +130,14 @@ RETURNING
   negate;`
 	err := dbutil.ParseError(
 		rsc.SegmentRule.String(),
-		ResourceArgs{
+		segmentrulemodel.ResourceArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,
 			SegmentKey:     a.SegmentKey,
 			SegmentRuleKey: i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -150,12 +161,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*SegmentRule, error) {
-	var o SegmentRule
+	a segmentrulemodel.ResourceArgs,
+) (*segmentrulemodel.SegmentRule, error) {
+	var o segmentrulemodel.SegmentRule
 	sqlStatement := `
 SELECT
   sr.id,
@@ -181,7 +191,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.SegmentRule.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -201,12 +211,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i SegmentRule,
-	a ResourceArgs,
-) (*SegmentRule, error) {
+	i segmentrulemodel.SegmentRule,
+	a segmentrulemodel.ResourceArgs,
+) (*segmentrulemodel.SegmentRule, error) {
 	sqlStatement := `
 UPDATE segment_rule
 SET
@@ -216,7 +225,7 @@ SET
   operator = $5,
   negate = $6
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -235,10 +244,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a segmentrulemodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM segment_rule
@@ -265,7 +273,7 @@ WHERE key = $5
       AND p.key = $2
       AND e.key = $3
   )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

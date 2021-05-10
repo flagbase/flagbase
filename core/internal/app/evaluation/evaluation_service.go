@@ -4,7 +4,8 @@ import (
 	"context"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
-	"core/internal/app/segmentrule"
+	segmentrulemodel "core/internal/app/segmentrule/model"
+	segmentrulerepo "core/internal/app/segmentrule/repository"
 	"core/internal/app/targeting"
 	"core/internal/app/targetingrule"
 	cons "core/internal/pkg/constants"
@@ -24,12 +25,13 @@ func Get(
 	a RootArgs,
 ) (*flagset.Flagset, *res.Errors) {
 	var e res.Errors
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	o := make(flagset.Flagset)
 
-	fr := flagrepo.Repo{
-		DB: senv.DB,
-	}
+	fr := flagrepo.NewRepo(senv)
+	srr := segmentrulerepo.NewRepo(senv)
 
 	fl, _e := fr.List(context.Background(), flagmodel.ResourceArgs{
 		WorkspaceKey: a.WorkspaceKey,
@@ -81,14 +83,14 @@ func Get(
 				})
 			case string(rsc.Segment):
 				if string(_tr.SegmentKey) != "" {
-					sr, err := segmentrule.List(senv, atk, segmentrule.RootArgs{
+					sr, err := srr.List(ctx, segmentrulemodel.RootArgs{
 						WorkspaceKey:   a.WorkspaceKey,
 						ProjectKey:     a.ProjectKey,
 						EnvironmentKey: a.EnvironmentKey,
 						SegmentKey:     _tr.SegmentKey,
 					})
-					if !err.IsEmpty() {
-						e.Extend(err)
+					if err != nil {
+						e.Append(cons.ErrorInternal, err.Error())
 					}
 
 					for _, _sr := range *sr {
