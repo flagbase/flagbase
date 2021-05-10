@@ -1,20 +1,31 @@
-package project
+package repository
 
 import (
 	"context"
+	projectmodel "core/internal/app/project/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Project, error) {
-	var o []Project
+	a projectmodel.RootArgs,
+) (*[]projectmodel.Project, error) {
+	var o []projectmodel.Project
 	sqlStatement := `
 SELECT
   p.id,
@@ -26,7 +37,7 @@ FROM project p
 LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -35,7 +46,7 @@ WHERE w.key = $1`
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Project
+		var _o projectmodel.Project
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -50,13 +61,12 @@ WHERE w.key = $1`
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Project,
-	a RootArgs,
-) (*Project, error) {
-	var o Project
+	i projectmodel.Project,
+	a projectmodel.RootArgs,
+) (*projectmodel.Project, error) {
+	var o projectmodel.Project
 	sqlStatement := `
 INSERT INTO
   project(
@@ -86,11 +96,11 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Project.String(),
-		ResourceArgs{
+		projectmodel.ResourceArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -109,12 +119,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Project, error) {
-	var o Project
+	a projectmodel.ResourceArgs,
+) (*projectmodel.Project, error) {
+	var o projectmodel.Project
 	sqlStatement := `
 SELECT
   p.id,
@@ -130,7 +139,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Project.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -146,12 +155,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Project,
-	a ResourceArgs,
-) (*Project, error) {
+	i projectmodel.Project,
+	a projectmodel.ResourceArgs,
+) (*projectmodel.Project, error) {
 	sqlStatement := `
 UPDATE project
 SET
@@ -160,7 +168,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -178,10 +186,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a projectmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM project
@@ -191,7 +198,7 @@ WHERE key = $2
     FROM workspace
     WHERE key = $1
   )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

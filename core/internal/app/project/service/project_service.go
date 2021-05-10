@@ -1,8 +1,10 @@
-package project
+package service
 
 import (
 	"context"
 	"core/internal/app/auth"
+	projectmodel "core/internal/app/project/model"
+	projectrepo "core/internal/app/project/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -10,23 +12,34 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv        *srvenv.Env
+	ProjectRepo *projectrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:        senv,
+		ProjectRepo: projectrepo.NewRepo(senv),
+	}
+}
+
 // List returns a list of resource instances
 // (*) atk: access_type <= service
-func List(
-	senv *srvenv.Env,
+func (s *Service) List(
 	atk rsc.Token,
-	a RootArgs,
-) (*[]Project, *res.Errors) {
+	a projectmodel.RootArgs,
+) (*[]projectmodel.Project, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessService); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessService); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := listResource(ctx, senv, a)
+	r, err := s.ProjectRepo.List(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
@@ -36,22 +49,21 @@ func List(
 
 // Create creates a new resource instance given the resource instance
 // (*) atk: access_type <= admin
-func Create(
-	senv *srvenv.Env,
+func (s *Service) Create(
 	atk rsc.Token,
-	i Project,
-	a RootArgs,
-) (*Project, *res.Errors) {
+	i projectmodel.Project,
+	a projectmodel.RootArgs,
+) (*projectmodel.Project, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(senv, atk, rsc.AccessAdmin); err != nil {
+	if err := auth.Authorize(s.Senv, atk, rsc.AccessAdmin); err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
-	r, err := createResource(ctx, senv, i, a)
+	r, err := s.ProjectRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}
@@ -59,7 +71,7 @@ func Create(
 	// add policy for requesting user, after resource creation
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
-			senv,
+			s.Senv,
 			atk,
 			r.ID,
 			rsc.Project,
@@ -74,22 +86,21 @@ func Create(
 
 // Get gets a resource instance given an atk & key
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a ResourceArgs,
-) (*Project, *res.Errors) {
+	a projectmodel.ResourceArgs,
+) (*projectmodel.Project, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.ProjectRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Project,
@@ -103,25 +114,24 @@ func Get(
 
 // Update updates resource instance given an atk, key & patch object
 // (*) atk: access_type <= user
-func Update(
-	senv *srvenv.Env,
+func (s *Service) Update(
 	atk rsc.Token,
 	patchDoc patch.Patch,
-	a ResourceArgs,
-) (*Project, *res.Errors) {
-	var o Project
+	a projectmodel.ResourceArgs,
+) (*projectmodel.Project, *res.Errors) {
+	var o projectmodel.Project
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.ProjectRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Project,
@@ -136,7 +146,7 @@ func Update(
 		cancel()
 	}
 
-	r, err = updateResource(ctx, senv, o, a)
+	r, err = s.ProjectRepo.Update(ctx, o, a)
 	if err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -146,23 +156,22 @@ func Update(
 
 // Delete deletes a resource instance given an atk & key
 // (*) atk: access_type <= admin
-func Delete(
-	senv *srvenv.Env,
+func (s *Service) Delete(
 	atk rsc.Token,
-	a ResourceArgs,
+	a projectmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, a)
+	r, err := s.ProjectRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
 	if err := auth.Enforce(
-		senv,
+		s.Senv,
 		atk,
 		r.ID,
 		rsc.Project,
@@ -172,7 +181,7 @@ func Delete(
 		cancel()
 	}
 
-	if err := deleteResource(ctx, senv, a); err != nil {
+	if err := s.ProjectRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 

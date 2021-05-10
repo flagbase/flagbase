@@ -6,7 +6,7 @@ import (
 	flagtransport "core/internal/app/flag/transport"
 	"core/internal/app/healthcheck"
 	"core/internal/app/identity"
-	"core/internal/app/project"
+	projecttransport "core/internal/app/project/transport"
 	"core/internal/app/segment"
 	"core/internal/app/targeting"
 	traittransport "core/internal/app/trait/transport"
@@ -26,7 +26,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	evaluation.ApplyRoutes(senv, root)
 	healthcheck.ApplyRoutes(senv, root)
 	identity.ApplyRoutes(senv, root)
-	project.ApplyRoutes(senv, root)
+	projecttransport.ApplyRoutes(senv, root)
 	targeting.ApplyRoutes(senv, root)
 	traittransport.ApplyRoutes(senv, root)
 	segment.ApplyRoutes(senv, root)
