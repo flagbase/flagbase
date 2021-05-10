@@ -1,20 +1,31 @@
-package segment
+package repository
 
 import (
 	"context"
+	segmentmodel "core/internal/app/segment/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Segment, error) {
-	var o []Segment
+	a segmentmodel.RootArgs,
+) (*[]segmentmodel.Segment, error) {
+	var o []segmentmodel.Segment
 	sqlStatement := `
 SELECT
   s.id,
@@ -29,7 +40,7 @@ LEFT JOIN workspace w
   ON w.id = p.workspace_id
 WHERE w.key = $1
   AND p.key = $2`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -39,7 +50,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Segment
+		var _o segmentmodel.Segment
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -54,13 +65,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Segment,
-	a RootArgs,
-) (*Segment, error) {
-	var o Segment
+	i segmentmodel.Segment,
+	a segmentmodel.RootArgs,
+) (*segmentmodel.Segment, error) {
+	var o segmentmodel.Segment
 	sqlStatement := `
 INSERT INTO
   segment(
@@ -93,12 +103,12 @@ RETURNING
   tags;`
 	err := dbutil.ParseError(
 		rsc.Segment.String(),
-		ResourceArgs{
+		segmentmodel.ResourceArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
 			SegmentKey:   i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -118,12 +128,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Segment, error) {
-	var o Segment
+	a segmentmodel.ResourceArgs,
+) (*segmentmodel.Segment, error) {
+	var o segmentmodel.Segment
 	sqlStatement := `
 SELECT
   s.id,
@@ -142,7 +151,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Segment.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -159,12 +168,11 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Segment,
-	a ResourceArgs,
-) (*Segment, error) {
+	i segmentmodel.Segment,
+	a segmentmodel.ResourceArgs,
+) (*segmentmodel.Segment, error) {
 	sqlStatement := `
 UPDATE segment
 SET
@@ -173,7 +181,7 @@ SET
   description = $4,
   tags = $5
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -191,10 +199,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a segmentmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM segment
@@ -207,7 +214,7 @@ WHERE key = $3
     WHERE w.key = $1
       AND p.key = $2
   )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,

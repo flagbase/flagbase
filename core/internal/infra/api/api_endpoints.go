@@ -7,7 +7,7 @@ import (
 	"core/internal/app/healthcheck"
 	identitytransport "core/internal/app/identity/transport"
 	projecttransport "core/internal/app/project/transport"
-	"core/internal/app/segment"
+	segmenttransport "core/internal/app/segment/transport"
 	"core/internal/app/targeting"
 	traittransport "core/internal/app/trait/transport"
 	workspacetransport "core/internal/app/workspace/transport"
@@ -29,6 +29,6 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	projecttransport.ApplyRoutes(senv, root)
 	targeting.ApplyRoutes(senv, root)
 	traittransport.ApplyRoutes(senv, root)
-	segment.ApplyRoutes(senv, root)
+	segmenttransport.ApplyRoutes(senv, root)
 	workspacetransport.ApplyRoutes(senv, root)
 }
