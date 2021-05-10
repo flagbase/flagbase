@@ -1,18 +1,30 @@
-package trait
+package repo
 
 import (
 	"context"
+	traitmodel "core/internal/app/trait/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
+
+	"github.com/jackc/pgx/v4/pgxpool"
 )
 
-func listResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) List(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a RootArgs,
-) (*[]Trait, error) {
-	var o []Trait
+	a traitmodel.RootArgs,
+) (*[]traitmodel.Trait, error) {
+	var o []traitmodel.Trait
 	sqlStatement := `
 SELECT
   t.id,
@@ -28,7 +40,7 @@ LEFT JOIN workspace w
 WHERE w.key = $1
   AND p.key = $2
   AND e.key = $3`
-	rows, err := senv.DB.Query(
+	rows, err := r.DB.Query(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
@@ -39,7 +51,7 @@ WHERE w.key = $1
 		return nil, err
 	}
 	for rows.Next() {
-		var _o Trait
+		var _o traitmodel.Trait
 		if err = rows.Scan(
 			&_o.ID,
 			&_o.Key,
@@ -52,13 +64,12 @@ WHERE w.key = $1
 	return &o, nil
 }
 
-func createResource(
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Trait,
-	a RootArgs,
-) (*Trait, error) {
-	var o Trait
+	i traitmodel.Trait,
+	a traitmodel.RootArgs,
+) (*traitmodel.Trait, error) {
+	var o traitmodel.Trait
 	sqlStatement := `
 INSERT INTO
   trait(
@@ -88,13 +99,13 @@ RETURNING
   is_identifier;`
 	err := dbutil.ParseError(
 		rsc.Trait.String(),
-		ResourceArgs{
+		traitmodel.ResourceArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,
 			TraitKey:       i.Key,
 		},
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -111,12 +122,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
-) (*Trait, error) {
-	var o Trait
+	a traitmodel.ResourceArgs,
+) (*traitmodel.Trait, error) {
+	var o traitmodel.Trait
 	sqlStatement := `
 SELECT
   t.id,
@@ -136,7 +146,7 @@ WHERE w.key = $1
 	err := dbutil.ParseError(
 		rsc.Trait.String(),
 		a,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			a.WorkspaceKey,
@@ -152,19 +162,18 @@ WHERE w.key = $1
 	return &o, err
 }
 
-func updateResource(
+func (r *Repo) Update(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Trait,
-	a ResourceArgs,
-) (*Trait, error) {
+	i traitmodel.Trait,
+	a traitmodel.ResourceArgs,
+) (*traitmodel.Trait, error) {
 	sqlStatement := `
 UPDATE trait
 SET
   key = $2,
   is_identifier = $3
 WHERE id = $1`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		i.ID.String(),
@@ -180,10 +189,9 @@ WHERE id = $1`
 	return &i, nil
 }
 
-func deleteResource(
+func (r *Repo) Delete(
 	ctx context.Context,
-	senv *srvenv.Env,
-	a ResourceArgs,
+	a traitmodel.ResourceArgs,
 ) error {
 	sqlStatement := `
 DELETE FROM trait
@@ -199,7 +207,7 @@ WHERE key = $4
       AND p.key = $2
       AND e.key = $3
     )`
-	if _, err := senv.DB.Exec(
+	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
 		a.WorkspaceKey,
