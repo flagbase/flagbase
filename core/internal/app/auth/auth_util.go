@@ -1,15 +1,15 @@
 package auth
 
 import (
-	"core/internal/app/access"
+	accessmodel "core/internal/app/access/model"
 	"core/internal/pkg/jwt"
 	rsc "core/internal/pkg/resource"
 	"encoding/json"
 )
 
 // getAccessFromToken retrieves access from access token (atk)
-func getAccessFromToken(atk rsc.Token) (*access.Access, error) {
-	var a access.Access
+func getAccessFromToken(atk rsc.Token) (*accessmodel.Access, error) {
+	var a accessmodel.Access
 
 	ma, err := jwt.Verify(atk)
 	if err != nil {

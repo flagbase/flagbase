@@ -1,4 +1,4 @@
-package access
+package model
 
 import rsc "core/internal/pkg/resource"
 

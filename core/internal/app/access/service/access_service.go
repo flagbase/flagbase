@@ -1,7 +1,9 @@
-package access
+package service
 
 import (
 	"context"
+	accessmodel "core/internal/app/access/model"
+	accessrepo "core/internal/app/access/repository"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/jwt"
 	"core/internal/pkg/srvenv"
@@ -10,16 +12,28 @@ import (
 	"encoding/json"
 )
 
+type Service struct {
+	Senv       *srvenv.Env
+	AccessRepo *accessrepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:       senv,
+		AccessRepo: accessrepo.NewRepo(senv),
+	}
+}
+
 // GenerateToken generate an access token via an access pair
-func GenerateToken(senv *srvenv.Env, i KeySecretPair) (
-	*Token,
+func (s *Service) GenerateToken(i accessmodel.KeySecretPair) (
+	*accessmodel.Token,
 	*res.Errors,
 ) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := getResource(ctx, senv, KeySecretPair{Key: i.Key, Secret: "******"})
+	r, err := s.AccessRepo.Get(ctx, accessmodel.KeySecretPair{Key: i.Key, Secret: "******"})
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -42,15 +56,15 @@ func GenerateToken(senv *srvenv.Env, i KeySecretPair) (
 	// hide secret
 	r.Secret = "**************"
 
-	return &Token{
+	return &accessmodel.Token{
 		Token:  atk,
 		Access: r,
 	}, &e
 }
 
 // Create creates new access resource.
-func Create(senv *srvenv.Env, i Access) (
-	*Access,
+func (s *Service) Create(senv *srvenv.Env, i accessmodel.Access) (
+	*accessmodel.Access,
 	*res.Errors,
 ) {
 	var e res.Errors
@@ -66,7 +80,7 @@ func Create(senv *srvenv.Env, i Access) (
 	originalSecret := i.Secret
 	i.Secret = encryptedSecret
 
-	r, err := createResource(ctx, senv, i)
+	r, err := s.AccessRepo.Create(ctx, i)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
 	}

@@ -2,7 +2,8 @@ package manage
 
 import (
 	"context"
-	"core/internal/app/access"
+	accessmodel "core/internal/app/access/model"
+	accessservice "core/internal/app/access/service"
 	srv "core/internal/infra/server"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
@@ -76,7 +77,9 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		}
 		defer srv.Cleanup(senv)
 
-		if _, err := access.Create(senv, access.Access{
+		aservice := accessservice.NewService(senv)
+
+		if _, err := aservice.Create(senv, accessmodel.Access{
 			Key:       rsc.Key(ctx.String(KeyFlag)),
 			Secret:    ctx.String(SecretFlag),
 			Type:      ctx.String(TypeFlag),

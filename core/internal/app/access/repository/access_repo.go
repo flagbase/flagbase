@@ -1,20 +1,31 @@
-package access
+package repository
 
 import (
 	"context"
+	accessmodel "core/internal/app/access/model"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
 
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/lib/pq"
 )
 
-func createResource(
+type Repo struct {
+	DB *pgxpool.Pool
+}
+
+func NewRepo(senv *srvenv.Env) *Repo {
+	return &Repo{
+		DB: senv.DB,
+	}
+}
+
+func (r *Repo) Create(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i Access,
-) (*Access, error) {
-	var o Access
+	i accessmodel.Access,
+) (*accessmodel.Access, error) {
+	var o accessmodel.Access
 	sqlStatement := `
 INSERT INTO
   access(
@@ -47,7 +58,7 @@ RETURNING
 	err := dbutil.ParseError(
 		rsc.Access.String(),
 		i,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
@@ -69,12 +80,11 @@ RETURNING
 	return &o, err
 }
 
-func getResource(
+func (r *Repo) Get(
 	ctx context.Context,
-	senv *srvenv.Env,
-	i KeySecretPair,
-) (*Access, error) {
-	var o Access
+	i accessmodel.KeySecretPair,
+) (*accessmodel.Access, error) {
+	var o accessmodel.Access
 	sqlStatement := `
 SELECT
   id,
@@ -93,7 +103,7 @@ WHERE
 	err := dbutil.ParseError(
 		rsc.Access.String(),
 		i,
-		senv.DB.QueryRow(
+		r.DB.QueryRow(
 			ctx,
 			sqlStatement,
 			i.Key,
