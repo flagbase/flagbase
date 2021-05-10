@@ -1,7 +1,8 @@
 package poller
 
 import (
-	"core/internal/app/evaluation"
+	evaluationmodel "core/internal/app/evaluation/model"
+	evaluationservice "core/internal/app/evaluation/service"
 	sdkkeyservice "core/internal/app/sdkkey/service"
 	cons "core/internal/pkg/constants"
 	"core/pkg/evaluator"
@@ -19,6 +20,7 @@ func getAndSetCache(args CachedServiceArgs) (
 	var e res.Errors
 	var o *flagset.Flagset
 
+	evalservice := evaluationservice.NewService(args.Senv)
 	sks := sdkkeyservice.NewService(args.Senv)
 
 	a, _err := sks.GetRootArgsFromServerKey(
@@ -28,10 +30,9 @@ func getAndSetCache(args CachedServiceArgs) (
 		e.Append(cons.ErrorInternal, _err.Error())
 	}
 
-	r, err := evaluation.Get(
-		args.Senv,
+	r, err := evalservice.Get(
 		args.Atk,
-		evaluation.RootArgs{
+		evaluationmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,
@@ -69,6 +70,7 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 	var e res.Errors
 	var o *evaluator.Evaluations
 
+	evalservice := evaluationservice.NewService(args.Senv)
 	sks := sdkkeyservice.NewService(args.Senv)
 
 	a, _err := sks.GetRootArgsFromSDKKey(
@@ -78,11 +80,10 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 		e.Append(cons.ErrorInternal, _err.Error())
 	}
 
-	r, err := evaluation.Evaluate(
-		args.Senv,
+	r, err := evalservice.Evaluate(
 		args.Atk,
 		args.Ectx,
-		evaluation.RootArgs{
+		evaluationmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			EnvironmentKey: a.EnvironmentKey,

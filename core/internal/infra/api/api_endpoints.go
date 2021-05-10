@@ -2,7 +2,7 @@ package api
 
 import (
 	"core/internal/app/access"
-	"core/internal/app/evaluation"
+	evaluationtransport "core/internal/app/evaluation/transport"
 	flagtransport "core/internal/app/flag/transport"
 	"core/internal/app/healthcheck"
 	identitytransport "core/internal/app/identity/transport"
@@ -23,7 +23,7 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
 	root := r.Group("/")
 	access.ApplyRoutes(senv, root)
 	flagtransport.ApplyRoutes(senv, root)
-	evaluation.ApplyRoutes(senv, root)
+	evaluationtransport.ApplyRoutes(senv, root)
 	healthcheck.ApplyRoutes(senv, root)
 	identitytransport.ApplyRoutes(senv, root)
 	projecttransport.ApplyRoutes(senv, root)

@@ -1,6 +1,8 @@
-package evaluation
+package transport
 
 import (
+	evaluationmodel "core/internal/app/evaluation/model"
+	evaluationservice "core/internal/app/evaluation/service"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
@@ -12,8 +14,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// APIHandler API handler context
+type APIHandler struct {
+	Senv              *srvenv.Env
+	EvaluationService *evaluationservice.Service
+}
+
+func newAPIHandler(senv *srvenv.Env) *APIHandler {
+	return &APIHandler{
+		Senv:              senv,
+		EvaluationService: evaluationservice.NewService(senv),
+	}
+}
+
 // ApplyRoutes flag route handlers
 func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
+	h := newAPIHandler(senv)
 	routes := r.Group(rsc.RouteEvaluation)
 	rootPath := httputil.BuildPath(
 		rsc.WorkspaceKey,
@@ -21,11 +37,11 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 		rsc.EnvironmentKey,
 	)
 
-	routes.GET(rootPath, httputil.Handler(senv, getEvaluationAPIHandler))
-	routes.POST(rootPath, httputil.Handler(senv, evaluateAPIHandler))
+	routes.GET(rootPath, h.getEvaluationAPIHandler)
+	routes.POST(rootPath, h.evaluateAPIHandler)
 }
 
-func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) getEvaluationAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -33,10 +49,9 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	r, _err := Get(
-		senv,
+	r, _err := h.EvaluationService.Get(
 		atk,
-		RootArgs{
+		evaluationmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),
@@ -57,7 +72,7 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	)
 }
 
-func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
+func (h *APIHandler) evaluateAPIHandler(ctx *gin.Context) {
 	var e res.Errors
 
 	atk, err := httputil.ExtractATK(ctx)
@@ -70,11 +85,10 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
 
-	r, _err := Evaluate(
-		senv,
+	r, _err := h.EvaluationService.Evaluate(
 		atk,
 		i,
-		RootArgs{
+		evaluationmodel.RootArgs{
 			WorkspaceKey:   httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:     httputil.GetParam(ctx, rsc.ProjectKey),
 			EnvironmentKey: httputil.GetParam(ctx, rsc.EnvironmentKey),

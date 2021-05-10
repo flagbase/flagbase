@@ -1,9 +1,11 @@
-package evaluation
+package service
 
 import (
 	"context"
+	evaluationmodel "core/internal/app/evaluation/model"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
+	segmentrepo "core/internal/app/segment/repository"
 	segmentrulemodel "core/internal/app/segmentrule/model"
 	segmentrulerepo "core/internal/app/segmentrule/repository"
 	targetingmodel "core/internal/app/targeting/model"
@@ -19,12 +21,31 @@ import (
 	res "core/pkg/response"
 )
 
+type Service struct {
+	Senv              *srvenv.Env
+	FlagRepo          *flagrepo.Repo
+	SegmentRepo       *segmentrepo.Repo
+	SegmentRuleRepo   *segmentrulerepo.Repo
+	TargetingRepo     *targetingrepo.Repo
+	TargetingRuleRepo *targetingrulerepo.Repo
+}
+
+func NewService(senv *srvenv.Env) *Service {
+	return &Service{
+		Senv:              senv,
+		FlagRepo:          flagrepo.NewRepo(senv),
+		SegmentRepo:       segmentrepo.NewRepo(senv),
+		SegmentRuleRepo:   segmentrulerepo.NewRepo(senv),
+		TargetingRepo:     targetingrepo.NewRepo(senv),
+		TargetingRuleRepo: targetingrulerepo.NewRepo(senv),
+	}
+}
+
 // Get returns a set raw (non-evaluated) flagsets
 // (*) atk: access_type <= service
-func Get(
-	senv *srvenv.Env,
+func (s *Service) Get(
 	atk rsc.Token,
-	a RootArgs,
+	a evaluationmodel.RootArgs,
 ) (*flagset.Flagset, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -32,12 +53,7 @@ func Get(
 
 	o := make(flagset.Flagset)
 
-	frepo := flagrepo.NewRepo(senv)
-	srrepo := segmentrulerepo.NewRepo(senv)
-	trepo := targetingrepo.NewRepo(senv)
-	trrepo := targetingrulerepo.NewRepo(senv)
-
-	fl, _e := frepo.List(context.Background(), flagmodel.ResourceArgs{
+	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.ResourceArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
@@ -46,7 +62,7 @@ func Get(
 	}
 
 	for _, f := range *fl {
-		t, err := trepo.Get(ctx, targetingmodel.RootArgs{
+		t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
@@ -56,7 +72,7 @@ func Get(
 			e.Append(cons.ErrorInternal, err.Error())
 		}
 
-		tr, _err := trrepo.List(ctx, targetingrulemodel.RootArgs{
+		tr, _err := s.TargetingRuleRepo.List(ctx, targetingrulemodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
 			FlagKey:        f.Key,
@@ -87,7 +103,7 @@ func Get(
 				})
 			case string(rsc.Segment):
 				if string(_tr.SegmentKey) != "" {
-					sr, err := srrepo.List(ctx, segmentrulemodel.RootArgs{
+					sr, err := s.SegmentRuleRepo.List(ctx, segmentrulemodel.RootArgs{
 						WorkspaceKey:   a.WorkspaceKey,
 						ProjectKey:     a.ProjectKey,
 						EnvironmentKey: a.EnvironmentKey,
@@ -118,15 +134,14 @@ func Get(
 
 // Evaluate returns an evaluated flagset given the user context
 // (*) atk: access_type <= service
-func Evaluate(
-	senv *srvenv.Env,
+func (s *Service) Evaluate(
 	atk rsc.Token,
 	ectx evaluator.Context,
-	a RootArgs,
+	a evaluationmodel.RootArgs,
 ) (*evaluator.Evaluations, *res.Errors) {
 	var e res.Errors
 
-	r, err := Get(senv, atk, a)
+	r, err := s.Get(atk, a)
 	if !err.IsEmpty() {
 		e.Extend(err)
 	}
