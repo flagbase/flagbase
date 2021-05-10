@@ -3,8 +3,10 @@ package service
 import (
 	"context"
 	"core/internal/app/auth"
+	environmentrepo "core/internal/app/environment/repository"
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
+	variationrepo "core/internal/app/variation/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -13,14 +15,18 @@ import (
 )
 
 type Service struct {
-	Senv     *srvenv.Env
-	FlagRepo *flagrepo.Repo
+	Senv            *srvenv.Env
+	FlagRepo        *flagrepo.Repo
+	EnvironmentRepo *environmentrepo.Repo
+	VariationRepo   *variationrepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
 	return &Service{
-		Senv:     senv,
-		FlagRepo: flagrepo.NewRepo(senv),
+		Senv:            senv,
+		FlagRepo:        flagrepo.NewRepo(senv),
+		EnvironmentRepo: environmentrepo.NewRepo(senv),
+		VariationRepo:   variationrepo.NewRepo(senv),
 	}
 }
 
