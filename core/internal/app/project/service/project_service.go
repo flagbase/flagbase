@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	projectmodel "core/internal/app/project/model"
 	projectrepo "core/internal/app/project/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

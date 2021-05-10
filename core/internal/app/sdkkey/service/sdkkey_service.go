@@ -2,9 +2,9 @@ package sdkkey
 
 import (
 	"context"
-	"core/internal/app/auth"
 	sdkkeymodel "core/internal/app/sdkkey/model"
 	sdkkeyrepo "core/internal/app/sdkkey/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

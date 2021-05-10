@@ -2,9 +2,9 @@ package targeting
 
 import (
 	"context"
-	"core/internal/app/auth"
 	targetingmodel "core/internal/app/targeting/model"
 	targetingrepo "core/internal/app/targeting/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

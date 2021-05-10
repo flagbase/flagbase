@@ -2,10 +2,10 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	environmentmodel "core/internal/app/environment/model"
 	environmentrepo "core/internal/app/environment/repository"
 	sdkkeyrepo "core/internal/app/sdkkey/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

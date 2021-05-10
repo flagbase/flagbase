@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	workspacemodel "core/internal/app/workspace/model"
 	workspacerepo "core/internal/app/workspace/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

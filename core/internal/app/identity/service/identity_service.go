@@ -2,9 +2,9 @@ package identity
 
 import (
 	"context"
-	"core/internal/app/auth"
 	identitymodel "core/internal/app/identity/model"
 	identityrepo "core/internal/app/identity/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

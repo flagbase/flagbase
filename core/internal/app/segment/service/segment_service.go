@@ -2,9 +2,9 @@ package segment
 
 import (
 	"context"
-	"core/internal/app/auth"
 	segmentmodel "core/internal/app/segment/model"
 	segmentrepo "core/internal/app/segment/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

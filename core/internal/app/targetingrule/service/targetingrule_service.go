@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	targetingrulemodel "core/internal/app/targetingrule/model"
 	targetingrulerepo "core/internal/app/targetingrule/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

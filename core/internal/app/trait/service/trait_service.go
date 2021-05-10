@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	traitmodel "core/internal/app/trait/model"
 	traitrepo "core/internal/app/trait/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"

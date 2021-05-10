@@ -2,9 +2,9 @@ package service
 
 import (
 	"context"
-	"core/internal/app/auth"
 	segmentrulemodel "core/internal/app/segmentrule/model"
 	segmentrulerepo "core/internal/app/segmentrule/repository"
+	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
