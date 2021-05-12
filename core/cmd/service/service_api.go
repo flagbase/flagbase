@@ -1,10 +1,9 @@
 package service
 
 import (
-	"core/internal/pkg/api"
+	"core/internal/infra/api"
 	"core/internal/pkg/cmdutil"
-
-	srv "core/internal/pkg/server"
+	"core/internal/pkg/srvenv"
 )
 
 // APIConfig API service configuration
@@ -19,8 +18,8 @@ type APIConfig struct {
 }
 
 // StartAPI start API
-func StartAPI(sctx *srv.Ctx, cfg APIConfig) {
-	sctx.Log.Info().Str(
+func StartAPI(senv *srvenv.Env, cfg APIConfig) {
+	senv.Log.Info().Str(
 		HostFlag, cfg.Host,
 	).Bool(
 		cmdutil.VerboseFlag, cfg.Verbose,
@@ -28,7 +27,7 @@ func StartAPI(sctx *srv.Ctx, cfg APIConfig) {
 		APIPortFlag, cfg.APIPort,
 	).Msg("Starting API Service")
 
-	api.New(sctx, api.Config{
+	api.New(senv, api.Config{
 		Host:    cfg.Host,
 		APIPort: cfg.APIPort,
 		Verbose: cfg.Verbose,

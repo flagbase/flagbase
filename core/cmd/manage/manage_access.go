@@ -2,11 +2,12 @@ package manage
 
 import (
 	"context"
-	"core/internal/app/access"
+	accessmodel "core/internal/app/access/model"
+	accessservice "core/internal/app/access/service"
+	srv "core/internal/infra/server"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
 	"log"
 
 	"github.com/urfave/cli/v2"
@@ -63,7 +64,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
-		sctx, err := srv.Setup(srv.Config{
+		senv, err := srv.Setup(srv.Config{
 			Ctx:           context.Background(),
 			PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
 			RedisAddr:     ctx.String(cmdutil.RedisAddr),
@@ -74,9 +75,11 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		if err != nil {
 			log.Fatal("Unable to setup app context. Reason: ", err.Error())
 		}
-		defer srv.Cleanup(sctx)
+		defer srv.Cleanup(senv)
 
-		if _, err := access.Create(sctx, access.Access{
+		aservice := accessservice.NewService(senv)
+
+		if _, err := aservice.Create(senv, accessmodel.Access{
 			Key:       rsc.Key(ctx.String(KeyFlag)),
 			Secret:    ctx.String(SecretFlag),
 			Type:      ctx.String(TypeFlag),
@@ -84,7 +87,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 			ExpiresAt: cons.MaxUnixTime,
 		}); err.IsEmpty() {
 			// TODO: add error reasons
-			sctx.Log.Error().Msg("Unable to create access")
+			senv.Log.Error().Msg("Unable to create access")
 		}
 
 		return nil

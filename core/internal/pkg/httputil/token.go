@@ -2,7 +2,7 @@ package httputil
 
 import (
 	rsc "core/internal/pkg/resource"
-	srv "core/internal/pkg/server"
+	"core/internal/pkg/srvenv"
 	"errors"
 	"strings"
 
@@ -27,6 +27,6 @@ func ExtractATK(ctx *gin.Context) (rsc.Token, error) {
 }
 
 // SecureOverideATK get security token to overide protected operations
-func SecureOverideATK(sctx *srv.Ctx) rsc.Token {
-	return rsc.Token(sctx.SecureRuntimeHash)
+func SecureOverideATK(senv *srvenv.Env) rsc.Token {
+	return rsc.Token(senv.SecureRuntimeHash)
 }

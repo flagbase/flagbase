@@ -15,6 +15,7 @@ require (
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.10
 	github.com/go-pg/pg/v9 v9.1.0
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.7.1
 	github.com/google/uuid v1.1.1
 	github.com/jackc/pgtype v1.3.0

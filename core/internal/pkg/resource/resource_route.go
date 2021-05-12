@@ -31,6 +31,4 @@ const (
 	RouteRule string = "rules"
 	// RouteEvaluation points to the evaluation resource
 	RouteEvaluation string = "evaluation"
-	// RoutePolling points to the polling worker
-	RoutePolling string = "polling"
 )
