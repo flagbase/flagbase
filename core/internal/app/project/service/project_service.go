@@ -2,8 +2,10 @@ package service
 
 import (
 	"context"
+	environmentrepo "core/internal/app/environment/repository"
 	projectmodel "core/internal/app/project/model"
 	projectrepo "core/internal/app/project/repository"
+	sdkkeyrepo "core/internal/app/sdkkey/repository"
 	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -13,14 +15,18 @@ import (
 )
 
 type Service struct {
-	Senv        *srvenv.Env
-	ProjectRepo *projectrepo.Repo
+	Senv            *srvenv.Env
+	ProjectRepo     *projectrepo.Repo
+	EnvironmentRepo *environmentrepo.Repo
+	SDKKeyRepo      *sdkkeyrepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
 	return &Service{
-		Senv:        senv,
-		ProjectRepo: projectrepo.NewRepo(senv),
+		Senv:            senv,
+		ProjectRepo:     projectrepo.NewRepo(senv),
+		EnvironmentRepo: environmentrepo.NewRepo(senv),
+		SDKKeyRepo:      sdkkeyrepo.NewRepo(senv),
 	}
 }
 
@@ -78,6 +84,12 @@ func (s *Service) Create(
 			rsc.AccessAdmin,
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
+		}
+	}
+
+	if e.IsEmpty() {
+		if err := s.createChildren(ctx, i, a); !err.IsEmpty() {
+			e.Extend(err)
 		}
 	}
 
