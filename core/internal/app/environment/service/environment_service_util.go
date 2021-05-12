@@ -63,7 +63,7 @@ func (s *Service) createChildren(
 			e.Append(cons.ErrorInternal, fmt.Sprintf("No variation found on flag with key=%s", f.Key))
 		}
 
-		s.TargetingRepo.Create(ctx, targetingmodel.Targeting{
+		_, _err = s.TargetingRepo.Create(ctx, targetingmodel.Targeting{
 			Enabled: false,
 			FallthroughVariations: []flagset.Variation{
 				{
@@ -77,6 +77,9 @@ func (s *Service) createChildren(
 			EnvironmentKey: i.Key,
 			FlagKey:        f.Key,
 		})
+		if _err != nil {
+			e.Append(cons.ErrorInternal, _err.Error())
+		}
 	}
 
 	return &e
