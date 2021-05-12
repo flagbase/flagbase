@@ -81,7 +81,8 @@ func (s *Service) Create(
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
-		_e := s.createDefaultChildren(atk, i, a)
+
+		_e := s.createDefaultChildren(ctx, i, a)
 		if !_e.IsEmpty() {
 			e.Extend(_e)
 		}

@@ -13,6 +13,7 @@ import (
 	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
+	"log"
 )
 
 type Service struct {
@@ -77,6 +78,9 @@ func (s *Service) Create(
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
+	s.Senv.Log.Debug().Msg("PART 1")
+	log.Printf("%+v", e)
+
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
 			s.Senv,
@@ -86,15 +90,14 @@ func (s *Service) Create(
 			rsc.AccessAdmin,
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
+		}
+	}
 
-			err := s.createChildren(
-				atk,
-				i,
-				a,
-			)
-			if !err.IsEmpty() {
-				e.Extend(err)
-			}
+	if e.IsEmpty() {
+		s.Senv.Log.Debug().Msg("PART 2")
+		err := s.createDefaultChildren(ctx, i, a)
+		if !err.IsEmpty() {
+			e.Extend(err)
 		}
 	}
 

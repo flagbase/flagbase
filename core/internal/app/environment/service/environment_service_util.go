@@ -10,20 +10,18 @@ import (
 )
 
 func (s *Service) createDefaultChildren(
-	atk rsc.Token,
+	ctx context.Context,
 	i environmentmodel.Environment,
 	a environmentmodel.RootArgs,
 ) *res.Errors {
 	var e res.Errors
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
 
 	_, _err := s.SDKKeyRepo.Create(
 		ctx,
 		sdkkeymodel.SDKKey{
 			Enabled:     true,
 			ExpiresAt:   cons.MaxUnixTime,
-			Name:        rsc.Name(i.Name + " SDK Key"),
+			Name:        i.Name + " SDK Key",
 			Description: rsc.Description("Default SDK key for " + i.Name),
 			Tags:        rsc.Tags{"generated"},
 		},

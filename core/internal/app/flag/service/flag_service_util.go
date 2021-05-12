@@ -12,14 +12,18 @@ import (
 	res "core/pkg/response"
 )
 
-func (s *Service) createChildren(
-	atk rsc.Token,
+const (
+	DefaultFallthroughVariationWeight int8 = 100
+)
+
+func (s *Service) createDefaultChildren(
+	ctx context.Context,
 	i flagmodel.Flag,
 	a flagmodel.ResourceArgs,
 ) *res.Errors {
 	var e res.Errors
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+
+	s.Senv.Log.Debug().Msg("CREATING flag stuff")
 
 	envs, _err := s.EnvironmentRepo.List(
 		ctx,
@@ -76,7 +80,7 @@ func (s *Service) createChildren(
 				FallthroughVariations: []flagset.Variation{
 					{
 						VariationKey: string(cVar.Key),
-						Weight:       100,
+						Weight:       DefaultFallthroughVariationWeight,
 					},
 				},
 			},
