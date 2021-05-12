@@ -4,7 +4,10 @@ import (
 	"context"
 	environmentmodel "core/internal/app/environment/model"
 	environmentrepo "core/internal/app/environment/repository"
+	flagrepo "core/internal/app/flag/repository"
 	sdkkeyrepo "core/internal/app/sdkkey/repository"
+	targetingrepo "core/internal/app/targeting/repository"
+	variationrepo "core/internal/app/variation/repository"
 	"core/internal/pkg/auth"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -17,6 +20,9 @@ type Service struct {
 	Senv            *srvenv.Env
 	EnvironmentRepo *environmentrepo.Repo
 	SDKKeyRepo      *sdkkeyrepo.Repo
+	FlagRepo        *flagrepo.Repo
+	TargetingRepo   *targetingrepo.Repo
+	VariationRepo   *variationrepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
@@ -24,6 +30,9 @@ func NewService(senv *srvenv.Env) *Service {
 		Senv:            senv,
 		EnvironmentRepo: environmentrepo.NewRepo(senv),
 		SDKKeyRepo:      sdkkeyrepo.NewRepo(senv),
+		FlagRepo:        flagrepo.NewRepo(senv),
+		TargetingRepo:   targetingrepo.NewRepo(senv),
+		VariationRepo:   variationrepo.NewRepo(senv),
 	}
 }
 
@@ -81,10 +90,11 @@ func (s *Service) Create(
 		); err != nil {
 			e.Append(cons.ErrorAuth, err.Error())
 		}
+	}
 
-		_e := s.createDefaultChildren(ctx, i, a)
-		if !_e.IsEmpty() {
-			e.Extend(_e)
+	if e.IsEmpty() {
+		if err := s.createChildren(ctx, i, a); !err.IsEmpty() {
+			e.Extend(err)
 		}
 	}
 

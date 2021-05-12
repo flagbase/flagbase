@@ -3,13 +3,18 @@ package service
 import (
 	"context"
 	environmentmodel "core/internal/app/environment/model"
+	flagmodel "core/internal/app/flag/model"
 	sdkkeymodel "core/internal/app/sdkkey/model"
+	targetingmodel "core/internal/app/targeting/model"
+	variationmodel "core/internal/app/variation/model"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
+	"core/pkg/flagset"
 	res "core/pkg/response"
+	"fmt"
 )
 
-func (s *Service) createDefaultChildren(
+func (s *Service) createChildren(
 	ctx context.Context,
 	i environmentmodel.Environment,
 	a environmentmodel.RootArgs,
@@ -33,6 +38,42 @@ func (s *Service) createDefaultChildren(
 	)
 	if _err != nil {
 		e.Append(cons.ErrorInternal, _err.Error())
+	}
+
+	fl, _err := s.FlagRepo.List(ctx, flagmodel.RootArgs{
+		WorkspaceKey: a.WorkspaceKey,
+		ProjectKey:   a.ProjectKey,
+	})
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
+	}
+	for _, f := range *fl {
+		vl, _err := s.VariationRepo.List(ctx, variationmodel.RootArgs{
+			WorkspaceKey: a.WorkspaceKey,
+			ProjectKey:   a.ProjectKey,
+			FlagKey:      f.Key,
+		})
+		if _err != nil {
+			e.Append(cons.ErrorInternal, _err.Error())
+		}
+		if len(*vl) < 1 {
+			e.Append(cons.ErrorInternal, fmt.Sprintf("No variation found on flag with key=%s", f.Key))
+		}
+
+		s.TargetingRepo.Create(ctx, targetingmodel.Targeting{
+			Enabled: false,
+			FallthroughVariations: []flagset.Variation{
+				{
+					VariationKey: string((*vl)[0].Key),
+					Weight:       flagset.DefaultFallthroughVariationWeight,
+				},
+			},
+		}, targetingmodel.RootArgs{
+			WorkspaceKey:   a.WorkspaceKey,
+			ProjectKey:     a.ProjectKey,
+			EnvironmentKey: i.Key,
+			FlagKey:        f.Key,
+		})
 	}
 
 	return &e

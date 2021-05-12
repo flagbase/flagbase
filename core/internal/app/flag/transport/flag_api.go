@@ -59,7 +59,7 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 
 	r, _err := h.FlagService.List(
 		atk,
-		flagmodel.ResourceArgs{
+		flagmodel.RootArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 		},
@@ -95,7 +95,7 @@ func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	r, _err := h.FlagService.Create(
 		atk,
 		i,
-		flagmodel.ResourceArgs{
+		flagmodel.RootArgs{
 			WorkspaceKey: httputil.GetParam(ctx, rsc.WorkspaceKey),
 			ProjectKey:   httputil.GetParam(ctx, rsc.ProjectKey),
 		},

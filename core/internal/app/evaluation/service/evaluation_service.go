@@ -53,7 +53,7 @@ func (s *Service) Get(
 
 	o := make(flagset.Flagset)
 
-	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.ResourceArgs{
+	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.RootArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})

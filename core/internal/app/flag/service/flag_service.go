@@ -13,7 +13,6 @@ import (
 	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
-	"log"
 )
 
 type Service struct {
@@ -38,7 +37,7 @@ func NewService(senv *srvenv.Env) *Service {
 // (*) atk: access_type <= service
 func (s *Service) List(
 	atk rsc.Token,
-	a flagmodel.ResourceArgs,
+	a flagmodel.RootArgs,
 ) (*[]flagmodel.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -62,7 +61,7 @@ func (s *Service) List(
 func (s *Service) Create(
 	atk rsc.Token,
 	i flagmodel.Flag,
-	a flagmodel.ResourceArgs,
+	a flagmodel.RootArgs,
 ) (*flagmodel.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
@@ -78,9 +77,6 @@ func (s *Service) Create(
 		e.Append(cons.ErrorInput, err.Error())
 	}
 
-	s.Senv.Log.Debug().Msg("PART 1")
-	log.Printf("%+v", e)
-
 	if e.IsEmpty() {
 		if err := auth.AddPolicy(
 			s.Senv,
@@ -94,9 +90,7 @@ func (s *Service) Create(
 	}
 
 	if e.IsEmpty() {
-		s.Senv.Log.Debug().Msg("PART 2")
-		err := s.createDefaultChildren(ctx, i, a)
-		if !err.IsEmpty() {
+		if err := s.createChildren(ctx, i, a); !err.IsEmpty() {
 			e.Extend(err)
 		}
 	}
