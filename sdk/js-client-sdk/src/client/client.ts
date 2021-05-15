@@ -22,7 +22,7 @@ export default function Client(
   const events = Events();
   const context = Context(config, identity);
   const transport = Transport(context, events);
-  const api = Api(context);
+  const api = Api(context, events);
 
   transport.start();
 

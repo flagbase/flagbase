@@ -10,8 +10,6 @@ import FlagbaseClient, {
 
 const BORDER_STYLE = { border: "1px solid black" };
 
-const FLAGBASE_EVENT_PREFIX = "Flagbase: ";
-
 export type PollingAppProps = {
   clientKey: string;
   identity: Identity;
@@ -25,7 +23,14 @@ type DebugLog = {
 };
 
 const PollingApp: React.FC<PollingAppProps> = (props) => {
+  const [flagbaseClient, setFlagbaseClient] = useState<IClient>();
   const [debugLog, setDebugLog] = useState<DebugLog[]>([]);
+  const [identifier, setIdentifier] = useState<Identity["identifier"]>(
+    props["identity"]["identifier"]
+  );
+  const [traits, setTraits] = useState<Identity["traits"]>(
+    props["identity"]["traits"]
+  );
 
   const [flagset, setFlagset] = useState<Flagset>({});
   const [internalData, setInternalData] = useState<InternalData>({
@@ -34,7 +39,51 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     flagsetChanges: 0,
   });
 
-  let flagbaseClient: IClient;
+  useEffect(() => {
+    const _flagbaseClient = FlagbaseClient(
+      props.clientKey,
+      props.identity,
+      props.opts
+    );
+    setFlagbaseClient(_flagbaseClient);
+
+    _flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
+
+    _flagbaseClient.on(EventType.FLAG_CHANGE, (eventMessage) => {
+      addDebugLog(EventType.FLAG_CHANGE, eventMessage);
+      setFlagset(_flagbaseClient.getAllFlags());
+    });
+
+    _flagbaseClient.on(EventType.CONTEXT_CHANGE, (eventMessage) => {
+      addDebugLog(EventType.CONTEXT_CHANGE, eventMessage);
+      setIdentifier(_flagbaseClient.getIdentifier());
+      setTraits(_flagbaseClient.getAllTraits());
+    });
+
+    _flagbaseClient.on(EventType.NETWORK_FETCH, () => {
+      setInternalData(_flagbaseClient.getInternalData());
+    });
+
+    _flagbaseClient.on(EventType.NETWORK_FETCH_FULL, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_FULL, eventMessage);
+    });
+
+    _flagbaseClient.on(EventType.NETWORK_FETCH_CACHED, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_CACHED, eventMessage);
+    });
+
+    _flagbaseClient.on(EventType.NETWORK_FETCH_ERROR, (eventMessage) => {
+      addDebugLog(EventType.NETWORK_FETCH_ERROR, eventMessage);
+    });
+
+    _flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
+      addDebugLog(EventType.CLIENT_READY, eventMessage);
+    });
+
+    return () => _flagbaseClient.destroy();
+  }, [props]);
 
   const addDebugLog = (eventType: EventType, eventMessage: string) => {
     const newEntry: DebugLog = {
@@ -44,47 +93,6 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     };
     setDebugLog((prevDebugLog) => [...prevDebugLog, newEntry]);
   };
-
-  useEffect(() => {
-    flagbaseClient = FlagbaseClient(
-      props.clientKey,
-      props.identity,
-      props.opts
-    );
-
-    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
-      addDebugLog(EventType.CLIENT_READY, eventMessage);
-    });
-
-    flagbaseClient.on(EventType.FLAG_CHANGE, (eventMessage) => {
-      addDebugLog(EventType.FLAG_CHANGE, eventMessage);
-      setFlagset(flagbaseClient.getAllFlags());
-    });
-
-    flagbaseClient.on(EventType.NETWORK_FETCH, () => {
-      setInternalData(flagbaseClient.getInternalData());
-    });
-
-    flagbaseClient.on(EventType.NETWORK_FETCH_FULL, (eventMessage) => {
-      addDebugLog(EventType.NETWORK_FETCH_FULL, eventMessage);
-    });
-
-    flagbaseClient.on(EventType.NETWORK_FETCH_CACHED, (eventMessage) => {
-      addDebugLog(EventType.NETWORK_FETCH_CACHED, eventMessage);
-    });
-
-    flagbaseClient.on(EventType.NETWORK_FETCH_ERROR, (eventMessage) => {
-      addDebugLog(EventType.NETWORK_FETCH_ERROR, eventMessage);
-    });
-
-    flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
-      addDebugLog(EventType.CLIENT_READY, eventMessage);
-    });
-
-    return function cleanup() {
-      flagbaseClient.destroy();
-    };
-  }, []);
 
   return (
     <>
@@ -111,6 +119,76 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
           })}
         </tbody>
       </table>
+      <h3>Evaluated Context</h3>
+      <h4>Identifier</h4>
+      <input
+        value={identifier}
+        onChange={(e) => setIdentifier(e.target.value)}
+      />
+      <button onClick={() => flagbaseClient.setIdentifier(identifier)}>
+        save
+      </button>
+      <h4>Traits</h4>
+      <table style={BORDER_STYLE}>
+        <thead>
+          <tr>
+            <th style={BORDER_STYLE}>Key</th>
+            <th style={BORDER_STYLE}>Value</th>
+            <th style={BORDER_STYLE}>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {Object.keys(traits).map((traitKey) => {
+            return (
+              traits[traitKey] && (
+                <tr key={traitKey} style={BORDER_STYLE}>
+                  <td style={BORDER_STYLE}>{traitKey}</td>
+                  <td style={BORDER_STYLE}>
+                    <input
+                      onChange={(e) => {
+                        e?.target?.value &&
+                          setTraits((prevTraits) => ({
+                            ...prevTraits,
+                            [traitKey]: e.target.value,
+                          }));
+                      }}
+                      value={traits[traitKey]}
+                    />
+                  </td>
+                  <td style={BORDER_STYLE}>
+                    <button
+                      onClick={() =>
+                        flagbaseClient.setTrait(traitKey, traits[traitKey])
+                      }
+                    >
+                      update
+                    </button>
+                    <button
+                      onClick={() =>
+                        flagbaseClient.setTrait(traitKey, undefined)
+                      }
+                    >
+                      delete
+                    </button>
+                  </td>
+                </tr>
+              )
+            );
+          })}
+        </tbody>
+      </table>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const traitKey = e?.target[0]?.value;
+          const traitValue = e?.target[1]?.value;
+          flagbaseClient.setTrait(traitKey, traitValue);
+        }}
+      >
+        <input name="traitKey" placeholder="traitKey" />
+        <input name="traitValue" placeholder="traitValue" />
+        <button type="submit">add</button>
+      </form>
       <h3>Internal Stats</h3>
       <table style={BORDER_STYLE}>
         <thead>
