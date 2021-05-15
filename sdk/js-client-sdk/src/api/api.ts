@@ -11,6 +11,8 @@ export interface IApi {
     flagKey: string,
     defaultVariationKey: string
   ) => Flag["variationKey"];
+  getIdentifier: () => Identity['identifier']
+  setIdentifier: (identifier: string) => void
   getAllTraits: () => Identity["traits"];
   getTrait: (traitKey: string) => string | number;
   setTrait: (traitKey: string, traitValue: string | number) => void;
@@ -22,6 +24,10 @@ export default function Api(context: IContext): IApi {
   const variation: IApi["variation"] = (flagKey, defaultVariationKey) => {
     return context.getFlag(flagKey)?.variationKey || defaultVariationKey;
   };
+
+  const getIdentifier: IApi["getIdentifier"] = () => context.getIdentity()['identifier']
+
+  const setIdentifier: IApi["setIdentifier"] = (identifier) => context.setIdentity({ identifier })
 
   const getAllTraits: IApi["getAllTraits"] = () => context.getIdentityTraits();
 
@@ -37,6 +43,8 @@ export default function Api(context: IContext): IApi {
 
   return {
     variation,
+    getIdentifier,
+    setIdentifier,
     getAllTraits,
     getTrait,
     setTrait,

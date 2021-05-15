@@ -1,1 +1,1 @@
-export * from './fetch';
+export { fetchFlagsViaPoller } from './fetch-flag-via-poller';
