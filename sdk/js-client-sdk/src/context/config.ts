@@ -1,27 +1,18 @@
 export enum Mode {
+  HYBRID,
   POLLING,
   STREAMING,
 }
-export type Config = IConfigPolling | IConfigStreaming;
-
-export interface IConfig {
+export type Config = {
   clientKey: string;
   mode: Mode;
-  endpointUri?: string;
-}
-
-export interface IConfigPolling extends IConfig {
-  mode: Mode.POLLING;
-  pollIntervalMilliseconds?: number;
-}
-
-export interface IConfigStreaming extends IConfig {
-  mode: Mode.STREAMING;
-}
+  pollingServiceUrl?: string;
+  pollingIntervalMs?: number;
+};
 
 export const DEFAULT_CONFIG: Config = {
   mode: Mode.POLLING,
   clientKey: '',
-  endpointUri: 'https://polling.flagbase.io',
-  pollIntervalMilliseconds: 1000
+  pollingServiceUrl: 'https://polling.flagbase.io',
+  pollingIntervalMs: 300000
 }
