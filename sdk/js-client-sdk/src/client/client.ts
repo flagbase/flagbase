@@ -26,16 +26,18 @@ export default function Client(
 
   transport.start();
 
+  const { on, off, clear } = events;
+
   const destroy = () => {
-    events.clear();
+    clear();
     transport.stop();
-  }
+  };
 
   return {
     ...api,
+    on,
+    off,
+    clear,
     destroy,
-    on: events.on,
-    off: events.off,
-    clear: events.clear,
   };
 }

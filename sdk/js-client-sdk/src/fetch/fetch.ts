@@ -1,10 +1,47 @@
-import axios from "axios";
 import { Flagset, Identity } from "../context";
 import { Config } from "../context/config";
 import { ETAG_HEADER, SDK_KEY_HEADER } from "./constants";
 
+type XHRPollingRequestHeaders = {
+  [key: string]: string;
+};
+type XHRPollingResponse = {
+  etag: string;
+  status: number;
+  data: Flagset | {};
+  hasFailed: boolean;
+};
+
+const pollingRequest = (
+  endpointUrl: string,
+  requestBody: string,
+  headers: XHRPollingRequestHeaders
+): Promise<XHRPollingResponse> => {
+  return new Promise((resolve, _) => {
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", endpointUrl, true);
+    Object.keys(headers).forEach((k) => xhr.setRequestHeader(k, headers[k]));
+    xhr.onload = function () {
+      if (this.readyState != 4) return;
+      resolve({
+        etag: this.getResponseHeader(ETAG_HEADER) || "unknown",
+        status: this.status,
+        hasFailed: !(this.status == 200 || this.status == 304),
+        data: this.status == 200 ? JSON.parse(this.responseText).data : {},
+      });
+    };
+    xhr.onerror = () => resolve({
+      etag: "unknown",
+      status: xhr.status,
+      hasFailed: true,
+      data: {},
+    });
+    xhr.send(requestBody);
+  });
+};
+
 export const fetchFlagsViaPoller = async (
-  endpointUri: Config["endpointUri"],
+  pollingServiceUrl: Config["pollingServiceUrl"],
   clientKey: Config["clientKey"],
   identity: Identity,
   etag: string,
@@ -12,31 +49,27 @@ export const fetchFlagsViaPoller = async (
   onCachedRequest?: () => void,
   onErrorRequest?: () => void
 ): Promise<[string, Flagset]> => {
-  let retag = etag;
-  let flagset: Flagset = {};
+  const {
+    etag: retag,
+    status,
+    data: flagset,
+    hasFailed,
+  } = await pollingRequest(
+    String(pollingServiceUrl),
+    JSON.stringify(identity),
+    {
+      [ETAG_HEADER]: etag,
+      [SDK_KEY_HEADER]: clientKey,
+    }
+  );
 
-  flagset = await axios
-    .post(String(endpointUri), identity, {
-      headers: {
-        [ETAG_HEADER]: etag,
-        [SDK_KEY_HEADER]: clientKey,
-      },
-      validateStatus: (status) => status >= 200 && status <= 304,
-    })
-    .then((data) => {
-      if (data.status === 304) {
-        typeof onCachedRequest === "function" && onCachedRequest();
-      } else if (data.status === 200) {
-        typeof onFullRequest === "function" && onFullRequest();
-      }
-      retag = data?.headers?.etag || etag;
-      return data;
-    })
-    .then(({ data }: any) => data.data as Flagset)
-    .catch(() => {
-      typeof onErrorRequest === "function" && onErrorRequest();
-      return {};
-    });
+  if (!hasFailed && status === 200) {
+    typeof onFullRequest === "function" && onFullRequest();
+  } else if (!hasFailed && status === 304) {
+    typeof onCachedRequest === "function" && onCachedRequest();
+  } else if (hasFailed) {
+    typeof onErrorRequest === "function" && onErrorRequest();
+  }
 
   return [retag, flagset];
 };

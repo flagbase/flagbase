@@ -11,7 +11,7 @@ export default function Poller(
   events: EventProducer
 ): ITransport {
   const config = context.getConfig() as IConfigPolling;
-  const endpointUri = config.endpointUri;
+  const pollingServiceUrl = config.pollingServiceUrl;
   const clientKey = config.clientKey;
 
   let interval = setInterval(() => {});
@@ -61,7 +61,7 @@ export default function Poller(
 
   const start = async () => {
     await fetchFlagsViaPoller(
-      endpointUri,
+      pollingServiceUrl,
       clientKey,
       context.getIdentity(),
       etag
@@ -74,7 +74,7 @@ export default function Poller(
 
     interval = setInterval(async () => {
       const [retag, evaluation] = await fetchFlagsViaPoller(
-        endpointUri,
+        pollingServiceUrl,
         clientKey,
         context.getIdentity(),
         etag,
@@ -114,7 +114,7 @@ export default function Poller(
         "Fetched flags from service via polling.",
         context.getInternalData()
       );
-    }, config.pollIntervalMilliseconds);
+    }, config.pollingIntervalMs);
   };
 
   const stop = async () => clearInterval(interval);

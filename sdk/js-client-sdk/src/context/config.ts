@@ -7,12 +7,12 @@ export type Config = IConfigPolling | IConfigStreaming;
 export interface IConfig {
   clientKey: string;
   mode: Mode;
-  endpointUri?: string;
+  pollingServiceUrl?: string;
 }
 
 export interface IConfigPolling extends IConfig {
   mode: Mode.POLLING;
-  pollIntervalMilliseconds?: number;
+  pollingIntervalMs?: number;
 }
 
 export interface IConfigStreaming extends IConfig {
@@ -22,6 +22,6 @@ export interface IConfigStreaming extends IConfig {
 export const DEFAULT_CONFIG: Config = {
   mode: Mode.POLLING,
   clientKey: '',
-  endpointUri: 'https://polling.flagbase.io',
-  pollIntervalMilliseconds: 1000
+  pollingServiceUrl: 'https://polling.flagbase.io',
+  pollingIntervalMs: 1000
 }

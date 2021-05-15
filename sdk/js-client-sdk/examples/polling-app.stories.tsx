@@ -20,7 +20,7 @@ DefaultPollingApp.args = {
     },
   },
   opts: {
-    endpointUri: "http://127.0.0.1:9051",
-    pollIntervalMilliseconds: 5000,
+    pollingServiceUrl: "http://127.0.0.1:9051",
+    pollingIntervalMs: 5000,
   }
 };
