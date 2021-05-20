@@ -17,11 +17,13 @@ require (
 	github.com/go-pg/pg/v9 v9.1.0
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/go-redis/redis/v8 v8.7.1
+	github.com/google/jsonapi v1.0.0
 	github.com/google/uuid v1.1.1
 	github.com/jackc/pgtype v1.3.0
 	github.com/jackc/pgx v3.6.2+incompatible
 	github.com/jackc/pgx/v4 v4.6.0
 	github.com/lib/pq v1.2.0
+	github.com/manyminds/api2go v0.0.0-20210211132652-5457038544fa
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.7.1
 	github.com/rs/zerolog v1.16.0
