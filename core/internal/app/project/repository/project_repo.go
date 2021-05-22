@@ -24,8 +24,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a projectmodel.RootArgs,
-) (*[]projectmodel.Project, error) {
-	var o []projectmodel.Project
+) ([]*projectmodel.Project, error) {
+	var o []*projectmodel.Project
 	sqlStatement := `
 SELECT
   p.id,
@@ -56,9 +56,9 @@ WHERE w.key = $1`
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(
