@@ -119,7 +119,7 @@ RETURNING
 				ctx,
 				sqlStatement,
 				f.Weight,
-				o.ID.String(),
+				o.ID,
 				a.WorkspaceKey,
 				a.ProjectKey,
 				a.FlagKey,
@@ -233,7 +233,7 @@ WHERE id = $1`
 	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
-		i.ID.String(),
+		i.ID,
 		i.Enabled,
 	); err != nil {
 		return &i, dbutil.ParseError(
@@ -266,7 +266,7 @@ WHERE targeting_id = $1
 		if _, err := r.DB.Exec(
 			ctx,
 			sqlStatement,
-			i.ID.String(),
+			i.ID,
 			f.Weight,
 			a.WorkspaceKey,
 			a.ProjectKey,

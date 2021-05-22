@@ -103,7 +103,7 @@ WHERE tr.id = $1`
 		_rows, err := r.DB.Query(
 			ctx,
 			sqlStatement,
-			_o.ID.String(),
+			_o.ID,
 		)
 		if err != nil {
 			return &o, err
@@ -286,7 +286,7 @@ RETURNING
 				ctx,
 				sqlStatement,
 				f.Weight,
-				o.ID.String(),
+				o.ID,
 				a.WorkspaceKey,
 				a.ProjectKey,
 				a.FlagKey,
@@ -388,7 +388,7 @@ WHERE w.key = $1
 		a.WorkspaceKey,
 		a.ProjectKey,
 		a.FlagKey,
-		o.ID.String(),
+		o.ID,
 	)
 	if err != nil {
 		return &o, err
@@ -453,7 +453,7 @@ WHERE id = $1`
 	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
-		i.ID.String(),
+		i.ID,
 		i.Key,
 		i.Type,
 		i.Name,
@@ -499,7 +499,7 @@ WHERE targeting_rule_id = $1
 		if _, err := r.DB.Exec(
 			ctx,
 			sqlStatement,
-			i.ID.String(),
+			i.ID,
 			f.Weight,
 			a.WorkspaceKey,
 			a.ProjectKey,

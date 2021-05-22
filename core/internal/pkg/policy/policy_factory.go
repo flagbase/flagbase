@@ -8,8 +8,8 @@ import (
 
 // Contract consist of policy identifiers
 type Contract struct {
-	AccessID     rsc.ID
-	ResourceID   rsc.ID
+	AccessID     string
+	ResourceID   string
 	ResourceType rsc.Type
 	AccessType   rsc.AccessType
 }
@@ -20,10 +20,10 @@ func EnforcePolicyFactory(
 ) func(cfg Contract) (bool, error) {
 	return func(cfg Contract) (bool, error) {
 		return enf.Enforce(
-			cfg.AccessID.String(),
-			cfg.ResourceID.String(),
-			cfg.ResourceType.String(),
-			cfg.AccessType.String(),
+			cfg.AccessID,
+			cfg.ResourceID,
+			string(cfg.ResourceType),
+			string(cfg.AccessType),
 		)
 	}
 }
@@ -34,10 +34,10 @@ func AddPolicyFactory(
 ) func(cfg Contract) (bool, error) {
 	return func(cfg Contract) (bool, error) {
 		return enf.AddPolicy(
-			cfg.AccessID.String(),
-			cfg.ResourceID.String(),
-			cfg.ResourceType.String(),
-			cfg.AccessType.String(),
+			cfg.AccessID,
+			cfg.ResourceID,
+			string(cfg.ResourceType),
+			string(cfg.AccessType),
 		)
 	}
 }

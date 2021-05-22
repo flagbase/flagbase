@@ -4,7 +4,7 @@ import rsc "core/internal/pkg/resource"
 
 // SDKKey is used to provide fast access to a particular environment
 type SDKKey struct {
-	ID          rsc.ID          `json:"id"`
+	ID          string          `json:"id"`
 	Enabled     bool            `json:"enabled,omitempty"`
 	ClientKey   string          `json:"clientKey"`
 	ServerKey   string          `json:"serverKey"`

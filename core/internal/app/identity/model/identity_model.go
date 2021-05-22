@@ -4,6 +4,6 @@ import rsc "core/internal/pkg/resource"
 
 // Identity represents a flag consumer (i.e. an entity which requests for an evaluated flagset).
 type Identity struct {
-	ID  rsc.ID  `json:"id"`
+	ID  string  `json:"id"`
 	Key rsc.Key `json:"key"`
 }

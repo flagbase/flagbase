@@ -55,21 +55,10 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	var res []*workspacemodel.Response
-	for _, r := range *r {
-		res = append(res, &workspacemodel.Response{
-			ID:          string(r.ID),
-			Key:         string(r.Key),
-			Name:        string(r.Name),
-			Description: string(r.Description),
-			Tags:        r.Tags,
-		})
-	}
-
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		res,
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -93,18 +82,10 @@ func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	res := &workspacemodel.Response{
-		ID:          string(r.ID),
-		Key:         string(r.Key),
-		Name:        string(r.Name),
-		Description: string(r.Description),
-		Tags:        r.Tags,
-	}
-
 	httputil.SendJSON(
 		ctx,
 		http.StatusCreated,
-		res,
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -128,18 +109,10 @@ func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	res := &workspacemodel.Response{
-		ID:          string(r.ID),
-		Key:         string(r.Key),
-		Name:        string(r.Name),
-		Description: string(r.Description),
-		Tags:        r.Tags,
-	}
-
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		res,
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -169,18 +142,10 @@ func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	res := &workspacemodel.Response{
-		ID:          string(r.ID),
-		Key:         string(r.Key),
-		Name:        string(r.Name),
-		Description: string(r.Description),
-		Tags:        r.Tags,
-	}
-
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		res,
+		r,
 		http.StatusInternalServerError,
 		e,
 	)

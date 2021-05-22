@@ -197,7 +197,7 @@ WHERE id = $1`
 	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
-		i.ID.String(),
+		i.ID,
 		i.Key,
 		i.Name,
 		i.Description,

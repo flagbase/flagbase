@@ -5,7 +5,7 @@ import rsc "core/internal/pkg/resource"
 // Access is used to represent the relationship between the API user and the service.
 // Access objects are attached to the resources, which are used to authorise users.
 type Access struct {
-	ID          rsc.ID          `json:"id,omitempty"`
+	ID          string          `json:"id,omitempty"`
 	Key         rsc.Key         `json:"key,omitempty"`
 	Description rsc.Description `json:"description,omitempty"`
 	Name        rsc.Name        `json:"name,omitempty"`

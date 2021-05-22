@@ -24,8 +24,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a workspacemodel.RootArgs,
-) (*[]workspacemodel.Workspace, error) {
-	var o []workspacemodel.Workspace
+) ([]*workspacemodel.Workspace, error) {
+	var o []*workspacemodel.Workspace
 	sqlStatement := `
 SELECT
   id,
@@ -49,9 +49,9 @@ FROM workspace`
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(

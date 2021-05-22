@@ -45,7 +45,7 @@ func Authorize(
 func Enforce(
 	senv *srvenv.Env,
 	atk rsc.Token,
-	resourceID rsc.ID,
+	resourceID string,
 	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) error {
@@ -85,7 +85,7 @@ func Enforce(
 func AddPolicy(
 	senv *srvenv.Env,
 	atk rsc.Token,
-	resourceID rsc.ID,
+	resourceID string,
 	resourceType rsc.Type,
 	accessType rsc.AccessType,
 ) error {
