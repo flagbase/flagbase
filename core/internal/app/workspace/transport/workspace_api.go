@@ -168,7 +168,7 @@ func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 		e.Extend(err)
 	}
 
-	httputil.SendJSON(
+	httputil.Send(
 		ctx,
 		http.StatusNoContent,
 		&res.Success{},

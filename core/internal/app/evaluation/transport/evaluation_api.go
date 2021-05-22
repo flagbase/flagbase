@@ -61,10 +61,12 @@ func (h *APIHandler) getEvaluationAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.SendJSON(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
-		r,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -96,10 +98,12 @@ func (h *APIHandler) evaluateAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.SendJSON(
+	httputil.Send(
 		ctx,
 		http.StatusOK,
-		r,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)

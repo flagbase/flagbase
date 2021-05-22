@@ -44,10 +44,12 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		statusCode = http.StatusNotModified
 	}
 
-	httputil.SendJSON(
+	httputil.Send(
 		ctx,
 		statusCode,
-		r,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
@@ -82,10 +84,12 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		statusCode = http.StatusNotModified
 	}
 
-	httputil.SendJSON(
+	httputil.Send(
 		ctx,
 		statusCode,
-		r,
+		&res.Success{
+			Data: r,
+		},
 		http.StatusInternalServerError,
 		e,
 	)
