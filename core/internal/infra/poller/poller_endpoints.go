@@ -47,9 +47,7 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		statusCode,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -87,9 +85,7 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		statusCode,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)

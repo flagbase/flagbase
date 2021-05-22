@@ -68,9 +68,7 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -100,9 +98,7 @@ func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)

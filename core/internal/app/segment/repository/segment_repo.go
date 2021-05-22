@@ -24,8 +24,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a segmentmodel.RootArgs,
-) (*[]segmentmodel.Segment, error) {
-	var o []segmentmodel.Segment
+) ([]*segmentmodel.Segment, error) {
+	var o []*segmentmodel.Segment
 	sqlStatement := `
 SELECT
   s.id,
@@ -60,9 +60,9 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(

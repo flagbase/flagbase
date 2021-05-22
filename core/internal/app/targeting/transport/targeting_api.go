@@ -76,9 +76,7 @@ func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusCreated,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -108,9 +106,7 @@ func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -146,9 +142,7 @@ func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
