@@ -113,7 +113,7 @@ func (s *Service) Get(
 						e.Append(cons.ErrorInternal, err.Error())
 					}
 
-					for _, _sr := range *sr {
+					for _, _sr := range sr {
 						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
 							RuleType:       _tr.Type,
 							TraitKey:       _sr.TraitKey,
