@@ -25,8 +25,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a sdkkeymodel.RootArgs,
-) (*[]sdkkeymodel.SDKKey, error) {
-	var o []sdkkeymodel.SDKKey
+) ([]*sdkkeymodel.SDKKey, error) {
+	var o []*sdkkeymodel.SDKKey
 	sqlStatement := `
 SELECT
   sk.id,
@@ -71,9 +71,9 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(
