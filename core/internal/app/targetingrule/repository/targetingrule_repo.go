@@ -25,8 +25,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a targetingrulemodel.RootArgs,
-) (*[]targetingrulemodel.TargetingRule, error) {
-	var o []targetingrulemodel.TargetingRule
+) ([]*targetingrulemodel.TargetingRule, error) {
+	var o []*targetingrulemodel.TargetingRule
 	sqlStatement := `
 SELECT
   tr.id,
@@ -106,7 +106,7 @@ WHERE tr.id = $1`
 			_o.ID,
 		)
 		if err != nil {
-			return &o, err
+			return o, err
 		}
 		for _rows.Next() {
 			var _v flagset.Variation
@@ -119,9 +119,9 @@ WHERE tr.id = $1`
 			_o.RuleVariations = append(_o.RuleVariations, _v)
 		}
 
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(

@@ -90,7 +90,7 @@ func (s *Service) Get(
 
 		o[string(f.Key)].Rules = []flagset.Rule{}
 
-		for _, _tr := range *tr {
+		for _, _tr := range tr {
 			switch _tr.Type {
 			case string(rsc.Trait):
 				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
