@@ -59,7 +59,7 @@ func (s *Service) createChildren(
 		if _err != nil {
 			e.Append(cons.ErrorInternal, _err.Error())
 		}
-		if len(*vl) < 1 {
+		if len(vl) < 1 {
 			e.Append(cons.ErrorInternal, fmt.Sprintf("No variation found on flag with key=%s", f.Key))
 		}
 
@@ -67,7 +67,7 @@ func (s *Service) createChildren(
 			Enabled: false,
 			FallthroughVariations: []flagset.Variation{
 				{
-					VariationKey: string((*vl)[0].Key),
+					VariationKey: string(vl[0].Key),
 					Weight:       flagset.DefaultFallthroughVariationWeight,
 				},
 			},
