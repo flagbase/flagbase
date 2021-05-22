@@ -22,8 +22,8 @@ func EnforcePolicyFactory(
 		return enf.Enforce(
 			cfg.AccessID,
 			cfg.ResourceID,
-			string(cfg.ResourceType),
-			string(cfg.AccessType),
+			cfg.ResourceType.String(),
+			cfg.AccessType.String(),
 		)
 	}
 }
@@ -36,8 +36,8 @@ func AddPolicyFactory(
 		return enf.AddPolicy(
 			cfg.AccessID,
 			cfg.ResourceID,
-			string(cfg.ResourceType),
-			string(cfg.AccessType),
+			cfg.ResourceType.String(),
+			cfg.AccessType.String(),
 		)
 	}
 }
