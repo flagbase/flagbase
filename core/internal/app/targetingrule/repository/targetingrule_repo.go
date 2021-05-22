@@ -25,8 +25,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a targetingrulemodel.RootArgs,
-) (*[]targetingrulemodel.TargetingRule, error) {
-	var o []targetingrulemodel.TargetingRule
+) ([]*targetingrulemodel.TargetingRule, error) {
+	var o []*targetingrulemodel.TargetingRule
 	sqlStatement := `
 SELECT
   tr.id,
@@ -103,10 +103,10 @@ WHERE tr.id = $1`
 		_rows, err := r.DB.Query(
 			ctx,
 			sqlStatement,
-			_o.ID.String(),
+			_o.ID,
 		)
 		if err != nil {
-			return &o, err
+			return o, err
 		}
 		for _rows.Next() {
 			var _v flagset.Variation
@@ -119,9 +119,9 @@ WHERE tr.id = $1`
 			_o.RuleVariations = append(_o.RuleVariations, _v)
 		}
 
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(
@@ -286,7 +286,7 @@ RETURNING
 				ctx,
 				sqlStatement,
 				f.Weight,
-				o.ID.String(),
+				o.ID,
 				a.WorkspaceKey,
 				a.ProjectKey,
 				a.FlagKey,
@@ -388,7 +388,7 @@ WHERE w.key = $1
 		a.WorkspaceKey,
 		a.ProjectKey,
 		a.FlagKey,
-		o.ID.String(),
+		o.ID,
 	)
 	if err != nil {
 		return &o, err
@@ -453,7 +453,7 @@ WHERE id = $1`
 	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
-		i.ID.String(),
+		i.ID,
 		i.Key,
 		i.Type,
 		i.Name,
@@ -499,7 +499,7 @@ WHERE targeting_rule_id = $1
 		if _, err := r.DB.Exec(
 			ctx,
 			sqlStatement,
-			i.ID.String(),
+			i.ID,
 			f.Weight,
 			a.WorkspaceKey,
 			a.ProjectKey,

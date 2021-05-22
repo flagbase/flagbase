@@ -44,13 +44,13 @@ func (s *Service) createChildren(
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
-	if len(*fl) == 0 || fl == nil {
+	if len(fl) == 0 || fl == nil {
 		return &e
 	}
 	if _err != nil {
 		e.Append(cons.ErrorInternal, _err.Error())
 	}
-	for _, f := range *fl {
+	for _, f := range fl {
 		vl, _err := s.VariationRepo.List(ctx, variationmodel.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,
@@ -59,7 +59,7 @@ func (s *Service) createChildren(
 		if _err != nil {
 			e.Append(cons.ErrorInternal, _err.Error())
 		}
-		if len(*vl) < 1 {
+		if len(vl) < 1 {
 			e.Append(cons.ErrorInternal, fmt.Sprintf("No variation found on flag with key=%s", f.Key))
 		}
 
@@ -67,7 +67,7 @@ func (s *Service) createChildren(
 			Enabled: false,
 			FallthroughVariations: []flagset.Variation{
 				{
-					VariationKey: string((*vl)[0].Key),
+					VariationKey: string(vl[0].Key),
 					Weight:       flagset.DefaultFallthroughVariationWeight,
 				},
 			},

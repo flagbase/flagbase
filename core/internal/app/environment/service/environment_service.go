@@ -41,7 +41,7 @@ func NewService(senv *srvenv.Env) *Service {
 func (s *Service) List(
 	atk rsc.Token,
 	a environmentmodel.RootArgs,
-) (*[]environmentmodel.Environment, *res.Errors) {
+) ([]*environmentmodel.Environment, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

@@ -29,7 +29,7 @@ func NewService(senv *srvenv.Env) *Service {
 func (s *Service) List(
 	atk rsc.Token,
 	a identitymodel.RootArgs,
-) (*[]identitymodel.Identity, *res.Errors) {
+) ([]*identitymodel.Identity, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

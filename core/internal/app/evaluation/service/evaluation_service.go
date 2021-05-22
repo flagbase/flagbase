@@ -61,7 +61,7 @@ func (s *Service) Get(
 		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
-	for _, f := range *fl {
+	for _, f := range fl {
 		t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
@@ -90,7 +90,7 @@ func (s *Service) Get(
 
 		o[string(f.Key)].Rules = []flagset.Rule{}
 
-		for _, _tr := range *tr {
+		for _, _tr := range tr {
 			switch _tr.Type {
 			case string(rsc.Trait):
 				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
@@ -113,7 +113,7 @@ func (s *Service) Get(
 						e.Append(cons.ErrorInternal, err.Error())
 					}
 
-					for _, _sr := range *sr {
+					for _, _sr := range sr {
 						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
 							RuleType:       _tr.Type,
 							TraitKey:       _sr.TraitKey,

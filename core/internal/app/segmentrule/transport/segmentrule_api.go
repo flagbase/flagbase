@@ -75,12 +75,10 @@ func (h *APIHandler) listAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -113,12 +111,10 @@ func (h *APIHandler) createAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusCreated,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -146,12 +142,10 @@ func (h *APIHandler) getAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -185,12 +179,10 @@ func (h *APIHandler) updateAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -217,7 +209,7 @@ func (h *APIHandler) deleteAPIHandler(ctx *gin.Context) {
 		e.Extend(err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusNoContent,
 		&res.Success{},

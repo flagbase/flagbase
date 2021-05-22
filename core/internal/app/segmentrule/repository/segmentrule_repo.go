@@ -23,8 +23,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a segmentrulemodel.RootArgs,
-) (*[]segmentrulemodel.SegmentRule, error) {
-	var o []segmentrulemodel.SegmentRule
+) ([]*segmentrulemodel.SegmentRule, error) {
+	var o []*segmentrulemodel.SegmentRule
 	sqlStatement := `
 SELECT
   sr.id,
@@ -69,9 +69,9 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(
@@ -228,7 +228,7 @@ WHERE id = $1`
 	if _, err := r.DB.Exec(
 		ctx,
 		sqlStatement,
-		i.ID.String(),
+		i.ID,
 		i.Key,
 		i.TraitKey,
 		i.TraitValue,

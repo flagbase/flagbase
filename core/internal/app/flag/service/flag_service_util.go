@@ -66,7 +66,7 @@ func (s *Service) createChildren(
 		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
-	for _, env := range *envs {
+	for _, env := range envs {
 		_, _err := s.TargetingRepo.Create(
 			ctx,
 			targetingmodel.Targeting{

@@ -29,7 +29,7 @@ func NewService(senv *srvenv.Env) *Service {
 func (s *Service) List(
 	atk rsc.Token,
 	a targetingrulemodel.RootArgs,
-) (*[]targetingrulemodel.TargetingRule, *res.Errors) {
+) ([]*targetingrulemodel.TargetingRule, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
