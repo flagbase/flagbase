@@ -44,13 +44,13 @@ func (s *Service) createChildren(
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
 	})
-	if len(*fl) == 0 || fl == nil {
+	if len(fl) == 0 || fl == nil {
 		return &e
 	}
 	if _err != nil {
 		e.Append(cons.ErrorInternal, _err.Error())
 	}
-	for _, f := range *fl {
+	for _, f := range fl {
 		vl, _err := s.VariationRepo.List(ctx, variationmodel.RootArgs{
 			WorkspaceKey: a.WorkspaceKey,
 			ProjectKey:   a.ProjectKey,

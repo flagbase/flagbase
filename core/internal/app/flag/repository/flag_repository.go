@@ -24,8 +24,8 @@ func NewRepo(senv *srvenv.Env) *Repo {
 func (r *Repo) List(
 	ctx context.Context,
 	a flagmodel.RootArgs,
-) (*[]flagmodel.Flag, error) {
-	var o []flagmodel.Flag
+) ([]*flagmodel.Flag, error) {
+	var o []*flagmodel.Flag
 	sqlStatement := `
 SELECT
   f.id,
@@ -60,9 +60,9 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o = append(o, _o)
+		o = append(o, &_o)
 	}
-	return &o, nil
+	return o, nil
 }
 
 func (r *Repo) Create(

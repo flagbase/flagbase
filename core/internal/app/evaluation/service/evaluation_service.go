@@ -61,7 +61,7 @@ func (s *Service) Get(
 		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
-	for _, f := range *fl {
+	for _, f := range fl {
 		t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,
