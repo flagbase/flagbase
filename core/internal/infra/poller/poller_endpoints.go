@@ -44,7 +44,7 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		statusCode = http.StatusNotModified
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		statusCode,
 		&res.Success{
@@ -84,7 +84,7 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		statusCode = http.StatusNotModified
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		statusCode,
 		&res.Success{

@@ -61,7 +61,7 @@ func (h *APIHandler) getEvaluationAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
 		&res.Success{
@@ -98,7 +98,7 @@ func (h *APIHandler) evaluateAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
 		&res.Success{
