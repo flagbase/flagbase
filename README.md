@@ -26,14 +26,14 @@ Aside from the usual features a remote configuration service provides, Flagbase 
 
 ## Getting started
 Flagbase is very easy to get up and running. Follow these steps to get started:
-1. [Setup the core](https://flagbase.com/docs/core/setup): provision the service on server(s). You can use your preferred cloud vendor.
+1. [Set up the core](https://flagbase.com/docs/core/setup): provision the service on server(s). You can use your preferred cloud vendor.
 1. [Integrate to your application](https://flagbase.com/docs/sdk/overview): use the SDK in your application to wrap features you want to control remotely.
 1. [Configure targeting](https://flagbase.com/docs/guides/targeting): set up your flag's targeting rules so users see feature variations intended for them.
 
 That's it! Now your ready to release your feature code - knowing that you'll be able to turn it off anytime 🚀
 
 ## Directories
-This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI, SDKs.
+This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI & SDKs.
 * **[`/core`](./core/README.md)**: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream flagsets to the SDKs.
 * **[`/sdk`](./sdk/README.md)**: SDKs retrieve and evaluate flagsets from the Core.
 * **[`/ui`](./ui/README.md)**: UI interacts with the [Core API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc).

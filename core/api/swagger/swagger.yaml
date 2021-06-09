@@ -1,23 +1,8 @@
 openapi: 3.0.0
 info:
-  description: |
-    # Overview
-    ## Key Concepts
-    TODO
-
-    ## Authentication
-    TODO
-
-    ## Representations
-    TODO
-
-    ## CORS
-    TODO
-
-    ## Versioning
-    TODO
+  description: "# Overview\nThis is the swagger docs for the [Core](https://flagbase.com/oss/#core) API. For an overview of the system - please read our [overview guides](http://flagbase.com/docs/guides/overview). This API conforms to the [JSON:API specification](https://jsonapi.org/format/).\n\n# Getting Started\nHere's a tiny guide on getting started with the service. These steps will help you create and evaluate your first flag.\n1. [Obtain your root user access token](#operation/gen-access-token). In order to create a workspace, you'll need root user permissions, hence why we obtain root access to the service. If you want to create a root access key-secret pair, please refer to the [getting started guide](/dev/core/getting-started) for the core.\n1. [Create a workspace](#operation/create-workspace). Your projects will live inside here.\n1. [Create admin access](#operation/create-workspace-access) for your workspace. We will use this access token for all subsequent requests.\n1. [Obtain your workspace admin access token](#operation/gen-access-token) you created in the previous step. \n1. [Create a project](#operation/create-project). Your flags will live inside here.\n1. [Create a flag](#operation/create-flag). You can [configure targeting](#operation/update-tageting) for that flag if you wish.\n1. [Evaluate your flags](#operation/evaluate-flags) or [get the non-evaluated flagset](#operation/get-evaluation)\n"
   title: Flagbase API
-  version: 1.0.0
+  version: 0.0.1-alpha
   contact:
     name: Flagbase
     url: 'https://flagbase.com'
@@ -30,8 +15,8 @@ info:
   termsOfService: 'https://flagbase.com/legal/privacy'
 tags:
   - name: auth
-    x-displayName: Access Token
-    description: Access authorisation
+    x-displayName: Auth Management
+    description: Authenticate using the access key-secret pair and obtain an access token used to authorize your requests.
   - name: workspaces
     x-displayName: Workspace Management
     description: "Workspaces represent a collection of projects. It can be used to group an individual or organisation's projects."
@@ -131,13 +116,27 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Workspace'
+                    $ref: '#/components/schemas/WorkspaceResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: workspace
+                      id: 8904dc87-067a-448d-9678-5241a0c65103
+                      attributes:
+                        description: This should be a description.
+                        key: testing-workspace
+                        name: Testing Workspace
+                        tags:
+                          - example-tag
         '500':
           description: Internal Server Error
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - Access Token: []
     parameters:
       - name: wsKey
         in: path
@@ -157,7 +156,19 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Workspace'
+                    $ref: '#/components/schemas/WorkspaceResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: workspace
+                      id: 8904dc87-067a-448d-9678-5241a0c65103
+                      attributes:
+                        description: This should be a description.
+                        key: testing-workspace
+                        name: Cool workspace
+                        tags:
+                          - example-tag
         '500':
           description: Internal Server Error
           content:
@@ -172,7 +183,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /name
+                    value: Cool workspace
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete workspace
       operationId: delete-workspace
@@ -191,6 +210,8 @@ paths:
       description: Delete an existing workspace. This operation can not be undone. Please proceed with caution.
       tags:
         - workspaces
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}':
     parameters:
       - name: projKey
@@ -217,7 +238,17 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Project'
+                    $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      id: 8872a9cf-7062-4230-80c2-de639395ff16
+                      key: testing-project
+                      name: Test Project
+                      description: This should be a description.
+                      tags:
+                        - some-project-tag
         '500':
           description: Internal Server Error
           content:
@@ -240,7 +271,17 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Project'
+                    $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      id: 8872a9cf-7062-4230-80c2-de639395ff16
+                      key: testing-project
+                      name: Cool Project
+                      description: This should be a description.
+                      tags:
+                        - some-project-tag
         '500':
           description: Internal Server Error
           content:
@@ -255,6 +296,12 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /name
+                    value: Cool project
           application/xml:
             schema:
               $ref: '#/components/schemas/PatchDocument'
@@ -308,6 +355,7 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Environment'
+              examples: {}
         '500':
           description: Internal Server Error
           content:
@@ -330,6 +378,7 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/Environment'
+              examples: {}
         '500':
           description: Internal Server Error
           content:
@@ -344,6 +393,7 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples: {}
         description: Patch Document (RFC 6902)
     delete:
       summary: Delete environment
@@ -444,7 +494,19 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Workspace'
+                      $ref: '#/components/schemas/WorkspaceResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - type: workspace
+                        id: 8904dc87-067a-448d-9678-5241a0c65103
+                        attributes:
+                          description: This should be a description.
+                          key: testing-workspace
+                          name: Test Workspace
+                          tags:
+                            - example-tag
         '500':
           description: Internal Server Error
           content:
@@ -465,7 +527,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SuccessResponse'
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/WorkspaceResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      type: workspace
+                      id: 8904dc87-067a-448d-9678-5241a0c65103
+                      attributes:
+                        description: This should be a description.
+                        key: testing-workspace
+                        name: Testing Workspace
+                        tags:
+                          - example-tag
         '500':
           description: Internal Server Error
           content:
@@ -491,7 +568,17 @@ paths:
                 type: object
                 properties:
                   data:
-                    $ref: '#/components/schemas/Project'
+                    $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      id: 8872a9cf-7062-4230-80c2-de639395ff16
+                      key: testing-project
+                      name: Test Project
+                      description: This should be a description.
+                      tags:
+                        - some-project-tag
         '500':
           description: Internal Server Error
           content:
@@ -526,9 +613,27 @@ paths:
                 type: object
                 properties:
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Project'
+                    $ref: '#/components/schemas/ProjectResponse'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      - type: project
+                        id: 49af9f76-bf1d-4309-8070-a9e1318621e3
+                        attributes:
+                          description: This should be a description.
+                          key: testing-project
+                          name: Test Project
+                          tags:
+                            - some-project-tag
+                      - type: project
+                        id: 8872a9cf-7062-4230-80c2-de639395ff16
+                        attributes:
+                          description: This should be a description.
+                          key: testing-project-1
+                          name: Test Project 1
+                          tags:
+                            - some-project-tag
         '500':
           description: Internal Server Error
           content:
@@ -552,6 +657,17 @@ paths:
                 properties:
                   data:
                     $ref: '#/components/schemas/AccessToken'
+              examples:
+                example-1:
+                  value:
+                    data:
+                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBY2Nlc3MiOiJleUpwWkNJNklqa3hNakJrTURnNUxXRXpaakl0TkRVNE9DMDVOelkyTFRGalpqQTVaR013WkRZeFpDSXNJbXRsZVNJNkluSnZiM1FpTENKelpXTnlaWFFpT2lJa01tRWtNVEFrVW5CNGREaEJTelJ6WVhKV1RWQlhhV3RCYjNSVmRUQnBiREZ6Tmpsbk5XeE9kbWd4VGt0bFNWVkZVVVJYYzJsVlkzaElWVzBpTENKMGVYQmxJam9pY205dmRDSXNJbVY0Y0dseVpYTkJkQ0k2T1RJeU16TTNNakF6TmpnMU5EYzNOVGd3TjMwPSIsImV4cCI6MTYyMTk1NjY4Mn0.3DVGoUDC9k1rHO4KCEtwRxJtzme8toNCYQ7TT-0Klwg
+                      access:
+                        id: 9120d089-a3f2-4588-9766-1cf09dc0d61d
+                        key: root
+                        secret: '**************'
+                        type: root
+                        expiresAt: 9223372036854776000
         '500':
           description: Internal Server Error
           content:
@@ -574,9 +690,15 @@ paths:
               required:
                 - key
                 - secret
+            examples:
+              example-1:
+                value:
+                  key: root
+                  secret: toor
         description: Access key-secret pair.
       tags:
         - auth
+      security: []
     parameters: []
   '/workspaces/{wsKey}/access':
     parameters:
@@ -610,6 +732,8 @@ paths:
       description: List access keys that are currently in use for a particular workspace.
       tags:
         - workspace-access
+      security:
+        - Access Token: []
     post:
       summary: Create workspace access
       operationId: create-workspace-access
@@ -792,7 +916,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EnvironmentInput'
+              $ref: '#/components/schemas/Environment'
         description: Environmnet Object
   '/flags/{wsKey}/{projKey}/{flagKey}':
     parameters:
@@ -1940,6 +2064,9 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
       operationId: get-evaluation
       description: 'Get non-evaluated flagset rules, used for evaluation.'
+      security:
+        - Access Token: []
+      parameters: []
     parameters:
       - schema:
           type: string
@@ -2136,7 +2263,7 @@ paths:
 servers:
   - url: 'https://api.flagbase.io'
     description: Flagbase Cloud
-  - url: 'http://localhost:5051'
+  - url: 'http://127.0.0.1:5051'
     description: Localhost
 components:
   requestBodies:
@@ -2213,6 +2340,8 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
+      x-tags:
+        - workspaces
     Identity:
       title: Identity
       type: object
@@ -2223,14 +2352,15 @@ components:
           description: Unique key representing an identity
       required:
         - key
+      x-tags:
+        - identities
     Access:
       title: Access
       type: object
       description: 'Access is a key/secret pair used to restrict operations on a particular resource via the policy enforcer. You can create and attach access to workspace, project and environment resources.'
+      x-tags:
+        - auth
       properties:
-        id:
-          type: string
-          description: Arbitrary access identifier
         key:
           type: string
           description: Generated access key (make sure you save this key)
@@ -2278,6 +2408,8 @@ components:
           type: integer
           description: Unix time stating when this access expires.
           format: int64
+      x-tags:
+        - auth
     ResourceKey:
       type: string
       title: Resource Key
@@ -2320,20 +2452,8 @@ components:
       required:
         - key
       description: "A project can have multiple environments (e.g. staging, production) which correspond to different targeting states. This means if you modify a flag's targeting or a segment's rules in one environment, your changes will be scoped to that particular environment. This allows you to have different targeting rules for flags and segments in each environment."
-    EnvironmentInput:
-      title: EnvironmentInput
-      type: object
-      properties:
-        key:
-          $ref: '#/components/schemas/ResourceKey'
-        name:
-          $ref: '#/components/schemas/ResouceName'
-        description:
-          $ref: '#/components/schemas/ResourceDescription'
-        tags:
-          $ref: '#/components/schemas/ResourceTags'
-      required:
-        - key
+      x-tags:
+        - environments
     Project:
       title: Project
       type: object
@@ -2349,6 +2469,8 @@ components:
           $ref: '#/components/schemas/ResouceName'
       required:
         - key
+      x-tags:
+        - projects
     Flag:
       title: Flag
       type: object
@@ -2364,6 +2486,8 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
+      x-tags:
+        - flags
     Variation:
       title: Variation
       type: object
@@ -2379,6 +2503,8 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
+      x-tags:
+        - variations
     SuccessResponse:
       title: SuccessResponse
       type: object
@@ -2409,6 +2535,8 @@ components:
         secret:
           type: string
           description: The access secret.
+      x-tags:
+        - auth
     Segment:
       title: Segment
       type: object
@@ -2424,6 +2552,8 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
+      x-tags:
+        - segments
     SegmentRule:
       title: SegmentRule
       type: object
@@ -2437,6 +2567,8 @@ components:
           $ref: '#/components/schemas/RuleOperand'
         traitValue:
           type: string
+      x-tags:
+        - segment-rules
     Error:
       title: Error
       type: object
@@ -2455,6 +2587,8 @@ components:
           type: string
         access:
           $ref: '#/components/schemas/Access'
+      x-tags:
+        - auth
     Trait:
       title: Trait
       type: object
@@ -2470,6 +2604,8 @@ components:
         - key
         - isIdentifier
       description: A trait (aka attribute) represents a particular characteristic of a identity (aka user).
+      x-tags:
+        - traits
     Targeting:
       title: Targeting
       type: object
@@ -2545,6 +2681,9 @@ components:
         - greater_than_or_equal
         - contains
         - regex
+      x-tags:
+        - targeting-rules
+        - segment-rules
     EvaluationContext:
       title: EvaluationContext
       type: object
@@ -2605,3 +2744,64 @@ components:
         clientKey:
           type: string
           description: Used for client-side SDKs (public)
+    WorkspaceResponse:
+      title: WorkspaceResponse
+      type: object
+      description: 'Workspace response (JSON:API)'
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/Workspace'
+      x-examples:
+        example-1:
+          type: workspace
+          id: 8904dc87-067a-448d-9678-5241a0c65103
+          attributes:
+            description: This should be a description.
+            key: testing-workspace
+            name: Example Name
+            tags:
+              - example-tag
+    ProjectResponse:
+      title: ProjectResponse
+      type: object
+      description: 'Project response (JSON:API)'
+      x-examples:
+        example-1:
+          data:
+            id: 8872a9cf-7062-4230-80c2-de639395ff16
+            key: testing-project
+            name: Test Project
+            description: This should be a description.
+            tags:
+              - some-project-tag
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/Project'
+    VariationResponse:
+      title: VariationResponse
+      type: object
+      description: 'Variation response (JSON:API)'
+      x-tags:
+        - variations
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        attributes:
+          $ref: '#/components/schemas/Variation'
+  securitySchemes:
+    Access Token:
+      type: http
+      scheme: bearer
+      description: 'Please include a access token in the request headers for protected endpoints. (i.e. "Authorization": "Bearer my-access-token")'
+security:
+  - Access Token: []

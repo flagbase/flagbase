@@ -1,0 +1,15 @@
+.redoc-json span.token.punctuation {
+  color: white !important;
+}
+
+.redoc-json code {
+  background-color: #1c1e21;
+}
+
+.redoc-json .collapser {
+  color: limegreen;
+}
+
+.redoc-json span.property.token {
+  color: white !important;
+}
