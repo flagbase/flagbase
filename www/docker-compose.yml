@@ -9,6 +9,7 @@ services:
       - 3000:3000
     volumes:
       - ./_app_/pages/docs:/app/flagbase/src/pages/docs
+      - ./_app_/css:/app/flagbase/src/css
       - ../core/api/swagger/swagger.yaml:/app/flagbase/static/swagger.yaml
       - ./_app_/docusaurus.config.js:/app/flagbase/docusaurus.config.js
       - ./blog:/app/flagbase/blog
