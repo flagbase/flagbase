@@ -13,8 +13,8 @@ CREATE TABLE segment_rule (
   description resource_description,
   tags resource_tags,
   -- references
-  segment_id resource_id REFERENCES segment (id),
-  environment_id resource_id REFERENCES environment (id),
+  segment_id resource_id REFERENCES segment (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  environment_id resource_id REFERENCES environment (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT segment_rule_key UNIQUE(key, segment_id, environment_id)
 );

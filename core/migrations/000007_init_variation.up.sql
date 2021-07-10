@@ -9,7 +9,7 @@ CREATE TABLE variation (
   description resource_description,
   tags resource_tags,
   -- references
-  flag_id resource_id REFERENCES flag (id),
+  flag_id resource_id REFERENCES flag (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT variation_key UNIQUE(key, flag_id)
 );

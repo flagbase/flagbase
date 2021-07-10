@@ -29,9 +29,9 @@ CREATE TABLE targeting_rule (
   description resource_description,
   tags resource_tags,
   -- references
-  identity_id UUID REFERENCES identity (id),
-  segment_id UUID REFERENCES segment (id),
-  targeting_id UUID REFERENCES targeting (id) NOT NULL,
+  identity_id UUID REFERENCES identity (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  segment_id UUID REFERENCES segment (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  targeting_id UUID REFERENCES targeting (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
   -- contraints
   CONSTRAINT targeting_rule_key UNIQUE(key, targeting_id)
 );
@@ -42,8 +42,8 @@ CREATE TABLE targeting_rule_variation (
   -- attributes
   weight INT DEFAULT 100 NOT NULL,
   -- references
-  variation_id UUID REFERENCES variation (id) NOT NULL,
-  targeting_rule_id UUID REFERENCES targeting_rule (id) NOT NULL,
+  variation_id UUID REFERENCES variation (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+  targeting_rule_id UUID REFERENCES targeting_rule (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
   -- constraints
   CHECK (weight BETWEEN 0 AND 100)
 );

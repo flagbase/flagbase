@@ -8,7 +8,7 @@ CREATE TABLE identity (
   -- attributes
   key identity_resource_key,
   -- references
-  environment_id resource_id REFERENCES environment (id),
+  environment_id resource_id REFERENCES environment (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT identity_key UNIQUE(key, environment_id)
 );

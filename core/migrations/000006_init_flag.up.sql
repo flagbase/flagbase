@@ -9,7 +9,7 @@ CREATE TABLE flag (
   description resource_description,
   tags resource_tags,
   -- references
-  project_id resource_id REFERENCES project (id),
+  project_id resource_id REFERENCES project (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT flag_key UNIQUE(key, project_id)
 );

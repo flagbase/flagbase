@@ -9,7 +9,7 @@ CREATE TABLE project (
   description resource_description,
   tags resource_tags,
   -- references
-  workspace_id resource_id REFERENCES workspace (id),
+  workspace_id resource_id REFERENCES workspace (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT project_key UNIQUE(key, workspace_id)
 );
