@@ -1,14 +1,13 @@
 package evaluator
 
 import (
-	"core/pkg/flagset"
-
+	"core/pkg/model"
 	"errors"
 )
 
 // Evaluate the variation for a single flag
 func Evaluate(
-	flag flagset.Flag,
+	flag model.Flag,
 	salt string,
 	ectx Context,
 ) *Evaluation {
@@ -37,7 +36,7 @@ func Evaluate(
 }
 
 func evaluateRules(
-	rules []flagset.Rule,
+	rules []model.Rule,
 	salt string,
 	ectx Context,
 ) Evaluation {
@@ -63,7 +62,7 @@ func evaluateRules(
 }
 
 func evaluateRule(
-	rule flagset.Rule,
+	rule model.Rule,
 	salt string,
 	ectx Context,
 ) (Evaluation, error) {

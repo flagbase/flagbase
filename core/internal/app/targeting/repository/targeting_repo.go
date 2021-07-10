@@ -6,7 +6,7 @@ import (
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/dbutil"
-	"core/pkg/flagset"
+	"core/pkg/model"
 
 	"github.com/jackc/pgx/v4/pgxpool"
 )
@@ -207,7 +207,7 @@ WHERE w.key = $1
 		return &o, err
 	}
 	for rows.Next() {
-		var _o flagset.Variation
+		var _o model.Variation
 		if err = rows.Scan(
 			&_o.Weight,
 			&_o.VariationKey,

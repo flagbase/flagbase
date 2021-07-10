@@ -1,4 +1,4 @@
-package flagset
+package model
 
 // Flagset represents a set of flags with their appropriate rules and variations
 type Flagset map[string]*Flag

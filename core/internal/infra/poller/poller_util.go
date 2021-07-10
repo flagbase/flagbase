@@ -6,19 +6,19 @@ import (
 	sdkkeyservice "core/internal/app/sdkkey/service"
 	cons "core/internal/pkg/constants"
 	"core/pkg/evaluator"
-	"core/pkg/flagset"
 	"core/pkg/hashutil"
+	"core/pkg/model"
 	res "core/pkg/response"
 	"encoding/json"
 )
 
 func getAndSetCache(args CachedServiceArgs) (
-	*flagset.Flagset,
+	*model.Flagset,
 	res.Errors,
 	string,
 ) {
 	var e res.Errors
-	var o *flagset.Flagset
+	var o *model.Flagset
 
 	evalservice := evaluationservice.NewService(args.Senv)
 	sks := sdkkeyservice.NewService(args.Senv)

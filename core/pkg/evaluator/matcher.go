@@ -1,32 +1,32 @@
 package evaluator
 
 import (
-	"core/pkg/flagset"
+	"core/pkg/model"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
 // EvalMapper map containing comparators for all valid operands
-type EvalMapper map[flagset.Operator](func(input interface{}, rule string) bool)
+type EvalMapper map[model.Operator](func(input interface{}, rule string) bool)
 
 // Matcher instance of EvalMapper, used to select the appropriate comparator given the operand
 var Matcher EvalMapper = EvalMapper{
-	(flagset.OPEqual): func(i interface{}, r string) bool {
+	(model.OPEqual): func(i interface{}, r string) bool {
 		iS, ok := i.(string)
 		if !ok {
 			return false
 		}
 		return iS == r
 	},
-	(flagset.OPContains): func(i interface{}, r string) bool {
+	(model.OPContains): func(i interface{}, r string) bool {
 		iS, ok := i.(string)
 		if !ok {
 			return false
 		}
 		return strings.Contains(iS, r)
 	},
-	(flagset.OPGreaterThan): func(i interface{}, r string) bool {
+	(model.OPGreaterThan): func(i interface{}, r string) bool {
 		rV, err := strconv.ParseFloat(r, 64)
 		if err != nil {
 			return false
@@ -37,7 +37,7 @@ var Matcher EvalMapper = EvalMapper{
 		}
 		return iV > rV
 	},
-	(flagset.OPGreaterThanOrEqual): func(i interface{}, r string) bool {
+	(model.OPGreaterThanOrEqual): func(i interface{}, r string) bool {
 		rV, err := strconv.ParseFloat(r, 64)
 		if err != nil {
 			return false
@@ -48,7 +48,7 @@ var Matcher EvalMapper = EvalMapper{
 		}
 		return iV >= rV
 	},
-	(flagset.OPRegex): func(i interface{}, r string) bool {
+	(model.OPRegex): func(i interface{}, r string) bool {
 		iS, ok := i.(string)
 		if !ok {
 			return false

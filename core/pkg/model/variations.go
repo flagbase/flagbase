@@ -1,4 +1,4 @@
-package flagset
+package model
 
 // Variation represents a single flag state, with an appropriate weight
 type Variation struct {

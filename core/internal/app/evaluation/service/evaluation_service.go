@@ -16,8 +16,8 @@ import (
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/evaluator"
-	"core/pkg/flagset"
 	"core/pkg/hashutil"
+	"core/pkg/model"
 	res "core/pkg/response"
 )
 
@@ -46,12 +46,12 @@ func NewService(senv *srvenv.Env) *Service {
 func (s *Service) Get(
 	atk rsc.Token,
 	a evaluationmodel.RootArgs,
-) (*flagset.Flagset, *res.Errors) {
+) (*model.Flagset, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	o := make(flagset.Flagset)
+	o := make(model.Flagset)
 
 	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.RootArgs{
 		WorkspaceKey: a.WorkspaceKey,
@@ -82,18 +82,18 @@ func (s *Service) Get(
 			e.Append(cons.ErrorInternal, _err.Error())
 		}
 
-		o[string(f.Key)] = &flagset.Flag{
+		o[string(f.Key)] = &model.Flag{
 			FlagKey:               string(f.Key),
 			UseFallthrough:        !t.Enabled,
 			FallthroughVariations: t.FallthroughVariations,
 		}
 
-		o[string(f.Key)].Rules = []flagset.Rule{}
+		o[string(f.Key)].Rules = []model.Rule{}
 
 		for _, _tr := range tr {
 			switch _tr.Type {
 			case string(rsc.Trait):
-				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
+				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, model.Rule{
 					RuleType:       _tr.Type,
 					TraitKey:       _tr.TraitKey,
 					TraitValue:     _tr.TraitValue,
@@ -114,7 +114,7 @@ func (s *Service) Get(
 					}
 
 					for _, _sr := range sr {
-						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, flagset.Rule{
+						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, model.Rule{
 							RuleType:       _tr.Type,
 							TraitKey:       _sr.TraitKey,
 							TraitValue:     _sr.TraitValue,

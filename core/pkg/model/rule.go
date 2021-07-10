@@ -1,4 +1,4 @@
-package flagset
+package model
 
 // Rule represents generic flagbase rule (used by targeting and segments)
 type Rule struct {
