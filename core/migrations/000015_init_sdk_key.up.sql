@@ -12,10 +12,10 @@ CREATE TABLE sdk_key (
   description resource_description,
   tags resource_tags,
   -- references
-  environment_id resource_id REFERENCES environment (id),
+  environment_id resource_id REFERENCES environment (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
   -- contraints
-  CONSTRAINT sdk_server_key UNIQUE(server_key, environment_id),
-  CONSTRAINT sdk_client_key UNIQUE(client_key, environment_id)
+  CONSTRAINT sdk_server_key UNIQUE(server_key),
+  CONSTRAINT sdk_client_key UNIQUE(client_key)
 );
 
 END;

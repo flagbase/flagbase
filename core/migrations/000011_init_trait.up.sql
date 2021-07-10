@@ -10,7 +10,7 @@ CREATE TABLE trait (
   key trait_resource_key,
   is_identifier BOOLEAN DEFAULT FALSE,
   -- references
-  environment_id resource_id REFERENCES environment (id),
+  environment_id resource_id REFERENCES environment (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT trait_key UNIQUE(key, environment_id)
 );

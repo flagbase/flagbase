@@ -14,8 +14,8 @@ CREATE TABLE targeting (
   -- attributes
   enabled BOOLEAN DEFAULT FALSE NOT NULL,
   -- references
-  flag_id UUID REFERENCES flag (id),
-  environment_id UUID REFERENCES environment (id),
+  flag_id UUID REFERENCES flag (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  environment_id UUID REFERENCES environment (id) ON DELETE CASCADE ON UPDATE CASCADE,
   -- contraints
   CONSTRAINT uq_flag_environment UNIQUE(flag_id, environment_id)
 );
@@ -25,8 +25,8 @@ CREATE TABLE targeting_fallthrough_variation (
   -- attributes
   weight INT DEFAULT 100  NOT NULL,
   -- references
-  variation_id UUID REFERENCES variation (id) NOT NULL,
-  targeting_id UUID REFERENCES targeting (id) NOT NULL,
+  variation_id UUID REFERENCES variation (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
+  targeting_id UUID REFERENCES targeting (id) ON DELETE CASCADE ON UPDATE CASCADE NOT NULL,
   -- constraints
   CHECK (weight BETWEEN 0 AND 100)
 );
