@@ -1,7 +1,20 @@
 openapi: 3.0.0
 info:
-  description: "# Overview\nThis is the swagger docs for the [Core](https://flagbase.com/oss/#core) API. For an overview of the system - please read our [overview guides](http://flagbase.com/docs/guides/overview). This API conforms to the [JSON:API specification](https://jsonapi.org/format/).\n\n# Getting Started\nHere's a tiny guide on getting started with the service. These steps will help you create and evaluate your first flag.\n1. [Obtain your root user access token](#operation/gen-access-token). In order to create a workspace, you'll need root user permissions, hence why we obtain root access to the service. If you want to create a root access key-secret pair, please refer to the [getting started guide](/dev/core/getting-started) for the core.\n1. [Create a workspace](#operation/create-workspace). Your projects will live inside here.\n1. [Create admin access](#operation/create-workspace-access) for your workspace. We will use this access token for all subsequent requests.\n1. [Obtain your workspace admin access token](#operation/gen-access-token) you created in the previous step. \n1. [Create a project](#operation/create-project). Your flags will live inside here.\n1. [Create a flag](#operation/create-flag). You can [configure targeting](#operation/update-tageting) for that flag if you wish.\n1. [Evaluate your flags](#operation/evaluate-flags) or [get the non-evaluated flagset](#operation/get-evaluation)\n"
-  title: Flagbase API
+  description: |
+    # Overview
+    This is the swagger docs for the [Core](https://flagbase.com/oss/#core) API. For an overview of the system - please read our [overview guides](http://flagbase.com/docs/guides/overview). This API conforms to the [JSON:API spec](https://jsonapi.org/format/).
+
+    # Getting Started
+    The steps will help you create and evaluate your first flag. In this guide, we assume you already have an instance of Flagbase Core running.
+
+    1. [Obtain your root user access token](#operation/gen-access-token). In order to create a workspace, you'll need root user permissions, hence why we obtain root access to the service. If you want to create a root access key-secret pair, please refer to the [getting started guide](/dev/core/getting-started) for the core.
+    1. [Create a workspace](#operation/create-workspace). Your projects will live inside here.
+    1. [Create admin access](#operation/create-workspace-access) for your workspace. We will use this access token for all subsequent requests.
+    1. [Obtain your workspace admin access token](#operation/gen-access-token) you created in the previous step. 
+    1. [Create a project](#operation/create-project). Your flags will live inside here.
+    1. [Create a flag](#operation/create-flag). You can [configure targeting](#operation/update-tageting) for that flag if you wish.
+    1. [Evaluate your flags](#operation/evaluate-flags) or [get the non-evaluated flagset](#operation/get-evaluation)
+  title: Core API
   version: 0.0.1-alpha
   contact:
     name: Flagbase
@@ -19,7 +32,7 @@ tags:
     description: Authenticate using the access key-secret pair and obtain an access token used to authorize your requests.
   - name: workspaces
     x-displayName: Workspace Management
-    description: "Workspaces represent a collection of projects. It can be used to group an individual or organisation's projects."
+    description: Workspaces represent a collection of projects. It can be used to group an individual or organisation's projects.
   - name: workspace-access
     x-displayName: Workspace Access
     description: A new workspace-access link should be created in order to enable the appropriate acess permissions to this resource and its children.
@@ -46,7 +59,7 @@ tags:
     description: A variation represents a particular feature flag state. Feature flags usually consist of multiple variations (e.g. True and False). We can rollout different feature variations to particular users or user segments.
   - name: targeting
     x-displayName: Targeting Management
-    description: 'Targeting is essentially a rollout configuration which defines how feature flag variations are rolled out to specific users. Rollout rules can target specific user or segments. After users "evaluate" a specific rollout rule and obtain a flag variation.'
+    description: Targeting is essentially a rollout configuration which defines how feature flag variations are rolled out to specific users. Rollout rules can target specific user or segments. After users "evaluate" a specific rollout rule and obtain a flag variation.
   - name: targeting-rules
     x-displayName: Targeting Rules
     description: Targeting rules allow you to explicity define how you want to target feature flags to users. You are required to specify logical statements which are evaluated when serving flags to users.
@@ -61,7 +74,7 @@ tags:
     description: Segments represent a specific group of users based on their attributes. You can define a specific user segments using a set rules. Rules contain conditions that are applied to attributes.
   - name: segment-rules
     x-displayName: Segment Rules
-    description: "Segment rules consists of conditions that need to match a specific user's attributes (i.e. identity traits) ."
+    description: Segment rules consists of conditions that need to match a specific user's attributes (i.e. identity traits) .
   - name: identities
     x-displayName: Identity Management
     description: An identity is an instance of a user. Identities are initially created when the first evaluate a feature flag (i.e. by using the SDK).
@@ -109,72 +122,21 @@ paths:
         - workspaces
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/WorkspaceResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      type: workspace
-                      id: 8904dc87-067a-448d-9678-5241a0c65103
-                      attributes:
-                        description: This should be a description.
-                        key: testing-workspace
-                        name: Testing Workspace
-                        tags:
-                          - example-tag
+          $ref: '#/components/responses/Workspace'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       security:
         - Access Token: []
     parameters:
-      - name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-        schema:
-          type: string
+      - $ref: '#/components/parameters/wsKey'
     patch:
       summary: Update workspace
       operationId: update-workspace
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/WorkspaceResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      type: workspace
-                      id: 8904dc87-067a-448d-9678-5241a0c65103
-                      attributes:
-                        description: This should be a description.
-                        key: testing-workspace
-                        name: Cool workspace
-                        tags:
-                          - example-tag
+          $ref: '#/components/responses/Workspace'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - workspaces
       description: Update an existing workspace.
@@ -188,7 +150,7 @@ paths:
                 value:
                   - op: replace
                     path: /name
-                    value: Cool workspace
+                    value: ECorp
         description: Patch Document (RFC 6902)
       security:
         - Access Token: []
@@ -202,92 +164,38 @@ paths:
             application/json:
               schema: {}
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing workspace. This operation can not be undone. Please proceed with caution.
       tags:
         - workspaces
       security:
         - Access Token: []
+      parameters: []
   '/projects/{wsKey}/{projKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: |
-          The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
     get:
       summary: Get project
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ProjectResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      id: 8872a9cf-7062-4230-80c2-de639395ff16
-                      key: testing-project
-                      name: Test Project
-                      description: This should be a description.
-                      tags:
-                        - some-project-tag
+          $ref: '#/components/responses/Project'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-project
       tags:
         - projects
       description: Get an existing project.
+      security:
+        - Access Token: []
     patch:
       summary: Update project
       operationId: update-project
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ProjectResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      id: 8872a9cf-7062-4230-80c2-de639395ff16
-                      key: testing-project
-                      name: Cool Project
-                      description: This should be a description.
-                      tags:
-                        - some-project-tag
+          $ref: '#/components/responses/Project'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - projects
       description: Update an existing project.
@@ -296,95 +204,52 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
-            examples:
-              example-1:
-                value:
-                  - op: replace
-                    path: /name
-                    value: Cool project
           application/xml:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete project
       operationId: delete-project
       responses:
         '204':
-          description: No Content
+          $ref: '#/components/responses/InternalServerError'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - projects
       description: Delete an existing project.
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}/environments/{envKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: envKey
-        in: path
-        required: true
-        description: The environment key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
     get:
       summary: Get environment
       tags:
         - environments
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Environment'
-              examples: {}
+          $ref: '#/components/responses/Environment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-environment
       description: Get a project environment.
       parameters: []
+      security:
+        - Access Token: []
     patch:
       summary: Update environment
       operationId: update-environment
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Environment'
-              examples: {}
+          $ref: '#/components/responses/Environment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - environments
       description: Update an existing environment.
@@ -395,6 +260,8 @@ paths:
               $ref: '#/components/schemas/PatchDocument'
             examples: {}
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete environment
       operationId: delete-environment
@@ -402,72 +269,38 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - environments
       description: Delete an existing environment.
+      security:
+        - Access Token: []
   '/flags/{wsKey}/{projKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
     get:
       summary: List feature flags
       tags:
         - flags
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Flag'
+          $ref: '#/components/responses/Flags'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-flags
       parameters: []
       description: List feature flags in the project.
+      security:
+        - Access Token: []
     post:
       summary: Create feature flag
       operationId: create-flag
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Flag'
+          $ref: '#/components/responses/Flag'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - flags
       description: Create a new feature flag in the specified project
@@ -478,6 +311,8 @@ paths:
             schema:
               $ref: '#/components/schemas/Flag'
         description: Flag Object
+      security:
+        - Access Token: []
   /workspaces:
     get:
       summary: List workspaces
@@ -485,75 +320,31 @@ paths:
         - workspaces
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/WorkspaceResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      - type: workspace
-                        id: 8904dc87-067a-448d-9678-5241a0c65103
-                        attributes:
-                          description: This should be a description.
-                          key: testing-workspace
-                          name: Test Workspace
-                          tags:
-                            - example-tag
+          $ref: '#/components/responses/Workspaces'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-workspaces
       description: |-
         List all workspaces.
 
         Note: you need root access to perform this operation.
+      security:
+        - Access Token: []
     post:
       summary: Create workspace
       operationId: create-workspace
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/WorkspaceResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      type: workspace
-                      id: 8904dc87-067a-448d-9678-5241a0c65103
-                      attributes:
-                        description: This should be a description.
-                        key: testing-workspace
-                        name: Testing Workspace
-                        tags:
-                          - example-tag
+          $ref: '#/components/responses/Workspace'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - workspaces
       description: Create a new workspace. Workspace keys must be unique.
       requestBody:
         $ref: '#/components/requestBodies/Workspace'
+      security:
+        - Access Token: []
     parameters: []
   '/projects/{wsKey}':
     post:
@@ -561,30 +352,9 @@ paths:
       operationId: create-project
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ProjectResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      id: 8872a9cf-7062-4230-80c2-de639395ff16
-                      key: testing-project
-                      name: Test Project
-                      description: This should be a description.
-                      tags:
-                        - some-project-tag
+          $ref: '#/components/responses/Project'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       requestBody:
         content:
           application/json:
@@ -594,86 +364,32 @@ paths:
       tags:
         - projects
       description: Create a new project. The project will be created in the workspace accociated with the access key-secret pair being used.
+      security:
+        - Access Token: []
     parameters:
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
     get:
       summary: List projects
       operationId: get-projects
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/ProjectResponse'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      - type: project
-                        id: 49af9f76-bf1d-4309-8070-a9e1318621e3
-                        attributes:
-                          description: This should be a description.
-                          key: testing-project
-                          name: Test Project
-                          tags:
-                            - some-project-tag
-                      - type: project
-                        id: 8872a9cf-7062-4230-80c2-de639395ff16
-                        attributes:
-                          description: This should be a description.
-                          key: testing-project-1
-                          name: Test Project 1
-                          tags:
-                            - some-project-tag
+          $ref: '#/components/responses/Projects'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: List all projects in the workspace associated with this access key-secret pair.
       tags:
         - projects
+      security:
+        - Access Token: []
   /access/token:
     post:
       summary: Obtain access token
       operationId: gen-access-token
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/AccessToken'
-              examples:
-                example-1:
-                  value:
-                    data:
-                      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBY2Nlc3MiOiJleUpwWkNJNklqa3hNakJrTURnNUxXRXpaakl0TkRVNE9DMDVOelkyTFRGalpqQTVaR013WkRZeFpDSXNJbXRsZVNJNkluSnZiM1FpTENKelpXTnlaWFFpT2lJa01tRWtNVEFrVW5CNGREaEJTelJ6WVhKV1RWQlhhV3RCYjNSVmRUQnBiREZ6Tmpsbk5XeE9kbWd4VGt0bFNWVkZVVVJYYzJsVlkzaElWVzBpTENKMGVYQmxJam9pY205dmRDSXNJbVY0Y0dseVpYTkJkQ0k2T1RJeU16TTNNakF6TmpnMU5EYzNOVGd3TjMwPSIsImV4cCI6MTYyMTk1NjY4Mn0.3DVGoUDC9k1rHO4KCEtwRxJtzme8toNCYQ7TT-0Klwg
-                      access:
-                        id: 9120d089-a3f2-4588-9766-1cf09dc0d61d
-                        key: root
-                        secret: '**************'
-                        type: root
-                        expiresAt: 9223372036854776000
+          $ref: '#/components/responses/AccessToken'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Obtain a signed access token using an access key-secret pair.
       requestBody:
         content:
@@ -702,12 +418,7 @@ paths:
     parameters: []
   '/workspaces/{wsKey}/access':
     parameters:
-      - name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-        schema:
-          type: string
+      - $ref: '#/components/parameters/wsKey'
     get:
       summary: List workspace access
       responses:
@@ -723,11 +434,7 @@ paths:
                     items:
                       $ref: '#/components/schemas/Access'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-workspace-access
       description: List access keys that are currently in use for a particular workspace.
       tags:
@@ -748,16 +455,14 @@ paths:
                   data:
                     $ref: '#/components/schemas/Access'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Create a new workspace access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
       requestBody:
         $ref: '#/components/requestBodies/AccessInput'
       tags:
         - workspace-access
+      security:
+        - Access Token: []
     delete:
       summary: Delete workspace access
       operationId: delete-workspaces-access
@@ -765,16 +470,14 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing workspace access link.
       requestBody:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - workspace-access
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}/access':
     get:
       summary: List project access
@@ -789,28 +492,16 @@ paths:
                   data:
                     $ref: '#/components/schemas/AccessPairInput'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-project-access
       description: List access keys that are currently in use for a particular project.
       tags:
         - project-access
+      security:
+        - Access Token: []
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
     post:
       summary: Create project access
       operationId: create-project-access
@@ -825,16 +516,14 @@ paths:
                   data:
                     $ref: '#/components/schemas/Access'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Create a new project access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
       requestBody:
         $ref: '#/components/requestBodies/AccessInput'
       tags:
         - project-access
+      security:
+        - Access Token: []
     delete:
       summary: Delete project access
       operationId: delete-project-access
@@ -842,73 +531,39 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing project access link.
       requestBody:
         $ref: '#/components/requestBodies/AccessPairInput'
       tags:
         - project-access
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}/environments':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
     get:
       summary: List project environments
       tags:
         - environments
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Environment'
+          $ref: '#/components/responses/Environments'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-environments
-      description: "Retreive a list of a project's environments."
+      description: Retreive a list of a project's environments.
+      security:
+        - Access Token: []
     post:
       summary: Create environment
       operationId: create-environment
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Environment'
+          $ref: '#/components/responses/Environment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - environments
       description: Create a new project environment
@@ -918,68 +573,35 @@ paths:
             schema:
               $ref: '#/components/schemas/Environment'
         description: Environmnet Object
+      security:
+        - Access Token: []
   '/flags/{wsKey}/{projKey}/{flagKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/flagKey'
     get:
       summary: Get feature flag
       tags:
         - flags
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Flag'
+          $ref: '#/components/responses/Flag'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-flag
       parameters: []
       description: Get a single feature flag using its key.
+      security:
+        - Access Token: []
     patch:
       summary: Update feature flag
       operationId: update-flag
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Flag'
+          $ref: '#/components/responses/Flag'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - flags
       description: Update an existing flag.
@@ -990,6 +612,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete feature flag
       operationId: delete-flag
@@ -997,149 +621,84 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - flags
       description: Delete an existing flag.
+      security:
+        - Access Token: []
   '/flags/{wsKey}/{projKey}/{flagKey}/variations':
     parameters:
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/flagKey'
     get:
       summary: List variations
       tags:
         - variations
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Variation'
+          $ref: '#/components/responses/Variations'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-variations
       description: List all variations of a specific flag.
+      security:
+        - Access Token: []
     post:
       summary: Create variation
       operationId: create-variation
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Variation'
+          $ref: '#/components/responses/Variation'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - variations
       description: Create a flag variation.
       requestBody:
-        $ref: '#/components/requestBodies/Variation'
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Variation'
+            examples:
+              example-1:
+                value:
+                  key: control
+                  name: Control
+                  description: Default variation observed by the control group.
+                  tags:
+                    - example-tag
+        description: Flag variation
+      security:
+        - Access Token: []
   '/flags/{wsKey}/{projKey}/{flagKey}/variations/{variationKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - name: variationKey
-        in: path
-        required: true
-        description: The variation key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/flagKey'
+      - $ref: '#/components/parameters/variationKey'
     get:
       summary: Get variation
       tags:
         - variations
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Variation'
+          $ref: '#/components/responses/Variation'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-variation
       description: Get a single variation of a specific flag.
+      security:
+        - Access Token: []
     patch:
       summary: Update variation
       operationId: update-variation
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Variation'
+          $ref: '#/components/responses/Variation'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - variations
       description: Update a specific variation.
@@ -1149,6 +708,8 @@ paths:
             schema:
               $ref: '#/components/schemas/PatchDocument'
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete variation
       operationId: delete-variation
@@ -1156,122 +717,50 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - variations
       description: Delete a single flag variation
+      security:
+        - Access Token: []
   '/identities/{wsKey}/{projKey}/{envKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: envKey
-        in: path
-        required: true
-        description: The environment key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
     get:
       summary: List identities
       tags:
         - identities
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Identity'
+          $ref: '#/components/responses/Identities'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-identities
       description: List project identities in a specific environment.
-      parameters:
-        - in: query
-          name: q
-          description: Search query
-          schema:
-            type: string
-        - in: query
-          name: limit
-          description: Number of identities items to fetch. Useful for pagination.
-          schema:
-            type: number
-        - in: query
-          name: offset
-          description: Number of identities to skip. Useful for pagination.
-          schema:
-            type: number
+      parameters: []
+      security:
+        - Access Token: []
   '/identities/{wsKey}/{projKey}/{envKey}/{identityKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: envKey
-        in: path
-        required: true
-        description: The environment key
-        schema:
-          type: string
-      - name: identityKey
-        in: path
-        required: true
-        description: The identity key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/identityKey'
     get:
       summary: Get identity
       tags:
         - identities
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Identity'
+          $ref: '#/components/responses/Indentity'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-identity
       description: Get a single identity from a project.
+      security:
+        - Access Token: []
     delete:
       summary: Delete identity
       operationId: delete-identity
@@ -1282,76 +771,40 @@ paths:
             application/json:
               schema: {}
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - identities
       description: Delete an environment specific identity.
+      security:
+        - Access Token: []
   '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}':
     parameters:
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/flagKey'
     get:
       summary: Get targeting
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Targeting'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-targeting
-      description: "Get a specific flag's targeting configuration. "
+      description: 'Get a specific flag''s targeting configuration. '
       tags:
         - targeting
       parameters: []
+      security:
+        - Access Token: []
     patch:
       summary: Update targeting
       operationId: update-tageting
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Targeting'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update a targeting configuration of a existing feature flag.
       parameters: []
       tags:
@@ -1361,104 +814,91 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /enabled
+                    value: true
+                  - op: replace
+                    path: /fallthroughVariations/0/weight
+                    value: 60
+                  - op: replace
+                    path: /fallthroughVariations/1/weight
+                    value: 40
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     post:
       summary: Create targeting
       operationId: create-targeting
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Targeting'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-              examples: {}
+          $ref: '#/components/responses/InternalServerError'
       description: Create a targeting configuration for a particular flag per environment
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/Targeting'
+            examples:
+              example-1:
+                value:
+                  id: string
+                  enabled: true
+                  fallthroughVariations:
+                    - variationKey: control
+                      weight: 50
+                    - variationKey: treatment
+                      weight: 50
         description: Targeting configuration
       tags:
         - targeting
+      security:
+        - Access Token: []
     delete:
       summary: Delete targeting
       operationId: delete-targeting
       responses:
         '200':
-          description: OK
+          $ref: '#/components/responses/Targeting'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
       description: Delete a targeting configuration for a particular flag per environment
       tags:
         - targeting
+      security:
+        - Access Token: []
   '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}/rules':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/flagKey'
     get:
       summary: List targeting rules
       tags:
         - targeting-rules
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/TargetingRules'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-target-rules
       description: List the targeting rules of an existing flag in a specific environment.
       parameters: []
+      security:
+        - Access Token: []
     post:
       summary: Create targeting rule
       operationId: create-targeting-rule
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/TargetingRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - targeting-rules
       description: Create a new targeting rule for a feature flag in a specific environment.
@@ -1468,75 +908,56 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/TargetingRule'
+            examples:
+              example-1:
+                value:
+                  key: test-targeting-rule-1
+                  name: Example targeting rule
+                  description: This should describe the purpose of the targeting rule.
+                  tags:
+                    - example-tag
+                  type: trait
+                  traitKey: some-trait-key
+                  traitValue: some-trait-value
+                  operator: equal
+                  ruleVariations:
+                    - variationKey: control
+                      weight: 0
+                    - variationKey: treatment
+                      weight: 100
+                  segmentKey: test-segment-1
         description: Targeting Rule
+      security:
+        - Access Token: []
   '/targeting/{wsKey}/{projKey}/{envKey}/{flagKey}/rules/{ruleKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: flagKey
-        in: path
-        required: true
-        description: The flag key
-        schema:
-          type: string
-      - name: ruleKey
-        in: path
-        required: true
-        description: The rule key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/flagKey'
+      - $ref: '#/components/parameters/ruleKey'
     get:
       summary: Get targeting rule
       tags:
         - targeting-rules
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/TargetingRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-targeting-rule
       parameters: []
       description: Get a targeting rule for a specfic flag and its environment.
+      security:
+        - Access Token: []
     patch:
       summary: Update targeting rule
       operationId: update-targeting-rule
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/TargetingRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update an existing target rule.
       parameters: []
       tags:
@@ -1546,7 +967,18 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /operator
+                    value: contains
+                  - op: replace
+                    path: /ruleVariations/0/weight
+                    value: 20
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete targeting rule
       operationId: delete-targeting-rule
@@ -1557,92 +989,58 @@ paths:
             application/json:
               schema: {}
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing targeting rule.
       parameters: []
       tags:
         - targeting-rules
+      security:
+        - Access Token: []
   '/traits/{wsKey}/{projKey}/{envKey}/{traitKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: envKey
-        in: path
-        required: true
-        description: The environment key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: traitKey
-        in: path
-        required: true
-        description: The trait key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/traitKey'
     get:
       summary: Get trait
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Trait'
+          $ref: '#/components/responses/Trait'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-trait
       description: Get a trait within a specific environment.
       parameters: []
       tags:
         - traits
+      security:
+        - Access Token: []
     patch:
       summary: Update trait
       operationId: update-trait
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Trait'
+          $ref: '#/components/responses/Trait'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update an existing trait.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /key
+                    value: test-trait
         description: Patch Document (RFC 6902)
       tags:
         - traits
+      security:
+        - Access Token: []
     delete:
       summary: Delete trait
       operationId: delete-trait
@@ -1650,58 +1048,30 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing trait.
       tags:
         - traits
+      security:
+        - Access Token: []
   '/traits/{wsKey}/{projKey}/{envKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
     get:
-      summary: List traits indexed in an environment
+      summary: List traits
       tags:
         - traits
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Trait'
+          $ref: '#/components/responses/Traits'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-traits
       description: Retreive a list of traits in a particular environment.
+      security:
+        - Access Token: []
     post:
       summary: Create trait
       operationId: create-trait
@@ -1716,11 +1086,7 @@ paths:
                   data:
                     $ref: '#/components/schemas/Trait'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - traits
       description: Create a new trait for a particular environment
@@ -1729,68 +1095,39 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Trait'
+            examples:
+              example-1:
+                value:
+                  key: some-trait-key
+                  isIdentifier: true
         description: Environmnet Object
+      security:
+        - Access Token: []
   '/segments/{wsKey}/{projKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
     get:
       summary: List segments
       tags:
         - segments
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '404':
-          description: Not Found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/Segments'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-segments
-      description: "List a project's user segments."
+      description: List a project's user segments.
+      security:
+        - Access Token: []
     post:
       summary: Create segment
       operationId: create-segment
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Segment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - segments
       description: Create a user segment in a specific project.
@@ -1799,61 +1136,43 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/Segment'
+            examples:
+              example-1:
+                value:
+                  id: 87871700-ab40-40c5-b8dc-1d4dcac38ca6
+                  key: test-segment-1
+                  name: Example Name
+                  description: This should be a description.
+                  tags:
+                    - example-tag
+      security:
+        - Access Token: []
   '/segments/{wsKey}/{projKey}/{segKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: segKey
-        in: path
-        required: true
-        description: The segment key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/segKey'
     get:
       summary: Get segment
       tags:
         - segments
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Segment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-segment
       description: Get a user segment from a project.
+      security:
+        - Access Token: []
     patch:
       summary: Update segment
       operationId: update-segment
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Segment'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update an existing user segment in a specific project.
       tags:
         - segments
@@ -1862,7 +1181,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /name
+                    value: Cool segment name
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete segment
       operationId: delete-segment
@@ -1870,75 +1197,39 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - segments
       description: Delete an existing user segment.
+      security:
+        - Access Token: []
   '/segments/{wsKey}/{projKey}/{segKey}/rules/{envKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: segKey
-        in: path
-        required: true
-        description: The segment key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/segKey'
     get:
       summary: List segment rules
       tags:
         - segment-rules
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SegmentRules'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-segment-rules
       description: List segment rules for a particular segment.
+      security:
+        - Access Token: []
     post:
       summary: Create segment rule
       operationId: create-segment-rule
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SegmentRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       tags:
         - segment-rules
       description: Create a new segment rule for a particular segment.
@@ -1947,79 +1238,45 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/SegmentRule'
+            examples:
+              example-1:
+                value:
+                  key: some-segment-rule
+                  traitKey: some-trait-key
+                  traitValue: some-trait-value
+                  operator: equal
+                  negate: false
         description: Segment Rules
+      security:
+        - Access Token: []
   '/segments/{wsKey}/{projKey}/{segKey}/rules/{envKey}/{ruleKey}':
     parameters:
-      - name: projKey
-        in: path
-        required: true
-        description: The project key
-        schema:
-          type: string
-      - name: segKey
-        in: path
-        required: true
-        description: The segment key
-        schema:
-          type: string
-      - name: ruleKey
-        in: path
-        required: true
-        description: The segment rule key
-        schema:
-          type: string
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/segKey'
+      - $ref: '#/components/parameters/ruleKey'
     get:
       summary: Get segment rule
       tags:
         - segment-rules
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/SegmentRule'
+          $ref: '#/components/responses/SegmentRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-segment-rule
       description: Get a specific segment rule
+      security:
+        - Access Token: []
     patch:
       summary: Update segment rule
       operationId: update-segment-rule
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/SegmentRule'
+          $ref: '#/components/responses/SegmentRule'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update an existing segment rule.
       tags:
         - segment-rules
@@ -2028,7 +1285,15 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /traitKey
+                    value: some-random-trait-key
         description: Patch Document (RFC 6902)
+      security:
+        - Access Token: []
     delete:
       summary: Delete segment rule
       operationId: delete-segment-rule
@@ -2036,14 +1301,12 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete an existing segment rule
       tags:
         - segment-rules
+      security:
+        - Access Token: []
   '/evaluation/{wsKey}/{projKey}/{envKey}':
     get:
       summary: Get evaluation details
@@ -2051,200 +1314,133 @@ paths:
         - evaluation
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/EvaluationDetails'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-evaluation
-      description: 'Get non-evaluated flagset rules, used for evaluation.'
+      description: 'Get non-evaluated flagset rules, used for evaluation. The raw flagset contains the flag variations, rules etc. Using the raw flagset, we can compute the evaluated flagset using the user context (i.e. user traits & identifer).'
       security:
         - Access Token: []
       parameters: []
     parameters:
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: projKey
-        in: path
-        required: true
-        description: The project key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
     post:
       summary: Evaluate flags
       operationId: evaluate-flags
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/Evaluation'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Evaluate flags given a particular context.
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/EvaluationContext'
+            examples:
+              example-1:
+                value:
+                  identifier: some-user-key
+                  traits:
+                    some-trait-key: some-trait-value
         description: The evaluation context is required when evaluating a flagset.
       tags:
         - evaluation
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}/environments/{envKey}/sdk-keys':
     parameters:
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: projKey
-        in: path
-        required: true
-        description: The project key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
     get:
       summary: List SDK keys
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SDKKeys'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: list-sdk-keys
       description: Retrieve a list of sdk keys for that particular environment
       tags:
         - sdk-keys
+      security:
+        - Access Token: []
     post:
       summary: Create SDK key
       operationId: create-sdk-key
       responses:
         '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SDKKeys'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Create a sdk key for a particular project environment
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SDKKeyRequest'
+              $ref: '#/components/schemas/SDKKey'
+            examples:
+              example-1:
+                value:
+                  enabled: true
+                  expiresAt: 9223372036854776000
+                  name: Secondary SDK key (us-region)
+                  description: This should only be used by servers / clients in the US region.
+                  tags:
+                    - us-region
         description: SDK Key request body
       tags:
         - sdk-keys
+      security:
+        - Access Token: []
   '/projects/{wsKey}/{projKey}/environments/{envKey}/sdk-keys/{id}':
     parameters:
-      - schema:
-          type: string
-        name: wsKey
-        in: path
-        required: true
-        description: The workspace key
-      - schema:
-          type: string
-        name: projKey
-        in: path
-        required: true
-        description: The project key
-      - schema:
-          type: string
-        name: envKey
-        in: path
-        required: true
-        description: The environment key
-      - schema:
-          type: string
-        name: id
-        in: path
-        required: true
-        description: The SDK key id
+      - $ref: '#/components/parameters/wsKey'
+      - $ref: '#/components/parameters/projKey'
+      - $ref: '#/components/parameters/envKey'
+      - $ref: '#/components/parameters/id'
     get:
       summary: List SDK keys
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SDKKey'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       operationId: get-sdk-key
       description: Retrieve a list of sdk keys for that particular environment
       tags:
         - sdk-keys
+      security:
+        - Access Token: []
     patch:
       summary: Update SDK Key
       operationId: update-sdk-key
       responses:
         '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SuccessResponse'
+          $ref: '#/components/responses/SDKKey'
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Update SDK Key
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/PatchDocument'
+            examples:
+              example-1:
+                value:
+                  - op: replace
+                    path: /description
+                    value: Secondary SDK key (use in us-region only)
         description: Update sdk key
       tags:
         - sdk-keys
+      security:
+        - Access Token: []
     delete:
       summary: Delete SDK Key
       operationId: delete-sdk-key
@@ -2252,14 +1448,12 @@ paths:
         '204':
           description: No Content
         '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
+          $ref: '#/components/responses/InternalServerError'
       description: Delete SDK key
       tags:
         - sdk-keys
+      security:
+        - Access Token: []
 servers:
   - url: 'https://api.flagbase.io'
     description: Flagbase Cloud
@@ -2285,18 +1479,6 @@ components:
           schema:
             $ref: '#/components/schemas/AccessPairInput'
       description: Access Key-Secret Pair
-    Variation:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Variation'
-      description: Variation Object
-    Segment:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Segment'
-      description: Segment Object
   schemas:
     PatchDocument:
       description: A JSONPatch document as defined by RFC 6902
@@ -2319,8 +1501,15 @@ components:
             type: string
             description: A JSON-Pointer
           value:
-            type: object
             description: The value to be used within the operations.
+            anyOf:
+              - type: object
+              - type: string
+                properties: {}
+              - properties: {}
+                type: number
+              - type: boolean
+                properties: {}
           from:
             type: string
             description: A string containing a JSON Pointer value.
@@ -2369,7 +1558,7 @@ components:
           description: Generated secret (make sure you save this secert).
         type:
           type: string
-          description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
+          description: Access key type describes the level of permissions you get for a particular resource (root > user > service).
           enum:
             - root
             - admin
@@ -2396,7 +1585,7 @@ components:
             - admin
             - user
             - service
-          description: 'Access key type describes the level of permissions you get for a particular resource (root > user > service).'
+          description: Access key type describes the level of permissions you get for a particular resource (root > user > service).
           default: service
         name:
           $ref: '#/components/schemas/ResouceName'
@@ -2451,13 +1640,15 @@ components:
           $ref: '#/components/schemas/ResourceTags'
       required:
         - key
-      description: "A project can have multiple environments (e.g. staging, production) which correspond to different targeting states. This means if you modify a flag's targeting or a segment's rules in one environment, your changes will be scoped to that particular environment. This allows you to have different targeting rules for flags and segments in each environment."
+      description: 'A project can have multiple environments (e.g. staging, production) which correspond to different targeting states. This means if you modify a flag''s targeting or a segment''s rules in one environment, your changes will be scoped to that particular environment. This allows you to have different targeting rules for flags and segments in each environment.'
       x-tags:
         - environments
     Project:
       title: Project
       type: object
       description: A project is a collection of environments and their respective flags.
+      x-tags:
+        - projects
       properties:
         key:
           $ref: '#/components/schemas/ResourceKey'
@@ -2466,11 +1657,9 @@ components:
         description:
           $ref: '#/components/schemas/ResourceDescription'
         tags:
-          $ref: '#/components/schemas/ResouceName'
+          $ref: '#/components/schemas/ResourceTags'
       required:
         - key
-      x-tags:
-        - projects
     Flag:
       title: Flag
       type: object
@@ -2505,25 +1694,6 @@ components:
         - key
       x-tags:
         - variations
-    SuccessResponse:
-      title: SuccessResponse
-      type: object
-      properties:
-        data:
-          type: object
-      description: Standard success response object
-    ErrorResponse:
-      title: ErrorResponse
-      type: object
-      description: Error response is an array of error objects
-      x-examples: {}
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/Error'
-      required:
-        - errors
     AccessPairInput:
       title: AccessPairInput
       type: object
@@ -2592,24 +1762,21 @@ components:
     Trait:
       title: Trait
       type: object
+      description: A trait (aka attribute) represents a particular characteristic of a identity (aka user).
+      x-tags:
+        - traits
       properties:
-        id:
-          type: string
         key:
           type: string
         isIdentifier:
           type: boolean
       required:
-        - id
         - key
         - isIdentifier
-      description: A trait (aka attribute) represents a particular characteristic of a identity (aka user).
-      x-tags:
-        - traits
     Targeting:
       title: Targeting
       type: object
-      description: "Targeting is a spec used to determine a flag's variation. This spec consists of a set of rules which when evaluated using a user's context (i.e. traits), determines which variation of a flag that particular user will receive. So essentially you could say targeting rules are conditions mapped to a variation. A flag's targeting rules are scoped to a particular project environment."
+      description: 'Targeting is a spec used to determine a flag''s variation. This spec consists of a set of rules which when evaluated using a user''s context (i.e. traits), determines which variation of a flag that particular user will receive. So essentially you could say targeting rules are conditions mapped to a variation. A flag''s targeting rules are scoped to a particular project environment.'
       x-tags:
         - targeting
       properties:
@@ -2700,29 +1867,10 @@ components:
         - traits
       x-tags:
         - evaluation
-    SDKKeyRequest:
-      title: SDKKeyRequest
+    SDKKey:
+      title: SDKKey
       type: object
-      description: SDK key request body
-      properties:
-        enabled:
-          type: boolean
-          description: Whether or not this SDK key is active
-        expiresAt:
-          type: number
-          description: 'Time this key is no longer valid (unix timestamp) '
-        name:
-          $ref: '#/components/schemas/ResouceName'
-        tags:
-          $ref: '#/components/schemas/ResourceTags'
-        description:
-          $ref: '#/components/schemas/ResourceDescription'
-      x-tags:
-        - sdk-keys
-    SDKKeyResponse:
-      title: SDKKeyResponse
-      type: object
-      description: SDK key response body
+      description: SDK key
       x-tags:
         - sdk-keys
       properties:
@@ -2738,70 +1886,1129 @@ components:
           $ref: '#/components/schemas/ResourceTags'
         description:
           $ref: '#/components/schemas/ResourceDescription'
-        serverKey:
-          type: string
-          description: Used for server-side SDKs (keep private)
         clientKey:
           type: string
-          description: Used for client-side SDKs (public)
-    WorkspaceResponse:
-      title: WorkspaceResponse
-      type: object
-      description: 'Workspace response (JSON:API)'
-      properties:
-        id:
+          description: Client-side SDK key
+          readOnly: true
+        serverKey:
           type: string
-        type:
-          type: string
-        attributes:
-          $ref: '#/components/schemas/Workspace'
-      x-examples:
-        example-1:
-          type: workspace
-          id: 8904dc87-067a-448d-9678-5241a0c65103
-          attributes:
-            description: This should be a description.
-            key: testing-workspace
-            name: Example Name
-            tags:
-              - example-tag
-    ProjectResponse:
-      title: ProjectResponse
-      type: object
-      description: 'Project response (JSON:API)'
-      x-examples:
-        example-1:
-          data:
-            id: 8872a9cf-7062-4230-80c2-de639395ff16
-            key: testing-project
-            name: Test Project
-            description: This should be a description.
-            tags:
-              - some-project-tag
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
-          $ref: '#/components/schemas/Project'
-    VariationResponse:
-      title: VariationResponse
-      type: object
-      description: 'Variation response (JSON:API)'
-      x-tags:
-        - variations
-      properties:
-        id:
-          type: string
-        type:
-          type: string
-        attributes:
-          $ref: '#/components/schemas/Variation'
+          description: Server-side SDK key
+          readOnly: true
   securitySchemes:
     Access Token:
       type: http
       scheme: bearer
       description: 'Please include a access token in the request headers for protected endpoints. (i.e. "Authorization": "Bearer my-access-token")'
+  responses:
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              errors:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Error'
+    Workspace:
+      description: Workspace response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Workspace'
+          examples:
+            example-1:
+              value:
+                data:
+                  type: workspace
+                  id: 8904dc87-067a-448d-9678-5241a0c65103
+                  attributes:
+                    description: This should be a description.
+                    key: testing-workspace
+                    name: Testing Workspace
+                    tags:
+                      - example-tag
+    Workspaces:
+      description: Workspace list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Workspace'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: workspace
+                    id: bce391e1-c54d-47b6-910e-6450720ac646
+                    attributes:
+                      description: This should be a description.
+                      key: testing-workspace
+                      name: Example Name
+                      tags:
+                        - example-tag
+                  - type: workspace
+                    id: f3c800fc-bc52-4c51-8768-164f3d2863bd
+                    attributes:
+                      description: This should be a description.
+                      key: testing-workspace-1
+                      name: Example Name
+                      tags:
+                        - example-tag
+    Project:
+      description: Project response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Project'
+          examples:
+            example-1:
+              value:
+                data:
+                  id: 8872a9cf-7062-4230-80c2-de639395ff16
+                  key: testing-project-1
+                  name: Example Name
+                  description: This should be a description.
+                  tags:
+                    - some-project-tag
+    Projects:
+      description: Project list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Project'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: project
+                    id: 49af9f76-bf1d-4309-8070-a9e1318661e6
+                    attributes:
+                      description: This should be a description.
+                      key: testing-project
+                      name: Example Name
+                      tags:
+                        - some-project-tag
+                  - type: project
+                    id: 8872a9cf-7062-4230-80c2-de639395ff16
+                    attributes:
+                      description: This should be a description.
+                      key: testing-project-1
+                      name: Example Name
+                      tags:
+                        - some-project-tag
+    Environment:
+      description: Environment response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Environment'
+          examples:
+            example-1:
+              value:
+                data:
+                  type: environment
+                  id: ed741b53-720a-4d8a-b67c-57bb943ec7a7
+                  attributes:
+                    description: This should be a description.
+                    key: testing-env
+                    name: Example Name
+                    tags:
+                      - example-tag
+    Environments:
+      description: Environment list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Environment'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: environment
+                    id: ed741b53-720a-4d8a-b67c-57bb943ec7a7
+                    attributes:
+                      description: This should be a description.
+                      key: testing-env
+                      name: Example Name
+                      tags:
+                        - example-tag
+                  - type: environment
+                    id: 69d2bf3a-6e4c-41a4-a288-a901e48bdbc8
+                    attributes:
+                      description: This should be a description.
+                      key: testing-env-1
+                      name: Prod
+                      tags:
+                        - example-tag
+    Flag:
+      description: Flag response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Flag'
+          examples:
+            example-1:
+              value:
+                data:
+                  id: 6a8da406-a57e-40d6-9d25-6d22479d0b11
+                  key: test-flag
+                  name: Example Name
+                  description: This should be a description.
+                  tags:
+                    - example-tag
+    Flags:
+      description: Flag list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Flag'
+          examples:
+            example-1:
+              value:
+                data:
+                  - id: b4a506b7-e911-4ccd-8645-c58f4b35d3c9
+                    key: test-flag
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: f8c33272-8911-4159-bd45-5f4754e85e35
+                    key: test-flag-1
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: a5575918-a07c-431a-9e4e-8a70ce7eda28
+                    key: test-flag-4
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 1b89b39d-b8e6-4e47-b01c-3895a7740bc9
+                    key: test-flag-2
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: a62469a7-36bb-4a4a-a551-ad758c4624ce
+                    key: test-flag-3
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 6d1bac9d-adb1-4be0-b0f1-b7515a84fc39
+                    key: test-flag-5
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: c06bbda2-ec5c-4448-ae2b-53861218acdd
+                    key: test-flag-6
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 2c605f40-b38e-4bca-8035-e6c47d37ac46
+                    key: test-flag-7
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 1fd2a9fb-9658-420e-bbff-85770d374edf
+                    key: test-flag-8
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 3b0dc296-a45f-45ad-84fa-380fa725081d
+                    key: test-flag-9
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+                  - id: 6a8da406-a57e-40d6-9d25-6d22479d0b11
+                    key: test-flag-10
+                    name: Example Name
+                    description: This should be a description.
+                    tags:
+                      - example-tag
+    AccessToken:
+      description: Access token response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/AccessToken'
+          examples:
+            example-1:
+              value:
+                data:
+                  token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJBY2Nlc3MiOiJleUpwWkNJNkltTTFOamcwWVdKaExUUTJPVFl0TkRRM1l5MDVZakF3TFRBelkyWTJNMkU1TmpnMlppSXNJbXRsZVNJNkluSnZiM1FpTENKelpXTnlaWFFpT2lJa01tRWtNVEFrUWpNMmREWm1NMFV3VEVVNVJrOUljMnRVTWtGcFpTOU1iR3ByZFM0NFpqbEtlR3BYTTJveVpHNVVWM0ppTjJscGRHOTZVVk1pTENKMGVYQmxJam9pY205dmRDSXNJbVY0Y0dseVpYTkJkQ0k2T1RJeU16TTNNakF6TmpnMU5EYzNOVGd3TjMwPSIsImV4cCI6MTYyNTA5MjQwN30.2wPy7mh7Q2ml9X3K6Mq8rEwVGyUzr7Qjk4D-Relax0U
+                  access:
+                    id: c5684aba-4696-447c-9b00-03cf63a9686f
+                    key: root
+                    secret: '**************'
+                    type: root
+                    expiresAt: 9223372036854776000
+    Variation:
+      description: Variation response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Variation'
+          examples:
+            example-1:
+              value:
+                data:
+                  type: variation
+                  id: 62a70520-1959-4895-9d0f-6a92af8cf264
+                  attributes:
+                    description: This should be a description.
+                    key: test-variation
+                    name: Example Name
+                    tags:
+                      - example-tag
+    Variations:
+      description: Variation list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Variation'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: variation
+                    id: 62a70520-1959-4895-9d0f-6a92af8cf264
+                    attributes:
+                      description: This should be a description.
+                      key: test-variation
+                      name: Example Name
+                      tags:
+                        - example-tag
+                  - type: variation
+                    id: ecd1740d-5cc8-4320-aa40-8c0b0660f86c
+                    attributes:
+                      description: This should be a description.
+                      key: test-variation-1
+                      name: Example Name
+                      tags:
+                        - example-tag
+                  - type: variation
+                    id: 541bcdb1-6209-45cf-87ff-be60c15ec809
+                    attributes:
+                      description: This should be a description.
+                      key: test-variation-2
+                      name: Example Name
+                      tags:
+                        - example-tag
+    Identities:
+      description: Identity list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Identity'
+    Indentity:
+      description: Identity response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Identity'
+    Targeting:
+      description: Targeting response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Targeting'
+          examples:
+            example-1:
+              value:
+                data:
+                  type: targeting
+                  id: b05d0b54-b036-455b-9f77-64b215eb5b85
+                  attributes:
+                    enabled: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 50
+                      - variationKey: treatment
+                        weight: 50
+    TargetingRule:
+      description: Targeting rule response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/TargetingRule'
+          examples:
+            example-1:
+              value:
+                data:
+                  id: 6cbee271-4bbd-4071-9085-f034ef73198e
+                  key: test-targeting-rule
+                  name: Example Name
+                  description: This should be a description.
+                  tags:
+                    - example-tag
+                  type: trait
+                  traitKey: some-trait-key
+                  traitValue: some-trait-value
+                  operator: equal
+                  ruleVariations:
+                    - variationKey: test-variation
+                      weight: 50
+                    - variationKey: test-variation-1
+                      weight: 50
+    TargetingRules:
+      description: Targeting rule list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/TargetingRule'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: targeting_rule
+                    id: 6cbee271-4bbd-4071-9085-f034ef73198e
+                    attributes:
+                      description: This should be a description.
+                      key: test-targeting-rule
+                      name: Example Name
+                      operator: equal
+                      ruleVariations:
+                        - variationKey: test-variation
+                          weight: 50
+                        - variationKey: test-variation-1
+                          weight: 50
+                      segmentKey: test-segment-1
+                      tags:
+                        - example-tag
+                      traitKey: some-trait-key
+                      traitValue: some-trait-value
+                      type: segment
+                  - type: targeting_rule
+                    id: ce95a1eb-d179-4434-8857-b9208b307318
+                    attributes:
+                      description: This should be a description.
+                      key: test-targeting-rule-1
+                      name: Example Name
+                      operator: regex
+                      ruleVariations:
+                        - variationKey: test-variation
+                          weight: 50
+                        - variationKey: test-variation-1
+                          weight: 50
+                      tags:
+                        - example-tag
+                      traitKey: some-trait-key
+                      traitValue: '((((((([[:graph:]]*.)+.)+.)+.)+.)+.)+.)+'
+                      type: trait
+    Traits:
+      description: Trait list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Trait'
+    Trait:
+      description: Trait response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: object
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Trait'
+    Segment:
+      description: Segment response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/Segment'
+          examples:
+            example-1:
+              value:
+                data:
+                  type: segment
+                  id: 87871700-ab40-40c5-b8dc-1d4dcac38ca6
+                  attributes:
+                    description: This should describe a segment.
+                    key: test-segment-1
+                    name: Example Name
+                    tags:
+                      - example-tag
+    Segments:
+      description: Segment list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/Segment'
+          examples:
+            example-1:
+              value:
+                data:
+                  - type: segment
+                    id: 1aee39f0-f753-482a-98d6-dbac6df00275
+                    attributes:
+                      description: This should be a description.
+                      key: test-segment
+                      name: Example Name
+                      tags:
+                        - example-tag
+                  - type: segment
+                    id: 87871700-ab40-40c5-b8dc-1d4dcac38ca6
+                    attributes:
+                      description: This should be a description.
+                      key: test-segment-1
+                      name: Example Name
+                      tags:
+                        - example-tag
+    SegmentRule:
+      description: Segment rule response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/SegmentRule'
+          examples:
+            example-1:
+              value:
+                data:
+                  id: 45326ac0-ac8f-46f2-9af4-f881407848f4
+                  type: segment_rule
+                  attributes:
+                    key: test-segment-rule
+                    traitKey: some-random-trait-key
+                    traitValue: some-trait-value
+                    operator: equal
+                    negate: false
+    SegmentRules:
+      description: Example response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/SegmentRule'
+          examples:
+            example-1:
+              value:
+                data:
+                  - id: 45326ac0-ac8f-46f2-9af4-f881407848f4
+                    type: segment_rule
+                    attributes:
+                      key: postcode-rule-entry
+                      traitKey: postcode
+                      traitValue: '20322'
+                      operator: greater_than
+                      negate: false
+                  - id: 45326ac0-ac8f-46f2-9af4-f881407848f4
+                    type: segment_rule
+                    attributes:
+                      key: postcode-rule-exit
+                      traitKey: postcode
+                      traitValue: '20400'
+                      operator: greater_than_or_equal
+                      negate: true
+                  - id: 45326ac0-ac8f-46f2-9af4-f881407848f4
+                    type: segment_rule
+                    attributes:
+                      key: some-other-segment-rule
+                      traitKey: some-random-trait-key
+                      traitValue: some-trait-value
+                      operator: equal
+                      negate: false
+    Evaluation:
+      description: Evaluated flagset response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+          examples:
+            example-1:
+              value:
+                data:
+                  test-flag:
+                    flagKey: test-flag
+                    variationKey: test-variation
+                    reason: FALLTHROUGH
+                  test-flag-1:
+                    flagKey: test-flag-1
+                    variationKey: test-variation-2
+                    reason: FALLTHROUGH
+                  test-flag-10:
+                    flagKey: test-flag-10
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-2:
+                    flagKey: test-flag-2
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-3:
+                    flagKey: test-flag-3
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-4:
+                    flagKey: test-flag-4
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-5:
+                    flagKey: test-flag-5
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-6:
+                    flagKey: test-flag-6
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-7:
+                    flagKey: test-flag-7
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-8:
+                    flagKey: test-flag-8
+                    variationKey: control
+                    reason: FALLTHROUGH
+                  test-flag-9:
+                    flagKey: test-flag-9
+                    variationKey: control
+                    reason: FALLTHROUGH
+    EvaluationDetails:
+      description: Pre-evaluated flagset response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+          examples:
+            example-1:
+              value:
+                data:
+                  test-flag:
+                    flagKey: test-flag
+                    useFallthrough: false
+                    fallthroughVariations:
+                      - variationKey: test-variation-2
+                        weight: 33
+                      - variationKey: test-variation
+                        weight: 33
+                      - variationKey: test-variation-1
+                        weight: 33
+                    rules:
+                      - ruleType: segment
+                        traitKey: some-trait-key
+                        traitValue: some-trait-value
+                        operator: equal
+                        negate: false
+                        ruleVariations:
+                          - variationKey: test-variation
+                            weight: 50
+                          - variationKey: test-variation-1
+                            weight: 50
+                      - ruleType: segment
+                        traitKey: some-trait-key
+                        traitValue: some-trait-value
+                        operator: equal
+                        negate: false
+                        ruleVariations:
+                          - variationKey: test-variation
+                            weight: 50
+                          - variationKey: test-variation-1
+                            weight: 50
+                      - ruleType: trait
+                        traitKey: some-trait-key
+                        traitValue: '((((((([[:graph:]]*.)+.)+.)+.)+.)+.)+.)+'
+                        operator: regex
+                        negate: false
+                        ruleVariations:
+                          - variationKey: test-variation
+                            weight: 50
+                          - variationKey: test-variation-1
+                            weight: 50
+                  test-flag-1:
+                    flagKey: test-flag-1
+                    useFallthrough: false
+                    fallthroughVariations:
+                      - variationKey: test-variation
+                        weight: 50
+                      - variationKey: test-variation-1
+                        weight: 50
+                    rules:
+                      - ruleType: trait
+                        traitKey: some-trait-key
+                        traitValue: some-trait-value
+                        operator: equal
+                        negate: false
+                        ruleVariations:
+                          - variationKey: test-variation-1
+                            weight: 50
+                          - variationKey: test-variation
+                            weight: 50
+                  test-flag-10:
+                    flagKey: test-flag-10
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-2:
+                    flagKey: test-flag-2
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-3:
+                    flagKey: test-flag-3
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-4:
+                    flagKey: test-flag-4
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-5:
+                    flagKey: test-flag-5
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-6:
+                    flagKey: test-flag-6
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-7:
+                    flagKey: test-flag-7
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-8:
+                    flagKey: test-flag-8
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+                  test-flag-9:
+                    flagKey: test-flag-9
+                    useFallthrough: true
+                    fallthroughVariations:
+                      - variationKey: control
+                        weight: 100
+    SDKKey:
+      description: SDK Key response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  type:
+                    type: string
+                  attributes:
+                    $ref: '#/components/schemas/SDKKey'
+          examples:
+            example-1:
+              value:
+                data:
+                  id: dcb46332-ee5e-453a-8898-28218a17e92d
+                  type: sdk_key
+                  attributes:
+                    enabled: true
+                    clientKey: sdk-client_a0a016f0-e313-413f-8994-a87c9e455026
+                    serverKey: sdk-server_e7349b68-0b8d-42e2-b56d-51a75013fef4
+                    expiresAt: 9223372036854776000
+                    name: Prod SDK Key
+                    description: Generated SDK for the production environment.
+                    tags:
+                      - generated
+    SDKKeys:
+      description: SDK Key list response
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/SDKKey'
+          examples:
+            example-1:
+              value:
+                data:
+                  - id: dcb46332-ee5e-453a-8898-28218a17e92d
+                    type: sdk_key
+                    attributes:
+                      enabled: true
+                      clientKey: sdk-client_a0a016f0-e313-413f-8994-a87c9e455026
+                      serverKey: sdk-server_e7349b68-0b8d-42e2-b56d-51a75013fef4
+                      expiresAt: 9223372036854776000
+                      name: Prod SDK Key
+                      description: Generated SDK for the production environment.
+                      tags:
+                        - generated
+                  - id: dcb46332-ee5e-453a-8898-28218a17e92d
+                    type: sdk_key
+                    attributes:
+                      enabled: true
+                      clientKey: sdk-client_a0a016f0-e313-413f-8994-a87c9e455026
+                      serverKey: sdk-server_e7349b68-0b8d-42e2-b56d-51a75013fef4
+                      expiresAt: 9223372036854776000
+                      name: Prod SDK Key (secondary)
+                      description: Secondary SDK for the production environment.
+                      tags:
+                        - generated
+  examples: {}
+  parameters:
+    wsKey:
+      name: wsKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+        example: my-workspace
+      description: The workspace key
+    projKey:
+      name: projKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        example: my-project
+        minLength: 4
+        maxLength: 30
+      description: The project key
+    envKey:
+      name: envKey
+      in: path
+      required: true
+      schema:
+        type: string
+        example: staging
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+      description: The environment key
+    flagKey:
+      name: flagKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        example: some-flag
+        minLength: 4
+        maxLength: 30
+      description: The flag key
+    variationKey:
+      name: variationKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+        example: control
+      description: The variation key
+    identityKey:
+      name: identityKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+      description: The identity key
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+      description: Resource identifier
+    ruleKey:
+      name: ruleKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+        example: some-rule-key
+      description: The rule key
+    segKey:
+      name: segKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 4
+        maxLength: 30
+        example: some-segment-key
+      description: The segment key
+    traitKey:
+      name: traitKey
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: '^[a-z0-9]+([_ -]?[a-z0-9])*$'
+        minLength: 3
+        maxLength: 30
+      description: The trait key
 security:
   - Access Token: []
