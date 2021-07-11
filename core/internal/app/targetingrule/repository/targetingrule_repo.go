@@ -116,7 +116,7 @@ WHERE tr.id = $1`
 			); err != nil {
 				return nil, err
 			}
-			_o.RuleVariations = append(_o.RuleVariations, _v)
+			_o.RuleVariations = append(_o.RuleVariations, &_v)
 		}
 
 		o = append(o, &_o)
@@ -401,7 +401,7 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o.RuleVariations = append(o.RuleVariations, _o)
+		o.RuleVariations = append(o.RuleVariations, &_o)
 	}
 
 	return &o, err

@@ -4,7 +4,6 @@ import (
 	"context"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
-	"core/pkg/evaluator"
 	"core/pkg/hashutil"
 	"core/pkg/model"
 	res "core/pkg/response"
@@ -61,11 +60,11 @@ func Evaluate(
 	senv *srvenv.Env,
 	atk rsc.Token,
 	etag string,
-	ectx evaluator.Context,
+	ectx model.Context,
 	a RootHeaders,
-) (*evaluator.Evaluations, string, *res.Errors) {
+) (*model.Evaluations, string, *res.Errors) {
 	var e res.Errors
-	var o *evaluator.Evaluations
+	var o *model.Evaluations
 	ctx := context.Background()
 
 	retag := etag

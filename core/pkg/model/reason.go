@@ -1,4 +1,4 @@
-package evaluator
+package model
 
 // Reason evaluation reason
 type Reason string

@@ -7,7 +7,7 @@ import (
 	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
-	"core/pkg/evaluator"
+	"core/pkg/model"
 	res "core/pkg/response"
 	"net/http"
 
@@ -61,12 +61,10 @@ func (h *APIHandler) getEvaluationAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		*r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -80,7 +78,7 @@ func (h *APIHandler) evaluateAPIHandler(ctx *gin.Context) {
 		e.Append(cons.ErrorAuth, err.Error())
 	}
 
-	var i evaluator.Context
+	var i model.Context
 	if err := ctx.BindJSON(&i); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -98,12 +96,10 @@ func (h *APIHandler) evaluateAPIHandler(ctx *gin.Context) {
 		e.Extend(_err)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		&res.Success{
-			Data: r,
-		},
+		*r,
 		http.StatusInternalServerError,
 		e,
 	)

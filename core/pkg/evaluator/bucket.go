@@ -10,7 +10,7 @@ const BucketSize uint16 = 100
 
 func deriveVariation(
 	salt string,
-	variations []model.Variation,
+	variations []*model.Variation,
 ) string {
 	saltVal := binary.LittleEndian.Uint16([]byte(salt))
 	userBucket := int8(saltVal % BucketSize)

@@ -65,7 +65,7 @@ func (s *Service) createChildren(
 
 		_, _err = s.TargetingRepo.Create(ctx, targetingmodel.Targeting{
 			Enabled: false,
-			FallthroughVariations: []model.Variation{
+			FallthroughVariations: []*model.Variation{
 				{
 					VariationKey: string(vl[0].Key),
 					Weight:       model.DefaultFallthroughVariationWeight,

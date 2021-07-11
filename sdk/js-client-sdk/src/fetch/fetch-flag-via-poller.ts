@@ -1,4 +1,4 @@
-import { Flagset, Identity } from "../context";
+import { Evaluations, Identity } from "../context";
 import { Config } from "../context/config";
 import { ETAG_HEADER, SDK_KEY_HEADER } from "./constants";
 
@@ -8,7 +8,7 @@ type XHRPollingRequestHeaders = {
 type XHRPollingResponse = {
   etag: string;
   status: number;
-  data: Flagset | {};
+  data: Evaluations | {};
   hasFailed: boolean;
 };
 
@@ -30,12 +30,13 @@ const pollingRequest = (
         data: this.status == 200 ? JSON.parse(this.responseText).data : {},
       });
     };
-    xhr.onerror = () => resolve({
-      etag: "unknown",
-      status: xhr.status,
-      hasFailed: true,
-      data: {},
-    });
+    xhr.onerror = () =>
+      resolve({
+        etag: "unknown",
+        status: xhr.status,
+        hasFailed: true,
+        data: {},
+      });
     xhr.send(requestBody);
   });
 };
@@ -48,11 +49,11 @@ export const fetchFlagsViaPoller = async (
   onFullRequest?: () => void,
   onCachedRequest?: () => void,
   onErrorRequest?: () => void
-): Promise<[string, Flagset]> => {
+): Promise<[string, Evaluations]> => {
   const {
     etag: retag,
     status,
-    data: flagset,
+    data: evaluations,
     hasFailed,
   } = await pollingRequest(
     String(pollingServiceUrl),
@@ -71,5 +72,5 @@ export const fetchFlagsViaPoller = async (
     typeof onErrorRequest === "function" && onErrorRequest();
   }
 
-  return [retag, flagset];
+  return [retag, Array.isArray(evaluations) ? evaluations : []];
 };

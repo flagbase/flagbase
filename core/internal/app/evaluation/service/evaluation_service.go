@@ -51,7 +51,7 @@ func (s *Service) Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	o := make(model.Flagset)
+	var o model.Flagset
 
 	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.RootArgs{
 		WorkspaceKey: a.WorkspaceKey,
@@ -82,18 +82,12 @@ func (s *Service) Get(
 			e.Append(cons.ErrorInternal, _err.Error())
 		}
 
-		o[string(f.Key)] = &model.Flag{
-			FlagKey:               string(f.Key),
-			UseFallthrough:        !t.Enabled,
-			FallthroughVariations: t.FallthroughVariations,
-		}
-
-		o[string(f.Key)].Rules = []model.Rule{}
-
+		var _r []*model.Rule
 		for _, _tr := range tr {
 			switch _tr.Type {
 			case string(rsc.Trait):
-				o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, model.Rule{
+				_r = append(_r, &model.Rule{
+					ID:             _tr.ID,
 					RuleType:       _tr.Type,
 					TraitKey:       _tr.TraitKey,
 					TraitValue:     _tr.TraitValue,
@@ -114,7 +108,8 @@ func (s *Service) Get(
 					}
 
 					for _, _sr := range sr {
-						o[string(f.Key)].Rules = append(o[string(f.Key)].Rules, model.Rule{
+						_r = append(_r, &model.Rule{
+							ID:             _tr.ID,
 							RuleType:       _tr.Type,
 							TraitKey:       _sr.TraitKey,
 							TraitValue:     _sr.TraitValue,
@@ -127,6 +122,14 @@ func (s *Service) Get(
 				// TODO match identity ~ case string(rsc.Identity):
 			}
 		}
+
+		o = append(o, &model.Flag{
+			ID:                    t.ID,
+			FlagKey:               string(f.Key),
+			UseFallthrough:        !t.Enabled,
+			FallthroughVariations: t.FallthroughVariations,
+			Rules:                 _r,
+		})
 	}
 
 	return &o, &e
@@ -136,9 +139,9 @@ func (s *Service) Get(
 // (*) atk: access_type <= service
 func (s *Service) Evaluate(
 	atk rsc.Token,
-	ectx evaluator.Context,
+	ectx model.Context,
 	a evaluationmodel.RootArgs,
-) (*evaluator.Evaluations, *res.Errors) {
+) (*model.Evaluations, *res.Errors) {
 	var e res.Errors
 
 	r, err := s.Get(atk, a)
@@ -146,7 +149,7 @@ func (s *Service) Evaluate(
 		e.Extend(err)
 	}
 
-	o := make(evaluator.Evaluations)
+	var o model.Evaluations
 
 	for _, flag := range *r {
 		salt := hashutil.HashKeys(
@@ -156,7 +159,7 @@ func (s *Service) Evaluate(
 			flag.FlagKey,
 			ectx.Identifier,
 		)
-		o[flag.FlagKey] = evaluator.Evaluate(*flag, salt, ectx)
+		o = append(o, evaluator.Evaluate(*flag, salt, ectx))
 	}
 
 	return &o, &e

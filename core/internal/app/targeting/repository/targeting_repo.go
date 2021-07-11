@@ -214,7 +214,7 @@ WHERE w.key = $1
 		); err != nil {
 			return nil, err
 		}
-		o.FallthroughVariations = append(o.FallthroughVariations, _o)
+		o.FallthroughVariations = append(o.FallthroughVariations, &_o)
 	}
 
 	return &o, err

@@ -71,7 +71,7 @@ func (s *Service) createChildren(
 			ctx,
 			targetingmodel.Targeting{
 				Enabled: false,
-				FallthroughVariations: []model.Variation{
+				FallthroughVariations: []*model.Variation{
 					{
 						VariationKey: string(cVar.Key),
 						Weight:       model.DefaultFallthroughVariationWeight,

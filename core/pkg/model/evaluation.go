@@ -1,4 +1,4 @@
-package evaluator
+package model
 
 // Context evaluation context is essentially the data required to evaluate a flag
 type Context struct {
@@ -7,11 +7,12 @@ type Context struct {
 }
 
 // Evaluations evaluated flagset
-type Evaluations map[string]*Evaluation
+type Evaluations []*Evaluation
 
 // Evaluation evaluated flag (i.e. variations derived from the flag's ruleset)
 type Evaluation struct {
-	FlagKey      string `json:"flagKey"`
-	VariationKey string `json:"variationKey"`
-	Reason       Reason `json:"reason"`
+	ID           string `json:"id,omitempty" jsonapi:"primary,evaluated_flag"`
+	FlagKey      string `json:"flagKey" jsonapi:"attr,flagKey"`
+	VariationKey string `json:"variationKey" jsonapi:"attr,variationKey"`
+	Reason       Reason `json:"reason" jsonapi:"attr,reason"`
 }

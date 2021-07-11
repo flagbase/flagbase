@@ -1,5 +1,5 @@
 import { fetchFlagsViaPoller } from "../fetch";
-import { IContext, IConfigPolling } from "../context";
+import { Flagset, IContext } from "../context";
 import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
@@ -10,7 +10,7 @@ export default function Poller(
   context: IContext,
   events: EventProducer
 ): ITransport {
-  const config = context.getConfig() as IConfigPolling;
+  const config = context.getConfig();
   const pollingServiceUrl = config.pollingServiceUrl;
   const clientKey = config.clientKey;
 
@@ -73,7 +73,7 @@ export default function Poller(
     );
 
     interval = setInterval(async () => {
-      const [retag, evaluation] = await fetchFlagsViaPoller(
+      const [retag, evaluations] = await fetchFlagsViaPoller(
         pollingServiceUrl,
         clientKey,
         context.getIdentity(),
@@ -82,13 +82,20 @@ export default function Poller(
         onCachedRequest,
         onErrorRequest
       );
-      if (
-        evaluation &&
-        JSON.stringify(context.getAllFlags()) !== JSON.stringify(evaluation) &&
-        Object.keys(evaluation).length !== 0
-      ) {
-        Object.keys(evaluation).forEach((flagKey) =>
-          context.setFlag(flagKey, evaluation[flagKey])
+      if (evaluations?.length) {
+        const flagset: Flagset = evaluations.reduce(
+          (acc, evaluation) => ({
+            [evaluation.attributes.flagKey]: evaluation.attributes,
+            ...acc,
+          }),
+          {}
+        );
+        if (JSON.stringify(context.getAllFlags()) === JSON.stringify(flagset)) {
+          return;
+        }
+
+        Object.keys(flagset).forEach((flagKey) =>
+          context.setFlag(flagKey, flagset[flagKey])
         );
         const {
           flagsetChanges: prevFlagsetChanges,
