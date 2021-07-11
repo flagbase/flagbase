@@ -1,18 +1,17 @@
 package evaluator
 
 import (
-	"core/pkg/flagset"
-
+	"core/pkg/model"
 	"errors"
 )
 
 // Evaluate the variation for a single flag
 func Evaluate(
-	flag flagset.Flag,
+	flag model.Flag,
 	salt string,
-	ectx Context,
-) *Evaluation {
-	o := &Evaluation{
+	ectx model.Context,
+) *model.Evaluation {
+	o := &model.Evaluation{
 		FlagKey: flag.FlagKey,
 	}
 
@@ -23,9 +22,9 @@ func Evaluate(
 	}
 
 	if o.VariationKey == "" {
-		o.Reason = ReasonFallthrough
+		o.Reason = model.ReasonFallthrough
 		if len(flag.FallthroughVariations) > 1 {
-			o.Reason = ReasonFallthroughWeighted
+			o.Reason = model.ReasonFallthroughWeighted
 		}
 		o.VariationKey = deriveVariation(
 			salt,
@@ -37,16 +36,16 @@ func Evaluate(
 }
 
 func evaluateRules(
-	rules []flagset.Rule,
+	rules []*model.Rule,
 	salt string,
-	ectx Context,
-) Evaluation {
-	var o Evaluation
+	ectx model.Context,
+) model.Evaluation {
+	var o model.Evaluation
 	variationVotes := make(map[string]int)
 
 	maxVotes := 0
 	for _, r := range rules {
-		eval, err := evaluateRule(r, salt, ectx)
+		eval, err := evaluateRule(*r, salt, ectx)
 		if err == nil {
 			if _, ok := variationVotes[eval.VariationKey]; !ok {
 				variationVotes[eval.VariationKey] = 0
@@ -63,11 +62,11 @@ func evaluateRules(
 }
 
 func evaluateRule(
-	rule flagset.Rule,
+	rule model.Rule,
 	salt string,
-	ectx Context,
-) (Evaluation, error) {
-	var o Evaluation
+	ectx model.Context,
+) (model.Evaluation, error) {
+	var o model.Evaluation
 
 	if _, ok := ectx.Traits[rule.TraitKey]; !ok {
 		return o, errors.New("rule trait not present in context")
@@ -85,9 +84,9 @@ func evaluateRule(
 		return o, errors.New("rule does not match")
 	}
 
-	o.Reason = ReasonTargeted
+	o.Reason = model.ReasonTargeted
 	if len(rule.RuleVariations) > 1 {
-		o.Reason = ReasonTargetedWeighted
+		o.Reason = model.ReasonTargetedWeighted
 	}
 	o.VariationKey = deriveVariation(
 		salt,

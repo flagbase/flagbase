@@ -4,7 +4,7 @@ import (
 	"context"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
-	"core/pkg/evaluator"
+	"core/pkg/model"
 )
 
 // RootHeaders arguments for selecting root resource
@@ -24,7 +24,7 @@ type CachedServiceArgs struct {
 	Senv        *srvenv.Env
 	Ctx         context.Context
 	Atk         rsc.Token
-	Ectx        evaluator.Context
+	Ectx        model.Context
 	RootHeaders RootHeaders
 	CacheKey    string
 }

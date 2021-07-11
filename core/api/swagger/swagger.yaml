@@ -1314,7 +1314,7 @@ paths:
         - evaluation
       responses:
         '200':
-          $ref: '#/components/responses/EvaluationDetails'
+          $ref: '#/components/responses/FlagsetRaw'
         '500':
           $ref: '#/components/responses/InternalServerError'
       operationId: get-evaluation
@@ -1331,7 +1331,7 @@ paths:
       operationId: evaluate-flags
       responses:
         '200':
-          $ref: '#/components/responses/Evaluation'
+          $ref: '#/components/responses/FlagsetEvaluated'
         '500':
           $ref: '#/components/responses/InternalServerError'
       description: Evaluate flags given a particular context.
@@ -1894,6 +1894,66 @@ components:
           type: string
           description: Server-side SDK key
           readOnly: true
+    FlagRaw:
+      title: RawFlag
+      type: object
+      description: Raw flag (i.e. pre-evaluate flag state containing targeting rules and serve variations)
+      properties:
+        flagKey:
+          type: string
+        fallthroughVariations:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariationWeight'
+        rules:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              ruleType:
+                type: string
+              traitKey:
+                type: string
+              traitValue:
+                type: string
+              operator:
+                $ref: '#/components/schemas/RuleOperand'
+              negate:
+                type: boolean
+              ruleVariations:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VariationWeight'
+        useFallthrough:
+          type: boolean
+    VariationWeight:
+      title: VariationWeight
+      type: object
+      description: Weighted variation
+      properties:
+        variationKey:
+          type: string
+          description: 'Variation key (e.g. control, treatment)'
+        weight:
+          type: number
+          description: Rollout weight (0..100)
+          minimum: 0
+          maximum: 100
+          exclusiveMinimum: true
+          exclusiveMaximum: true
+    FlagEvaluated:
+      title: FlagEvaluated
+      type: object
+      properties:
+        flagKey:
+          type: string
+        reason:
+          type: string
+        variationKey:
+          type: string
+      description: Evaluated flag
   securitySchemes:
     Access Token:
       type: http
@@ -1997,12 +2057,14 @@ components:
             example-1:
               value:
                 data:
-                  id: 8872a9cf-7062-4230-80c2-de639395ff16
-                  key: testing-project-1
-                  name: Example Name
-                  description: This should be a description.
-                  tags:
-                    - some-project-tag
+                  type: project
+                  id: 49af9f76-bf1d-4309-8070-a9e1318661e6
+                  attributes:
+                    description: This should be a description.
+                    key: testing-project
+                    name: Example Name
+                    tags:
+                      - some-project-tag
     Projects:
       description: Project list response
       content:
@@ -2644,7 +2706,7 @@ components:
                       traitValue: some-trait-value
                       operator: equal
                       negate: false
-    Evaluation:
+    FlagsetEvaluated:
       description: Evaluated flagset response
       content:
         application/json:
@@ -2652,7 +2714,14 @@ components:
             type: object
             properties:
               data:
-                type: object
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/FlagEvaluated'
           examples:
             example-1:
               value:
@@ -2701,7 +2770,7 @@ components:
                     flagKey: test-flag-9
                     variationKey: control
                     reason: FALLTHROUGH
-    EvaluationDetails:
+    FlagsetRaw:
       description: Pre-evaluated flagset response
       content:
         application/json:
@@ -2709,125 +2778,156 @@ components:
             type: object
             properties:
               data:
-                type: object
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    type:
+                      type: string
+                    attributes:
+                      $ref: '#/components/schemas/FlagRaw'
           examples:
             example-1:
               value:
                 data:
-                  test-flag:
-                    flagKey: test-flag
-                    useFallthrough: false
-                    fallthroughVariations:
-                      - variationKey: test-variation-2
-                        weight: 33
-                      - variationKey: test-variation
-                        weight: 33
-                      - variationKey: test-variation-1
-                        weight: 33
-                    rules:
-                      - ruleType: segment
-                        traitKey: some-trait-key
-                        traitValue: some-trait-value
-                        operator: equal
-                        negate: false
-                        ruleVariations:
-                          - variationKey: test-variation
-                            weight: 50
-                          - variationKey: test-variation-1
-                            weight: 50
-                      - ruleType: segment
-                        traitKey: some-trait-key
-                        traitValue: some-trait-value
-                        operator: equal
-                        negate: false
-                        ruleVariations:
-                          - variationKey: test-variation
-                            weight: 50
-                          - variationKey: test-variation-1
-                            weight: 50
-                      - ruleType: trait
-                        traitKey: some-trait-key
-                        traitValue: '((((((([[:graph:]]*.)+.)+.)+.)+.)+.)+.)+'
-                        operator: regex
-                        negate: false
-                        ruleVariations:
-                          - variationKey: test-variation
-                            weight: 50
-                          - variationKey: test-variation-1
-                            weight: 50
-                  test-flag-1:
-                    flagKey: test-flag-1
-                    useFallthrough: false
-                    fallthroughVariations:
-                      - variationKey: test-variation
-                        weight: 50
-                      - variationKey: test-variation-1
-                        weight: 50
-                    rules:
-                      - ruleType: trait
-                        traitKey: some-trait-key
-                        traitValue: some-trait-value
-                        operator: equal
-                        negate: false
-                        ruleVariations:
-                          - variationKey: test-variation-1
-                            weight: 50
-                          - variationKey: test-variation
-                            weight: 50
-                  test-flag-10:
-                    flagKey: test-flag-10
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-2:
-                    flagKey: test-flag-2
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-3:
-                    flagKey: test-flag-3
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-4:
-                    flagKey: test-flag-4
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-5:
-                    flagKey: test-flag-5
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-6:
-                    flagKey: test-flag-6
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-7:
-                    flagKey: test-flag-7
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-8:
-                    flagKey: test-flag-8
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
-                  test-flag-9:
-                    flagKey: test-flag-9
-                    useFallthrough: true
-                    fallthroughVariations:
-                      - variationKey: control
-                        weight: 100
+                  - type: raw_flag
+                    id: 8ab71914-9f10-4427-b257-6b30c7ad2846
+                    attributes:
+                      flagKey: test-flag
+                      useFallthrough: false
+                      fallthroughVariations:
+                        - variationKey: test-variation-2
+                          weight: 33
+                        - variationKey: test-variation
+                          weight: 33
+                        - variationKey: test-variation-1
+                          weight: 33
+                      rules:
+                        - ruleType: segment
+                          traitKey: some-trait-key
+                          traitValue: some-trait-value
+                          operator: equal
+                          negate: false
+                          ruleVariations:
+                            - variationKey: test-variation
+                              weight: 50
+                            - variationKey: test-variation-1
+                              weight: 50
+                        - ruleType: segment
+                          traitKey: some-trait-key
+                          traitValue: some-trait-value
+                          operator: equal
+                          negate: false
+                          ruleVariations:
+                            - variationKey: test-variation
+                              weight: 50
+                            - variationKey: test-variation-1
+                              weight: 50
+                        - ruleType: trait
+                          traitKey: some-trait-key
+                          traitValue: '((((((([[:graph:]]*.)+.)+.)+.)+.)+.)+.)+'
+                          operator: regex
+                          negate: false
+                          ruleVariations:
+                            - variationKey: test-variation
+                              weight: 50
+                            - variationKey: test-variation-1
+                              weight: 50
+                  - type: raw_flag
+                    id: 323dsdf3-9f10-4427-b257-6b30c7a23sd46
+                    attributes:
+                      flagKey: test-flag-1
+                      useFallthrough: false
+                      fallthroughVariations:
+                        - variationKey: test-variation
+                          weight: 50
+                        - variationKey: test-variation-1
+                          weight: 50
+                      rules:
+                        - ruleType: trait
+                          traitKey: some-trait-key
+                          traitValue: some-trait-value
+                          operator: equal
+                          negate: false
+                          ruleVariations:
+                            - variationKey: test-variation-1
+                              weight: 50
+                            - variationKey: test-variation
+                              weight: 50
+                  - type: raw_flag
+                    id: 13b71914-9f10-4427-b257-6b30c7ad2432
+                    attributes:
+                      flagKey: test-flag-10
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 923sdf914-9f10-4427-b257-6b30c7ad2699
+                    attributes:
+                      flagKey: test-flag-2
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 3471914-9f10-4427-b257-6b30c7ae46
+                    attributes:
+                      flagKey: test-flag-3
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 854b71914-9f10-4427-b257-6b30cloud6999
+                    attributes:
+                      flagKey: test-flag-4
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 8541914-9f10-4427-b257-4d30c7ad2816
+                    attributes:
+                      flagKey: test-flag-5
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 8ab71914-9f10-4427-b257-6b30c7ad2846
+                    attributes:
+                      flagKey: test-flag-6
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 35df71514-9f10-4427-b257-6b30c7ad2842
+                    attributes:
+                      flagKey: test-flag-7
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 2as34dfd-9f10-4427-b257-6b30c7a23446
+                    attributes:
+                      flagKey: test-flag-8
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
+                  - type: raw_flag
+                    id: 23fsd2f23-9f10-4427-b257-43df07ad2842
+                    attributes:
+                      flagKey: test-flag-9
+                      useFallthrough: true
+                      fallthroughVariations:
+                        - variationKey: control
+                          weight: 100
     SDKKey:
       description: SDK Key response
       content:

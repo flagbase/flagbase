@@ -8,7 +8,7 @@ import (
 	variationmodel "core/internal/app/variation/model"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
-	"core/pkg/flagset"
+	"core/pkg/model"
 	res "core/pkg/response"
 )
 
@@ -71,10 +71,10 @@ func (s *Service) createChildren(
 			ctx,
 			targetingmodel.Targeting{
 				Enabled: false,
-				FallthroughVariations: []flagset.Variation{
+				FallthroughVariations: []*model.Variation{
 					{
 						VariationKey: string(cVar.Key),
-						Weight:       flagset.DefaultFallthroughVariationWeight,
+						Weight:       model.DefaultFallthroughVariationWeight,
 					},
 				},
 			},

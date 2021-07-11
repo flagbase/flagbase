@@ -4,9 +4,8 @@ import (
 	"context"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
-	"core/pkg/evaluator"
-	"core/pkg/flagset"
 	"core/pkg/hashutil"
+	"core/pkg/model"
 	res "core/pkg/response"
 )
 
@@ -17,9 +16,9 @@ func Get(
 	atk rsc.Token,
 	etag string,
 	a RootHeaders,
-) (*flagset.Flagset, string, *res.Errors) {
+) (*model.Flagset, string, *res.Errors) {
 	var e res.Errors
-	var o *flagset.Flagset
+	var o *model.Flagset
 	ctx := context.Background()
 
 	retag := etag
@@ -61,11 +60,11 @@ func Evaluate(
 	senv *srvenv.Env,
 	atk rsc.Token,
 	etag string,
-	ectx evaluator.Context,
+	ectx model.Context,
 	a RootHeaders,
-) (*evaluator.Evaluations, string, *res.Errors) {
+) (*model.Evaluations, string, *res.Errors) {
 	var e res.Errors
-	var o *evaluator.Evaluations
+	var o *model.Evaluations
 	ctx := context.Background()
 
 	retag := etag

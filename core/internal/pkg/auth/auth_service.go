@@ -62,6 +62,10 @@ func Enforce(
 		return err
 	}
 
+	if a.Type == rsc.AccessRoot.String() {
+		return nil
+	}
+
 	// enforce policy
 	ok, err := senv.Policy.EnforcePolicy(
 		policy.Contract{

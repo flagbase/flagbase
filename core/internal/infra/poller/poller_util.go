@@ -5,20 +5,19 @@ import (
 	evaluationservice "core/internal/app/evaluation/service"
 	sdkkeyservice "core/internal/app/sdkkey/service"
 	cons "core/internal/pkg/constants"
-	"core/pkg/evaluator"
-	"core/pkg/flagset"
 	"core/pkg/hashutil"
+	"core/pkg/model"
 	res "core/pkg/response"
 	"encoding/json"
 )
 
 func getAndSetCache(args CachedServiceArgs) (
-	*flagset.Flagset,
+	*model.Flagset,
 	res.Errors,
 	string,
 ) {
 	var e res.Errors
-	var o *flagset.Flagset
+	var o *model.Flagset
 
 	evalservice := evaluationservice.NewService(args.Senv)
 	sks := sdkkeyservice.NewService(args.Senv)
@@ -63,12 +62,11 @@ func getAndSetCache(args CachedServiceArgs) (
 }
 
 func evaluateAndSetCache(args CachedServiceArgs) (
-	*evaluator.Evaluations,
+	*model.Evaluations,
 	res.Errors,
 	string,
 ) {
 	var e res.Errors
-	var o *evaluator.Evaluations
 
 	evalservice := evaluationservice.NewService(args.Senv)
 	sks := sdkkeyservice.NewService(args.Senv)
@@ -93,14 +91,12 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 		e.Extend(err)
 	}
 
-	o = r
-
-	oBytes, _err := json.Marshal(o)
+	rBytes, _err := json.Marshal(*r)
 	if _err != nil {
 		e.Append(cons.ErrorInternal, _err.Error())
 	}
 	retag := hashutil.HashKeys(
-		string(oBytes),
+		string(rBytes),
 	)
 	if err := args.Senv.Cache.Set(
 		args.CacheKey,
@@ -110,5 +106,5 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 		panic(err)
 	}
 
-	return o, e, retag
+	return r, e, retag
 }

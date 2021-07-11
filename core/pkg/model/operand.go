@@ -1,4 +1,4 @@
-package flagset
+package model
 
 // Operator represents an conditional operator (i.e. <operand> <operator> <operand>)
 type Operator string

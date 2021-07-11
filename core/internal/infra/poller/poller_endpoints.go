@@ -5,7 +5,7 @@ import (
 	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/srvenv"
-	"core/pkg/evaluator"
+	"core/pkg/model"
 	res "core/pkg/response"
 	"net/http"
 
@@ -44,12 +44,10 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 		statusCode = http.StatusNotModified
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		statusCode,
-		&res.Success{
-			Data: r,
-		},
+		*r,
 		http.StatusInternalServerError,
 		e,
 	)
@@ -60,7 +58,7 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 
 	etag := ctx.Request.Header.Get("ETag")
 
-	var ectx evaluator.Context
+	var ectx model.Context
 	if err := ctx.BindJSON(&ectx); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
 	}
@@ -82,14 +80,19 @@ func evaluateAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	statusCode := http.StatusOK
 	if e.IsEmpty() && retag == etag {
 		statusCode = http.StatusNotModified
+		httputil.Send(
+			ctx,
+			statusCode,
+			nil,
+			http.StatusInternalServerError,
+			e,
+		)
 	}
 
-	httputil.Send(
+	httputil.SendJSON(
 		ctx,
 		statusCode,
-		&res.Success{
-			Data: r,
-		},
+		*r,
 		http.StatusInternalServerError,
 		e,
 	)

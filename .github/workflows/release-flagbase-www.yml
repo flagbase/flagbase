@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - 'www/**'
+      - 'core/api/swagger/**'
 
 jobs:
   release:
