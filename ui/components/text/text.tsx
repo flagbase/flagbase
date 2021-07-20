@@ -6,7 +6,7 @@ export type TextProps = {
 };
 
 const Text: React.FC<TextProps> = (props) => {
-  return <span {...props} />;
+  return <span  {...props} />;
 };
 
 export default Text;

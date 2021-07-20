@@ -6,7 +6,7 @@ export type InputProps = {
 } & AntdInputProps;
 
 const Input: React.FC<InputProps> = (props) => {
-  return <AntdInput {...props} />;
+  return <AntdInput style={{borderRadius: '2px'}} {...props} />;
 };
 
 export default Input;
