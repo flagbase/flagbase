@@ -7,10 +7,10 @@ export type InputTagProps = {
   children: React.ReactChild,
 } & AntdSelectProps<string>;
 
-const InputTags: React.FC<InputTagProps> = ({ children }) => {
-  return  <AntdSelect mode="tags" placeholder="Tags Mode">
-  {children}
-</AntdSelect>;
+const InputTags: React.FC<InputTagProps> = ({ children, placeholder }) => {
+  return <AntdSelect mode="tags" placeholder={placeholder} style={{ width: '100%' }}>
+    {children}
+  </AntdSelect>;
 };
 
 export default InputTags;

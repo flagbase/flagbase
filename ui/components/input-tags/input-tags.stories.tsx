@@ -5,16 +5,12 @@ import InputTags, { InputTagProps } from './input-tags';
 
 export default {
   title: 'Components/InputTags',
-  component: InputTags,
-  argTypes: {
-    backgroundColor: { control: 'color' }
-  }
+  component: InputTags
 } as Meta;
 
 const Template: Story<InputTagProps> = (args) => <InputTags {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  placeholder: 'Enter a flag name'
+  placeholder: 'Add some tags for your flags'
 };
-

@@ -5,16 +5,12 @@ import Text, { TextProps } from './text';
 
 export default {
   title: 'Components/Text',
-  component: Text,
-  argTypes: {
-    backgroundColor: { control: 'color' }
-  }
+  component: Text
 } as Meta;
 
-const Template: Story<TextProps> = (args) => <Text {...args} />;
+const Template: Story<TextProps> = (args) => <Text {...args}> {args.text} </Text>;
 
 export const Default = Template.bind({});
 Default.args = {
-  level: '1',
+  text: 'Hello there. General kenobi!!'
 };
-

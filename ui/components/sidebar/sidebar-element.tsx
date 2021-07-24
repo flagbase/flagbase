@@ -1,18 +1,18 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const SidebarElement = styled.div`
-  
+const SidebarElementContainer = styled.div`
+  cursor: pointer;
 `;
 
 export type SidebarElementProps = {
   image: string,
 };
 
-const Sidebar: React.FC<SidebarElementProps> = ({ image }) => {
-  return <SidebarElement>
+const SidebarElement: React.FC<SidebarElementProps> = ({ image }) => {
+  return <SidebarElementContainer>
     <img src={image} />
-  </SidebarElement>;
+  </SidebarElementContainer>;
 };
 
-export default Sidebar;
+export default SidebarElement;

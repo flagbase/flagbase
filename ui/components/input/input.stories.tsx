@@ -17,4 +17,3 @@ export const Default = Template.bind({});
 Default.args = {
   placeholder: 'Enter a flag name'
 };
-
