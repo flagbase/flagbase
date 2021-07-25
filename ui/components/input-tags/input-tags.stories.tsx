@@ -4,7 +4,7 @@ import { Story, Meta } from '@storybook/react';
 import InputTags, { InputTagProps } from './input-tags';
 
 export default {
-  title: 'Components/InputTags',
+  title: 'Forms/InputTags',
   component: InputTags
 } as Meta;
 

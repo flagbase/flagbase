@@ -15,5 +15,12 @@ const Template: Story<AppNavigationProps> = (args) => <AppNavigation {...args} /
 
 export const Default = Template.bind({});
 Default.args = {
-  title: 'Workspaces'
+  title: 'Workspaces',
+  buttons: [{
+    title: 'Add new project',
+    type: 'primary'
+  }, {
+    title: '...',
+    type: 'secondary'
+  }]
 };

@@ -18,7 +18,6 @@ Default.args = {
   placeholder: 'Enter a flag name'
 };
 
-
 const ContainerTemplate: Story<LayoutProps> = (args) => {
   return (<Layout style={{ height: '100vh', padding: '50px' }} {...args}>
     <Content style={{
@@ -29,9 +28,7 @@ const ContainerTemplate: Story<LayoutProps> = (args) => {
     }}>
       test
     </Content>
-  </Layout>)
+  </Layout>);
 };
 
 export const Container = ContainerTemplate.bind({});
-
-
