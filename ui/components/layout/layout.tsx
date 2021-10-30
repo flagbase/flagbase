@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout as AntdLayout, LayoutProps as AntdLayoutProps  } from 'antd';
+import { Layout as AntdLayout, LayoutProps as AntdLayoutProps } from 'antd';
 
 const { Content } = AntdLayout;
 
@@ -11,4 +11,4 @@ const Layout: React.FC<LayoutProps> = (props) => {
   return <AntdLayout {...props} />;
 };
 
-export { Layout, Content } ;
+export { Layout, Content };

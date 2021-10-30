@@ -39,6 +39,8 @@ const StyledDivider = styled(Divider)`
 type NavigationElementProps = {
     title: string,
     subMenuContent: Array<Record<string, string>>,
+    isHover: boolean,
+    onHover: (hover: string | null) => void,
 }
 
 type NavigationSubMenuProps = {
@@ -62,13 +64,11 @@ const NavigationSubMenu: React.FC<NavigationSubMenuProps> = ({ show, onMouseOver
     : <React.Fragment> </React.Fragment>;
 };
 
-export const NavigationElement: React.FC<NavigationElementProps> = ({ title, subMenuContent }) => {
-  const [isHover, setHover] = useState(false);
-
+export const NavigationElement: React.FC<NavigationElementProps> = ({ title, subMenuContent, onHover, isHover }) => {
   return (
     <React.Fragment>
-      <StyledNavigationElement onMouseOver={() => setHover(true)}>{title}</StyledNavigationElement>
-      <NavigationSubMenu title={title} subMenuContent={subMenuContent} onMouseOver={() => setHover(true)} onMouseLeave={() => setHover(false)} show={isHover}>Navigation menu goes here</NavigationSubMenu>
+      <StyledNavigationElement onMouseOver={() => onHover(title)}>{title}</StyledNavigationElement>
+      <NavigationSubMenu title={title} subMenuContent={subMenuContent} onMouseOver={() => onHover(title)} onMouseLeave={() => onHover(null)} show={isHover}>Navigation menu goes here</NavigationSubMenu>
     </React.Fragment>
   );
 };

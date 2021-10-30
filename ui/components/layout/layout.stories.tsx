@@ -19,9 +19,9 @@ Default.args = {
 };
 
 const ContainerTemplate: Story<LayoutProps> = (args) => {
-  return (<Layout style={{ height: '100vh', padding: '50px' }} {...args}>
+  return (<Layout style={{ height: '100vh', padding: '50px', backgroundColor: '#F9F9F9' }} {...args}>
     <Content style={{
-      padding: '0px 50px',
+      padding: '20px 50px',
       backgroundColor: 'white',
       borderRadius: '15px',
       boxShadow: '0px 0px 4px rgba(0, 0, 0, 0.25)'
