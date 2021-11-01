@@ -40,6 +40,7 @@ type SubMenuProps = {
 };
 
 const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
+  console.log('CONTENT', subMenuContent);
   const titles = Object.keys(subMenuContent);
   console.log('title', titles);
   const [currHover, setHover] = useState(null);

@@ -19,12 +19,14 @@ Default.args = {
     {
       key: '1',
       name: 'Pakistan',
-      url: 'https://flagbase.infinibit.com.au'
+      url: 'https://flagbase.infinibit.com.au',
+      connect: <a>Connect</a>
     },
     {
       key: '2',
       name: 'India',
-      url: 'https://flagbase.chronal.space'
+      url: 'https://flagbase.chronal.space',
+      connect: <a>Connect</a>
     }
   ],
   columns: [
@@ -34,9 +36,14 @@ Default.args = {
       key: 'name'
     },
     {
-      title: 'Url',
+      title: 'URL',
       dataIndex: 'url',
       key: 'url'
+    },
+    {
+      title: 'Action',
+      dataIndex: 'connect',
+      key: 'connect'
     }
   ]
 };

@@ -8,18 +8,7 @@ export type TableProps = {
 };
 
 const Table: React.FC<TableProps> = ({ columns, dataSource }) => {
-  return <AntdTable dataSource={dataSource}>
-
-    {columns.map((column) => (
-      <Column title={column.title} dataIndex={column.dataIndex} key={column.key} />))}
-
-    <Column
-      title="Action"
-      key="action"
-      render={() => (
-        <a>Connect</a>
-      )}
-    />
+  return <AntdTable dataSource={dataSource} columns={columns}>
   </AntdTable>;
 };
 
