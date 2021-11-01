@@ -8,7 +8,6 @@ import PageLayout from '../../../components/page-layout';
 import Table from '../../../components/table/table';
 
 import { Typography } from 'antd';
-import { Link } from 'react-router-dom';
 
 const { Title, Text } = Typography;
 
@@ -29,11 +28,12 @@ const Instances: React.FC = () => {
   };
 
   const convertInstances = (instanceList: sessionProps[]) => {
-    return instanceList.map((instance:sessionProps) => {
+    return instanceList.map((instance:sessionProps, index: number) => {
       return {
         name: instance.name,
         url: instance.url,
-        action: <a href={instance.url}>Connect</a>
+        action: <a href={instance.url}>Connect</a>,
+        key: `${instance.url}_${index}`
       };
     });
   };

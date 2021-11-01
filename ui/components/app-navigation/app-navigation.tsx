@@ -1,6 +1,7 @@
+/* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, PageHeaderProps, SubMenuProps } from 'antd';
 import { PageHeaderStyled } from './app-navigation.styles';
 import { BaseButtonProps } from 'antd/lib/button/button';
@@ -36,27 +37,21 @@ export type AppNavigationProps = {
 } & PageHeaderProps;
 
 type SubMenuProps = {
-  subMenuContent: Array<Record<keyof FlagbaseSubMenuProps, string>>;
+  subMenuContent: Record<keyof FlagbaseSubMenuProps, string>;
 };
 
 const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
-  console.log('CONTENT', subMenuContent);
-  const titles = Object.keys(subMenuContent);
-  console.log('title', titles);
-  const [currHover, setHover] = useState(null);
+  const [currHover, setHover] = useState<string>('');
   return (
     <SubMenuContainer>
-      {titles.map((title: string, index) => (
-        <React.Fragment key={`${title}_${index}`}>
-          <NavigationElement
-            title={title}
-            key={title}
-            subMenuContent={subMenuContent[title].content}
-            isHover={title === currHover}
-            onHover={(title) => setHover(title)}
-          />
-          {index !== titles.length - 1 && <span></span>}
-        </React.Fragment>
+      {Object.keys(subMenuContent).map((title: string, index) => (
+        <NavigationElement
+          title={title}
+          key={`${title}_${index}`}
+          subMenuContent={subMenuContent[title].content}
+          isHover={title === currHover}
+          onHover={(title: string) => setHover(title)}
+        />
       ))}
     </SubMenuContainer>
   );
@@ -64,28 +59,14 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
 
 const AppNavigation: React.FC<AppNavigationProps> = ({
   hasBackIcon,
-  buttons,
   subMenuContent,
   ...props
 }) => {
-  const renderedButtons = buttons?.map((button: ButtonProps, index: number) => (
-    <Button
-      css={{
-        backgroundColor:
-          buttonColor[(button.type as BaseButtonProps['type']) || 'default']
-      }}
-      key={`${button}_${index}`}
-      type={button.type as BaseButtonProps['type']}
-    >
-      {button.title}
-    </Button>
-  ));
   return (
     <PageHeaderStyled
       {...(hasBackIcon && { onBack: () => window.history.back() })}
       ghost={false}
       {...props}
-      extra={renderedButtons}
       title={<AppSubMenu subMenuContent={subMenuContent} />}
     />
   );
