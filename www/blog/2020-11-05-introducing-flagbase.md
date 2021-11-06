@@ -5,12 +5,10 @@ authorURL: http://github.com/cjoy
 authorImageURL: https://avatars2.githubusercontent.com/u/10393925?s=60&v=4
 ---
 
-I am very happy to introduce [Flagbase](https://github.com/flagbase/flagbase) - an open-source feature flagging service.
-
-My vision for [Flagbase](https://flagbase.com) is to be the world's best open-source feature management platform. I want it to be a tool organisations can use to customise their own feature release workflow(s). It should help manage your feature's entire lifecycle. From inception to delivery. This is very hard, because each organisation has their own unique product change management workflows. Some organisations may also have their own targeting/attribution platform, which they want to integrate with their feature-flagging provider. It's very difficuilt for organisation to intergrate their internalattribution systems with proprietary feature flagging providers, so they often choose to build their own feature flagging service.
+We're happy to introduce [Flagbase](https://github.com/flagbase/flagbase). Flagbase is an open-source feature management solution, helping teams release feature safely through the use of feature flags.
 
 :::info
-This project is still under development and is **NOT** at a usable state as of writing this blog post. This project is on [Github](https://github.com/flagbase/flagbase) - feel free to contribute 🙂
+This project is still under development and is **NOT** at a usable state as of writing this blog post. This project is on [Github](https://github.com/flagbase/flagbase) - please star the project to keep updated 🙂
 :::
 
 <!--truncate-->
@@ -64,8 +62,8 @@ The core is essentially the feature flagging micro-service that’ll handle requ
 - Auditing capabilities
 - Resource access management via Casbin
 - Service monitoring via Prometheus
-- Two delivery modes:
-  - Polling via HTTP
+- Two transports:
+  - Polling
   - Streaming via SSE
 
 ##### Core

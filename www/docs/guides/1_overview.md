@@ -1,17 +1,10 @@
 ---
 id: overview
-title: Guides
-sidebar_label: Overview
+title: Concepts
+sidebar_label: Concepts
 ---
 
-## Overview
-
-<div align="center">
-  <img width="570px" aria-label="Architecture Diagram" src="/assets/dev/system-in-context.jpg" />
-</div>
-
-
-## Key Concepts
+## Resources
 
 The diagram below illustrates the Flagbase's resource hierarchy. To simplify the diagram, [identity](#identity) and [targeting](#targeting) have not been included in this diagram.
 
