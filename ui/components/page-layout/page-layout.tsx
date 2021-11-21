@@ -1,4 +1,5 @@
 import React from 'react';
+import ComposedProvider from '../../app/context';
 
 import { PageContainer } from './page-layout.styles';
 
@@ -10,9 +11,11 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
   return (
     <>
       {navigation}
+    <ComposedProvider>
       <PageContainer>
         {children}
       </PageContainer>
+      </ComposedProvider>
     </>
   );
 };

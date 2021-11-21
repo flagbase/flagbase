@@ -11,12 +11,12 @@ import { Typography } from 'antd';
 
 const { Title, Text } = Typography;
 
-type sessionProps = {
+export type sessionProps = {
     name: string;
     url: string;
 }
 const Instances: React.FC = () => {
-  const [sessionList, setSessionList] = useState<sessionProps[]>(JSON.parse(localStorage.getItem('sessions') || '{}'));
+  const [sessionList, setSessionList] = useState<sessionProps[]>(JSON.parse(localStorage.getItem('sessions') || '[]'));
   const [currInstance, setInstance] = useState({
     name: '',
     url: ''
@@ -32,7 +32,7 @@ const Instances: React.FC = () => {
       return {
         name: instance.name,
         url: instance.url,
-        action: <a href={instance.url}>Connect</a>,
+        action: <a href={`/workspaces/${instance.name.toLowerCase()}`}>Connect</a>,
         key: `${instance.url}_${index}`
       };
     });
