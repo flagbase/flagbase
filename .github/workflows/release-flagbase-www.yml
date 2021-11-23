@@ -8,10 +8,6 @@ on:
       - 'www/**'
       - 'core/api/swagger/**'
 
-concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   release:
     name: Release website
@@ -23,3 +19,6 @@ jobs:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
           repository: ${{ secrets.FLAGBASE_COM_REPO }}
           event-type: ${{ secrets.FLAGBASE_COM_RELEASE_WEBSITE_EVENT_TYPE }}
+    concurrency:
+      group: ${{ github.ref }}
+      cancel-in-progress: true
