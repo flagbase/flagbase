@@ -12,8 +12,8 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// InitSenv Initialize server env
-func InitSenv(ctx *cli.Context, wg *sync.WaitGroup) *srvenv.Env {
+// Setup Initialize server env
+func Setup(ctx *cli.Context, wg *sync.WaitGroup) *srvenv.Env {
 	senv, err := srv.Setup(srv.Config{
 		Ctx:           context.Background(),
 		PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),

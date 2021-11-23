@@ -77,7 +77,7 @@ func startCommand(ctx *cli.Context) error {
 	switch mode := ctx.String("mode"); mode {
 	case string(workermode.AllMode):
 		wg.Add(1)
-		senv = InitSenv(ctx, &wg)
+		senv = Setup(ctx, &wg)
 		wg.Add(1)
 		go StartAPI(ctx, senv, &wg)
 		wg.Add(1)
@@ -87,17 +87,17 @@ func startCommand(ctx *cli.Context) error {
 		wg.Wait()
 	case string(workermode.APIMode):
 		wg.Add(1)
-		senv = InitSenv(ctx, &wg)
+		senv = Setup(ctx, &wg)
 		wg.Add(1)
 		StartAPI(ctx, senv, &wg)
 	case string(workermode.StreamerMode):
 		wg.Add(1)
-		senv = InitSenv(ctx, &wg)
+		senv = Setup(ctx, &wg)
 		wg.Add(1)
 		StartSteamer(ctx, senv, &wg)
 	case string(workermode.PollerMode):
 		wg.Add(1)
-		senv = InitSenv(ctx, &wg)
+		senv = Setup(ctx, &wg)
 		wg.Add(1)
 		StartPoller(ctx, senv, &wg)
 	default:
