@@ -8,6 +8,7 @@ import PageLayout from '../../../components/page-layout';
 import Table from '../../../components/table/table';
 
 import { Typography } from 'antd';
+import { useLocalStorage } from '@rehooks/local-storage';
 
 const { Title, Text } = Typography;
 
@@ -18,7 +19,7 @@ export type sessionProps = {
     key: string;
 }
 const Instances: React.FC = () => {
-  const [sessionList, setSessionList] = useState<sessionProps[]>(JSON.parse(localStorage.getItem('sessions') || '[]'));
+  const [sessionList, setSessionList] = useLocalStorage<sessionProps[]>('sessions', []);
   const [currInstance, setInstance] = useState({
     name: '',
     url: '',
@@ -27,16 +28,23 @@ const Instances: React.FC = () => {
   });
 
   const addInstance = () => {
-    localStorage.setItem('sessions', JSON.stringify([...sessionList, currInstance]));
     setSessionList([...sessionList, currInstance]);
   };
+
+  const deleteInstance = (deletedSession: sessionProps) => {
+    setSessionList(sessionList.filter((session) => session.name !== deletedSession.name));
+  }
 
   const convertInstances = (instanceList: sessionProps[]) => {
     return instanceList.map((instance:sessionProps, index: number) => {
       return {
         name: instance.name,
         url: instance.url,
-        action: <a href={`/workspaces/${instance.name.toLowerCase()}`}>Connect</a>,
+        action: <>
+          <a href={`/workspaces/${instance.name.toLowerCase()}`}>Connect</a>
+          <span> | </span>
+          <a onClick={() => deleteInstance(instance)}>Delete</a>
+        </>,
         key: `${instance.url}_${index}`
       };
     });
