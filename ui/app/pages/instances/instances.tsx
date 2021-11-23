@@ -14,12 +14,16 @@ const { Title, Text } = Typography;
 export type sessionProps = {
     name: string;
     url: string;
+    secret: string;
+    key: string;
 }
 const Instances: React.FC = () => {
   const [sessionList, setSessionList] = useState<sessionProps[]>(JSON.parse(localStorage.getItem('sessions') || '[]'));
   const [currInstance, setInstance] = useState({
     name: '',
-    url: ''
+    url: '',
+    secret: '',
+    key: ''
   });
 
   const addInstance = () => {
@@ -64,6 +68,14 @@ const Instances: React.FC = () => {
             ...currInstance,
             url: event.target.value
           })} placeholder="URL" style={{ marginBottom: '1em' }} />
+          <Input onChange={(event) => setInstance({
+            ...currInstance,
+            key: event.target.value
+          })} placeholder="Access Key" style={{ marginBottom: '1em' }} />
+          <Input onChange={(event) => setInstance({
+            ...currInstance,
+            secret: event.target.value
+          })} placeholder="Access Secret" style={{ marginBottom: '1em' }} />
           <Button onClick={() => addInstance()} type="primary" style={{ marginBottom: '1em' }}>Submit</Button>
         </Content>
       </Layout>
