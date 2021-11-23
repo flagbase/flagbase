@@ -1,4 +1,4 @@
-package service
+package worker
 
 import (
 	"core/internal/infra/api"
@@ -6,7 +6,7 @@ import (
 	"core/internal/pkg/srvenv"
 )
 
-// APIConfig API service configuration
+// APIConfig API worker configuration
 type APIConfig struct {
 	Host          string
 	APIPort       int
@@ -25,7 +25,7 @@ func StartAPI(senv *srvenv.Env, cfg APIConfig) {
 		cmdutil.VerboseFlag, cfg.Verbose,
 	).Int(
 		APIPortFlag, cfg.APIPort,
-	).Msg("Starting API Service")
+	).Msg("Starting API Worker")
 
 	api.New(senv, api.Config{
 		Host:    cfg.Host,

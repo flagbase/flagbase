@@ -1,4 +1,4 @@
-package service
+package worker
 
 import (
 	"context"
@@ -13,23 +13,23 @@ import (
 )
 
 const (
-	// ModeFlag Type of worker (api, streamer)
+	// ModeFlag Type of worker (api, graphql, streamer, poller)
 	ModeFlag string = "mode"
 	// HostFlag Server host address
 	HostFlag string = "host"
-	// APIPortFlag Port API will operate wihtin
+	// APIPortFlag Port API will operate within
 	APIPortFlag string = "api-port"
-	// StreamerPortFlag Port streamer will operate wihtin
+	// StreamerPortFlag Port streamer will operate within
 	StreamerPortFlag string = "streamer-port"
-	// PollingPortFlag Port streamer will operate wihtin
+	// PollingPortFlag Port streamer will operate within
 	PollerPortFlag string = "poller-port"
 )
 
-// Command service command entry
+// Command worker command entry
 var Command cli.Command = cli.Command{
-	Name:        "service",
-	Usage:       "Manage service workers",
-	Description: "Manage flagbase service workers (API, Streamer)",
+	Name:        "worker",
+	Usage:       "Manage workers",
+	Description: "Manage flagbase workers (API, GraphQL, Streamer, Poller etc...)",
 	Subcommands: []*cli.Command{
 		&StartCommand,
 	},
@@ -38,8 +38,8 @@ var Command cli.Command = cli.Command{
 // StartCommand service start command
 var StartCommand cli.Command = cli.Command{
 	Name:        "start",
-	Usage:       "Start service workers",
-	Description: "Manage flagbase service workers (API, Streamer, Polling)",
+	Usage:       "Start worker",
+	Description: "Manage flagbase workers (API, Streamer, Polling)",
 	Flags: append([]cli.Flag{
 		&cli.StringFlag{
 			Name:  ModeFlag,

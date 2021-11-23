@@ -1,4 +1,4 @@
-package service
+package worker
 
 import (
 	"core/internal/infra/poller"
@@ -6,7 +6,7 @@ import (
 	"core/internal/pkg/srvenv"
 )
 
-// PollingConfig Polling service configuration
+// PollingConfig Polling worker configuration
 type PollingConfig struct {
 	Host          string
 	PollingPort   int
@@ -25,7 +25,7 @@ func StartPoller(senv *srvenv.Env, cfg PollingConfig) {
 		cmdutil.VerboseFlag, cfg.Verbose,
 	).Int(
 		PollerPortFlag, cfg.PollingPort,
-	).Msg("Starting Polling Service")
+	).Msg("Starting Polling Worker")
 
 	poller.New(senv, poller.Config{
 		Host:        cfg.Host,
