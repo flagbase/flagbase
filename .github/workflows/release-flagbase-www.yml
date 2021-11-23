@@ -8,6 +8,10 @@ on:
       - 'www/**'
       - 'core/api/swagger/**'
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   release:
     name: Release website
