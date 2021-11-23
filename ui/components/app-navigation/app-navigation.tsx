@@ -32,7 +32,6 @@ type FlagbaseSubMenuProps = 'instance' | 'workspace' | 'project' | 'flags';
 export type AppNavigationProps = {
   title: string;
   hasBackIcon?: boolean;
-  buttons: Array<Record<keyof ButtonProps, string>>;
   subMenuContent: Array<Record<keyof FlagbaseSubMenuProps, string>>;
 } & PageHeaderProps;
 

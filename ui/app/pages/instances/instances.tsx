@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import AppNavigation from '../../../components/app-navigation';
 import Button from '../../../components/button';
@@ -6,47 +6,46 @@ import Input from '../../../components/input';
 import { Content, Layout } from '../../../components/layout';
 import PageLayout from '../../../components/page-layout';
 import Table from '../../../components/table/table';
-
 import { Typography } from 'antd';
-import { useLocalStorage } from '@rehooks/local-storage';
+import { Instance, InstanceContext } from '../../context/instance';
+import { v4 as uuidv4 } from 'uuid';
 
 const { Title, Text } = Typography;
 
-export type sessionProps = {
-    name: string;
-    url: string;
-    secret: string;
-    key: string;
-}
 const Instances: React.FC = () => {
-  const [sessionList, setSessionList] = useLocalStorage<sessionProps[]>('sessions', []);
   const [currInstance, setInstance] = useState({
-    name: '',
-    url: '',
-    secret: '',
-    key: ''
-  });
+    id: '',
+    connectionString: '',
+    key: '',
+    accessToken: '',
+    accessKey: ''
+  } as Instance);
 
-  const addInstance = () => {
-    setSessionList([...sessionList, currInstance]);
+  const { addEntity, removeEntity, entities: instanceList, } = useContext(InstanceContext)
+
+  const addInstance = (instance: Instance) => {
+    addEntity({...instance, id: uuidv4()})
   };
 
-  const deleteInstance = (deletedSession: sessionProps) => {
-    setSessionList(sessionList.filter((session) => session.name !== deletedSession.name));
+  const deleteInstance = (deletedSession: Instance) => {
+    removeEntity(deletedSession.id)
   }
 
-  const convertInstances = (instanceList: sessionProps[]) => {
-    return instanceList.map((instance:sessionProps, index: number) => {
+  const convertInstances = (instanceList: Instance[]) => {
+    console.log("INSTANCE LIST", instanceList)
+    return instanceList.map((instance:Instance, index: number) => {
       return {
-        name: instance.name,
-        url: instance.url,
+        id: '',
+        connectionString: instance.connectionString,
         action: <>
-          <a href={`/workspaces/${instance.name.toLowerCase()}`}>Connect</a>
+          <a href={`/workspaces/${instance.key.toLowerCase()}`}>Connect</a>
           <span> | </span>
           <a onClick={() => deleteInstance(instance)}>Delete</a>
         </>,
-        key: `${instance.url}_${index}`
-      };
+        key: instance.key,
+        accessKey: instance.accessKey,
+        accessToken: instance.accessToken,
+      } as Instance;
     });
   };
   return (
@@ -70,21 +69,21 @@ const Instances: React.FC = () => {
           <Text style={{ fontSize: '14px' }}>Connect to a Flagbase instance to begin managing your flags</Text>
           <Input onChange={(event) => setInstance({
             ...currInstance,
-            name: event.target.value
+            key: event.target.value
           })} placeholder="Instance name" style={{ marginTop: '1em', marginBottom: '1em' }} />
           <Input onChange={(event) => setInstance({
             ...currInstance,
-            url: event.target.value
+            connectionString: event.target.value
           })} placeholder="URL" style={{ marginBottom: '1em' }} />
           <Input onChange={(event) => setInstance({
             ...currInstance,
-            key: event.target.value
+            accessKey: event.target.value
           })} placeholder="Access Key" style={{ marginBottom: '1em' }} />
           <Input onChange={(event) => setInstance({
             ...currInstance,
-            secret: event.target.value
-          })} placeholder="Access Secret" style={{ marginBottom: '1em' }} />
-          <Button onClick={() => addInstance()} type="primary" style={{ marginBottom: '1em' }}>Submit</Button>
+            accessToken: event.target.value
+          })} placeholder="Access Token" style={{ marginBottom: '1em' }} />
+          <Button onClick={() => addInstance(currInstance)} type="primary" style={{ marginBottom: '1em' }}>Submit</Button>
         </Content>
       </Layout>
 
@@ -97,16 +96,16 @@ const Instances: React.FC = () => {
         }}>
           <Title style={{ fontSize: '24px' }}>Connect to an instance</Title>
 
-          <Table dataSource={convertInstances(sessionList)} columns={[
+          <Table dataSource={convertInstances(Object.values(instanceList as unknown as {}))} columns={[
             {
               title: 'Name',
-              dataIndex: 'name',
-              key: 'name'
+              dataIndex: 'key',
+              key: 'key'
             },
             {
               title: 'URL',
-              dataIndex: 'url',
-              key: 'url'
+              dataIndex: 'connectionString',
+              key: 'connectionString'
             },
             {
               title: 'Action',

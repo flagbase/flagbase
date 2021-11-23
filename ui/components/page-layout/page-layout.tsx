@@ -11,11 +11,9 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
   return (
     <>
       {navigation}
-    <ComposedProvider>
       <PageContainer>
         {children}
       </PageContainer>
-      </ComposedProvider>
     </>
   );
 };

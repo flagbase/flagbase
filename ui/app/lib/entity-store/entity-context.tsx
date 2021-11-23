@@ -1,27 +1,31 @@
 import React, { createContext, useState } from 'react';
 
-import { createStore, EntityStore } from './entity-store';
-import { createActions, EntityActions } from './entity-actions';
+import { createStore, EntityStore } from "./entity-store";
+import { createActions, EntityActions } from "./entity-actions";
 
 type Options = {
   useLocalStorage?: boolean;
 };
 
+type EntityStoreWithActions<Entity> = EntityStore<Entity> &
+  EntityActions<Entity>;
+
 type EntityContext<Entity> = {
-  Context: React.Context<EntityStore<Entity> & Partial<EntityActions<Entity>>>;
+  Context: React.Context<EntityStoreWithActions<Entity>>;
   Provider: React.FC;
 };
 
-function createEntityContext<Entity> (
+function createEntityContext<Entity>(
   entityKey: string,
   initialState?: Partial<EntityStore<Entity>> | undefined,
   opts?: Options
 ): EntityContext<Entity> {
   const _intialState = createStore(initialState);
 
-  const Context = createContext<
-    EntityStore<Entity> & Partial<EntityActions<Entity>>
-  >(_intialState);
+  const Context = createContext<EntityStoreWithActions<Entity>>({
+    ..._intialState,
+    ...createActions<Entity>({} as EntityStore<Entity>, () => {}),
+  });
 
   const Provider: React.FC = ({ children }) => {
     const [state, setState] = useState<EntityStore<Entity>>(_intialState);
@@ -35,7 +39,7 @@ function createEntityContext<Entity> (
       <Context.Provider
         value={{
           ...state,
-          ...actions
+          ...actions,
         }}
       >
         {children}
@@ -47,7 +51,7 @@ function createEntityContext<Entity> (
 
   return {
     Context,
-    Provider
+    Provider,
   };
 }
 

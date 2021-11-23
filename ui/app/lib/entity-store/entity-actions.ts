@@ -23,11 +23,13 @@ export const createActions = <T>(
       }),
     addEntities: (entities: { [entityId: string]: Entity<T> }) =>
       setState({ ...state, entities: { ...state.entities, ...entities } }),
-    removeEntity: (entityId: string) =>
+    removeEntity: (entityId: string) => {
+      const { [entityId]: _, ...rest } = state.entities 
       setState({
         ...state,
-        entities: { ...state.entities, [entityId]: undefined }
-      }),
+        entities: { ...rest }
+      })
+    },
     clearEntities: () =>
       setState({
         ...state,
