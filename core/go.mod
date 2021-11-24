@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/casbin/casbin-pg-adapter v0.1.5
-	github.com/casbin/casbin/v2 v2.7.1
+	github.com/casbin/casbin/v2 v2.39.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/evanphx/json-patch v4.5.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
