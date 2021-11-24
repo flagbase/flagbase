@@ -32,7 +32,7 @@ jobs:
         run: go test  ./... -v -covermode=count -coverprofile=coverage.txt
         working-directory: ./core
       - name: Upload coverage report to CodeCov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v2.1.0
         with:
           token: ${{ secrets.CORE_CODECOV_TOKEN }}
           file: ./core/coverage.txt
