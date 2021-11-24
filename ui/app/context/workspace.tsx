@@ -6,12 +6,7 @@ export type Workspace = {
 };
 
 const WorkspaceStore = createEntityContext<Workspace>('workspace', {
-  entities: {
-    2: {
-      id: '2',
-      key: 'test'
-    }
-  }
+
 });
 
 export const WorkspaceContext = WorkspaceStore.Context;

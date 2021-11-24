@@ -5,6 +5,7 @@ export type Instance = {
   key: string;
   connectionString: string;
   accessKey: string;
+  accessSecret: string;
   accessToken: string;
 };
 
