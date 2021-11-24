@@ -2,11 +2,14 @@ package httpserver
 
 import (
 	"core/internal/pkg/srvenv"
+	"io"
 	"strconv"
+	"time"
 
 	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/logger"
+	ginlogger "github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog"
 )
 
 // Config API server configuration
@@ -37,10 +40,16 @@ func New(
 	r.Use(gin.Recovery())
 
 	if cfg.Verbose {
-		r.Use(logger.SetLogger(logger.Config{
-			Logger: senv.Log.Logger,
-			UTC:    true,
-		}))
+		r.Use(
+			ginlogger.SetLogger(
+				ginlogger.WithLogger(
+					func(_ *gin.Context, _ io.Writer, _ time.Duration) zerolog.Logger {
+						return *senv.Log.Logger
+					},
+				),
+				ginlogger.WithUTC(true),
+			),
+		)
 	}
 
 	applyRoutes(senv, r)
