@@ -28,7 +28,7 @@
     "docusaurus-plugin-auto-sidebars": "^1.0.7",
     "mobx": "^4.15.4",
     "node-fetch": "^2.6.1",
-    "react": "^16.8.4",
+    "react": "^16.14.0",
     "react-dom": "^16.8.4",
     "react-github-btn": "^1.2.1",
     "redoc": "^2.0.0-rc.30",
