@@ -1,0 +1,37 @@
+version: 2
+updates:
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: "gomod"
+    directory: "/core"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: "npm"
+    directory: "/ui"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: "npm"
+    directory: "/www/_app_"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
+
+  - package-ecosystem: "npm"
+    directory: "/sdk/js"
+    schedule:
+      interval: "daily"
+    open-pull-requests-limit: 25
