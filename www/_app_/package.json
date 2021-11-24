@@ -32,7 +32,7 @@
     "react-dom": "^16.8.4",
     "react-github-btn": "^1.2.0",
     "redoc": "^2.0.0-rc.30",
-    "styled-components": "^5.1.1"
+    "styled-components": "^5.3.3"
   },
   "browserslist": {
     "production": [
