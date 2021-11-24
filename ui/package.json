@@ -87,7 +87,7 @@
     "@emotion/styled": "^11.1.5",
     "@rehooks/local-storage": "^2.4.0",
     "antd": "^4.13.0",
-    "react": "^16.13.1",
+    "react": "^16.14.0",
     "react-context-devtool": "^2.0.3",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0"
