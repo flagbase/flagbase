@@ -30,7 +30,7 @@
     "node-fetch": "^2.6.1",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-github-btn": "^1.2.0",
+    "react-github-btn": "^1.2.1",
     "redoc": "^2.0.0-rc.30",
     "styled-components": "^5.3.3"
   },
