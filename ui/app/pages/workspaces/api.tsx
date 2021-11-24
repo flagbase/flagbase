@@ -26,6 +26,18 @@ export const listWorkspaces = async (url: string, accessToken: string) => {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  console.log("wtf", result)
-  return result.data.data
+  return result.data.data;
+};
+
+export const deleteWorkspace = async (
+  url: string,
+  workspaceKey: string,
+  accessToken: string
+) => {
+  return axios.delete(`${url}/workspaces/${workspaceKey}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE"
+    },
+  });
 };
