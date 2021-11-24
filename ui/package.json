@@ -45,7 +45,7 @@
     "@testing-library/react": "^10.4.3",
     "@types/electron-devtools-installer": "^2.2.0",
     "@types/jest": "^26.0.3",
-    "@types/react": "^16.9.34",
+    "@types/react": "^17.0.36",
     "@types/react-dom": "^16.9.6",
     "@types/react-router-dom": "^5.1.7",
     "@types/styled-components": "^5.1.15",
