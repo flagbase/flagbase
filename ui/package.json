@@ -90,7 +90,7 @@
     "antd": "^4.17.1",
     "react": "^16.14.0",
     "react-context-devtool": "^2.0.3",
-    "react-dom": "^16.13.1",
+    "react-dom": "^16.14.0",
     "react-router-dom": "^6.0.2"
   },
   "build": {
