@@ -22,8 +22,30 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          path: 'docs',
+          routeBasePath: '/docs',
           sidebarPath: require.resolve('./sidebars.docs.js'),
           editUrl: 'https://github.com/flagbase/flagbase/edit/master/www_v2/content/',
+          // This allows us to override sidebar items in order to add custom links
+          sidebarItemsGenerator: async function ({
+            defaultSidebarItemsGenerator,
+            ...args
+          }) {
+            const sidebarItems = await defaultSidebarItemsGenerator(args);
+            const newSidebarItems = []
+            for (const sidebarItem of sidebarItems) {
+              var newSidebarItem = {...sidebarItem}
+              if (newSidebarItem.label === 'Core') {
+                newSidebarItem.items.push({
+                  type: "link",
+                  href: "/docs/core/api",
+                  label: "API Docs"
+                })
+              }
+              newSidebarItems.push(newSidebarItem)
+            }
+            return sidebarItems;
+          },
         },
         blog: {
           path: './blog',
@@ -37,6 +59,15 @@ const config = {
         },
       }),
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [{
+          routePath: '/docs/core/api',
+          specUrl: '/swagger.yaml',
+        }]
+      }
+    ],
   ],
 
   plugins: [
@@ -47,6 +78,7 @@ const config = {
         path: 'dev',
         routeBasePath: 'dev',
         sidebarPath: require.resolve('./sidebars.dev.js'),
+        editUrl: 'https://github.com/flagbase/flagbase/edit/master/www_v2/content/'
       },
     ],
   ],
@@ -61,7 +93,6 @@ const config = {
           src: 'assets/_common_/banner-dark.svg',
         },
         items: [
-          {to: '/', label: 'Blog', position: 'left'},
           {
             type: 'doc',
             docId: 'intro/overview',
@@ -74,6 +105,10 @@ const config = {
             docId: 'intro/overview',
             position: 'left',
             label: 'Dev',
+          },
+          {
+            to: "/docs/core/api",
+            label: "API"
           },
           {
             href: 'https://github.com/flagbase/flagbase',
