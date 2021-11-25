@@ -3,15 +3,18 @@ name: ci-codeql-analysis
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'core/**'
+      - 'ui/**'
+      - 'sdk/**'
   pull_request:
-    # The branches below must be a subset of the branches above
     branches: [ master ]
+    paths:
+      - 'core/**'
+      - 'ui/**'
+      - 'sdk/**'
   schedule:
     - cron: '39 11 * * 0'
-  paths:
-    - 'core/**'
-    - 'ui/**'
-    - 'sdk/**'
 
 jobs:
   analyze:
