@@ -13,6 +13,7 @@ const StyledNavigationElement = styled.div`
     font-weight: bold;
     background-color: #2d3339;
   }
+  z-index: 1000;
 `;
 
 const StyledNavigationSubMenu = styled.div`
@@ -21,10 +22,6 @@ const StyledNavigationSubMenu = styled.div`
   background-color: #24292e;
   border-radius: 15px;
   padding: 20px 30px;
-`;
-
-const NavigationSubMenuHeading = styled.h2`
-  color: white;
 `;
 
 const StyledDivider = styled(Divider)`
@@ -84,16 +81,14 @@ export const NavigationElement: React.FC<NavigationElementProps> = ({
 }) => {
   return (
     <StyledNavigationElement onMouseOver={() => onHover(title)}>
-      {title}
+      {title} 
       <NavigationSubMenu
         title={title}
         subMenuContent={subMenuContent}
         onMouseOver={() => onHover(title)}
         onMouseLeave={() => onHover('')}
         show={isHover}
-      >
-          Navigation menu goes here
-      </NavigationSubMenu>
+      />
     </StyledNavigationElement>
   );
 };

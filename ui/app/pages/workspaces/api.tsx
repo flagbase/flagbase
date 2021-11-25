@@ -10,6 +10,7 @@ export const fetchAccessToken = async (
   key: string,
   secret: string
 ): Promise<AccessToken> => {
+  console.log("WHAT", url, key, secret)
   const result = await axios.post(`${url}/access/token`, {
     key,
     secret,

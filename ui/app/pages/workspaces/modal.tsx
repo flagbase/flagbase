@@ -5,6 +5,10 @@ import { deleteWorkspace } from "./api";
 
 const { confirm } = Modal;
 
+interface ReactState {
+  visible: boolean;
+  setVisible(data: boolean): void;
+}
 interface WorkspaceModal {
   visible: boolean;
   setVisible(data: boolean): void;
@@ -48,4 +52,4 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
   );
 };
 
-export { CreateWorkspace, confirmDeleteWorkspace };
+export { CreateWorkspace, confirmDeleteWorkspace, ReactState };

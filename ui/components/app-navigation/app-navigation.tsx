@@ -1,13 +1,13 @@
 /* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React, { useRef, useState } from 'react';
-import { Button, PageHeaderProps, SubMenuProps } from 'antd';
+import React, { useState } from 'react';
+import { PageHeaderProps, SubMenuProps } from 'antd';
 import { PageHeaderStyled } from './app-navigation.styles';
-import { BaseButtonProps } from 'antd/lib/button/button';
 import { NavigationElement } from './navigation-element';
 import { jsx } from '@emotion/react';
 import styled from '@emotion/styled';
+import { RightOutlined } from '@ant-design/icons';
 
 const SubMenuContainer = styled.div`
   display: flex;
@@ -18,17 +18,13 @@ export interface ButtonProps {
   type: string;
 }
 
-const buttonColor = {
-  link: '#24292e',
-  ghost: '#24292e',
-  text: '#24292e',
-  default: '#24292e',
-  dashed: '#24292e',
-  primary: '#24292e'
-};
 
 type FlagbaseSubMenuProps = 'instance' | 'workspace' | 'project' | 'flags';
 
+const NavigationElementContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
 export type AppNavigationProps = {
   title: string;
   hasBackIcon?: boolean;
@@ -44,13 +40,16 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
   return (
     <SubMenuContainer>
       {Object.keys(subMenuContent).map((title: string, index) => (
-        <NavigationElement
-          title={title}
-          key={`${title}_${index}`}
-          subMenuContent={subMenuContent[title].content}
-          isHover={title === currHover}
-          onHover={(title: string) => setHover(title)}
-        />
+        <NavigationElementContainer>
+          <NavigationElement
+            title={title}
+            key={`${title}_${index}`}
+            subMenuContent={subMenuContent[title].content}
+            isHover={title === currHover}
+            onHover={(title: string) => setHover(title)}
+          />
+          {index !== Object.keys(subMenuContent).length - 1 && <RightOutlined /> }  
+        </NavigationElementContainer>
       ))}
     </SubMenuContainer>
   );
@@ -63,7 +62,6 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
 }) => {
   return (
     <PageHeaderStyled
-      {...(hasBackIcon && { onBack: () => window.history.back() })}
       ghost={false}
       {...props}
       title={<AppSubMenu subMenuContent={subMenuContent} />}

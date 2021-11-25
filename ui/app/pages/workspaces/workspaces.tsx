@@ -73,12 +73,54 @@ const Workspaces: React.FC = () => {
   return (
     <PageLayout
       navigation={
-        <AppNavigation title="Workspaces" hasBackIcon subMenuContent={[]} />
+        <AppNavigation title="Workspaces" hasBackIcon subMenuContent={{
+          Workspaces: {
+            content: [{
+              title: 'Workspace 1',
+              href: '#'
+            },
+            {
+              title: 'Workspace 2',
+              href: '#'
+            },
+            {
+              title: 'Workspace 3',
+              href: '#'
+            }]
+          },
+          Projects: {
+            content: [{
+              title: 'Project 1',
+              href: '#'
+            },
+            {
+              title: 'Project 2',
+              href: '#'
+            },
+            {
+              title: 'Project 3',
+              href: '#'
+            }]
+          },
+          Flags: {
+            content: [{
+              title: 'Flag 1',
+              href: '#'
+            },
+            {
+              title: 'Flag 2',
+              href: '#'
+            },
+            {
+              title: 'Flag 3',
+              href: '#'
+            }]
+          }
+        }} />
       }
     >
       <Layout
         style={{
-          padding: "50px",
           paddingTop: "0px",
           backgroundColor: "#F9F9F9",
         }}
