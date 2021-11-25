@@ -11,6 +11,8 @@ services:
       - ./_app_/docusaurus.config.js:/docusaurus/docusaurus.config.js
       - ./_app_/sidebars.docs.js:/docusaurus/sidebars.docs.js
       - ./_app_/sidebars.dev.js:/docusaurus/sidebars.dev.js
+      - ./_app_/src/css:/docusaurus/src/css
+      - ../core/api/swagger/swagger.yaml:/docusaurus/static/swagger.yaml
       - ./content/assets:/docusaurus/static/assets
       - ./content/blog:/docusaurus/blog
       - ./content/docs:/docusaurus/docs
