@@ -1,0 +1,20 @@
+name: ci-flagbase-www
+
+on:
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'www_v2/**'
+
+jobs:
+  build:
+    name: Build via Docker
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@master
+
+      - name: Build
+        run: docker-compose run www yarn build
+        working-directory: ./www_v2
