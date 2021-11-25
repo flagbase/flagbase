@@ -8,6 +8,12 @@ on:
     branches: [ master ]
   schedule:
     - cron: '39 11 * * 0'
+  paths:
+    - 'core/**'
+  paths:
+    - 'ui/**'
+  paths:
+    - 'sdk/**'
 
 jobs:
   analyze:
