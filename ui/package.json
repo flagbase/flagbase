@@ -84,7 +84,7 @@
     "webpack-dev-server": "^4.5.0"
   },
   "dependencies": {
-    "@emotion/react": "^11.6.0",
+    "@emotion/react": "^11.7.0",
     "@emotion/styled": "^11.6.0",
     "@rehooks/local-storage": "^2.4.3",
     "antd": "^4.17.1",
