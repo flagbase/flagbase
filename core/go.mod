@@ -9,7 +9,7 @@ require (
 	github.com/evanphx/json-patch v4.5.0+incompatible
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.2.0
-	github.com/gin-gonic/gin v1.7.6
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/google/jsonapi v1.0.0
 	github.com/google/uuid v1.3.0
