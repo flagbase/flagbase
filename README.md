@@ -6,7 +6,7 @@
 [Flagbase](https://flagbase.com) is an open source feature management platform, engineered with scalability and performance in mind. Flagbase is a base for all your feature flags (i.e. "flag" + "base"). It's essentially a remote configuration service that streams feature flags to your applications.
 
 <div align="center">
-  <img width="570px"  src="./www/docs/assets/img/readme-banner.svg" /></br>
+  <img width="570px"  src="./www/content/assets/_common_/readme-banner.svg" /></br>
 </div>
 
 ## Status

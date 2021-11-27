@@ -25,12 +25,6 @@ updates:
     open-pull-requests-limit: 25
 
   - package-ecosystem: "npm"
-    directory: "/www/_app_"
-    schedule:
-      interval: "daily"
-    open-pull-requests-limit: 25
-
-  - package-ecosystem: "npm"
     directory: "/sdk/js"
     schedule:
       interval: "daily"

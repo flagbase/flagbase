@@ -1,17 +1,18 @@
 version: "3"
 
 services:
-  core:
+  www:
     container_name: flagbase-www
     build: .
-    command: ["npm", "start", "--", "--host", "0.0.0.0"]
+    command: ["yarn", "start", "--host", "0.0.0.0"]
     ports:
       - 3000:3000
     volumes:
-      - ./_app_/pages/docs:/app/flagbase/src/pages/docs
-      - ./_app_/css:/app/flagbase/src/css
-      - ../core/api/swagger/swagger.yaml:/app/flagbase/static/swagger.yaml
-      - ./_app_/docusaurus.config.js:/app/flagbase/docusaurus.config.js
-      - ./blog:/app/flagbase/blog
-      - ./dev:/app/flagbase/dev
-      - ./docs:/app/flagbase/docs
+      - ./_app_/docusaurus.config.js:/docusaurus/docusaurus.config.js
+      - ./_app_/sidebars.docs.js:/docusaurus/sidebars.docs.js
+      - ./_app_/sidebars.dev.js:/docusaurus/sidebars.dev.js
+      - ./content/assets:/docusaurus/static/assets
+      - ./content/blog:/docusaurus/blog
+      - ./content/docs:/docusaurus/docs
+      - ./content/dev:/docusaurus/dev
+

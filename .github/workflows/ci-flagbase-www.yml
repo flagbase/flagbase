@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'www_v2/**'
+      - 'www/**'
 
 jobs:
   build:
@@ -17,4 +17,4 @@ jobs:
 
       - name: Build
         run: docker-compose run www yarn build
-        working-directory: ./www_v2
+        working-directory: ./www
