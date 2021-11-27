@@ -1,14 +1,13 @@
-FROM node:14.15
+FROM node:16.13.0
 LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
-RUN apt-get update && apt-get -y install rsync
+RUN npx create-docusaurus@2.0.0-beta.9 docusaurus classic --typescript
 
-WORKDIR /app
-RUN npx @docusaurus/init@^2.0.0-alpha.56 init flagbase classic
-WORKDIR /app/flagbase
-COPY ./_app_/. .
+WORKDIR docusaurus
 
-RUN npm install --verbose
+RUN yarn add @docusaurus/plugin-content-docs@2.0.0-beta.9
+RUN yarn add redocusaurus@0.5.0
 
+RUN rm ./src/pages/index.tsx
 
 EXPOSE 3000/tcp
