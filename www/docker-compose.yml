@@ -8,11 +8,16 @@ services:
     ports:
       - 3000:3000
     volumes:
+      # Assets
+      - ./content/assets:/docusaurus/static/assets
+      - ../core/api/swagger/swagger.yaml:/docusaurus/static/swagger.yaml
+      # Config
       - ./_app_/docusaurus.config.js:/docusaurus/docusaurus.config.js
       - ./_app_/sidebars.docs.js:/docusaurus/sidebars.docs.js
       - ./_app_/sidebars.dev.js:/docusaurus/sidebars.dev.js
-      - ./content/assets:/docusaurus/static/assets
+      # Content
       - ./content/blog:/docusaurus/blog
       - ./content/docs:/docusaurus/docs
       - ./content/dev:/docusaurus/dev
-
+      # Src
+      - ./_app_/src/css:/docusaurus/src/css
