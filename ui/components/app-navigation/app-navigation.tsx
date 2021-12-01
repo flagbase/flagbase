@@ -1,13 +1,13 @@
 /* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React, { useState } from 'react';
-import { PageHeaderProps, SubMenuProps } from 'antd';
-import { PageHeaderStyled } from './app-navigation.styles';
-import { NavigationElement } from './navigation-element';
-import { jsx } from '@emotion/react';
-import styled from '@emotion/styled';
-import { RightOutlined } from '@ant-design/icons';
+import React, { useState } from "react";
+import { PageHeaderProps } from "antd";
+import { PageHeaderStyled } from "./app-navigation.styles";
+import { NavigationElement } from "./navigation-element";
+import { jsx } from "@emotion/react";
+import styled from "@emotion/styled";
+import { HomeFilled, RightOutlined } from "@ant-design/icons";
 
 const SubMenuContainer = styled.div`
   display: flex;
@@ -18,8 +18,7 @@ export interface ButtonProps {
   type: string;
 }
 
-
-type FlagbaseSubMenuProps = 'instance' | 'workspace' | 'project' | 'flags';
+type FlagbaseSubMenuProps = "Home" | "Instance" | "Workspace" | "Project" | "Flags";
 
 const NavigationElementContainer = styled.div`
   display: flex;
@@ -28,7 +27,7 @@ const NavigationElementContainer = styled.div`
 export type AppNavigationProps = {
   title: string;
   hasBackIcon?: boolean;
-  subMenuContent: Array<Record<keyof FlagbaseSubMenuProps, string>>;
+  subMenuContent: Record<FlagbaseSubMenuProps, object>;
 } & PageHeaderProps;
 
 type SubMenuProps = {
@@ -36,19 +35,22 @@ type SubMenuProps = {
 };
 
 const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
-  const [currHover, setHover] = useState<string>('');
+  const [currHover, setHover] = useState<string>("");
   return (
     <SubMenuContainer>
       {Object.keys(subMenuContent).map((title: string, index) => (
         <NavigationElementContainer>
           <NavigationElement
-            title={title}
+            title={subMenuContent[title].title || title}
             key={`${title}_${index}`}
             subMenuContent={subMenuContent[title].content}
             isHover={title === currHover}
-            onHover={(title: string) => setHover(title)}
+            onHover={() => setHover(title)}
+            offHover={() => setHover('')}
           />
-          {index !== Object.keys(subMenuContent).length - 1 && <RightOutlined /> }  
+          {index !== Object.keys(subMenuContent).length - 1 && (
+            <RightOutlined />
+          )}
         </NavigationElementContainer>
       ))}
     </SubMenuContainer>

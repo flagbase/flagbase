@@ -144,48 +144,6 @@ const Instances: React.FC = () => {
     <PageLayout
       navigation={
         <AppNavigation title="Instances" hasBackIcon subMenuContent={{
-          Instances: {
-            content: [{
-              title: 'Instance 1',
-              href: '#'
-            },
-            {
-              title: 'Instance 2',
-              href: '#'
-            },
-            {
-              title: 'Instance 3',
-              href: '#'
-            }]
-          },
-          Workspaces: {
-            content: [{
-              title: 'Workspace 1',
-              href: '#'
-            },
-            {
-              title: 'Workspace 2',
-              href: '#'
-            },
-            {
-              title: 'Workspace 3',
-              href: '#'
-            }]
-          },
-          Projects: {
-            content: [{
-              title: 'Project 1',
-              href: '#'
-            },
-            {
-              title: 'Project 2',
-              href: '#'
-            },
-            {
-              title: 'Project 3',
-              href: '#'
-            }]
-          },
           Flags: {
             content: [{
               title: 'Flag 1',

@@ -3,7 +3,7 @@ import { Button } from "antd";
 import Title from "antd/lib/typography/Title";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { PlusCircleOutlined } from "@ant-design/icons";
+import { HomeFilled, PlusCircleOutlined } from "@ant-design/icons";
 
 import AppNavigation from "../../../components/app-navigation";
 import { Content, Layout } from "../../../components/layout";
@@ -74,7 +74,14 @@ const Workspaces: React.FC = () => {
     <PageLayout
       navigation={
         <AppNavigation title="Workspaces" hasBackIcon subMenuContent={{
-          Workspaces: {
+          Home: {
+            title: <HomeFilled />,
+            content: [{ 
+              title: 'test',
+              href: '#',
+            }]  
+          },
+          Workspace: {
             content: [{
               title: 'Workspace 1',
               href: '#'
@@ -88,7 +95,7 @@ const Workspaces: React.FC = () => {
               href: '#'
             }]
           },
-          Projects: {
+          Project: {
             content: [{
               title: 'Project 1',
               href: '#'
@@ -126,7 +133,7 @@ const Workspaces: React.FC = () => {
         }}
       >
         <>
-          <SmallButton type="primary" icon={<PlusCircleOutlined />}>
+          <SmallButton onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
             Create a workspace
           </SmallButton>
           <Content

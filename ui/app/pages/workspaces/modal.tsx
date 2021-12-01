@@ -1,7 +1,10 @@
 import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Modal } from "antd";
+import { Input, Layout, Modal, Typography } from "antd";
+import { Content } from "antd/lib/layout/layout";
 import React, { useState } from "react";
 import { deleteWorkspace } from "./api";
+
+const { Title, Text } = Typography;
 
 const { confirm } = Modal;
 
@@ -9,6 +12,7 @@ interface ReactState {
   visible: boolean;
   setVisible(data: boolean): void;
 }
+
 interface WorkspaceModal {
   visible: boolean;
   setVisible(data: boolean): void;
@@ -34,20 +38,57 @@ function confirmDeleteWorkspace(
 
 const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modalText, setModalText] = useState("Content of the modal");
+  const [workspace, setWorkspace] = useState({
 
-  const showModal = () => {
-    setVisible(true);
-  };
+  });
 
   return (
     <Modal
-      title="Title"
+      title="Workspace"
       visible={visible}
       confirmLoading={confirmLoading}
       onCancel={() => setVisible(false)}
     >
-      <p>{modalText}</p>
+      <Layout style={{ padding: "0px 50px", backgroundColor: "#FFF" }}>
+          <Content>
+            <Title style={{ marginBottom: "0px", fontSize: "24px" }}>
+              Add a new workspace
+            </Title>
+            <Text style={{ fontSize: "14px" }}>
+              Connect to a Flagbase workspace to begin managing your flags
+            </Text>
+            <Input
+              onChange={(event) =>
+                setWorkspace({
+                  ...workspace,
+                  key: event.target.value,
+                })
+              }
+              placeholder="Workspace name"
+              style={{ marginTop: "1em", marginBottom: "1em" }}
+            />
+            <Input
+              onChange={(event) =>
+                setWorkspace({
+                  ...workspace,
+                  connectionString: event.target.value,
+                })
+              }
+              placeholder="Description"
+              style={{ marginBottom: "1em" }}
+            />
+            <Input
+              onChange={(event) =>
+                setWorkspace({
+                  ...workspace,
+                  accessSecret: event.target.value,
+                })
+              }
+              placeholder="Tags"
+              style={{ marginBottom: "1em" }}
+            />
+          </Content>
+        </Layout>
     </Modal>
   );
 };

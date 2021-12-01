@@ -5,7 +5,7 @@ import { jsx } from '@emotion/react';
 import { Divider } from 'antd';
 
 const StyledNavigationElement = styled.div`
-  font-size: 24px;
+  font-size: 18px;
   cursor: pointer;
   padding: 10px 25px;
   border-radius: 15px;
@@ -18,7 +18,7 @@ const StyledNavigationElement = styled.div`
 
 const StyledNavigationSubMenu = styled.div`
   position: absolute;
-  top: 100px;
+  top: 80px;
   background-color: #24292e;
   border-radius: 15px;
   padding: 20px 30px;
@@ -32,7 +32,9 @@ type NavigationElementProps = {
   title: string;
   subMenuContent: Array<Record<string, string>>;
   isHover: boolean;
-  onHover: (hover: string) => void;
+  onHover: () => void;
+  offHover: () => void;
+
 };
 
 type NavigationSubMenuProps = {
@@ -77,6 +79,7 @@ export const NavigationElement: React.FC<NavigationElementProps> = ({
   title,
   subMenuContent,
   onHover,
+  offHover,
   isHover
 }) => {
   return (
@@ -85,8 +88,8 @@ export const NavigationElement: React.FC<NavigationElementProps> = ({
       <NavigationSubMenu
         title={title}
         subMenuContent={subMenuContent}
-        onMouseOver={() => onHover(title)}
-        onMouseLeave={() => onHover('')}
+        onMouseOver={() => onHover()}
+        onMouseLeave={() => offHover()}
         show={isHover}
       />
     </StyledNavigationElement>
