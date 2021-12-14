@@ -112,7 +112,7 @@ const Workspaces: React.FC = () => {
             <Title style={{ fontSize: "24px" }}>Join a workspace</Title>
 
             <Table  
-              loading={status !== 'loaded'}
+              loading={false}
               dataSource={convertWorkspaces(
                 Object.values((workspaces as unknown) as {}),
                 instance

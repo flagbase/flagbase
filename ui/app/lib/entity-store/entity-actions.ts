@@ -17,11 +17,14 @@ export const createActions = <T>(
   state: EntityStore<T>,
   setState: (state: EntityStore<T>) => void
 ): EntityActions<T> => ({
-    addEntity: (entity: Entity<T>) =>
+    addEntity: (entity: Entity<T>) => {
+      console.log('setting', entity, state)
       setState({
         ...state,
         entities: { ...state.entities, [entity.id]: entity }
-      }),
+      })
+    }
+    ,
     addEntities: (entities: { [entityId: string]: Entity<T> }) =>
       setState({ ...state, entities: { ...state.entities, ...entities } }),
     removeEntity: (entityId: string) => {
@@ -39,7 +42,7 @@ export const createActions = <T>(
       }),
     setLoading: (isLoading = true) => setState({ ...state, isLoading }),
     setError: (error: string) => setState({ ...state, error }),
-    setStatus: (status: string) => setState({ ...state, status }),
+    setStatus: (status: string) => console.log('disabled'),
     setSelectedEntityId: (selectedEntityId: string) =>
       setState({ ...state, selectedEntityId }),
     selectEntity: (entity: Entity<T>) =>
