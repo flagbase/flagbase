@@ -3,12 +3,13 @@ import { Table as AntdTable, TableColumnProps, TableProps as AntdTableProps, Tab
 import Column from 'antd/lib/table/Column';
 
 export type TableProps = {
+  loading: boolean;
   dataSource: AntdTableProps<string>[];
   columns: TableColumnProps<TableColumnType<string>>[];
 };
 
-const Table: React.FC<TableProps> = ({ columns, dataSource }) => {
-  return <AntdTable dataSource={dataSource} columns={columns}>
+const Table: React.FC<TableProps> = ({ loading, columns, dataSource }) => {
+  return <AntdTable loading={loading} dataSource={dataSource} columns={columns}>
   </AntdTable>;
 };
 

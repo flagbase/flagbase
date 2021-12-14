@@ -7,6 +7,7 @@ export type Instance = {
   accessKey: string;
   accessSecret: string;
   accessToken: string;
+  expiresAt?: number;
 };
 
 const InstanceStore = createEntityContext<Instance>('instance', {}, {

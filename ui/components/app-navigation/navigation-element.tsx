@@ -34,6 +34,7 @@ type NavigationElementProps = {
   isHover: boolean;
   onHover: () => void;
   offHover: () => void;
+  onClick: () => void;
 
 };
 
@@ -41,6 +42,7 @@ type NavigationSubMenuProps = {
   show: boolean;
   onMouseOver: () => void;
   onMouseLeave: () => void;
+  onClick: () => void;
   subMenuContent: Array<Record<string, string>>;
   title: string;
 };
@@ -52,7 +54,7 @@ const NavigationSubMenu: React.FC<NavigationSubMenuProps> = ({
   subMenuContent,
   title
 }) => {
-  return show ? (
+  return show && subMenuContent.length > 0 ? (
     <StyledNavigationSubMenu
       onMouseOver={onMouseOver}
       onMouseLeave={onMouseLeave}
@@ -80,10 +82,11 @@ export const NavigationElement: React.FC<NavigationElementProps> = ({
   subMenuContent,
   onHover,
   offHover,
+  onClick,
   isHover
 }) => {
   return (
-    <StyledNavigationElement onMouseOver={() => onHover(title)}>
+    <StyledNavigationElement onClick={onClick} onMouseOver={() => onHover(title)}>
       {title} 
       <NavigationSubMenu
         title={title}

@@ -26,7 +26,7 @@ const SmallButton = styled(Button)`
 const Instances: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
-  const { addEntity, removeEntity, entities: instanceList } = useContext(
+  const { addEntity, removeEntity,  entities: instanceList } = useContext(
     InstanceContext
   );
 
@@ -61,9 +61,9 @@ const Instances: React.FC = () => {
         instance.accessKey,
         instance.accessSecret
       ).then((result) => {
-        addEntity({ ...instance, id: uuidv4(), accessToken: result.token });
+        addEntity({ ...instance, id: uuidv4(), accessToken: result.token, expiresAt: result.expiresAt });
         setVisible(false);
-      }).catch((err) => {
+      }).catch(() => {
         Modal.error({
           title: 'Could not add this instance',
           content: 'Did you make sure you added the correct key and secret?',
@@ -167,7 +167,7 @@ const Instances: React.FC = () => {
         type="primary"
         icon={<PlusCircleOutlined />}
       >
-        Create a workspace
+        Connect to an instance
       </SmallButton>
       <Layout
         style={{

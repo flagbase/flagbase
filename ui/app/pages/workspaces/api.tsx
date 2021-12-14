@@ -21,7 +21,7 @@ export const fetchAccessToken = async (
   };
 };
 
-export const listWorkspaces = async (url: string, accessToken: string) => {
+export const fetchWorkspaces = async (url: string, accessToken: string) => {
   const result = await axios.get(`${url}/workspaces`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
