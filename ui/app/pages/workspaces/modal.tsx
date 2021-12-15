@@ -27,8 +27,6 @@ function confirmDeleteWorkspace(
   confirm({
     title: `Are you sure you want to delete ${workspaceName}?`,
     icon: <ExclamationCircleOutlined />,
-    content:
-      "When clicked the OK button, this dialog will be closed after 1 second",
     onOk() {
       deleteWorkspace(url, workspaceKey, accessToken);
     },

@@ -1,32 +1,19 @@
 import React, { useContext, useState } from "react";
 
-import AppNavigation from "../../../components/app-navigation";
-import Button from "../../../components/button";
-import Input from "../../../components/input";
 import { Content, Layout } from "../../../components/layout";
-import PageLayout from "../../../components/page-layout";
 import Table from "../../../components/table/table";
 import { Typography } from "antd";
 import { Instance, InstanceContext } from "../../context/instance";
-import { v4 as uuidv4 } from "uuid";
-import { fetchAccessToken } from "../workspaces/api";
-import {Modal} from "antd";
-import { ReactState } from "../workspaces/modal";
-import styled from "@emotion/styled";
 import { PlusCircleOutlined } from "@ant-design/icons";
+import { AddNewInstanceModal } from "./instances.modal";
+import { SmallButton } from "./instances.style";
 
-const { Title, Text } = Typography;
-
-const SmallButton = styled(Button)`
-  display: inline-block;
-  width: fit-content;
-  margin-bottom: 15px;
-`;
+const { Title } = Typography;
 
 const Instances: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
-  const { addEntity, removeEntity,  entities: instanceList } = useContext(
+  const { addEntity, removeEntity, entities: instanceList } = useContext(
     InstanceContext
   );
 
@@ -54,120 +41,15 @@ const Instances: React.FC = () => {
     });
   };
 
-  const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
-    const addInstance = (instance: Instance) => {
-      fetchAccessToken(
-        instance.connectionString,
-        instance.accessKey,
-        instance.accessSecret
-      ).then((result) => {
-        addEntity({ ...instance, id: uuidv4(), accessToken: result.token, expiresAt: result.expiresAt });
-        setVisible(false);
-      }).catch(() => {
-        Modal.error({
-          title: 'Could not add this instance',
-          content: 'Did you make sure you added the correct key and secret?',
-        });
-      })
-    };
-
-    const [currInstance, setInstance] = useState({
-      id: "",
-      connectionString: "",
-      key: "",
-      accessToken: "",
-      accessSecret: "",
-      accessKey: "",
-    } as Instance);
-  
-    return (
-      <Modal
-        visible={visible}
-        okText="Submit"
-        onOk={() => addInstance(currInstance)}
-        onCancel={() => setVisible(false)}
-      >
-        <Layout style={{ padding: "0px 50px", backgroundColor: "#FFF" }}>
-          <Content>
-            <Title style={{ marginBottom: "0px", fontSize: "24px" }}>
-              Add a new instance
-            </Title>
-            <Text style={{ fontSize: "14px" }}>
-              Connect to a Flagbase instance to begin managing your flags
-            </Text>
-            <Input
-              onChange={(event) =>
-                setInstance({
-                  ...currInstance,
-                  key: event.target.value,
-                })
-              }
-              placeholder="Instance name"
-              style={{ marginTop: "1em", marginBottom: "1em" }}
-            />
-            <Input
-              onChange={(event) =>
-                setInstance({
-                  ...currInstance,
-                  connectionString: event.target.value,
-                })
-              }
-              placeholder="URL"
-              style={{ marginBottom: "1em" }}
-            />
-            <Input
-              onChange={(event) =>
-                setInstance({
-                  ...currInstance,
-                  accessKey: event.target.value,
-                })
-              }
-              placeholder="Access Key"
-              style={{ marginBottom: "1em" }}
-            />
-            <Input
-              onChange={(event) =>
-                setInstance({
-                  ...currInstance,
-                  accessSecret: event.target.value,
-                })
-              }
-              placeholder="Access Secret"
-              style={{ marginBottom: "1em" }}
-            />
-          </Content>
-        </Layout>
-      </Modal>
-    );
-  };
   return (
-    <PageLayout
-      navigation={
-        <AppNavigation title="Instances" hasBackIcon subMenuContent={{
-          Flags: {
-            content: [{
-              title: 'Flag 1',
-              href: '#'
-            },
-            {
-              title: 'Flag 2',
-              href: '#'
-            },
-            {
-              title: 'Flag 3',
-              href: '#'
-            }]
-          }
-        }} />
-      }
-    >
+    <React.Fragment>
       <AddNewInstanceModal visible={visible} setVisible={setVisible} />
       <SmallButton
         onClick={() => setVisible(true)}
         type="primary"
         icon={<PlusCircleOutlined />}
       >
-        Connect to an instance
+        Join a new instance
       </SmallButton>
       <Layout
         style={{
@@ -209,7 +91,7 @@ const Instances: React.FC = () => {
           />
         </Content>
       </Layout>
-    </PageLayout>
+    </React.Fragment>
   );
 };
 

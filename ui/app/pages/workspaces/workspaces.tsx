@@ -6,9 +6,7 @@ import { useParams } from "react-router-dom";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { notification } from 'antd';
 
-import AppNavigation from "../../../components/app-navigation";
 import { Content, Layout } from "../../../components/layout";
-import PageLayout from "../../../components/page-layout";
 import Table from "../../../components/table/table";
 import { Instance, InstanceContext } from "../../context/instance";
 import { Workspace, WorkspaceContext } from "../../context/workspace";
@@ -32,7 +30,7 @@ export const convertWorkspaces = (workspaceList: Workspace[], instance: Instance
       tags: workspace.attributes.tags,
       action: (
         <>
-          <a href={`/workspaces/${workspace.id.toLowerCase()}`}>Connect</a>
+          <a href={`/projects/${instance?.id}/${workspace?.id}`}>Connect</a>
           <span> | </span>
           <a
             onClick={() =>
@@ -60,8 +58,8 @@ const Workspaces: React.FC = () => {
   const { entities: workspaces, addEntity, setStatus, status} = useContext(
     WorkspaceContext
   );
+
   const instance = getEntity(instanceKey);
-  console.log("INSTANCE", workspaces)
   if (!instance) {
     return <> </>
   } 
@@ -72,7 +70,6 @@ const Workspaces: React.FC = () => {
     fetchWorkspaces(instance.connectionString, instance.accessToken).then(
       (result: Workspace[]) => {
         result.forEach((workspace) => {
-          console.log('adding', workspace)
           addEntity(workspace)
         });
       }
@@ -86,10 +83,7 @@ const Workspaces: React.FC = () => {
   }, []);
 
   return (
-    <PageLayout
-      navigation={
-        <AppNavigation title="Workspaces" hasBackIcon />
-      }
+    <React.Fragment
     >
       <Layout
         style={{
@@ -112,7 +106,7 @@ const Workspaces: React.FC = () => {
             <Title style={{ fontSize: "24px" }}>Join a workspace</Title>
 
             <Table  
-              loading={false}
+              loading={status !== 'loaded'}
               dataSource={convertWorkspaces(
                 Object.values((workspaces as unknown) as {}),
                 instance
@@ -142,9 +136,10 @@ const Workspaces: React.FC = () => {
             />
           </Content>
         </>
+        <CreateWorkspace visible={visible} setVisible={setVisible} />
+
       </Layout>
-      <CreateWorkspace visible={visible} setVisible={setVisible} />
-    </PageLayout>
+    </React.Fragment>
   );
 };
 

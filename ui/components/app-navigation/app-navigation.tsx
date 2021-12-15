@@ -1,52 +1,16 @@
 /* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React, { ReactElement, useContext, useState } from "react";
-import { PageHeaderProps } from "antd";
-import { PageHeaderStyled } from "./app-navigation.styles";
+import React, { useContext, useState } from "react";
+import { PageHeaderStyled, SubMenuContainer } from "./app-navigation.styles";
 import { NavigationElement } from "./navigation-element";
 import { jsx } from "@emotion/react";
-import styled from "@emotion/styled";
 import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import { Redirect, useHistory } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import { InstanceContext } from "../../app/context/instance";
 import { WorkspaceContext } from "../../app/context/workspace";
 import { convertWorkspaces } from "../../app/pages/workspaces/workspaces";
-
-const SubMenuContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-export interface ButtonProps {
-  title: string;
-  type: string;
-}
-
-type FlagbaseSubMenuProps =
-  | "Home"
-  | "Instance"
-  | "Workspace"
-  | "Project"
-  | "Flags"
-
-type FlagbaseSubMenuValues = {
-  title: ReactElement,
-  redirect: string,
-  content: { title: string; href: string; }[]
-}
-const NavigationElementContainer = styled.div`
-  display: flex;
-  align-items: center;
-`;
-export type AppNavigationProps = {
-  title: string;
-  hasBackIcon?: boolean;
-  subMenuContent: Record<FlagbaseSubMenuProps, object>;
-} & PageHeaderProps;
-
-type SubMenuProps = {
-  subMenuContent: Partial<Record<keyof FlagbaseSubMenuProps, string>>;
-};
+import { AppNavigationProps, FlagbaseSubMenuProps, FlagbaseSubMenuValues, SubMenuProps } from "./app-navigation.types";
 
 const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
   const [currHover, setHover] = useState<string>("");
@@ -59,7 +23,7 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
   return (
     <SubMenuContainer>
       {Object.keys(subMenuContent).map((title: string, index) => (
-        <NavigationElementContainer>
+        <React.Fragment>
           <NavigationElement
             title={subMenuContent[title]?.title || title}
             key={`${title}_${index}`}
@@ -72,7 +36,7 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
           {index !== Object.keys(subMenuContent).length - 1 && (
             <RightOutlined />
           )}
-        </NavigationElementContainer>
+        </React.Fragment>
       ))}
     </SubMenuContainer>
   );
@@ -89,7 +53,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
     status: workspaceStatus,
   } = useContext(WorkspaceContext);
   
-  const reduceSubMenuContent = (path: string) => {
+  const reduceSubMenuContent = () => {
     let subMenuContent: Partial<Record<FlagbaseSubMenuProps, FlagbaseSubMenuValues>> = {
       Home: {
         title: <HomeFilled />,
@@ -114,8 +78,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
     return subMenuContent;
   };
 
-  const history = useHistory();
-  const subMenuContent = reduceSubMenuContent(history.location.pathname);
+  const subMenuContent = reduceSubMenuContent();
 
   return (
     <PageHeaderStyled

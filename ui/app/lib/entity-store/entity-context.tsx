@@ -15,6 +15,25 @@ type EntityContext<Entity> = {
   Provider: React.FC;
 };
 
+type Action =
+ | { type: 'add', payload: any }
+ | { type: 'delete', results: string }
+ | { type: 'failure', error: string };
+
+function reducer<Entity>(state: Partial<EntityStore<Entity>>, action: Action) {
+  console.log("Reducer called", state, action)
+  switch (action.type) {
+    case 'add':
+      return {
+        ...state, ...action.payload
+      };
+    case 'delete':
+      return {...state};
+    default:
+      throw new Error();
+  }
+}
+
 function createEntityContext<Entity>(
   entityKey: string,
   initialState?: Partial<EntityStore<Entity>> | undefined,

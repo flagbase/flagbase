@@ -10,3 +10,8 @@ export const PageHeaderStyled = styled(PageHeader)`
       color: white;
   }
 `;
+
+export const SubMenuContainer = styled.div`
+display: flex;
+align-items: center;
+`;

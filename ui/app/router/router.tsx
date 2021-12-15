@@ -1,21 +1,23 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import { RouteParams } from './router.types';
-import Context from '../context';
-import Instances from '../pages/instances';
-import Workspaces from '../pages/workspaces';
-import Projects from '../pages/projects';
-import Flags from '../pages/flags';
-import Segments from '../pages/segments';
-import Identities from '../pages/identities';
-import Traits from '../pages/traits';
+import { RouteParams } from "./router.types";
+import Context from "../context";
+import Instances from "../pages/instances";
+import Workspaces from "../pages/workspaces";
+import Projects from "../pages/projects";
+import Flags from "../pages/flags";
+import Segments from "../pages/segments";
+import Identities from "../pages/identities";
+import Traits from "../pages/traits";
+import PageLayout from "../../components/page-layout";
+import AppNavigation from "../../components/app-navigation";
 
 const {
   InstanceKey,
   WorkspaceKey,
   ProjectKey,
-  EnvironmentKey
+  EnvironmentKey,
   // FlagKey,
   // SegmentKey,
   // IdentityKey,
