@@ -54,7 +54,7 @@ export const convertWorkspaces = (workspaceList: Workspace[], instance: Instance
 const Workspaces: React.FC = () => {
   const { instanceKey } = useParams<{ instanceKey: string }>();
   const [visible, setVisible] = useState(false);
-  const { getEntity } = useContext(InstanceContext);
+  const { getEntity, setSelectedEntityId } = useContext(InstanceContext);
   const { entities: workspaces, addEntity, setStatus, status} = useContext(
     WorkspaceContext
   );
@@ -67,6 +67,7 @@ const Workspaces: React.FC = () => {
 
   useEffect(() => {
     setStatus('loading')
+    setSelectedEntityId(instanceKey)
     fetchWorkspaces(instance.connectionString, instance.accessToken).then(
       (result: Workspace[]) => {
         result.forEach((workspace) => {

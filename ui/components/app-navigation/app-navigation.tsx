@@ -6,20 +6,16 @@ import { PageHeaderStyled, SubMenuContainer } from "./app-navigation.styles";
 import { NavigationElement } from "./navigation-element";
 import { jsx } from "@emotion/react";
 import { HomeFilled, RightOutlined } from "@ant-design/icons";
-import { Redirect } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { InstanceContext } from "../../app/context/instance";
 import { WorkspaceContext } from "../../app/context/workspace";
 import { convertWorkspaces } from "../../app/pages/workspaces/workspaces";
 import { AppNavigationProps, FlagbaseSubMenuProps, FlagbaseSubMenuValues, SubMenuProps } from "./app-navigation.types";
 
 const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
+  const history = useHistory();
   const [currHover, setHover] = useState<string>("");
-  const [redirect, setRedirect] = useState<string>('');
-  if (redirect) {
-    return (
-      <Redirect to={redirect} />
-    )
-  }
+  
   return (
     <SubMenuContainer>
       {Object.keys(subMenuContent).map((title: string, index) => (
@@ -31,7 +27,7 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
             isHover={title === currHover}
             onHover={() => setHover(title)}
             offHover={() => setHover("")}
-            onClick={() => setRedirect(subMenuContent[title]?.redirect)}
+            onClick={() => history.push(subMenuContent[title]?.redirect)}
           />
           {index !== Object.keys(subMenuContent).length - 1 && (
             <RightOutlined />
@@ -46,7 +42,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
   hasBackIcon,
   ...props
 }) => {
-  const { getEntity } = useContext(InstanceContext);
+  const { selectedEntityId } = useContext(InstanceContext);
   const {
     entities: workspaces,
     addEntity,
@@ -67,11 +63,11 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
       },
     };
 
-    if (workspaceStatus === "loaded") {
+    if (selectedEntityId) {
       console.log('workspaces', workspaces)
       subMenuContent["Workspace"] = {
         title: <React.Fragment>Workspaces</React.Fragment>,
-        redirect: `/workspaces`,
+        redirect: `/workspaces/${selectedEntityId}`,
         content: convertWorkspaces(Object.values((workspaces as unknown) as {})),
       };
     }
