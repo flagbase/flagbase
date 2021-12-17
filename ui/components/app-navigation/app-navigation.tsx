@@ -22,7 +22,6 @@ const AppSubMenu: React.FC<SubMenuProps> = ({ subMenuContent }) => {
         <React.Fragment>
           <NavigationElement
             title={subMenuContent[title]?.title || title}
-            key={`${title}_${index}`}
             subMenuContent={subMenuContent[title].content}
             isHover={title === currHover}
             onHover={() => setHover(title)}
@@ -46,7 +45,7 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
   const {
     entities: workspaces,
     addEntity,
-    status: workspaceStatus,
+    status: workspaceStatus
   } = useContext(WorkspaceContext);
   
   const reduceSubMenuContent = () => {
@@ -56,11 +55,11 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
         redirect: '/',
         content: [
           {
-            title: "test",
-            href: "#",
-          },
-        ],
-      },
+            title: 'test',
+            href: '#'
+          }
+        ]
+      }
     };
 
     if (selectedEntityId) {

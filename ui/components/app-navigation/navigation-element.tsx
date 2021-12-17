@@ -5,7 +5,7 @@ import { jsx } from '@emotion/react';
 import { Divider } from 'antd';
 
 const StyledNavigationElement = styled.div`
-  font-size: 18px;
+  font-size: 25px;
   cursor: pointer;
   padding: 10px 25px;
   border-radius: 15px;

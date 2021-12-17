@@ -11,14 +11,7 @@ mainElement.setAttribute("id", "root");
 document.body.appendChild(mainElement);
 const container = document.getElementById("root");
 
-render(
-  <Layout
-    style={{ height: "100vh", padding: "50px", backgroundColor: "#F9F9F9" }}
-  >
-    <Router />
-  </Layout>,
-  container
-);
+render(<Layout style={{ height: '100vh', padding: '50px', backgroundColor: 'white' }}> <Router /> </Layout>, container);
 
 debugContextDevtool(container, {
   disable: process.env.NODE_ENV !== "development",
