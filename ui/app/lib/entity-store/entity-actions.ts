@@ -17,39 +17,38 @@ export const createLocalStorageActions = <T>(
   state: EntityStore<T>,
   setState: (state: EntityStore<T>) => void
 ): EntityActions<T> => ({
-    addEntity: (entity: Entity<T>) => {
-      console.log('setting', entity, state)
-      setState({
-        ...state,
-        entities: { ...state.entities, [entity.id]: entity }
-      })
-    }
-    ,
-    addEntities: (entities: { [entityId: string]: Entity<T> }) =>
-      setState({ ...state, entities: { ...state.entities, ...entities } }),
-    removeEntity: (entityId: string) => {
-      const { [entityId]: _, ...rest } = state.entities 
-      setState({
-        ...state,
-        entities: { ...rest }
-      })
-    },
-    clearEntities: () =>
-      setState({
-        ...state,
-        entities: {},
-        selectedEntityId: null
-      }),
-    setLoading: (isLoading = true) => setState({ ...state, isLoading }),
-    setError: (error: string) => setState({ ...state, error }),
-    setStatus: (status: string) => console.log('disabled'),
-    setSelectedEntityId: (selectedEntityId: string) =>
-      setState({ ...state, selectedEntityId }),
-    selectEntity: (entity: Entity<T>) =>
-      setState({ ...state, selectedEntityId: entity.id }),
-    getEntity: (entityId: string): Entity<T> | undefined =>
-      state.entities[entityId]
-  });
+  addEntity: (entity: Entity<T>) => {
+    console.log("setting", entity, state);
+    setState({
+      ...state,
+      entities: { ...state.entities, [entity.id]: entity },
+    });
+  },
+  addEntities: (entities: { [entityId: string]: Entity<T> }) =>
+    setState({ ...state, entities: { ...state.entities, ...entities } }),
+  removeEntity: (entityId: string) => {
+    const { [entityId]: _, ...rest } = state.entities;
+    setState({
+      ...state,
+      entities: { ...rest },
+    });
+  },
+  clearEntities: () =>
+    setState({
+      ...state,
+      entities: {},
+      selectedEntityId: null,
+    }),
+  setLoading: (isLoading = true) => setState({ ...state, isLoading }),
+  setError: (error: string) => setState({ ...state, error }),
+  setStatus: (status: string) => console.log("disabled"),
+  setSelectedEntityId: (selectedEntityId: string) =>
+    setState({ ...state, selectedEntityId }),
+  selectEntity: (entity: Entity<T>) =>
+    setState({ ...state, selectedEntityId: entity.id }),
+  getEntity: (entityId: string): Entity<T> | undefined =>
+    state.entities[entityId],
+});
 
 export const createActions = <T>(
   state: EntityStore<T>,
@@ -67,7 +66,10 @@ export const createActions = <T>(
     });
   },
   addEntities: (entities: { [entityId: string]: Entity<T> }) =>
-    setState({ ...state, entities: { ...state.entities, ...entities } }),
+    setState({
+      type: "add",
+      payload: { entities: { ...entities } },
+    }),
   removeEntity: (entityId: string) => {
     const { [entityId]: _, ...rest } = state.entities;
     setState({

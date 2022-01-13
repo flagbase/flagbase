@@ -55,7 +55,7 @@ const Workspaces: React.FC = () => {
   const { instanceKey } = useParams<{ instanceKey: string }>();
   const [visible, setVisible] = useState(false);
   const { getEntity, setSelectedEntityId } = useContext(InstanceContext);
-  const { entities: workspaces, addEntity, setStatus, status} = useContext(
+  const { entities: workspaces, addEntity, addEntities, setStatus, status} = useContext(
     WorkspaceContext
   );
 
@@ -70,9 +70,7 @@ const Workspaces: React.FC = () => {
     setSelectedEntityId(instanceKey)
     fetchWorkspaces(instance.connectionString, instance.accessToken).then(
       (result: Workspace[]) => {
-        result.forEach((workspace) => {
-          addEntity(workspace)
-        });
+        addEntities(result);
       }
     ).catch(() => {
       notification.error({
@@ -81,7 +79,9 @@ const Workspaces: React.FC = () => {
     }).finally(() => {
       setStatus('loaded');
     })
-  }, []);
+  }, [visible]);
+
+
 
   return (
     <React.Fragment
@@ -89,7 +89,7 @@ const Workspaces: React.FC = () => {
       <Layout
         style={{
           paddingTop: "0px",
-          backgroundColor: "#F9F9F9",
+          backgroundColor: "white",
         }}
       >
         <>
