@@ -65,7 +65,7 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
           currInstance.connectionString,
           workspace.name,
           workspace.description,
-          workspace.tags,
+          workspace.tags.split(','),
           currInstance.accessToken
         ).then(() => setVisible(false))
       }
@@ -105,7 +105,7 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
                 tags: event.target.value,
               })
             }
-            placeholder="Tags"
+            placeholder="Tags (separate by comma)"
             style={{ marginBottom: "1em" }}
           />
         </Content>

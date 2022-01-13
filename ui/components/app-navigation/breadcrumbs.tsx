@@ -8,35 +8,30 @@ import { jsx } from '@emotion/react';
 import { useHistory, Link } from 'react-router-dom';
 import { InstanceContext } from '../../app/context/instance';
 import { WorkspaceContext } from '../../app/context/workspace';
+import { convertWorkspaces } from '../../app/pages/workspaces/workspaces';
 
 const Breadcrumbs: React.FC = ({
 }) => {
-  const { selectedEntityId } = useContext(InstanceContext);
+  const { selectedEntityId, getEntity } = useContext(InstanceContext);
   const {
     entities: workspaces,
     addEntity,
     status: workspaceStatus
   } = useContext(WorkspaceContext);
 
-  const menu = (
+  const instance = getEntity(selectedEntityId || '');
+
+  
+  const workspaceMenu = (
     <Menu>
-      <Menu.Item>
-        <Link to="/">
-          Instances
+      {convertWorkspaces(workspaces, instance).map((workspace) => <Menu.Item>
+        <Link to={workspace.href}>
+          {workspace.name}
         </Link>
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.taobao.com/">
-          Layout
-        </a>
-      </Menu.Item>
-      <Menu.Item>
-        <a target="_blank" rel="noopener noreferrer" href="http://www.tmall.com/">
-          Navigation
-        </a>
-      </Menu.Item>
+      </Menu.Item>)}
+
     </Menu>
-  );
+  )
 
   return (
     <Breadcrumb>
@@ -44,15 +39,12 @@ const Breadcrumbs: React.FC = ({
       <Breadcrumb.Item>
         <Link to="/">Instances</Link>
       </Breadcrumb.Item>
-      {selectedEntityId && <Breadcrumb.Item>
+      {selectedEntityId && <Breadcrumb.Item overlay={workspaceMenu}>
         <Link to="/">Workspaces</Link>
       </Breadcrumb.Item>}
       {workspaceStatus === 'loaded' && <Breadcrumb.Item>
         <Link to="/">Projects</Link>
       </Breadcrumb.Item>}
-      <Breadcrumb.Item overlay={menu}>
-        <a href="">General</a>
-      </Breadcrumb.Item>
     </Breadcrumb>
   );
 };

@@ -47,14 +47,14 @@ export const createWorkspace = async (
   url: string,
   name: string,
   description: string,
-  tags: string,
+  tags: string[],
   accessToken: string
 ) => {
   return axios.post(`${url}/workspaces`, {
       key: uuidv4().substring(0, 30),
       name,
       description,
-      tags: ['unimplemented']
+      tags
   }, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

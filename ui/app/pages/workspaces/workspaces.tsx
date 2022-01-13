@@ -19,20 +19,21 @@ const SmallButton = styled(Button)`
   margin-bottom: 15px;
 `;
 
-export const convertWorkspaces = (workspaceList: Workspace[], instance: Instance) => {
-  return workspaceList.map((workspace: Workspace, index: number) => {
+export const convertWorkspaces = (workspaceList: any, instance: Instance) => {
+  
+  return Object.values((workspaceList as unknown) as {}).map((workspace: Workspace, index: number) => {
+    
     return {
       id: "",
       title:workspace.attributes.name,
-      href: `/workspaces/${workspace.id.toLowerCase()}`,
+      href: `/projects/${instance?.id}/${workspace?.id}`,
       name: workspace.attributes.name,
       description: workspace.attributes.description,
-      tags: workspace.attributes.tags,
+      tags: workspace.attributes.tags.join(', '),
       action: (
         <>
           <a href={`/projects/${instance?.id}/${workspace?.id}`}>Connect</a>
-          <span> | </span>
-          <a
+          {/* <a
             onClick={() =>
               confirmDeleteWorkspace(
                 workspace.attributes.name,
@@ -43,7 +44,7 @@ export const convertWorkspaces = (workspaceList: Workspace[], instance: Instance
             }
           >
             Delete
-          </a>
+          </a> */}
         </>
       ),
     };
@@ -109,7 +110,7 @@ const Workspaces: React.FC = () => {
             <Table  
               loading={status !== 'loaded'}
               dataSource={convertWorkspaces(
-                Object.values((workspaces as unknown) as {}),
+                workspaces,
                 instance
               )}
               columns={[
