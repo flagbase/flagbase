@@ -1,4 +1,5 @@
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 interface AccessToken {
   expiresAt: number;
@@ -10,7 +11,6 @@ export const fetchAccessToken = async (
   key: string,
   secret: string
 ): Promise<AccessToken> => {
-  console.log("WHAT", url, key, secret)
   const result = await axios.post(`${url}/access/token`, {
     key,
     secret,
@@ -40,5 +40,26 @@ export const deleteWorkspace = async (
       Authorization: `Bearer ${accessToken}`,
       "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE"
     },
+  });
+};
+
+export const createWorkspace = async (
+  url: string,
+  name: string,
+  description: string,
+  tags: string,
+  accessToken: string
+) => {
+  return axios.post(`${url}/workspaces`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Access-Control-Allow-Methods": "GET, PUT, POST, DELETE"
+    },
+    body: {
+      key: uuidv4(),
+      name,
+      description,
+      tags
+    }
   });
 };
