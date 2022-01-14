@@ -1,27 +1,20 @@
-import styled from "@emotion/styled";
-import { Button } from "antd";
 import Title from "antd/lib/typography/Title";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { notification } from 'antd';
+import { Layout, notification } from 'antd';
 
-import { Content, Layout } from "../../../components/layout";
+import { Content } from "../../../components/layout";
 import Table from "../../../components/table/table";
 import { Instance, InstanceContext } from "../../context/instance";
-import { Workspace, WorkspaceContext } from "../../context/workspace";
-import { fetchWorkspaces } from "./api";
-import { confirmDeleteWorkspace, CreateWorkspace } from "./modal";
+import { WorkspaceContext } from "../../context/workspace";
+import { fetchWorkspaces, Workspace } from "./api";
+import { CreateWorkspace } from "./modal";
+import Button from "../../../components/button";
+import { Entities, Entity } from "../../lib/entity-store/entity-store";
 
-const SmallButton = styled(Button)`
-  display: inline-block;
-  width: fit-content;
-  margin-bottom: 15px;
-`;
-
-export const convertWorkspaces = (workspaceList: any, instance: Instance) => {
-  
-  return Object.values((workspaceList as unknown) as {}).map((workspace: Workspace, index: number) => {
+export const convertWorkspaces = (workspaceList: Entities<Workspace>, instance: Instance) => {
+  return Object.values(workspaceList).map((workspace: Entity<Workspace>, index: number) => {
     
     return {
       id: "",
@@ -33,18 +26,6 @@ export const convertWorkspaces = (workspaceList: any, instance: Instance) => {
       action: (
         <>
           <a href={`/projects/${instance?.id}/${workspace?.id}`}>Connect</a>
-          {/* <a
-            onClick={() =>
-              confirmDeleteWorkspace(
-                workspace.attributes.name,
-                instance.connectionString,
-                workspace.attributes.key,
-                instance.accessToken
-              )
-            }
-          >
-            Delete
-          </a> */}
         </>
       ),
     };
@@ -65,7 +46,6 @@ const Workspaces: React.FC = () => {
     return <> </>
   } 
 
-
   useEffect(() => {
     setStatus('loading')
     setSelectedEntityId(instanceKey)
@@ -82,11 +62,7 @@ const Workspaces: React.FC = () => {
     })
   }, [visible]);
 
-
-
   return (
-    <React.Fragment
-    >
       <Layout
         style={{
           paddingTop: "0px",
@@ -94,9 +70,9 @@ const Workspaces: React.FC = () => {
         }}
       >
         <>
-          <SmallButton onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
+          <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
             Create a workspace
-          </SmallButton>
+          </Button>
           <Content
             style={{
               padding: "20px 50px",
@@ -141,7 +117,6 @@ const Workspaces: React.FC = () => {
         <CreateWorkspace visible={visible} setVisible={setVisible} />
 
       </Layout>
-    </React.Fragment>
   );
 };
 

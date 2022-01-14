@@ -15,14 +15,12 @@ const Breadcrumbs: React.FC = ({
   const { selectedEntityId, getEntity } = useContext(InstanceContext);
   const {
     entities: workspaces,
-    addEntity,
     status: workspaceStatus
   } = useContext(WorkspaceContext);
 
-  const instance = getEntity(selectedEntityId || '');
+  const instance = selectedEntityId ? getEntity(selectedEntityId) : null;
 
-  
-  const workspaceMenu = (
+  const workspaceMenu = Object.keys(workspaces).length > 0 && instance ? (
     <Menu>
       {convertWorkspaces(workspaces, instance).map((workspace) => <Menu.Item>
         <Link to={workspace.href}>
@@ -31,7 +29,7 @@ const Breadcrumbs: React.FC = ({
       </Menu.Item>)}
 
     </Menu>
-  )
+  ) : undefined;
 
   return (
     <Breadcrumb>

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import { v4 as uuidv4 } from "uuid";
 
 interface AccessToken {
@@ -21,13 +21,29 @@ export const fetchAccessToken = async (
   };
 };
 
+export interface Workspace {
+  type: string;
+  id: string;
+  attributes: {
+    description: string;
+    key: string;
+    name: string;
+    tags: string[]
+  }
+}
+
+export interface WorkspaceResponse {
+  data: Workspace[]
+  
+}
+
 export const fetchWorkspaces = async (url: string, accessToken: string) => {
-  const result = await axios.get(`${url}/workspaces`, {
+  const result = await axios.get<WorkspaceResponse>(`${url}/workspaces`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
-  return result.data.data;
+  return result.data.data
 };
 
 export const deleteWorkspace = async (

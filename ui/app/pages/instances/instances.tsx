@@ -6,7 +6,7 @@ import { Typography } from "antd";
 import { Instance, InstanceContext } from "../../context/instance";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { AddNewInstanceModal } from "./instances.modal";
-import { SmallButton } from "./instances.style";
+import Button from "../../../components/button";
 
 const { Title } = Typography;
 
@@ -44,13 +44,13 @@ const Instances: React.FC = () => {
   return (
     <React.Fragment>
       <AddNewInstanceModal visible={visible} setVisible={setVisible} />
-      <SmallButton
+      <Button
         onClick={() => setVisible(true)}
         type="primary"
         icon={<PlusCircleOutlined />}
       >
         Join a new instance
-      </SmallButton>
+      </Button>
       <Layout
         style={{
           paddingTop: "0px",

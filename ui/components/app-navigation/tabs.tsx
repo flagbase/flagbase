@@ -1,8 +1,7 @@
 /* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React, { useContext, useState } from "react";
-import { Breadcrumb, Menu } from "antd";
+import React from "react";
 
 import { jsx } from "@emotion/react";
 import { Tabs as AntdTabs } from "antd";
@@ -15,8 +14,8 @@ const Tabs: React.FC = ({}) => {
   }
 
   return (
-    <AntdTabs defaultActiveKey="1" onChange={callback}>
-      <TabPane tab="Tab 1" key="1">
+    <AntdTabs style={{backgroundColor: '#F5F5F5'}} defaultActiveKey="1" onChange={callback}>
+      <TabPane  tab="Tab 1" key="1">
         Content of Tab Pane 1
       </TabPane>
       <TabPane tab="Tab 2" key="2">

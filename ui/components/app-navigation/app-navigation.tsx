@@ -18,7 +18,6 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
       ghost={false}
       {...props}
       breadcrumbRender={() => <Breadcrumbs />}
-      footer={<Tabs />}
     />
   );
 };
