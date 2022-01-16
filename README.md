@@ -3,7 +3,7 @@
 ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
 ![Build](https://img.shields.io/github/workflow/status/flagbase/flagbase/ci-flagbase-core)
 
-[Flagbase](https://flagbase.com) is an open source feature management platform, engineered with scalability and performance in mind. Flagbase is a base for all your feature flags (i.e. "flag" + "base"). It's essentially a remote configuration service that streams feature flags to your applications.
+[Flagbase](https://flagbase.com) is an open source feature management platform, enabling you to manage, track and deliver feature flags to all your applications.
 
 <div align="center">
   <img width="570px"  src="./www/content/assets/docs/intro/readme-banner.svg" /></br>
@@ -16,13 +16,13 @@ We're still in the process of building the MVP. You can join us on [slack](https
 
 ## Features
 
-Aside from the usual features a remote configuration service provides, Flagbase offers these additional features + many more!
-* Multiple transports (HTTP long-polling, SSE, gRPC)
+Flagbase is quite minimal at it core, yet extendable to suite your organisation's needs. Flagbase offers the following features:
 * Minimalist/composable targeting rules
-* Percentage rollouts + configurable consistent hashing mechanism
-* Access management (RBAC via [casbin](https://casbin.org/))
-* Extendable ~ e.g. integrate to use your own user attribution platform(s)
-* Can be provisioned to the cloud of your choice or run on-prem
+* Percentage rollouts + configurable hashing function (used for bucketing)
+* Multiple transports (HTTP long-polling, SSE, gRPC)
+* Robust Identity & Access Management (IAM) that uses a hybrid RBAC/ABAC design policy based access control
+* Extend to use additional contextual data from flag evaluations, using your own data sources
+* Self hosted: can be provisioned to the cloud of your choice or run on-prem
 
 ## Getting started
 Flagbase is very easy to get up and running. Follow these steps to get started:
@@ -34,8 +34,8 @@ That's it! Now your ready to release your feature code - knowing that you'll be 
 
 ## Directories
 This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Flagbase Core, UI & SDKs.
-* **[`/core`](./core/README.md)**: The primary resource provider. This microservice consists of the key services used to manage protected resources and stream flagsets to the SDKs.
-* **[`/sdk`](./sdk/README.md)**: SDKs retrieve and evaluate flagsets from the Core.
+* **[`/core`](./core/README.md)**: Code for `flagbased`, the service used to manage protected resources and stream feature flags to the SDKs. This service can be run in multiple worker modes, including `poller`, `streamer` and `API`.
+* **[`/sdk`](./sdk/README.md)**: SDKs retrieve and evaluate feature flags from the service.
 * **[`/ui`](./ui/README.md)**: UI interacts with the [Core API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags etc).
 
 ## Support
@@ -45,9 +45,9 @@ Please [raise an issue](https://github.com/flagbase/flagbase/issues) and label i
 We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](https://flagbase.com/dev/intro/workflow#contributing).
 
 Join us on [Github Dicussions](https://github.com/flagbase/flagbase/discussions).
-* [Help](https://github.com/flagbase/flagbase/discussions/categories/help): Stuck on something? Ask for help here :)
-* [Dev](https://github.com/flagbase/flagbase/discussions/categories/dev): Where contributers discuss ideas
 * [Announcements](https://github.com/flagbase/flagbase/discussions/categories/announcements):  General PSAs & feature updates
+* [Development](https://github.com/flagbase/flagbase/discussions/categories/dev): Where contributers discuss ideas
+* [Help](https://github.com/flagbase/flagbase/discussions/categories/help): Stuck on something? Ask for help here :)
 
 ## Other Resources
 * [Architecture](https://flagbase.com/dev/core/architecture)
