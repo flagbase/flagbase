@@ -9,7 +9,7 @@ module.exports = {
     mainFields: ['main', 'module', 'browser']
   },
   entry: path.resolve(rootPath, 'app', 'index.tsx'),
-  target: 'electron-renderer',
+  target: 'web',
   devtool: 'source-map',
   module: {
     rules: [
@@ -27,13 +27,16 @@ module.exports = {
     ]
   },
   devServer: {
-    contentBase: path.join(rootPath, 'dist/renderer'),
+    static: {
+      directory: path.join(rootPath, 'dist/renderer')
+    },
     historyApiFallback: true,
     compress: true,
     hot: true,
-    host: '0.0.0.0',
     port: 4000,
-    publicPath: '/'
+    devMiddleware: {
+      writeToDisk: true
+    },
   },
   output: {
     path: path.resolve(rootPath, 'dist/renderer'),
