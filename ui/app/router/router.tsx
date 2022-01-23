@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import { RouteParams } from './router.types';
 import Context from '../context';
@@ -25,38 +25,38 @@ const {
 const Router: React.FC = () => (
   <Context>
     <BrowserRouter>
-      <Switch>
+      <Routes>
         {/* Instances */}
-        <Route path="/" component={Instances} />
-        <Route path="/instances" component={Instances} />
+        <Route path="/" element={<Instances />} />
+        <Route path="/instances" element={<Instances />} />
         {/* Workspaces */}
-        <Route path={`/workspaces/${InstanceKey}`} component={Workspaces} />
+        <Route path={`/workspaces/${InstanceKey}`} element={<Workspaces />} />
         {/* Projects */}
         <Route
           path={`/projects/${InstanceKey}/${WorkspaceKey}`}
-          component={Projects}
+          element={<Projects />}
         />
         {/* Flags */}
         <Route
           path={`/flags/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-          component={Flags}
+          element={<Flags />}
         />
         {/* Segments */}
         <Route
           path={`/segments/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-          component={Segments}
+          element={<Segments />}
         />
         {/* Identities */}
         <Route
           path={`/identities/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-          component={Identities}
+          element={<Identities />}
         />
         {/* Traits */}
         <Route
           path={`/traits/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-          component={Traits}
+          element={<Traits />}
         />
-      </Switch>
+      </Routes>
     </BrowserRouter>
   </Context>
 );
