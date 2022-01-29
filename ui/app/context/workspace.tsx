@@ -9,7 +9,6 @@ export type Workspace = {
     key: string;
     tags: string[];
   }
-  loaded: boolean;
 };
 
 const WorkspaceStore = createEntityContext<Workspace>('workspace', {

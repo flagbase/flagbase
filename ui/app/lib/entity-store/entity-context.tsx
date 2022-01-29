@@ -25,7 +25,6 @@ type Action =
   | { type: "failure"; error: string };
 
 function reducer<Entity>(state: Partial<EntityStore<Entity>>, action: Action) {
-  console.log("Reducer called", state, action);
   switch (action.type) {
     case "add":
       return {

@@ -5,7 +5,6 @@ export type EntityActions<T> = {
   addEntities: (entities: { [entityId: string]: Entity<T> }) => void;
   removeEntity: (entityId: string) => void;
   clearEntities: () => void;
-  setLoading: (isLoading: boolean) => void;
   setError: (error: string) => void;
   setStatus: (status: string) => void;
   setSelectedEntityId: (selectedEntityId: string) => void;
@@ -18,7 +17,6 @@ export const createLocalStorageActions = <T>(
   setState: (state: EntityStore<T>) => void
 ): EntityActions<T> => ({
   addEntity: (entity: Entity<T>) => {
-    console.log("setting", entity, state);
     setState({
       ...state,
       entities: { ...state.entities, [entity.id]: entity },
@@ -39,9 +37,8 @@ export const createLocalStorageActions = <T>(
       entities: {},
       selectedEntityId: null,
     }),
-  setLoading: (isLoading = true) => setState({ ...state, isLoading }),
   setError: (error: string) => setState({ ...state, error }),
-  setStatus: (status: string) => console.log("disabled"),
+  setStatus: (status: string) => setState({...state, status}),
   setSelectedEntityId: (selectedEntityId: string) =>
     setState({ ...state, selectedEntityId }),
   selectEntity: (entity: Entity<T>) =>
@@ -55,7 +52,6 @@ export const createActions = <T>(
   setState: (state: EntityStore<T>) => void
 ): EntityActions<T> => ({
   addEntity: (entity: Entity<T>) => {
-    console.log("setting", entity, state);
     setState({
       type: "add",
       payload: {
@@ -83,7 +79,6 @@ export const createActions = <T>(
       entities: {},
       selectedEntityId: null,
     }),
-  setLoading: (isLoading = true) => setState({ ...state, isLoading }),
   setError: (error: string) => setState({ ...state, error }),
   setStatus: (status: string) =>
     setState({ type: "add", payload: { status: status } }),
