@@ -67,7 +67,7 @@ export const createWorkspace = async (
   accessToken: string
 ) => {
   return axios.post(`${url}/workspaces`, {
-      key: uuidv4().substring(0, 30),
+      key: name.toLowerCase().replace(' ', '-'),
       name,
       description,
       tags

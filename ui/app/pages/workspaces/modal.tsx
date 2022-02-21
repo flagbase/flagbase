@@ -35,13 +35,15 @@ function confirmDeleteWorkspace(
   });
 }
 
-const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [workspace, setWorkspace] = useState({
+const defaultWorkspace = {
     name: '',
     description: '',
     tags: '',
-  });
+  }
+
+const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [workspace, setWorkspace] = useState(defaultWorkspace);
 
   const {
     addEntity,
@@ -67,7 +69,10 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
           workspace.description,
           workspace.tags.split(','),
           currInstance.accessToken
-        ).then(() => setVisible(false))
+        ).then(() => {
+            setVisible(false)
+            setWorkspace(defaultWorkspace)
+        } )
       }
     >
       <Layout style={{ padding: "0px 50px", backgroundColor: "#FFF" }}>
