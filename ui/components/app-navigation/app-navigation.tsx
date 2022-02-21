@@ -7,7 +7,6 @@ import { jsx } from '@emotion/react';
 
 import { AppNavigationProps } from './app-navigation.types';
 import Breadcrumbs from './breadcrumbs';
-import Tabs from './tabs';
 
 const AppNavigation: React.FC<AppNavigationProps> = ({
   hasBackIcon,

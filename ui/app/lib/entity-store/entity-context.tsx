@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react';
+import React, { createContext, useReducer, useState } from 'react';
 
 import { createStore, EntityStore } from "./entity-store";
 import {
@@ -6,6 +6,7 @@ import {
   createLocalStorageActions,
   EntityActions,
 } from "./entity-actions";
+import useLocalStorage from '@rehooks/local-storage';
 
 type Options = {
   useLocalStorage?: boolean;
@@ -51,11 +52,9 @@ function createEntityContext<Entity>(
   });
 
   const Provider: React.FC = ({ children }) => {
-    const [state, setState] = useState<EntityStore<Entity>>(_intialState);
-    // TODO: use @rehooks/local-storage to persist state to localstorage.
-    // opts?.useLocalStorage
-    // ? useLocalStorage<EntityStore<Entity>>(entityKey, _intialState)
-    // : useState<EntityStore<Entity>>(_intialState);
+    const [state, setState] = opts?.useLocalStorage
+    ? useLocalStorage<EntityStore<Entity>>(entityKey, _intialState)
+    : useReducer<EntityStore<Entity>>(reducer, _intialState);
 
     const actions = opts?.useLocalStorage
       ? createLocalStorageActions<Entity>(state, setState)

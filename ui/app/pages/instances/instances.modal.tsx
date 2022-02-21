@@ -6,6 +6,7 @@ import { Instance, InstanceContext } from "../../context/instance";
 import { fetchAccessToken } from "../workspaces/api";
 import { ReactState } from "../workspaces/modal";
 import { v4 as uuidv4 } from "uuid";
+import { ModalLayout } from "../../../components/layout";
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     const { Title, Text } = Typography;
@@ -45,7 +46,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
         onOk={() => addInstance(currInstance)}
         onCancel={() => setVisible(false)}
       >
-        <Layout style={{ padding: "0px 50px", backgroundColor: "#FFF" }}>
+        <ModalLayout>
           <Content>
             <Title style={{ marginBottom: "0px", fontSize: "24px" }}>
               Add a new instance
@@ -94,7 +95,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
               style={{ marginBottom: "1em" }}
             />
           </Content>
-        </Layout>
+        </ModalLayout>
       </Modal>
     );
   };

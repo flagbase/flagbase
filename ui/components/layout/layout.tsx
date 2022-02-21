@@ -11,4 +11,9 @@ const Layout: React.FC<LayoutProps> = (props) => {
   return <AntdLayout {...props} />;
 };
 
-export { Layout, Content };
+const ModalLayout: React.FC<LayoutProps> = (props) => {
+    return <AntdLayout {...props} style={{ padding: "0px 50px", backgroundColor: "#FFF" }} />;
+  };
+  
+
+export { Layout, ModalLayout, Content };
