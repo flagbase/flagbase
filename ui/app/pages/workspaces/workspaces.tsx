@@ -2,9 +2,9 @@ import Title from "antd/lib/typography/Title";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlusCircleOutlined } from "@ant-design/icons";
-import { Alert, Layout, notification } from 'antd';
+import { Alert, notification } from 'antd';
 
-import { Content } from "../../../components/layout";
+import { Layout, Content } from "../../../components/layout";
 import Table from "../../../components/table/table";
 import { Instance, InstanceContext } from "../../context/instance";
 import { Workspace, WorkspaceContext } from "../../context/workspace";
@@ -73,27 +73,14 @@ const Workspaces: React.FC = () => {
     }, [visible]);
 
     return (
-        <Layout
-            style={{
-                paddingTop: "0px",
-                backgroundColor: "white",
-            }}
-        >
-            <Content>
-            <>
-                <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
+        <React.Fragment>
+            <CreateWorkspace visible={visible} setVisible={setVisible} />
+            <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
                     Create a workspace
           </Button>
-                <Content
-                    style={{
-                        padding: "20px 50px",
-                        backgroundColor: "white",
-                        borderRadius: "15px",
-                        boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
-                    }}
-                >
-                    <Title style={{ fontSize: "24px" }}>Join a workspace</Title>
-
+          <Layout>
+            <Content>
+                    <Title level={3}>Join a workspace</Title>
                     <Table
                         loading={status !== 'loaded'}
                         dataSource={convertWorkspaces(
@@ -123,13 +110,10 @@ const Workspaces: React.FC = () => {
                             },
                         ]}
                     />
-                </Content>
-            </>
             </Content>
-            
-            <CreateWorkspace visible={visible} setVisible={setVisible} />
-
         </Layout>
+        </React.Fragment>
+
     );
 };
 

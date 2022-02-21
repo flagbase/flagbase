@@ -10,7 +10,7 @@ import { ModalLayout } from "../../../components/layout";
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     const { Title, Text } = Typography;
-    const { addEntity, removeEntity,  entities: instanceList } = useContext(
+    const { addEntity } = useContext(
         InstanceContext
       );
     
@@ -48,10 +48,10 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
       >
         <ModalLayout>
           <Content>
-            <Title style={{ marginBottom: "0px", fontSize: "24px" }}>
+            <Title level={3}>
               Add a new instance
             </Title>
-            <Text style={{ fontSize: "14px" }}>
+            <Text>
               Connect to a Flagbase instance to begin managing your flags
             </Text>
             <Input
@@ -62,7 +62,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 })
               }
               placeholder="Instance name"
-              style={{ marginTop: "1em", marginBottom: "1em" }}
             />
             <Input
               onChange={(event) =>
@@ -72,7 +71,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 })
               }
               placeholder="URL"
-              style={{ marginBottom: "1em" }}
             />
             <Input
               onChange={(event) =>
@@ -82,7 +80,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 })
               }
               placeholder="Access Key"
-              style={{ marginBottom: "1em" }}
             />
             <Input
               onChange={(event) =>
@@ -92,7 +89,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 })
               }
               placeholder="Access Secret"
-              style={{ marginBottom: "1em" }}
             />
           </Content>
         </ModalLayout>

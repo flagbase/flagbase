@@ -13,7 +13,7 @@ const { Title } = Typography;
 const Instances: React.FC = () => {
   const [visible, setVisible] = useState(false);
 
-  const { addEntity, removeEntity, entities: instanceList } = useContext(
+  const { removeEntity, entities: instanceList } = useContext(
     InstanceContext
   );
 
@@ -52,20 +52,10 @@ const Instances: React.FC = () => {
         Join a new instance
       </Button>
       <Layout
-        style={{
-          paddingTop: "0px",
-          backgroundColor: "#F9F9F9",
-        }}
       >
         <Content
-          style={{
-            padding: "20px 50px",
-            backgroundColor: "white",
-            borderRadius: "15px",
-            boxShadow: "0px 0px 4px rgba(0, 0, 0, 0.25)",
-          }}
         >
-          <Title style={{ fontSize: "24px" }}>Connect to an instance</Title>
+          <Title level={3}>Connect to an instance</Title>
 
           <Table
             dataSource={convertInstances(

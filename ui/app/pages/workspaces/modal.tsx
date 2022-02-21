@@ -2,6 +2,7 @@ import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { Input, Layout, Modal, Typography } from "antd";
 import { Content } from "antd/lib/layout/layout";
 import React, { useContext, useState } from "react";
+import { ModalLayout } from "../../../components/layout";
 import { InstanceContext } from "../../context/instance";
 import { createWorkspace, deleteWorkspace } from "./api";
 
@@ -75,12 +76,12 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
         } )
       }
     >
-      <Layout style={{ padding: "0px 50px", backgroundColor: "#FFF" }}>
+      <ModalLayout>
         <Content>
-          <Title style={{ marginBottom: "0px", fontSize: "24px" }}>
+          <Title level={3}>
             Add a new workspace
           </Title>
-          <Text style={{ fontSize: "14px" }}>
+          <Text>
             Connect to a Flagbase workspace to begin managing your flags
           </Text>
           <Input
@@ -91,7 +92,6 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
               })
             }
             placeholder="Workspace name"
-            style={{ marginTop: "1em", marginBottom: "1em" }}
           />
           <Input
             onChange={(event) =>
@@ -101,7 +101,6 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
               })
             }
             placeholder="Description"
-            style={{ marginBottom: "1em" }}
           />
           <Input
             onChange={(event) =>
@@ -111,10 +110,9 @@ const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
               })
             }
             placeholder="Tags (separate by comma)"
-            style={{ marginBottom: "1em" }}
           />
         </Content>
-      </Layout>
+      </ModalLayout>
     </Modal>
   );
 };
