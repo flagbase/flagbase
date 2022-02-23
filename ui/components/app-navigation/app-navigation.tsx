@@ -1,11 +1,12 @@
+/* eslint-disable no-return-assign */
+/** @jsx jsx */
+
 import React from 'react';
-import { PageHeaderProps } from 'antd';
-
 import { PageHeaderStyled } from './app-navigation.styles';
+import { jsx } from '@emotion/react';
 
-export type AppNavigationProps = {
-  hasBackIcon?: boolean;
-} & PageHeaderProps;
+import { AppNavigationProps } from './app-navigation.types';
+import Breadcrumbs from './breadcrumbs';
 
 const AppNavigation: React.FC<AppNavigationProps> = ({
   hasBackIcon,
@@ -13,9 +14,9 @@ const AppNavigation: React.FC<AppNavigationProps> = ({
 }) => {
   return (
     <PageHeaderStyled
-      {...(hasBackIcon && { onBack: () => window.history.back() })}
       ghost={false}
       {...props}
+      breadcrumbRender={() => <Breadcrumbs />}
     />
   );
 };

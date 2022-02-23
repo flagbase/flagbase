@@ -13,6 +13,7 @@ export type EntityStore<T> = {
   selectedEntityId: string | null;
   isLoading: boolean;
   error: string | null;
+  status: string;
 };
 
 export const createStore = <T = void>(
@@ -22,5 +23,6 @@ export const createStore = <T = void>(
     selectedEntityId: null,
     isLoading: false,
     error: null,
+    status: 'idle',
     ...initialState
   });

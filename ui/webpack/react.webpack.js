@@ -1,7 +1,7 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const rootPath = path.resolve(__dirname, '..')
+const rootPath = path.resolve(__dirname, '..');
 
 module.exports = {
   resolve: {
@@ -22,8 +22,19 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: ['style-loader', 'css-loader']
       },
+      {
+        test: /\.(jpe?g|gif|png|svg)$/i,
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10000
+            }
+          }
+        ]
+      }
     ]
   },
   devServer: {
@@ -41,9 +52,9 @@ module.exports = {
   output: {
     path: path.resolve(rootPath, 'dist/renderer'),
     filename: 'js/[name].js',
-    publicPath: './'
+    publicPath: '/'
   },
   plugins: [
     new HtmlWebpackPlugin()
   ]
-}
+};

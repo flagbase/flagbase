@@ -3,15 +3,15 @@ import { createEntityContext } from '../lib/entity-store';
 export type Workspace = {
   id: string;
   key: string;
+  attributes: {
+    name: string;
+    description: string;
+    key: string;
+    tags: string[];
+  }
 };
 
 const WorkspaceStore = createEntityContext<Workspace>('workspace', {
-  entities: {
-    2: {
-      id: '2',
-      key: 'test'
-    }
-  }
 });
 
 export const WorkspaceContext = WorkspaceStore.Context;
