@@ -56,6 +56,7 @@ export const createActions = <T>(
       type: "add",
       payload: {
         entities: {
+        ...state.entities,
           [entity.id]: entity,
         },
       },
