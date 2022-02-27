@@ -51,7 +51,7 @@ export const convertWorkspaces = (workspaceList: Entities<Workspace>, instance: 
         }
         return {
             id: index,
-            title: <Text editable={{ onChange: (value) => updateWorkspace({ attributes: { name: value}}) }}>{workspace.attributes.name}</Text>,
+            title: <Text>{workspace.attributes.name}</Text>,
             href: `/projects/${instance?.id}/${workspace?.id}`,
             name: <Text editable={{ onChange: (value) => updateWorkspace({ attributes: { name: value}}) }}>{workspace.attributes.name}</Text>,
             description: <Text editable={{ onChange: (value) => updateWorkspace({ attributes: { description: value}}) }}>{workspace.attributes.description}</Text>,
