@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Alert, notification, Typography } from 'antd';
-
 import { Layout, Content } from "../../../components/layout";
 import Table from "../../../components/table/table";
 import { Instance, InstanceContext } from "../../context/instance";
@@ -41,7 +40,6 @@ export const convertWorkspaces = (workspaceList: Entities<Workspace>, instance: 
     if (!workspaceList) {
         return []
     }
-
 
     return Object.values(workspaceList).map((workspace: Entity<Workspace>, index: number) => {
         const updateWorkspace = (update) => {
@@ -90,8 +88,13 @@ const Workspaces: React.FC = () => {
         setSelectedEntityId(instanceKey)
         fetchWorkspaces(instance.connectionString, instance.accessToken).then(
             (result: APIWorkspace[]) => {
-                console.log("RESULT", result)
-                addEntities(result);
+                const workspaceList = result.reduce((previous, workspace) => {
+                    return {
+                        ...previous,
+                        [workspace.id]: workspace
+                    }
+                }, {})
+                addEntities(workspaceList);
             }
         ).catch(() => {
             notification.error({
