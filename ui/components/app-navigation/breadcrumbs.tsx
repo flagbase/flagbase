@@ -9,6 +9,8 @@ import {  Link } from 'react-router-dom';
 import { InstanceContext } from '../../app/context/instance';
 import { WorkspaceContext } from '../../app/context/workspace';
 import { convertWorkspaces } from '../../app/pages/workspaces/workspaces';
+import { ProjectContext } from '../../app/context/project';
+import { convertProjects } from '../../app/pages/projects/projects';
 
 const Breadcrumbs: React.FC = ({
 }) => {
@@ -18,14 +20,29 @@ const Breadcrumbs: React.FC = ({
     status: workspaceStatus
   } = useContext(WorkspaceContext);
 
-  const instance = selectedEntityId ? getEntity(selectedEntityId) : null;
+  const {
+    entities: projects,
+    status: projectStatus
+  } = useContext(ProjectContext);
 
-  console.log('breacrumbs??')
+  const instance = selectedEntityId ? getEntity(selectedEntityId) : null;
+  console.log("Workspaces", workspaces)
   const workspaceMenu = Object.keys(workspaces).length > 0 && instance ? (
     <Menu>
       {convertWorkspaces(workspaces, instance).map((workspace) => <Menu.Item>
         <Link to={workspace.href}>
-          {workspace.name}
+          {workspace.title}
+        </Link>
+      </Menu.Item>)}
+
+    </Menu>
+  ) : undefined;
+
+  const projectMenu = Object.keys(projects).length > 0 && instance ? (
+    <Menu>
+      {convertProjects(projects, instance).map((project) => <Menu.Item>
+        <Link to={project.href}>
+          {project.title}
         </Link>
       </Menu.Item>)}
 
@@ -38,10 +55,10 @@ const Breadcrumbs: React.FC = ({
       <Breadcrumb.Item>
         <Link to="/">Instances</Link>
       </Breadcrumb.Item>
-      {selectedEntityId && <Breadcrumb.Item overlay={workspaceMenu}>
+      {workspaceStatus === 'loaded' && <Breadcrumb.Item overlay={workspaceMenu}>
         <Link to="/">Workspaces</Link>
       </Breadcrumb.Item>}
-      {workspaceStatus === 'loaded' && <Breadcrumb.Item>
+      {projectStatus === 'loaded' && <Breadcrumb.Item overlay={projectMenu}>
         <Link to="/">Projects</Link>
       </Breadcrumb.Item>}
     </Breadcrumb>

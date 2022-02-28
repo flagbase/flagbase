@@ -1,17 +1,3 @@
-const workspace = {
-    id: 'testID',
-    attributes: {
-        description: 'description',
-        name: "name"
-    }
-}
-
-
-const update = {
-    attributes: {
-        name: "newName"
-    }
-}
 const mergeExisting = (obj1, obj2) => {
     const mutableObject1 = Object.assign({}, obj1);
     const mutableObject2 = Object.assign({}, obj2);
@@ -33,8 +19,4 @@ const mergeExisting = (obj1, obj2) => {
     });
   };
 
-
-const result = mergeExisting(workspace, update)
-
-
-console.log(result)
+export { mergeExisting }

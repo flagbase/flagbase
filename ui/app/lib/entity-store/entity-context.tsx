@@ -28,6 +28,7 @@ type Action =
 function reducer<Entity>(state: Partial<EntityStore<Entity>>, action: Action) {
   switch (action.type) {
     case "add":
+    console.log('viewing', action.type, action.payload)
       return {
         ...state,
         ...action.payload,

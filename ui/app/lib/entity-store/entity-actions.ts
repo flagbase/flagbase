@@ -69,16 +69,23 @@ export const createActions = <T>(
     }),
   removeEntity: (entityId: string) => {
     const { [entityId]: _, ...rest } = state.entities;
+    console.log('entityid', entityId, {...rest})
     setState({
-      ...state,
-      entities: { ...rest },
+        type: "add",
+        payload: {
+            entities: {
+                ...rest
+            }
+        }
     });
   },
   clearEntities: () =>
     setState({
-      ...state,
-      entities: {},
-      selectedEntityId: null,
+        type: "add",
+        payload: {
+            entities: {},
+            selectedEntityId: null,
+        }
     }),
   setError: (error: string) => setState({ ...state, error }),
   setStatus: (status: string) =>

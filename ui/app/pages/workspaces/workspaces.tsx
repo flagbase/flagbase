@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { PlusCircleOutlined } from "@ant-design/icons";
 import { Alert, notification, Typography } from 'antd';
 import { Layout, Content } from "../../../components/layout";
@@ -11,29 +11,9 @@ import { CreateWorkspace } from "./modal";
 import Button from "../../../components/button";
 import { Entities, Entity } from "../../lib/entity-store/entity-store";
 import { Workspace as APIWorkspace } from './api';
+import { mergeExisting } from "../../helpers/mergeObject";
 
 const { Title, Text } = Typography;
-
-const mergeExisting = (obj1, obj2) => {
-    const mutableObject1 = Object.assign({}, obj1);
-    const mutableObject2 = Object.assign({}, obj2);
-  
-    mergeFunction(mutableObject1, mutableObject2);
-  
-    return mutableObject1;
-  };
-  
-  const mergeFunction = (obj1, obj2) => {
-    Object.keys(obj2).forEach(function (key) {
-      if (key in obj1) {
-        if (typeof obj1[key] === 'object') {
-          mergeFunction(obj1[key], obj2[key]);
-        } else {
-          obj1[key] = obj2[key];
-        }
-      }
-    });
-  };
 
 export const convertWorkspaces = (workspaceList: Entities<Workspace>, instance: Instance, addEntity?: (entity: Entity<Workspace>) => void) => {
     console.log('test', workspaceList, instance)
@@ -52,13 +32,13 @@ export const convertWorkspaces = (workspaceList: Entities<Workspace>, instance: 
         return {
             id: index,
             title: <Text>{workspace.attributes.name}</Text>,
-            href: `/projects/${instance?.id}/${workspace?.id}`,
+            href: `/projects/${instance?.id}/${workspace?.attributes.key}`,
             name: <Text editable={{ onChange: (value) => updateWorkspace({ attributes: { name: value}}) }}>{workspace.attributes.name}</Text>,
             description: <Text editable={{ onChange: (value) => updateWorkspace({ attributes: { description: value}}) }}>{workspace.attributes.description}</Text>,
             tags: workspace.attributes.tags.join(', '),
             action: (
                 <>
-                    <a href={`/projects/${instance?.id}/${workspace?.id}`}>Connect</a>
+                    <Link to={`/projects/${instance?.id}/${workspace?.attributes.key}`}>Connect</Link>
                 </>
             ),
         };
@@ -104,12 +84,13 @@ const Workspaces: React.FC = () => {
             setStatus('loaded');
         })
     }, [visible]);
-
+    console.log("STATUS", status)
     return (
         <React.Fragment>
             <CreateWorkspace visible={visible} setVisible={setVisible} />
             <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
                     Create a workspace
+
           </Button>
           <Layout>
             <Content>
