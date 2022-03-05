@@ -15,9 +15,4 @@ export const instanceColumns = [
         dataIndex: 'connectionString',
         key: 'connectionString',
     },
-    {
-        title: 'Action',
-        dataIndex: 'action',
-        key: 'connect',
-    },
 ]

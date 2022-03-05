@@ -34,7 +34,7 @@ const Breadcrumbs: React.FC = ({}) => {
     const projectMenu =
         Object.keys(projects).length > 0 && instance ? (
             <Menu>
-                {convertProjects(projects, instance).map((project) => (
+                {convertProjects(projects, instance, '').map((project) => (
                     <Menu.Item>
                         <Link to={project.href}>{project.title}</Link>
                     </Menu.Item>
@@ -48,7 +48,7 @@ const Breadcrumbs: React.FC = ({}) => {
             <Breadcrumb.Item>
                 <Link to="/">Instances</Link>
             </Breadcrumb.Item>
-            {workspaceStatus === 'loaded' && (
+            {selectedEntityId && (
                 <Breadcrumb.Item overlay={workspaceMenu}>
                     <Link to={`/workspaces/${selectedEntityId}`}>Workspaces</Link>
                 </Breadcrumb.Item>

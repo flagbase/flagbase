@@ -3,7 +3,9 @@ import { PageHeader } from 'antd';
 
 export const PageHeaderStyled = styled(PageHeader)`
   padding: 5px 10px;
-  background-color: #F5F5F5;
+  background-color: #fff;
+  box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
+  border-radius: 5px;
   .ant-page-header-heading-title {
       color: black;
   }

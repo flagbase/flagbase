@@ -7,17 +7,16 @@ import { Instance, InstanceContext } from '../../context/instance'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
-import { DownOutlined } from '@ant-design/icons'
 import { Entities, Entity } from '../../lib/entity-store/entity-store'
 import { SearchOutlined } from '@ant-design/icons'
 import { constants, instanceColumns } from './instances.constants'
+import { Link } from 'react-router-dom'
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
 
 interface ConvertedInstance {
     connectionString: JSX.Element
-    action: JSX.Element
     accessKey: string
     accessSecret: string
 }
@@ -34,7 +33,6 @@ const Instances: React.FC = () => {
 
     const convertInstances = (instanceList: Entities<Instance>): ConvertedInstance[] => {
         const instances = Object.values(instanceList)
-        console.log('test', instances)
         if (!instances) {
             return []
         }
@@ -65,21 +63,18 @@ const Instances: React.FC = () => {
                             {instance.connectionString}
                         </Text>
                     ),
-                    action: (
-                        <Dropdown overlay={menu}>
-                            <a href={`/workspaces/${instance.id.toLowerCase()}`}>
-                                Connect <DownOutlined />
-                            </a>
-                        </Dropdown>
-                    ),
                     key: (
-                        <Text
-                            editable={{
-                                onChange: (value) => updateInstance('key', value, instance),
-                            }}
-                        >
-                            {instance.key}
-                        </Text>
+                        <Dropdown overlay={menu}>
+                            <Link to={`/workspaces/${instance.id.toLowerCase()}`}>
+                                <Text
+                                    editable={{
+                                        onChange: (value) => updateInstance('key', value, instance),
+                                    }}
+                                >
+                                    {instance.key}
+                                </Text>
+                            </Link>
+                        </Dropdown>
                     ),
                     accessKey: instance.accessKey,
                     accessSecret: instance.accessSecret,
