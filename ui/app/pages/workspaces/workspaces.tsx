@@ -11,6 +11,7 @@ import { CreateWorkspace } from './modal'
 import Button from '../../../components/button'
 import { Workspace as APIWorkspace } from './api'
 import { constants, workspaceColumns } from './workspace.constants'
+import { constants as instanceConstants } from '../instances/instances.constants'
 import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
@@ -20,7 +21,7 @@ const { Title } = Typography
 const Workspaces: React.FC = () => {
     const { instanceKey } = useParams<{ instanceKey: string }>()
     if (!instanceKey) {
-        return <Alert message="Could not load this instance" type="error" />
+        return <Alert message={instanceConstants.error} type="error" />
     }
 
     const [visible, setVisible] = useState(false)
@@ -30,7 +31,7 @@ const Workspaces: React.FC = () => {
 
     const instance = getEntity(instanceKey)
     if (!instance) {
-        return <Alert message="Could not load this instance" type="error" />
+        return <Alert message={instanceConstants.error} type="error" />
     }
 
     useEffect(() => {
@@ -54,7 +55,11 @@ const Workspaces: React.FC = () => {
             .finally(() => {
                 setStatus('loaded')
             })
-    }, [visible])
+
+        return () => {
+            setStatus('idle')
+        }
+    }, [])
 
     return (
         <React.Fragment>

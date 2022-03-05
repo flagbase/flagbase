@@ -12,7 +12,6 @@ interface ConvertedWorkspace {
     name: JSX.Element
     description: JSX.Element
     tags: string
-    action: JSX.Element
 }
 
 const { Text } = Typography
@@ -44,14 +43,17 @@ export const convertWorkspaces = (
                 title: <Text>{currentWorkspace.attributes.name}</Text>,
                 href: `/projects/${instance?.id}/${currentWorkspace?.attributes.key}`,
                 name: (
-                    <Text
-                        editable={{
-                            onChange: (value) =>
-                                updateWorkspace({ attributes: { ...currentWorkspace.attributes, name: value } }),
-                        }}
-                    >
-                        {currentWorkspace.attributes.name}
-                    </Text>
+                    <Link to={`/projects/${instance?.id}/${currentWorkspace?.attributes.key}`}>
+                        <Text
+                            strong
+                            editable={{
+                                onChange: (value) =>
+                                    updateWorkspace({ attributes: { ...currentWorkspace.attributes, name: value } }),
+                            }}
+                        >
+                            {currentWorkspace.attributes.name}
+                        </Text>
+                    </Link>
                 ),
                 description: (
                     <Text
@@ -64,11 +66,6 @@ export const convertWorkspaces = (
                     </Text>
                 ),
                 tags: currentWorkspace.attributes.tags.join(', '),
-                action: (
-                    <>
-                        <Link to={`/projects/${instance?.id}/${currentWorkspace?.attributes.key}`}>Connect</Link>
-                    </>
-                ),
             }
         })
 }
