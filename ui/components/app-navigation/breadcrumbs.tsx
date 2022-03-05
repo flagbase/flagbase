@@ -56,7 +56,7 @@ const Breadcrumbs: React.FC = ({
         <Link to="/">Instances</Link>
       </Breadcrumb.Item>
       {workspaceStatus === 'loaded' && <Breadcrumb.Item overlay={workspaceMenu}>
-        <Link to="/">Workspaces</Link>
+        <Link to={`/workspaces/${selectedEntityId}`}>Workspaces</Link>
       </Breadcrumb.Item>}
       {projectStatus === 'loaded' && <Breadcrumb.Item overlay={projectMenu}>
         <Link to="/">Projects</Link>
