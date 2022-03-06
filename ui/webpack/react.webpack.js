@@ -44,7 +44,6 @@ module.exports = {
                                     'border-radius-base': '2px',
                                     'table-header-color': '#3E2F5B',
                                     'body-background': '#f0f2f5',
-                                    'input-hover-border-color': 'transparent'
                                 },
                                 javascriptEnabled: true,
                             },
@@ -54,7 +53,7 @@ module.exports = {
                
             },
             {
-                test: /\.(jpe?g|gif|png|svg)$/i,
+                test: /\.(jpe?g|gif|png)$/i,
                 use: [
                     {
                         loader: 'url-loader',
@@ -62,6 +61,17 @@ module.exports = {
                             limit: 10000,
                         },
                     },
+                ],
+            },
+            {
+                test: /\.(svg)$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                          name: 'images/[hash]-[name].[ext]',
+                        },
+                    }
                 ],
             },
         ],

@@ -1,18 +1,25 @@
-import React from "react";
-import { render } from "react-dom";
-import { debugContextDevtool } from "react-context-devtool";
-import "antd/dist/antd.less";
+import React from 'react'
+import { render } from 'react-dom'
+import { debugContextDevtool } from 'react-context-devtool'
+import 'antd/dist/antd.less'
 
-import Router from "./router";
-import Layout from "antd/lib/layout/layout";
+import Router from './router'
+import PageLayout from '../components/page-layout'
+import AppNavigation from '../components/app-navigation'
+import Context from './context'
 
-const mainElement = document.createElement("div");
-mainElement.setAttribute("id", "root");
-document.body.appendChild(mainElement);
-const container = document.getElementById("root");
+const mainElement = document.createElement('div')
+mainElement.setAttribute('id', 'root')
+document.body.appendChild(mainElement)
+const container = document.getElementById('root')
 
-render(<Layout style={{  padding: '50px' }}> <Router /> </Layout>, container);
+render(
+    <Context>
+        <Router />
+    </Context>,
+    container
+)
 
 debugContextDevtool(container, {
-  disable: process.env.NODE_ENV !== "development",
-});
+    disable: process.env.NODE_ENV !== 'development',
+})

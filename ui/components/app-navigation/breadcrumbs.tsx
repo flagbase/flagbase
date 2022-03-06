@@ -14,7 +14,7 @@ import { convertWorkspaces } from '../../app/pages/workspaces/workspaces.helpers
 
 const Breadcrumbs: React.FC = ({}) => {
     const { selectedEntityId, getEntity } = useContext(InstanceContext)
-    const { entities: workspaces, status: workspaceStatus } = useContext(WorkspaceContext)
+    const { entities: workspaces } = useContext(WorkspaceContext)
 
     const { entities: projects, status: projectStatus } = useContext(ProjectContext)
 

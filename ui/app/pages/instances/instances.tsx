@@ -65,15 +65,7 @@ const Instances: React.FC = () => {
                     ),
                     key: (
                         <Dropdown overlay={menu}>
-                            <Link to={`/workspaces/${instance.id.toLowerCase()}`}>
-                                <Text
-                                    editable={{
-                                        onChange: (value) => updateInstance('key', value, instance),
-                                    }}
-                                >
-                                    {instance.key}
-                                </Text>
-                            </Link>
+                            <Link to={`/workspaces/${instance.id.toLowerCase()}`}>{instance.key}</Link>
                         </Dropdown>
                     ),
                     accessKey: instance.accessKey,

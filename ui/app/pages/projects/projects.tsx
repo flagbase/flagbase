@@ -19,18 +19,21 @@ import { constants, projectsColumn } from './projects.constants'
 const { Title, Text } = Typography
 
 export const convertProjects = (
-    workspaceList: Entities<Project>,
+    projectList: Entities<Project>,
     instance: Instance,
-    filter: string,
+    filter: string = '',
     addEntity?: (entity: Entity<Project>) => void,
     removeEntity?: (entityId: string) => void
 ) => {
-    if (!workspaceList) {
+    if (!projectList) {
         return []
     }
 
-    return Object.values(workspaceList)
-        .filter((project): project is Entity<Project> => project !== undefined && project.key.includes(filter))
+    console.log('PROJECTS', projectList)
+    return Object.values(projectList)
+        .filter(
+            (project): project is Entity<Project> => project !== undefined && project.attributes.key.includes(filter)
+        )
         .map((project: Entity<Project>, index: number) => {
             const updateProject = (update) => {
                 if (addEntity) {
@@ -123,6 +126,10 @@ const Projects: React.FC = () => {
             .finally(() => {
                 setStatus('loaded')
             })
+
+        return () => {
+            setStatus('idle')
+        }
     }, [workspaceKey])
 
     return (
