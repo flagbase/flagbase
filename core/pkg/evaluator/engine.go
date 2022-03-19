@@ -36,7 +36,7 @@ func Evaluate(
 }
 
 func evaluateRules(
-	rules []*model.Rule,
+	rules []model.Rule,
 	salt string,
 	ectx model.Context,
 ) model.Evaluation {
@@ -45,7 +45,7 @@ func evaluateRules(
 
 	maxVotes := 0
 	for _, r := range rules {
-		eval, err := evaluateRule(*r, salt, ectx)
+		eval, err := evaluateRule(r, salt, ectx)
 		if err == nil {
 			if _, ok := variationVotes[eval.VariationKey]; !ok {
 				variationVotes[eval.VariationKey] = 0
