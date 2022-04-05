@@ -51,7 +51,7 @@
     "@types/styled-components": "^5.1.19",
     "@types/uuid": "^8.3.4",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
-    "@typescript-eslint/parser": "^3.10.1",
+    "@typescript-eslint/parser": "^5.18.0",
     "babel-loader": "^8.2.3",
     "cross-env": "^7.0.3",
     "css-loader": "^5.2.7",
