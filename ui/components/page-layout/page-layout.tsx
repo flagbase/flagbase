@@ -11,7 +11,6 @@ import { convertWorkspaces } from '../../app/pages/workspaces/workspaces.helpers
 import { BlockOutlined, ClusterOutlined, ApartmentOutlined } from '@ant-design/icons'
 import flag from '../../assets/flagbaseLogo.svg'
 
-console.log('FLAG', flag)
 const { SubMenu } = Menu
 
 type Props = {
@@ -25,7 +24,6 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
     const navigate = useNavigate()
 
     const instance = selectedEntityId ? getEntity(selectedEntityId) : null
-    console.log('Workspaces', workspaces)
     const workspaceMenu = instance ? (
         Object.keys(workspaces).length == 0 ? (
             <Menu.Item key="workspaces" icon={<ClusterOutlined />}>
