@@ -1,24 +1,14 @@
 /* eslint-disable no-return-assign */
 /** @jsx jsx */
 
-import React from 'react';
-import { PageHeaderStyled } from './app-navigation.styles';
-import { jsx } from '@emotion/react';
+import React from 'react'
+import { PageHeaderStyled } from './app-navigation.styles'
+import { jsx } from '@emotion/react'
 
-import { AppNavigationProps } from './app-navigation.types';
-import Breadcrumbs from './breadcrumbs';
+import { AppNavigationProps } from './app-navigation.types'
 
-const AppNavigation: React.FC<AppNavigationProps> = ({
-  hasBackIcon,
-  ...props
-}) => {
-  return (
-    <PageHeaderStyled
-      ghost={false}
-      {...props}
-      breadcrumbRender={() => <Breadcrumbs />}
-    />
-  );
-};
+const AppNavigation: React.FC<AppNavigationProps> = ({ hasBackIcon, ...props }) => {
+    return <PageHeaderStyled ghost={false} {...props} />
+}
 
-export default AppNavigation;
+export default AppNavigation

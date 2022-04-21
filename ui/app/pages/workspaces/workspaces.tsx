@@ -35,7 +35,7 @@ const Workspaces: React.FC = () => {
                         </Content>
                     </Layout>
                 </TabPane>
-                <TabPane tab="Edit" key="2">
+                <TabPane tab="Modify Instance" key="2">
                     <Layout>
                         <Content>
                             <EditInstance instance={instance} addEntity={addEntity} removeEntity={removeEntity} />

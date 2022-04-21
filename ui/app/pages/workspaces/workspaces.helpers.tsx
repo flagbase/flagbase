@@ -44,27 +44,10 @@ export const convertWorkspaces = (
                 href: `/projects/${instance?.id}/${currentWorkspace?.attributes.key}`,
                 name: (
                     <Link to={`/projects/${instance?.id}/${currentWorkspace?.attributes.key}`}>
-                        <Text
-                            strong
-                            editable={{
-                                onChange: (value) =>
-                                    updateWorkspace({ attributes: { ...currentWorkspace.attributes, name: value } }),
-                            }}
-                        >
-                            {currentWorkspace.attributes.name}
-                        </Text>
+                        <Text strong>{currentWorkspace.attributes.name}</Text>
                     </Link>
                 ),
-                description: (
-                    <Text
-                        editable={{
-                            onChange: (value) =>
-                                updateWorkspace({ attributes: { ...currentWorkspace.attributes, description: value } }),
-                        }}
-                    >
-                        {currentWorkspace.attributes.description}
-                    </Text>
-                ),
+                description: <Text>{currentWorkspace.attributes.description}</Text>,
                 tags: currentWorkspace.attributes.tags.join(', '),
             }
         })

@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 
 import { PageContainer } from './page-layout.styles'
 import { Menu } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { InstanceContext } from '../../app/context/instance'
 import { ProjectContext } from '../../app/context/project'
 import { WorkspaceContext } from '../../app/context/workspace'
@@ -22,6 +22,7 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
     const { selectedEntityId, getEntity } = useContext(InstanceContext)
     const { entities: workspaces } = useContext(WorkspaceContext)
     const { entities: projects, status: projectStatus } = useContext(ProjectContext)
+    const navigate = useNavigate()
 
     const instance = selectedEntityId ? getEntity(selectedEntityId) : null
     console.log('Workspaces', workspaces)
@@ -31,7 +32,12 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
                 <Link to={`/workspaces/${selectedEntityId}`}>Workspaces</Link>
             </Menu.Item>
         ) : (
-            <SubMenu key="workspaces" title="Workspaces" icon={<ClusterOutlined />}>
+            <SubMenu
+                onTitleClick={() => navigate(`/workspaces/${selectedEntityId}`)}
+                key="workspaces"
+                title="Workspaces"
+                icon={<ClusterOutlined />}
+            >
                 {convertWorkspaces(workspaces, instance, '').map((workspace) => (
                     <Menu.Item key={workspace.id}>
                         <Link to={workspace.href}>{workspace.title}</Link>
@@ -70,7 +76,7 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
                 {workspaceMenu}
                 {projectMenu}
             </Menu>
-            {/* <Tabs /> */}
+
             <PageContainer>{children}</PageContainer>
         </>
     )
