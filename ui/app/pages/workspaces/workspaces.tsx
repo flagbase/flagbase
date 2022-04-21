@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
-import { Alert, Typography } from 'antd'
+import { Alert, Space, Typography } from 'antd'
 import { InstanceContext } from '../../context/instance'
 import { constants } from './workspace.constants'
 import { constants as instanceConstants } from '../instances/instances.constants'
@@ -26,7 +26,10 @@ const Workspaces: React.FC = () => {
 
     return (
         <React.Fragment>
-            <Title level={3}>{constants.join}</Title>
+            <Space >
+            <Title level={3}>{instance.key} | </Title>
+            <Title level={3}> {constants.join}</Title>
+            </Space>
             <Tabs defaultActiveKey="1">
                 <TabPane tab="Workspaces" key="1">
                     <Layout>
