@@ -43,7 +43,9 @@ const Instances: React.FC = () => {
             })
         }
         return instances
-            .filter((instance): instance is Entity<Instance> => instance !== undefined && instance.key.includes(filter))
+            .filter(
+                (instance): instance is Entity<Instance> => instance !== undefined && instance?.key?.includes(filter)
+            )
             .map((instance) => {
                 const menu = (
                     <Menu>
@@ -83,7 +85,7 @@ const Instances: React.FC = () => {
                     <Row wrap={false} gutter={12}>
                         <Col flex="none">
                             <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
-                                Join
+                                Join ssssss
                             </Button>
                         </Col>
                         <Col flex="auto">

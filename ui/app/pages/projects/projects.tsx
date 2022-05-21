@@ -11,10 +11,10 @@ import { Entities, Entity } from '../../lib/entity-store/entity-store'
 import { Layout, Content } from '../../../components/layout'
 import Button from '../../../components/button'
 import { CreateProject } from './projects.modal'
-import { mergeExisting } from '../../helpers/mergeObject'
 import { Link } from 'react-router-dom'
 import { constants as instanceConstants } from '../instances/instances.constants'
 import { constants, projectsColumn } from './projects.constants'
+import merge from 'lodash.merge'
 
 const { Title, Text } = Typography
 
@@ -37,7 +37,7 @@ export const convertProjects = (
         .map((project: Entity<Project>, index: number) => {
             const updateProject = (update) => {
                 if (addEntity) {
-                    const mergedEntity = mergeExisting(project, update)
+                    const mergedEntity = merge(project, update)
                     addEntity(mergedEntity)
                 }
             }

@@ -4,8 +4,6 @@ import { debugContextDevtool } from 'react-context-devtool'
 import 'antd/dist/antd.less'
 
 import Router from './router'
-import PageLayout from '../components/page-layout'
-import AppNavigation from '../components/app-navigation'
 import Context from './context'
 
 const mainElement = document.createElement('div')
