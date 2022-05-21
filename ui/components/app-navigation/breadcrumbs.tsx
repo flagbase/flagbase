@@ -19,7 +19,6 @@ const Breadcrumbs: React.FC = ({}) => {
     const { entities: projects, status: projectStatus } = useContext(ProjectContext)
 
     const instance = selectedEntityId ? getEntity(selectedEntityId) : null
-    console.log('Workspaces', workspaces)
     const workspaceMenu =
         Object.keys(workspaces).length > 0 && instance ? (
             <Menu>

@@ -29,7 +29,6 @@ export const convertProjects = (
         return []
     }
 
-    console.log('PROJECTS', projectList)
     return Object.values(projectList)
         .filter(
             (project): project is Entity<Project> => project !== undefined && project.attributes.key.includes(filter)

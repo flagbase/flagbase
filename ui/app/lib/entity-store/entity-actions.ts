@@ -69,7 +69,6 @@ export const createActions = <T>(
     }),
   removeEntity: (entityId: string) => {
     const { [entityId]: _, ...rest } = state.entities;
-    console.log('entityid', entityId, {...rest})
     setState({
         type: "add",
         payload: {
