@@ -3,7 +3,7 @@ import { PlusCircleOutlined, SearchOutlined } from '@ant-design/icons'
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Project, ProjectContext } from '../../context/project'
+import { Attributes, Project, ProjectContext } from '../../context/project'
 import Table from '../../../components/table/table'
 import { fetchProjects } from './api'
 import { Instance, InstanceContext } from '../../context/instance'
@@ -34,9 +34,9 @@ export const convertProjects = (
             (project): project is Entity<Project> => project !== undefined && project.attributes.key.includes(filter)
         )
         .map((project: Entity<Project>, index: number) => {
-            const updateProject = (update) => {
+            const updateProject = (update: Partial<Attributes>) => {
                 if (addEntity) {
-                    const mergedEntity = merge(project, update)
+                    const mergedEntity = merge(project, { attributes: update })
                     addEntity(mergedEntity)
                 }
             }
@@ -55,16 +55,16 @@ export const convertProjects = (
                 title: project.attributes.name,
                 href: `/flags/${instance?.id}/${project?.id}`,
                 name: (
-                    <Text editable={{ onChange: (value) => updateProject({ attributes: { name: value } }) }}>
+                    <Text editable={{ onChange: (value) => updateProject({ name: value }) }}>
                         {project.attributes.name}
                     </Text>
                 ),
                 description: (
-                    <Text editable={{ onChange: (value) => updateProject({ attributes: { description: value } }) }}>
+                    <Text editable={{ onChange: (value) => updateProject({ description: value }) }}>
                         {project.attributes.description}
                     </Text>
                 ),
-                tags: project.attributes.tags.join(', '),
+                tags: project.attributes.tags?.join(', '),
                 action: (
                     <>
                         <Dropdown overlay={menu}>

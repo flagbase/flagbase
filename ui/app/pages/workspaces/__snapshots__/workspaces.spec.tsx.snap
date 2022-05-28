@@ -6,116 +6,38 @@ Object {
   "baseElement": <body>
     <div>
       <div
-        class="ant-page-header css-h4fusb"
+        class="ant-alert ant-alert-error ant-alert-no-icon"
+        data-show="true"
+        role="alert"
       >
         <div
-          class="ant-page-header-heading"
+          class="ant-alert-content"
         >
           <div
-            class="ant-page-header-heading-left"
+            class="ant-alert-message"
           >
-            <div
-              class="ant-page-header-back"
-            >
-              <div
-                aria-label="Back"
-                class="ant-page-header-back-button"
-                role="button"
-                style="border: 0px; background: transparent; padding: 0px; line-height: inherit; display: inline-block;"
-                tabindex="0"
-              >
-                <span
-                  aria-label="arrow-left"
-                  class="anticon anticon-arrow-left"
-                  role="img"
-                >
-                  <svg
-                    aria-hidden="true"
-                    data-icon="arrow-left"
-                    fill="currentColor"
-                    focusable="false"
-                    height="1em"
-                    viewBox="64 64 896 896"
-                    width="1em"
-                  >
-                    <path
-                      d="M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 487.8a31.96 31.96 0 000 48.3L535.1 866c1.5 1.3 3.3 2 5.2 2h91.5c7.4 0 10.8-9.2 5.2-14L286.9 550H872c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </div>
-            <span
-              class="ant-page-header-heading-title"
-              title="Workspaces"
-            >
-              Workspaces
-            </span>
+            Could not load this instance
           </div>
         </div>
       </div>
-      <main
-        class="ant-layout-content css-cyr08h"
-      >
-        Todo: List of workspaces
-      </main>
     </div>
   </body>,
   "container": <div>
     <div
-      class="ant-page-header css-h4fusb"
+      class="ant-alert ant-alert-error ant-alert-no-icon"
+      data-show="true"
+      role="alert"
     >
       <div
-        class="ant-page-header-heading"
+        class="ant-alert-content"
       >
         <div
-          class="ant-page-header-heading-left"
+          class="ant-alert-message"
         >
-          <div
-            class="ant-page-header-back"
-          >
-            <div
-              aria-label="Back"
-              class="ant-page-header-back-button"
-              role="button"
-              style="border: 0px; background: transparent; padding: 0px; line-height: inherit; display: inline-block;"
-              tabindex="0"
-            >
-              <span
-                aria-label="arrow-left"
-                class="anticon anticon-arrow-left"
-                role="img"
-              >
-                <svg
-                  aria-hidden="true"
-                  data-icon="arrow-left"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="64 64 896 896"
-                  width="1em"
-                >
-                  <path
-                    d="M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 487.8a31.96 31.96 0 000 48.3L535.1 866c1.5 1.3 3.3 2 5.2 2h91.5c7.4 0 10.8-9.2 5.2-14L286.9 550H872c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-                  />
-                </svg>
-              </span>
-            </div>
-          </div>
-          <span
-            class="ant-page-header-heading-title"
-            title="Workspaces"
-          >
-            Workspaces
-          </span>
+          Could not load this instance
         </div>
       </div>
     </div>
-    <main
-      class="ant-layout-content css-cyr08h"
-    >
-      Todo: List of workspaces
-    </main>
   </div>,
   "debug": [Function],
   "findAllByAltText": [Function],
