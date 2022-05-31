@@ -85,7 +85,7 @@ const Instances: React.FC = () => {
                     <Row wrap={false} gutter={12}>
                         <Col flex="none">
                             <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
-                                Join ssssss
+                                Join instance
                             </Button>
                         </Col>
                         <Col flex="auto">
