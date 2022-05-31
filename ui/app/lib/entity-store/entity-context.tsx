@@ -15,19 +15,10 @@ type EntityContext<Entity> = {
     Provider: React.FC
 }
 
-type Action = { type: 'add'; payload: any } | { type: 'delete'; results: string } | { type: 'failure'; error: string }
-
-function reducer<Entity>(state: Partial<EntityStore<Entity>>, action: Action) {
-    switch (action.type) {
-        case 'add':
-            return {
-                ...state,
-                ...action.payload,
-            }
-        case 'delete':
-            return { ...state }
-        default:
-            throw new Error()
+function reducer<Entity>(state: EntityStore<Entity>, action: Partial<EntityStore<Entity>>) {
+    return {
+        ...state,
+        ...action,
     }
 }
 
@@ -44,23 +35,36 @@ function createEntityContext<Entity>(
     })
 
     const Provider: React.FC = ({ children }) => {
-        const [state, setState] = opts?.useLocalStorage
-            ? useLocalStorage<EntityStore<Entity>>(entityKey, _intialState)
-            : useReducer<Reducer<ReducerEntityStore<Entity>, Action>>(reducer, _intialState)
-
-        const actions = opts?.useLocalStorage
-            ? createLocalStorageActions<Entity>(state, setState)
-            : createActions<Entity>(state, setState)
-        return (
-            <Context.Provider
-                value={{
-                    ...state,
-                    ...actions,
-                }}
-            >
-                {children}
-            </Context.Provider>
-        )
+        if (opts?.useLocalStorage) {
+            const [state, setState] = useLocalStorage<EntityStore<Entity>>(entityKey, _intialState)
+            const actions = createLocalStorageActions<Entity>(state, setState)
+            return (
+                <Context.Provider
+                    value={{
+                        ...state,
+                        ...actions,
+                    }}
+                >
+                    {children}
+                </Context.Provider>
+            )
+        } else {
+            const [state, setState] = useReducer<Reducer<EntityStore<Entity>, Partial<EntityStore<Entity>>>>(
+                reducer,
+                _intialState
+            )
+            const actions = createActions<Entity>(state, setState)
+            return (
+                <Context.Provider
+                    value={{
+                        ...state,
+                        ...actions,
+                    }}
+                >
+                    {children}
+                </Context.Provider>
+            )
+        }
     }
 
     Context.displayName = entityKey

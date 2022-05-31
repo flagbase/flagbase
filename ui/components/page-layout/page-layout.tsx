@@ -20,7 +20,7 @@ type Props = {
 const PageLayout: React.FC<Props> = ({ children, navigation }) => {
     const { selectedEntityId, getEntity } = useContext(InstanceContext)
     const { entities: workspaces } = useContext(WorkspaceContext)
-    const { entities: projects, status: projectStatus } = useContext(ProjectContext)
+    const { entities: projects } = useContext(ProjectContext)
     const navigate = useNavigate()
 
     const instance = selectedEntityId ? getEntity(selectedEntityId) : null

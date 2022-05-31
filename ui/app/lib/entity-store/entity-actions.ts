@@ -46,42 +46,36 @@ export const createLocalStorageActions = <T>(
 
 export const createActions = <T>(
     state: EntityStore<T>,
-    setState: (state: ReducerEntityStore<T>) => void
+    setState: (state: Partial<EntityStore<T>>) => void
 ): EntityActions<T> => ({
     addEntity: (entity: Entity<T>) => {
         setState({
-            payload: {
-                entities: {
-                    ...state.entities,
-                    [entity.id]: entity,
-                },
+            entities: {
+                ...state.entities,
+                [entity.id]: entity,
             },
         })
     },
     addEntities: (entities: { [entityId: string]: Entity<T> }) =>
         setState({
-            payload: { entities: { ...entities } },
+            entities: { ...entities },
         }),
     removeEntity: (entityId: string) => {
         const { [entityId]: _, ...rest } = state.entities
         setState({
-            payload: {
-                entities: {
-                    ...rest,
-                },
+            entities: {
+                ...rest,
             },
         })
     },
     clearEntities: () =>
         setState({
-            payload: {
-                entities: {},
-                selectedEntityId: null,
-            },
+            entities: {},
+            selectedEntityId: null,
         }),
     setError: (error: string) => setState({ ...state, error }),
-    setStatus: (status: string) => setState({ payload: { status: status } }),
-    setSelectedEntityId: (selectedEntityId: string) => setState({ ...state, payload: { selectedEntityId } }),
-    selectEntity: (entity: Entity<T>) => setState({ ...state, payload: { selectedEntityId: entity.id } }),
+    setStatus: (status: string) => setState({ status: status }),
+    setSelectedEntityId: (selectedEntityId: string) => setState({ ...state, selectedEntityId }),
+    selectEntity: (entity: Entity<T>) => setState({ ...state, selectedEntityId: entity.id }),
     getEntity: (entityId: string): Entity<T> | undefined => state.entities[entityId],
 })
