@@ -1,22 +1,83 @@
-import React from 'react';
+import React, { useContext } from 'react'
 
-import { PageContainer } from './page-layout.styles';
-import Tabs from '../app-navigation/tabs';
+import { PageContainer } from './page-layout.styles'
+import { Menu } from 'antd'
+import { Link, useNavigate } from 'react-router-dom'
+import { InstanceContext } from '../../app/context/instance'
+import { ProjectContext } from '../../app/context/project'
+import { WorkspaceContext } from '../../app/context/workspace'
+import { convertProjects } from '../../app/pages/projects/projects'
+import { convertWorkspaces } from '../../app/pages/workspaces/workspaces.helpers'
+import { BlockOutlined, ClusterOutlined, ApartmentOutlined } from '@ant-design/icons'
+import flag from '../../assets/flagbaseLogo.svg'
+
+const { SubMenu } = Menu
 
 type Props = {
-  navigation: React.ReactNode;
-};
+    navigation: React.ReactNode
+}
 
 const PageLayout: React.FC<Props> = ({ children, navigation }) => {
-  return (
-    <>
-      {navigation}
-      {/* <Tabs /> */}
-      <PageContainer>
-        {children}
-      </PageContainer>
-    </>
-  );
-};
+    const { selectedEntityId, getEntity } = useContext(InstanceContext)
+    const { entities: workspaces } = useContext(WorkspaceContext)
+    const { entities: projects } = useContext(ProjectContext)
+    const navigate = useNavigate()
 
-export default PageLayout;
+    const instance = selectedEntityId ? getEntity(selectedEntityId) : null
+    const workspaceMenu = instance ? (
+        Object.keys(workspaces).length == 0 ? (
+            <Menu.Item key="workspaces" icon={<ClusterOutlined />}>
+                <Link to={`/workspaces/${selectedEntityId}`}>Workspaces</Link>
+            </Menu.Item>
+        ) : (
+            <SubMenu
+                onTitleClick={() => navigate(`/workspaces/${selectedEntityId}`)}
+                key="workspaces"
+                title="Workspaces"
+                icon={<ClusterOutlined />}
+            >
+                {convertWorkspaces(workspaces, instance, '').map((workspace) => (
+                    <Menu.Item key={workspace.id}>
+                        <Link to={workspace.href}>{workspace.title}</Link>
+                    </Menu.Item>
+                ))}
+            </SubMenu>
+        )
+    ) : undefined
+
+    const projectMenu = instance ? (
+        Object.keys(projects).length == 0 ? (
+            <Menu.Item key="projects" icon={<ApartmentOutlined />}>
+                <Link to={`/workspaces/${selectedEntityId}`}>Projects</Link>
+            </Menu.Item>
+        ) : (
+            <SubMenu key="projects" title="Projects" icon={<ApartmentOutlined />}>
+                {convertProjects(projects, instance, '').map((project) => (
+                    <Menu.Item>
+                        <Link to={project.href}>{project.title}</Link>
+                    </Menu.Item>
+                ))}
+            </SubMenu>
+        )
+    ) : undefined
+
+    return (
+        <>
+            <Menu mode="horizontal">
+                <SubMenu key="logo" title={<img width={30} src={flag} />}>
+                    <Menu.ItemGroup title="Instances">
+                        <Menu.Item key="setting:1" icon={<BlockOutlined />}>
+                            <Link to="/">Switch Instance</Link>
+                        </Menu.Item>
+                    </Menu.ItemGroup>
+                </SubMenu>
+                {workspaceMenu}
+                {projectMenu}
+            </Menu>
+
+            <PageContainer>{children}</PageContainer>
+        </>
+    )
+}
+
+export default PageLayout

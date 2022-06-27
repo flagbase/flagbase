@@ -5,114 +5,170 @@ Object {
   "asFragment": [Function],
   "baseElement": <body>
     <div>
-      <div
-        class="ant-page-header css-h4fusb"
+      <ul
+        class="ant-menu-overflow ant-menu ant-menu-root ant-menu-horizontal ant-menu-light"
+        data-menu-list="true"
+        role="menu"
+        tabindex="0"
       >
-        <div
-          class="ant-page-header-heading"
+        <li
+          class="ant-menu-overflow-item ant-menu-submenu ant-menu-submenu-horizontal"
+          role="none"
+          style="opacity: 1; order: 0;"
         >
           <div
-            class="ant-page-header-heading-left"
+            aria-controls="rc-menu-uuid-test-logo-popup"
+            aria-expanded="false"
+            aria-haspopup="true"
+            class="ant-menu-submenu-title"
+            data-menu-id="rc-menu-uuid-test-logo"
+            role="menuitem"
+            tabindex="-1"
           >
-            <div
-              class="ant-page-header-back"
-            >
-              <div
-                aria-label="Back"
-                class="ant-page-header-back-button"
-                role="button"
-                style="border: 0px; background: transparent; padding: 0px; line-height: inherit; display: inline-block;"
-                tabindex="0"
-              >
-                <span
-                  aria-label="arrow-left"
-                  class="anticon anticon-arrow-left"
-                  role="img"
-                >
-                  <svg
-                    aria-hidden="true"
-                    data-icon="arrow-left"
-                    fill="currentColor"
-                    focusable="false"
-                    height="1em"
-                    viewBox="64 64 896 896"
-                    width="1em"
-                  >
-                    <path
-                      d="M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 487.8a31.96 31.96 0 000 48.3L535.1 866c1.5 1.3 3.3 2 5.2 2h91.5c7.4 0 10.8-9.2 5.2-14L286.9 550H872c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-                    />
-                  </svg>
-                </span>
-              </div>
-            </div>
             <span
-              class="ant-page-header-heading-title"
-              title="Traits"
+              class="ant-menu-title-content"
             >
-              Traits
+              <img
+                src="[object Object]"
+                width="30"
+              />
             </span>
+            <i
+              class="ant-menu-submenu-arrow"
+            />
           </div>
-        </div>
-      </div>
+        </li>
+        <li
+          aria-hidden="true"
+          class="ant-menu-overflow-item ant-menu-overflow-item-rest ant-menu-submenu ant-menu-submenu-horizontal ant-menu-submenu-disabled"
+          role="none"
+          style="opacity: 0; height: 0px; overflow-y: hidden; order: 9007199254740991; pointer-events: none; position: absolute;"
+        >
+          <div
+            aria-controls="rc-menu-uuid-test-rc-menu-more-popup"
+            aria-disabled="true"
+            aria-expanded="false"
+            aria-haspopup="true"
+            class="ant-menu-submenu-title"
+            data-menu-id="rc-menu-uuid-test-rc-menu-more"
+            role="menuitem"
+          >
+            <span
+              aria-label="ellipsis"
+              class="anticon anticon-ellipsis"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="ellipsis"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+                />
+              </svg>
+            </span>
+            <i
+              class="ant-menu-submenu-arrow"
+            />
+          </div>
+        </li>
+      </ul>
+      <div
+        aria-hidden="true"
+        style="display: none;"
+      />
       <main
-        class="ant-layout-content css-cyr08h"
+        class="ant-layout-content css-1s1lcm9"
       >
         Todo: List of traits
       </main>
     </div>
   </body>,
   "container": <div>
-    <div
-      class="ant-page-header css-h4fusb"
+    <ul
+      class="ant-menu-overflow ant-menu ant-menu-root ant-menu-horizontal ant-menu-light"
+      data-menu-list="true"
+      role="menu"
+      tabindex="0"
     >
-      <div
-        class="ant-page-header-heading"
+      <li
+        class="ant-menu-overflow-item ant-menu-submenu ant-menu-submenu-horizontal"
+        role="none"
+        style="opacity: 1; order: 0;"
       >
         <div
-          class="ant-page-header-heading-left"
+          aria-controls="rc-menu-uuid-test-logo-popup"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="ant-menu-submenu-title"
+          data-menu-id="rc-menu-uuid-test-logo"
+          role="menuitem"
+          tabindex="-1"
         >
-          <div
-            class="ant-page-header-back"
-          >
-            <div
-              aria-label="Back"
-              class="ant-page-header-back-button"
-              role="button"
-              style="border: 0px; background: transparent; padding: 0px; line-height: inherit; display: inline-block;"
-              tabindex="0"
-            >
-              <span
-                aria-label="arrow-left"
-                class="anticon anticon-arrow-left"
-                role="img"
-              >
-                <svg
-                  aria-hidden="true"
-                  data-icon="arrow-left"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="64 64 896 896"
-                  width="1em"
-                >
-                  <path
-                    d="M872 474H286.9l350.2-304c5.6-4.9 2.2-14-5.2-14h-88.5c-3.9 0-7.6 1.4-10.5 3.9L155 487.8a31.96 31.96 0 000 48.3L535.1 866c1.5 1.3 3.3 2 5.2 2h91.5c7.4 0 10.8-9.2 5.2-14L286.9 550H872c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
-                  />
-                </svg>
-              </span>
-            </div>
-          </div>
           <span
-            class="ant-page-header-heading-title"
-            title="Traits"
+            class="ant-menu-title-content"
           >
-            Traits
+            <img
+              src="[object Object]"
+              width="30"
+            />
           </span>
+          <i
+            class="ant-menu-submenu-arrow"
+          />
         </div>
-      </div>
-    </div>
+      </li>
+      <li
+        aria-hidden="true"
+        class="ant-menu-overflow-item ant-menu-overflow-item-rest ant-menu-submenu ant-menu-submenu-horizontal ant-menu-submenu-disabled"
+        role="none"
+        style="opacity: 0; height: 0px; overflow-y: hidden; order: 9007199254740991; pointer-events: none; position: absolute;"
+      >
+        <div
+          aria-controls="rc-menu-uuid-test-rc-menu-more-popup"
+          aria-disabled="true"
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="ant-menu-submenu-title"
+          data-menu-id="rc-menu-uuid-test-rc-menu-more"
+          role="menuitem"
+        >
+          <span
+            aria-label="ellipsis"
+            class="anticon anticon-ellipsis"
+            role="img"
+          >
+            <svg
+              aria-hidden="true"
+              data-icon="ellipsis"
+              fill="currentColor"
+              focusable="false"
+              height="1em"
+              viewBox="64 64 896 896"
+              width="1em"
+            >
+              <path
+                d="M176 511a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0zm280 0a56 56 0 10112 0 56 56 0 10-112 0z"
+              />
+            </svg>
+          </span>
+          <i
+            class="ant-menu-submenu-arrow"
+          />
+        </div>
+      </li>
+    </ul>
+    <div
+      aria-hidden="true"
+      style="display: none;"
+    />
     <main
-      class="ant-layout-content css-cyr08h"
+      class="ant-layout-content css-1s1lcm9"
     >
       Todo: List of traits
     </main>

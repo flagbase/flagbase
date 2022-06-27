@@ -126,8 +126,7 @@ module.exports = {
   // setupFiles: [],
 
   // A list of paths to modules that run some code to configure or set up the testing framework before each test
-  setupFilesAfterEnv: ['./tests/setupTests.ts']
-
+  setupFilesAfterEnv: ['./tests/setupTests.ts'],
   // A list of paths to snapshot serializer modules Jest should use for snapshot testing
   // snapshotSerializers: [],
 
@@ -185,4 +184,9 @@ module.exports = {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+
+  transform: {
+    '^.+\\.tsx?$': '<rootDir>/node_modules/ts-jest/preprocessor.js',
+    '^.+\\.svg$': '<rootDir>/svgTransform.js'
+  }
 }
