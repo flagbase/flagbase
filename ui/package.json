@@ -97,7 +97,8 @@
     "react": "^16.14.0",
     "react-context-devtool": "^2.0.3",
     "react-dom": "^16.14.0",
-    "react-router-dom": "^6.2.1"
+    "react-router-dom": "^6.2.1",
+    "tsconfig-paths": "^4.1.0"
   },
   "build": {
     "appId": "flagbase.app-id",

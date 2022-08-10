@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { Content, Layout } from '../../../components/layout'
 import Table from '../../../components/table/table'
@@ -11,9 +11,9 @@ import { Entities, Entity } from '../../lib/entity-store/entity-store'
 import { SearchOutlined } from '@ant-design/icons'
 import { constants, instanceColumns } from './instances.constants'
 import { Link } from 'react-router-dom'
+import { fetchAccessToken } from '../workspaces/api'
 
 const { Title, Text } = Typography
-const { TabPane } = Tabs
 
 interface ConvertedInstance {
     connectionString: JSX.Element
@@ -26,6 +26,25 @@ const Instances: React.FC = () => {
     const [filter, setFilter] = useState('')
 
     const { removeEntity, entities: instanceList, addEntity } = useContext(InstanceContext)
+
+    useEffect(() => {
+        for (const instance of Object.values(instanceList)) {
+            if (instance && instance.expiresAt > new Date()) {
+                fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret).then(
+                    (result) => {
+                        console.log('adding res', result)
+                        addEntity({
+                            ...instance,
+                            id: result.id,
+                            accessToken: result.token,
+                            expiresAt: result.expiresAt,
+                        })
+                        setVisible(false)
+                    }
+                )
+            }
+        }
+    }, [])
 
     const deleteInstance = (deletedSession: Instance) => {
         removeEntity(deletedSession.id)

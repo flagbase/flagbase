@@ -10,12 +10,17 @@ import { convertProjects } from '../../app/pages/projects/projects'
 import { convertWorkspaces } from '../../app/pages/workspaces/workspaces.helpers'
 import { BlockOutlined, ClusterOutlined, ApartmentOutlined } from '@ant-design/icons'
 import flag from '../../assets/flagbaseLogo.svg'
+import styled from '@emotion/styled'
 
 const { SubMenu } = Menu
 
 type Props = {
     navigation: React.ReactNode
 }
+
+const MenuItem = styled(Menu.Item)`
+    font-weight: 600;
+`
 
 const PageLayout: React.FC<Props> = ({ children, navigation }) => {
     const { selectedEntityId, getEntity } = useContext(InstanceContext)
@@ -26,9 +31,9 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
     const instance = selectedEntityId ? getEntity(selectedEntityId) : null
     const workspaceMenu = instance ? (
         Object.keys(workspaces).length == 0 ? (
-            <Menu.Item key="workspaces" icon={<ClusterOutlined />}>
+            <MenuItem key="workspaces" icon={<ClusterOutlined />}>
                 <Link to={`/workspaces/${selectedEntityId}`}>Workspaces</Link>
-            </Menu.Item>
+            </MenuItem>
         ) : (
             <SubMenu
                 onTitleClick={() => navigate(`/workspaces/${selectedEntityId}`)}
@@ -47,15 +52,15 @@ const PageLayout: React.FC<Props> = ({ children, navigation }) => {
 
     const projectMenu = instance ? (
         Object.keys(projects).length == 0 ? (
-            <Menu.Item key="projects" icon={<ApartmentOutlined />}>
+            <MenuItem key="projects" icon={<ApartmentOutlined />}>
                 <Link to={`/workspaces/${selectedEntityId}`}>Projects</Link>
-            </Menu.Item>
+            </MenuItem>
         ) : (
             <SubMenu key="projects" title="Projects" icon={<ApartmentOutlined />}>
                 {convertProjects(projects, instance, '').map((project) => (
-                    <Menu.Item>
+                    <MenuItem>
                         <Link to={project.href}>{project.title}</Link>
-                    </Menu.Item>
+                    </MenuItem>
                 ))}
             </SubMenu>
         )

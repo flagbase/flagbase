@@ -44,6 +44,7 @@ module.exports = {
                                     'border-radius-base': '2px',
                                     'table-header-color': '#3E2F5B',
                                     'body-background': '#f0f2f5',
+                                    '@menu-item-font-size': '16px',
                                 },
                                 javascriptEnabled: true,
                             },
