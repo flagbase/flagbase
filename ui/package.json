@@ -93,12 +93,14 @@
     "@rehooks/local-storage": "^2.4.4",
     "antd": "^4.18.2",
     "axios": "^0.25.0",
+    "formik": "^2.2.9",
     "lodash.merge": "^4.6.2",
     "react": "^16.14.0",
     "react-context-devtool": "^2.0.3",
     "react-dom": "^16.14.0",
     "react-router-dom": "^6.2.1",
-    "tsconfig-paths": "^4.1.0"
+    "tsconfig-paths": "^4.1.0",
+    "yup": "^0.32.11"
   },
   "build": {
     "appId": "flagbase.app-id",

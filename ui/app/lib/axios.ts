@@ -1,9 +1,5 @@
 import Axios from 'axios'
 
-export const changeBaseURL = (url: string) => {
-    Axios.defaults.baseURL = url
-}
-
 export const axios = Axios.create()
 
 axios.interceptors.response.use(
@@ -16,3 +12,4 @@ axios.interceptors.response.use(
         return Promise.reject(error)
     }
 )
+axios.defaults.baseURL = 'http://localhost:3000/'
