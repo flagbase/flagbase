@@ -1,4 +1,4 @@
-import { Input, Modal, Typography } from 'antd'
+import { Modal, Typography } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import React, { useContext } from 'react'
 import { Instance, InstanceContext } from '../../context/instance'
@@ -8,13 +8,13 @@ import { ModalLayout } from '../../../components/layout'
 import { axios } from '../../lib/axios'
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik'
 import { InstanceSchema } from './instances.constants'
+import Input from '../../../components/input'
 
 type OmittedInstance = Omit<Instance, 'expiresAt'>
 
 const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: any }) => {
     const { Title, Text } = Typography
     const { submitForm } = useFormikContext<OmittedInstance>()
-    console.log('ERRS', errors)
     return (
         <>
             <Modal visible={visible} okText="Submit" onOk={() => submitForm()} onCancel={() => setVisible(false)}>
@@ -27,7 +27,7 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
                             <Field component={Input} id="connectionString" name="connectionString" placeholder="URL" />
                             <Field component={Input} id="accessKey" name="accessKey" placeholder="Access Key" />
                             <Field
-                                component={Input.Password}
+                                component={Input}
                                 id="accessSecret"
                                 name="accessSecret"
                                 placeholder="Access Secret"
