@@ -21,8 +21,7 @@ require (
 	github.com/prometheus/client_golang v1.7.1 // indirect
 	github.com/rs/zerolog v1.26.1
 	github.com/sirupsen/logrus v1.6.0 // indirect
-	github.com/urfave/cli/v2 v2.3.0
+	github.com/urfave/cli/v2 v2.19.2
 	github.com/zsais/go-gin-prometheus v0.1.0
 	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e
-	gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c // indirect
 )
