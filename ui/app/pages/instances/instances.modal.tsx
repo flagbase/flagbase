@@ -52,6 +52,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                     ...instance,
                     expiresAt: result.expiresAt,
                     id: result.id,
+                    accessToken: result.accessToken,
                 },
             ])
         )
@@ -85,7 +86,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 accessKey: '',
             }}
             onSubmit={(values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
-                console.log('submitting')
                 mutation.mutate(values)
                 setSubmitting(false)
             }}

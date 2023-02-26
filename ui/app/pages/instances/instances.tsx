@@ -25,15 +25,16 @@ interface ConvertedInstance {
     accessSecret: string
 }
 
+export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
+
 const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
     const { removeEntity, addEntity } = useContext(InstanceContext)
 
-    const { data: instanceList } = useQuery('instances', () => JSON.parse(localStorage.getItem('instances') || '[]'))
+    const { data: instanceList } = useQuery('instances', getInstances)
 
-    console.log(instanceList, typeof instanceList)
     useEffect(() => {
         if (instanceList) {
             for (const instance of instanceList as unknown as Instances) {
@@ -88,7 +89,7 @@ const Instances: React.FC = () => {
                     ),
                     key: (
                         <Dropdown overlay={menu}>
-                            <Link to={`/workspaces/${instance.id.toLowerCase()}`}>{instance.key}</Link>
+                            <Link to={`/${instance.key.toLowerCase()}/workspaces`}>{instance.key}</Link>
                         </Dropdown>
                     ),
                     accessKey: instance.accessKey,

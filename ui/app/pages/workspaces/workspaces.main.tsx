@@ -14,6 +14,8 @@ import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
 import { CreateWorkspace } from './modal'
+import Instances, { getInstances } from '../instances/instances'
+import { useQuery } from 'react-query'
 
 const MainWorkspaces: React.FC = () => {
     const { instanceKey } = useParams<{ instanceKey: string }>()
@@ -24,10 +26,17 @@ const MainWorkspaces: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
     const navigate = useNavigate()
-    const { getEntity, setSelectedEntityId } = useContext(InstanceContext)
+    const { setSelectedEntityId } = useContext(InstanceContext)
     const { entities: workspaces, addEntity, addEntities, setStatus, status } = useContext(WorkspaceContext)
 
-    const instance = getEntity(instanceKey)
+    const { data: instanceList } = useQuery<Instances>('instances', getInstances, {
+        select: (instances) => {
+            return instances.filter((instance) => instance.key === instanceKey)
+        },
+    })
+
+    const instance = instanceList && instanceList.length > 0 ? instanceList[0] : null
+
     if (!instance) {
         return <Alert message={instanceConstants.error} type="error" />
     }

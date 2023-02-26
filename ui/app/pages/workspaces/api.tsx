@@ -4,6 +4,7 @@ interface AccessToken {
     expiresAt: Date
     token: string
     id: string
+    accessToken: string
 }
 
 export const fetchAccessToken = async (url: string, key: string, secret: string): Promise<AccessToken> => {
@@ -16,6 +17,7 @@ export const fetchAccessToken = async (url: string, key: string, secret: string)
         expiresAt: result.data.access.expiresAt,
         token: result.data.token,
         id: result.data.access.id,
+        accessToken: result.data.token,
     }
 }
 
@@ -35,7 +37,7 @@ export interface WorkspaceResponse {
 }
 
 export const fetchWorkspaces = async (url: string, accessToken: string) => {
-    const result = await axios.get<WorkspaceResponse>(`/workspaces`, {
+    const result = await axios.get<WorkspaceResponse>(`${url}workspaces`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
