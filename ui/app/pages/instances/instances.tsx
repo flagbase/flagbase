@@ -12,6 +12,10 @@ import { SearchOutlined } from '@ant-design/icons'
 import { constants, instanceColumns } from './instances.constants'
 import { Link } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
+import '../../tailwind/tailwind.css'
+import { useQuery } from 'react-query'
+
+type Instances = Instance[]
 
 const { Title, Text } = Typography
 
@@ -25,33 +29,31 @@ const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const { removeEntity, entities: instanceList, addEntity } = useContext(InstanceContext)
+    const { removeEntity, addEntity } = useContext(InstanceContext)
 
+    const { data: instanceList } = useQuery('instances', () => JSON.parse(localStorage.getItem('instances') || '[]'))
+
+    console.log(instanceList, typeof instanceList)
     useEffect(() => {
-        for (const instance of Object.values(instanceList)) {
-            if (instance && instance.expiresAt > new Date()) {
-                fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret).then(
-                    (result) => {
-                        console.log('adding res', result)
-                        addEntity({
-                            ...instance,
-                            id: result.id,
-                            accessToken: result.token,
-                            expiresAt: result.expiresAt,
-                        })
-                        setVisible(false)
-                    }
-                )
+        if (instanceList) {
+            for (const instance of instanceList as unknown as Instances) {
+                if (instance && instance.expiresAt > new Date()) {
+                    fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret).then(
+                        (result) => {
+                            setVisible(false)
+                        }
+                    )
+                }
             }
         }
-    }, [])
+    }, [instanceList])
 
     const deleteInstance = (deletedSession: Instance) => {
         removeEntity(deletedSession.id)
     }
 
-    const convertInstances = (instanceList: Entities<Instance>): ConvertedInstance[] => {
-        const instances = Object.values(instanceList)
+    const transformInstancesToTableDataSource = (instanceList: Instances): ConvertedInstance[] => {
+        const instances = instanceList
         if (!instances) {
             return []
         }
@@ -62,7 +64,7 @@ const Instances: React.FC = () => {
             })
         }
         return instances
-            .filter(
+            ?.filter(
                 (instance): instance is Entity<Instance> => instance !== undefined && instance?.key?.includes(filter)
             )
             .map((instance) => {
@@ -101,22 +103,26 @@ const Instances: React.FC = () => {
             <Title level={3}>{constants.headline}</Title>
             <Layout>
                 <Content>
-                    <Row wrap={false} gutter={12}>
-                        <Col flex="none">
+                    <div className="flex gap-3 items-center">
+                        <div>
                             <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
                                 Join instance
                             </Button>
-                        </Col>
-                        <Col flex="auto">
+                        </div>
+                        <div className="flex-auto">
                             <Input
                                 onChange={(event) => setFilter(event.target.value)}
                                 placeholder="Search"
                                 prefix={<SearchOutlined />}
                             />
-                        </Col>
-                    </Row>
+                        </div>
+                    </div>
 
-                    <Table dataSource={convertInstances(instanceList)} loading={false} columns={instanceColumns} />
+                    <Table
+                        dataSource={transformInstancesToTableDataSource(instanceList)}
+                        loading={false}
+                        columns={instanceColumns}
+                    />
                 </Content>
             </Layout>
         </React.Fragment>

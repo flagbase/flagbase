@@ -13,9 +13,9 @@ export const fetchAccessToken = async (url: string, key: string, secret: string)
     })
 
     return {
-        expiresAt: result.data.data.access.expiresAt,
-        token: result.data.data.token,
-        id: result.data.data.access.id,
+        expiresAt: result.data.access.expiresAt,
+        token: result.data.token,
+        id: result.data.access.id,
     }
 }
 
