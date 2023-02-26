@@ -1,19 +1,21 @@
-import axios, { AxiosResponse } from 'axios'
-import { v4 as uuidv4 } from 'uuid'
+import { axios } from '../../lib/axios'
 
 interface AccessToken {
-    expiresAt: number
+    expiresAt: Date
     token: string
+    id: string
 }
 
 export const fetchAccessToken = async (url: string, key: string, secret: string): Promise<AccessToken> => {
-    const result = await axios.post(`${url}/access/token`, {
+    const result = await axios.post(`/access/token`, {
         key,
         secret,
     })
+
     return {
-        expiresAt: result.data.data.access.expiresAt,
-        token: result.data.data.token,
+        expiresAt: result.data.access.expiresAt,
+        token: result.data.token,
+        id: result.data.access.id,
     }
 }
 
@@ -33,7 +35,7 @@ export interface WorkspaceResponse {
 }
 
 export const fetchWorkspaces = async (url: string, accessToken: string) => {
-    const result = await axios.get<WorkspaceResponse>(`${url}/workspaces`, {
+    const result = await axios.get<WorkspaceResponse>(`/workspaces`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
@@ -42,7 +44,7 @@ export const fetchWorkspaces = async (url: string, accessToken: string) => {
 }
 
 export const deleteWorkspace = async (url: string, workspaceKey: string, accessToken: string) => {
-    return axios.delete(`${url}/workspaces/${workspaceKey}`, {
+    return axios.delete(`/workspaces/${workspaceKey}`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
             'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
@@ -58,7 +60,7 @@ export const createWorkspace = async (
     accessToken: string
 ) => {
     return axios.post(
-        `${url}/workspaces`,
+        `/workspaces`,
         {
             key: name.toLowerCase().replace(' ', '-'),
             name,

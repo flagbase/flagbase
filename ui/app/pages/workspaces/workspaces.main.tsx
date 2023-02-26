@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { Alert, Col, notification, Row, Typography } from 'antd'
 import Table from '../../../components/table/table'
@@ -23,6 +23,7 @@ const MainWorkspaces: React.FC = () => {
 
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
+    const navigate = useNavigate()
     const { getEntity, setSelectedEntityId } = useContext(InstanceContext)
     const { entities: workspaces, addEntity, addEntities, setStatus, status } = useContext(WorkspaceContext)
 
@@ -45,6 +46,7 @@ const MainWorkspaces: React.FC = () => {
                 addEntities(workspaceList)
             })
             .catch(() => {
+                navigate('/')
                 notification.error({
                     message: constants.error,
                 })

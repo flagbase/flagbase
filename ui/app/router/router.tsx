@@ -11,17 +11,11 @@ import Identities from '../pages/identities'
 import Traits from '../pages/traits'
 import PageLayout from '../../components/page-layout'
 import AppNavigation from '../../components/app-navigation'
+import '../tailwind/tailwind.css'
 
-const {
-    InstanceKey,
-    WorkspaceKey,
-    ProjectKey,
-    EnvironmentKey,
-    // FlagKey,
-    // SegmentKey,
-    // IdentityKey,
-    // TraitKey
-} = RouteParams
+const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
+
+// http://localhost:4000/%7BinstanceKey%7D/workspaces/%7BworkspaceKey%7D/projects/%7BprojectKey%7D/flag/%7BflagKey%7D
 
 const Router: React.FC = () => (
     <BrowserRouter>
@@ -31,28 +25,31 @@ const Router: React.FC = () => (
                 <Route path="/" element={<Instances />} />
                 <Route path="/instances" element={<Instances />} />
                 {/* Workspaces */}
-                <Route path={`/workspaces/${InstanceKey}`} element={<Workspaces />} />
+                <Route path={`/${InstanceKey}/workspaces`} element={<Workspaces />} />
+                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}`} element={<>Workspace view</>} />
                 {/* Projects */}
-                <Route path={`/projects/${InstanceKey}/${WorkspaceKey}`} element={<Projects />} />
+                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects`} element={<Projects />} />
+                <Route
+                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}`}
+                    element={<>Project view</>}
+                />
                 {/* Flags */}
                 <Route
-                    path={`/flags/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
+                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/flags/${EnvironmentKey}`}
                     element={<Flags />}
+                />
+                <Route
+                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/flags/${FlagKey}/${EnvironmentKey}`}
+                    element={<>Flag view</>}
                 />
                 {/* Segments */}
                 <Route
-                    path={`/segments/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
+                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/segments`}
                     element={<Segments />}
                 />
-                {/* Identities */}
                 <Route
-                    path={`/identities/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-                    element={<Identities />}
-                />
-                {/* Traits */}
-                <Route
-                    path={`/traits/${InstanceKey}/${WorkspaceKey}/${ProjectKey}/${EnvironmentKey}`}
-                    element={<Traits />}
+                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/segments/${SegmentKey}`}
+                    element={<>Segment view</>}
                 />
             </Routes>
         </PageLayout>

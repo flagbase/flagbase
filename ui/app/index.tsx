@@ -5,15 +5,20 @@ import 'antd/dist/antd.less'
 
 import Router from './router'
 import Context from './context'
+import { QueryClient, QueryClientProvider } from 'react-query'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 const container = document.getElementById('root')
 
+const queryClient = new QueryClient()
+
 render(
     <Context>
-        <Router />
+        <QueryClientProvider client={queryClient}>
+            <Router />
+        </QueryClientProvider>
     </Context>,
     container
 )
