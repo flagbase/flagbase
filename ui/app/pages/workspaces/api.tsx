@@ -32,23 +32,19 @@ export interface Workspace {
     }
 }
 
-export interface WorkspaceResponse {
-    data: Workspace[]
-}
-
 export const fetchWorkspaces = async (url: string, accessToken: string) => {
-    const result = await axios.get<WorkspaceResponse>(`${url}workspaces`, {
+    const result = await axios.get<Workspace[]>(`${url}/workspaces`, {
         headers: {
             Authorization: `Bearer ${accessToken}`,
         },
     })
-    return result.data.data
+    console.log('workspaces', result.data)
+    return result.data
 }
 
-export const deleteWorkspace = async (url: string, workspaceKey: string, accessToken: string) => {
+export const deleteWorkspace = async (workspaceKey: string) => {
     return axios.delete(`/workspaces/${workspaceKey}`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
         },
     })

@@ -9,8 +9,8 @@ export const constants = {
 export const instanceColumns = [
     {
         title: 'Name',
-        dataIndex: 'key',
-        key: 'key',
+        dataIndex: 'name',
+        key: 'name',
     },
     {
         title: 'URL',

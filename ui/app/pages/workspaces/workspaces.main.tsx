@@ -1,95 +1,122 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router-dom'
+import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { PlusCircleOutlined } from '@ant-design/icons'
-import { Alert, Col, notification, Row, Typography } from 'antd'
+import { Alert, notification } from 'antd'
 import Table from '../../../components/table/table'
-import { InstanceContext } from '../../context/instance'
-import { WorkspaceContext } from '../../context/workspace'
-import { fetchWorkspaces } from './api'
+import { Instance } from '../../context/instance'
+import { Workspace } from '../../context/workspace'
+import { createWorkspace, deleteWorkspace, fetchWorkspaces } from './api'
 import Button from '../../../components/button'
-import { Workspace as APIWorkspace } from './api'
 import { constants, workspaceColumns } from './workspace.constants'
 import { constants as instanceConstants } from '../instances/instances.constants'
 import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
 import { CreateWorkspace } from './modal'
-import Instances, { getInstances } from '../instances/instances'
-import { useQuery } from 'react-query'
+import Instances, { useInstances } from '../instances/instances'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { axios } from '../../lib/axios'
 
-const MainWorkspaces: React.FC = () => {
+type MainWorkspacesType = {
+    instances: Instances
+}
+
+export const useAddWorkspace = (instance: Instance) => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (values: Omit<Workspace['attributes'], 'key'>) => {
+            await createWorkspace(
+                instance.connectionString,
+                values.name,
+                values.description,
+                values.tags,
+                instance.accessToken
+            )
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['workspaces', instance.key] })
+        },
+    })
+    return mutation
+}
+
+export const useRemoveWorkspace = (instance: Instance) => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (key: string) => {
+            deleteWorkspace(key)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['workspaces', instance.key] })
+        },
+    })
+    return mutation
+}
+
+export const useWorkspaces = (instanceKey: string, options?: any) => {
+    const { data: instances } = useInstances({
+        select: (instances: Instance[]) =>
+            instances.filter((i) => i.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase()),
+    })
+    const [instance] = instances || []
+
+    const query = useQuery<Workspace[]>(['workspaces', instance?.key], {
+        ...options,
+        queryFn: () => fetchWorkspaces(instance.connectionString, instance.accessToken),
+        onSuccess: () => {
+            axios.defaults.baseURL = instance.connectionString
+            axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
+        },
+        enabled: !!instance?.key,
+    })
+    return query
+}
+
+const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
     const { instanceKey } = useParams<{ instanceKey: string }>()
+
     if (!instanceKey) {
         return <Alert message={instanceConstants.error} type="error" />
     }
 
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
-    const navigate = useNavigate()
-    const { setSelectedEntityId } = useContext(InstanceContext)
-    const { entities: workspaces, addEntity, addEntities, setStatus, status } = useContext(WorkspaceContext)
 
-    const { data: instanceList } = useQuery<Instances>('instances', getInstances, {
-        select: (instances) => {
-            return instances.filter((instance) => instance.key === instanceKey)
-        },
-    })
-
-    const instance = instanceList && instanceList.length > 0 ? instanceList[0] : null
+    const instance = instances && instances.length > 0 ? instances[0] : null
 
     if (!instance) {
         return <Alert message={instanceConstants.error} type="error" />
     }
 
-    useEffect(() => {
-        setStatus('loading')
-        setSelectedEntityId(instanceKey)
-        fetchWorkspaces(instance.connectionString, instance.accessToken)
-            .then((result: APIWorkspace[]) => {
-                const workspaceList = result.reduce((previous, workspace) => {
-                    return {
-                        ...previous,
-                        [workspace.id]: workspace,
-                    }
-                }, {})
-                addEntities(workspaceList)
-            })
-            .catch(() => {
-                navigate('/')
-                notification.error({
-                    message: constants.error,
-                })
-            })
-            .finally(() => {
-                setStatus('loaded')
-            })
+    const { data: workspaces, isError, isLoading } = useWorkspaces(instance.key)
 
-        return () => {
-            setStatus('idle')
-        }
-    }, [])
+    if (isError) {
+        notification.error({
+            message: constants.error,
+        })
+    }
 
     return (
         <React.Fragment>
-            <CreateWorkspace visible={visible} setVisible={setVisible} />
+            <CreateWorkspace visible={visible} setVisible={setVisible} instance={instance} />
 
-            <Row wrap={false} gutter={12}>
-                <Col flex="none">
+            <div className="flex flex-col-reverse md:flex-row gap-3 items-center">
+                <div>
                     <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
                         {constants.create}
                     </Button>
-                </Col>
-                <Col flex="auto">
+                </div>
+                <div className="flex-auto">
                     <Input
                         onChange={(event) => setFilter(event.target.value)}
                         placeholder="Search"
                         prefix={<SearchOutlined />}
                     />
-                </Col>
-            </Row>
+                </div>
+            </div>
             <Table
-                loading={status !== 'loaded'}
-                dataSource={convertWorkspaces(workspaces, instance, filter, addEntity)}
+                loading={isLoading}
+                dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
                 columns={workspaceColumns}
             />
         </React.Fragment>

@@ -7,19 +7,18 @@ import Workspaces from '../pages/workspaces'
 import Projects from '../pages/projects'
 import Flags from '../pages/flags'
 import Segments from '../pages/segments'
-import Identities from '../pages/identities'
-import Traits from '../pages/traits'
 import PageLayout from '../../components/page-layout'
-import AppNavigation from '../../components/app-navigation'
 import '../tailwind/tailwind.css'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
 // http://localhost:4000/%7BinstanceKey%7D/workspaces/%7BworkspaceKey%7D/projects/%7BprojectKey%7D/flag/%7BflagKey%7D
 
+export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/workspaces`
+
 const Router: React.FC = () => (
     <BrowserRouter>
-        <PageLayout navigation={<AppNavigation title="Flagbase" hasBackIcon />}>
+        <PageLayout>
             <Routes>
                 {/* Instances */}
                 <Route path="/" element={<Instances />} />

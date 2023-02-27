@@ -2,18 +2,19 @@ import React, { useContext, useEffect, useState } from 'react'
 
 import { Content, Layout } from '../../../components/layout'
 import Table from '../../../components/table/table'
-import { Col, Dropdown, Input, Menu, Row, Space, TableProps, Tabs, Typography } from 'antd'
+import { Dropdown, Input, Menu, Typography } from 'antd'
 import { Instance, InstanceContext } from '../../context/instance'
 import { PlusCircleOutlined } from '@ant-design/icons'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
-import { Entities, Entity } from '../../lib/entity-store/entity-store'
+import { Entity } from '../../lib/entity-store/entity-store'
 import { SearchOutlined } from '@ant-design/icons'
 import { constants, instanceColumns } from './instances.constants'
 import { Link } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
 import '../../tailwind/tailwind.css'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
+import { axios } from '../../lib/axios'
 
 type Instances = Instance[]
 
@@ -25,6 +26,39 @@ interface ConvertedInstance {
     accessSecret: string
 }
 
+export const useAddInstance = () => {
+    const mutation = useMutation({
+        mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
+            axios.defaults.baseURL = instance.connectionString
+            const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
+            const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
+            localStorage.setItem(
+                'instances',
+                JSON.stringify([
+                    ...currInstances,
+                    {
+                        ...instance,
+                        expiresAt: result.expiresAt,
+                        id: result.id,
+                        accessToken: result.accessToken,
+                    },
+                ])
+            )
+            return { ...instance, expiresAt: result.expiresAt }
+        },
+    })
+    return mutation
+}
+
+export const useInstances = (options?: any) => {
+    // Define a query to fetch the instances object from the server
+    const query = useQuery<Instances>(['instances'], getInstances, {
+        ...options,
+    })
+
+    return query
+}
+
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
 
 const Instances: React.FC = () => {
@@ -33,12 +67,12 @@ const Instances: React.FC = () => {
 
     const { removeEntity, addEntity } = useContext(InstanceContext)
 
-    const { data: instanceList } = useQuery('instances', getInstances)
+    const { data: instances } = useInstances()
 
     useEffect(() => {
-        if (instanceList) {
-            for (const instance of instanceList as unknown as Instances) {
-                if (instance && instance.expiresAt > new Date()) {
+        if (instances) {
+            for (const instance of instances) {
+                if (instance && instance.expiresAt < new Date()) {
                     fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret).then(
                         (result) => {
                             setVisible(false)
@@ -47,7 +81,7 @@ const Instances: React.FC = () => {
                 }
             }
         }
-    }, [instanceList])
+    }, [instances])
 
     const deleteInstance = (deletedSession: Instance) => {
         removeEntity(deletedSession.id)
@@ -71,13 +105,18 @@ const Instances: React.FC = () => {
             .map((instance) => {
                 const menu = (
                     <Menu>
-                        <Menu.Item onClick={() => deleteInstance(instance)} key="1">
+                        <Menu.Item onClick={() => deleteInstance(instance)} key={`${instance.id}_remove`}>
                             Remove
                         </Menu.Item>
                     </Menu>
                 )
 
                 return {
+                    name: (
+                        <Dropdown key={`${instance.id}_${instance.connectionString}`} overlay={menu}>
+                            <Link to={`/${instance.key.toLowerCase()}/workspaces`}>{instance.key}</Link>
+                        </Dropdown>
+                    ),
                     connectionString: (
                         <Text
                             editable={{
@@ -87,11 +126,7 @@ const Instances: React.FC = () => {
                             {instance.connectionString}
                         </Text>
                     ),
-                    key: (
-                        <Dropdown overlay={menu}>
-                            <Link to={`/${instance.key.toLowerCase()}/workspaces`}>{instance.key}</Link>
-                        </Dropdown>
-                    ),
+                    key: instance.key,
                     accessKey: instance.accessKey,
                     accessSecret: instance.accessSecret,
                 }
@@ -104,7 +139,7 @@ const Instances: React.FC = () => {
             <Title level={3}>{constants.headline}</Title>
             <Layout>
                 <Content>
-                    <div className="flex gap-3 items-center">
+                    <div className="flex flex-col-reverse md:flex-row gap-3 items-center">
                         <div>
                             <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
                                 Join instance
@@ -118,12 +153,13 @@ const Instances: React.FC = () => {
                             />
                         </div>
                     </div>
-
-                    <Table
-                        dataSource={transformInstancesToTableDataSource(instanceList)}
-                        loading={false}
-                        columns={instanceColumns}
-                    />
+                    {instances && (
+                        <Table
+                            dataSource={transformInstancesToTableDataSource(instances)}
+                            loading={false}
+                            columns={instanceColumns}
+                        />
+                    )}
                 </Content>
             </Layout>
         </React.Fragment>

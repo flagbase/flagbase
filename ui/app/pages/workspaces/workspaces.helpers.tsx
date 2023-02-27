@@ -2,7 +2,7 @@ import { Typography } from 'antd'
 import React from 'react'
 import { Instance } from '../../context/instance'
 import { Workspace } from '../../context/workspace'
-import { Entities, Entity } from '../../lib/entity-store/entity-store'
+import { Entity } from '../../lib/entity-store/entity-store'
 import { Link } from 'react-router-dom'
 
 interface ConvertedWorkspace {
@@ -17,10 +17,9 @@ interface ConvertedWorkspace {
 const { Text } = Typography
 
 export const convertWorkspaces = (
-    workspaceList: Entities<Workspace>,
+    workspaceList: Workspace[],
     instance: Instance,
-    filter: string,
-    addEntity?: (entity: Entity<Workspace>) => void
+    filter: string
 ): ConvertedWorkspace[] => {
     if (!workspaceList) {
         return []
@@ -32,12 +31,6 @@ export const convertWorkspaces = (
                 workspace !== undefined && workspace.attributes.name.includes(filter)
         )
         .map((currentWorkspace, index) => {
-            const updateWorkspace = (updatedWorkspace: Partial<Entity<Workspace>>) => {
-                if (addEntity) {
-                    const mergedEntity = { ...updatedWorkspace, ...currentWorkspace }
-                    addEntity(mergedEntity)
-                }
-            }
             return {
                 id: index,
                 title: <Text>{currentWorkspace.attributes.name}</Text>,
@@ -49,6 +42,7 @@ export const convertWorkspaces = (
                 ),
                 description: <Text>{currentWorkspace.attributes.description}</Text>,
                 tags: currentWorkspace.attributes.tags.join(', '),
+                key: currentWorkspace.attributes.key,
             }
         })
 }
