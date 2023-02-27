@@ -1,10 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react'
 
-import { Content, Layout } from '../../../components/layout'
+import { Layout } from '../../../components/layout'
 import Table from '../../../components/table/table'
-import { Dropdown, Input, Menu, Typography } from 'antd'
+import { Dropdown, Menu, Typography } from 'antd'
 import { Instance, InstanceContext } from '../../context/instance'
-import { PlusCircleOutlined } from '@ant-design/icons'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
 import { Entity } from '../../lib/entity-store/entity-store'
@@ -15,6 +14,8 @@ import { fetchAccessToken } from '../workspaces/api'
 import '../../tailwind/tailwind.css'
 import { useMutation, useQuery } from 'react-query'
 import { axios } from '../../lib/axios'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import Input from '../../../components/input'
 
 type Instances = Instance[]
 
@@ -138,29 +139,31 @@ const Instances: React.FC = () => {
             <AddNewInstanceModal visible={visible} setVisible={setVisible} />
             <Title level={3}>{constants.headline}</Title>
             <Layout>
-                <Content>
-                    <div className="flex flex-col-reverse md:flex-row gap-3 items-center">
-                        <div>
-                            <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
-                                Join instance
-                            </Button>
-                        </div>
-                        <div className="flex-auto">
-                            <Input
-                                onChange={(event) => setFilter(event.target.value)}
-                                placeholder="Search"
-                                prefix={<SearchOutlined />}
-                            />
-                        </div>
+                <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+                    <div>
+                        <Button
+                            onClick={() => setVisible(true)}
+                            type="button"
+                            suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
+                        >
+                            Join instance
+                        </Button>
                     </div>
-                    {instances && (
-                        <Table
-                            dataSource={transformInstancesToTableDataSource(instances)}
-                            loading={false}
-                            columns={instanceColumns}
+                    <div className="flex-auto">
+                        <Input
+                            onChange={(event) => setFilter(event.target.value)}
+                            placeholder="Search"
+                            prefix={<SearchOutlined />}
                         />
-                    )}
-                </Content>
+                    </div>
+                </div>
+                {instances && (
+                    <Table
+                        dataSource={transformInstancesToTableDataSource(instances)}
+                        loading={false}
+                        columns={instanceColumns}
+                    />
+                )}
             </Layout>
         </React.Fragment>
     )

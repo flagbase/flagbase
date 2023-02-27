@@ -1,6 +1,4 @@
 import React from 'react'
-import { Input as AntdInput, InputProps as AntdInputProps } from 'antd'
-import Label from './label'
 import { FieldInputProps, FormikFormProps, FormikProps } from 'formik'
 
 export type InputProps = {
