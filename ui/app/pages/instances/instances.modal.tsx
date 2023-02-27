@@ -1,16 +1,14 @@
 import { Modal, Typography } from 'antd'
-import React, { useContext, useEffect } from 'react'
-import { Instance, InstanceContext } from '../../context/instance'
-import { fetchAccessToken } from '../workspaces/api'
+import React, { useEffect } from 'react'
+import { Instance } from '../../context/instance'
 import { ReactState } from '../workspaces/modal'
 import { ModalLayout } from '../../../components/layout'
-import { axios } from '../../lib/axios'
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik'
 import { InstanceSchema } from './instances.constants'
 import Input from '../../../components/input'
 import Button from '../../../components/button/button'
-import { useMutation, useQueryClient } from 'react-query'
-import { useAddInstance, useInstances } from './instances'
+import { useQueryClient } from 'react-query'
+import { useAddInstance } from './instances'
 
 type OmittedInstance = Omit<Instance, 'expiresAt'>
 
@@ -26,10 +24,22 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
                         <Text>Connect to a Flagbase instance to begin managing your flags</Text>
                     </div>
                     <Form className="flex flex-col gap-3">
-                        <Field component={Input} id="key" name="key" placeholder="Instance Name" />
-                        <Field component={Input} id="connectionString" name="connectionString" placeholder="URL" />
-                        <Field component={Input} id="accessKey" name="accessKey" placeholder="Key" />
-                        <Field component={Input} id="accessSecret" name="accessSecret" placeholder="***" />
+                        <Field component={Input} id="key" name="key" label="Name" placeholder="anything-goes" />
+                        <Field
+                            component={Input}
+                            id="connectionString"
+                            name="connectionString"
+                            label="Connection String"
+                            placeholder="URL"
+                        />
+                        <Field component={Input} id="accessKey" name="accessKey" label="Access Key" placeholder="Key" />
+                        <Field
+                            component={Input}
+                            id="accessSecret"
+                            name="accessSecret"
+                            label="Access Secret"
+                            placeholder="Secret"
+                        />
                         <Button className="mt-3" onClick={() => submitForm()}>
                             Add Instance
                         </Button>
