@@ -135,37 +135,34 @@ const Instances: React.FC = () => {
     }
 
     return (
-        <React.Fragment>
+        <div className="mt-5">
             <AddNewInstanceModal visible={visible} setVisible={setVisible} />
-            <Title level={3}>{constants.headline}</Title>
-            <Layout>
-                <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
-                    <div>
-                        <Button
-                            onClick={() => setVisible(true)}
-                            type="button"
-                            suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
-                        >
-                            Join instance
-                        </Button>
-                    </div>
-                    <div className="flex-auto">
-                        <Input
-                            onChange={(event) => setFilter(event.target.value)}
-                            placeholder="Search"
-                            prefix={<SearchOutlined />}
-                        />
-                    </div>
+            <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+                <div>
+                    <Button
+                        onClick={() => setVisible(true)}
+                        type="button"
+                        suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
+                    >
+                        Join instance
+                    </Button>
                 </div>
-                {instances && (
-                    <Table
-                        dataSource={transformInstancesToTableDataSource(instances)}
-                        loading={false}
-                        columns={instanceColumns}
+                <div className="flex-auto">
+                    <Input
+                        onChange={(event) => setFilter(event.target.value)}
+                        placeholder="Search"
+                        prefix={<SearchOutlined />}
                     />
-                )}
-            </Layout>
-        </React.Fragment>
+                </div>
+            </div>
+            {instances && (
+                <Table
+                    dataSource={transformInstancesToTableDataSource(instances)}
+                    loading={false}
+                    columns={instanceColumns}
+                />
+            )}
+        </div>
     )
 }
 

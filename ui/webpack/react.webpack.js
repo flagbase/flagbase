@@ -43,7 +43,7 @@ module.exports = {
                                     'link-color': '#1DA57A',
                                     'border-radius-base': '2px',
                                     'table-header-color': '#3E2F5B',
-                                    'body-background': '#f0f2f5',
+                                    'body-background': '#FFF',
                                     '@menu-item-font-size': '16px',
                                 },
                                 javascriptEnabled: true,
@@ -51,7 +51,6 @@ module.exports = {
                         },
                     },
                 ],
-               
             },
             {
                 test: /\.(jpe?g|gif|png)$/i,
@@ -70,9 +69,9 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                          name: 'images/[hash]-[name].[ext]',
+                            name: 'images/[hash]-[name].[ext]',
                         },
-                    }
+                    },
                 ],
             },
         ],

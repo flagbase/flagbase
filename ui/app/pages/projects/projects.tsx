@@ -113,37 +113,33 @@ const Projects: React.FC = () => {
     const { data: projects, status } = useProjects(instanceKey, workspaceKey)
 
     return (
-        <React.Fragment>
+        <div className="mt-5">
             <CreateProject visible={visible} setVisible={setVisible} />
 
-            <Title level={3}>Join a project</Title>
-
-            <Layout>
-                <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
-                    <Button
-                        onClick={() => setVisible(true)}
-                        type="button"
-                        suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
-                    >
-                        {constants.create}
-                    </Button>
-                    <div className="flex-auto">
-                        <Input
-                            onChange={(event) => setFilter(event.target.value)}
-                            placeholder="Search"
-                            prefix={<SearchOutlined />}
-                        />
-                    </div>
-                </div>
-                {projects && (
-                    <Table
-                        loading={status !== 'success'}
-                        dataSource={convertProjects(projects, instanceKey, filter)}
-                        columns={projectsColumn}
+            <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+                <Button
+                    onClick={() => setVisible(true)}
+                    type="button"
+                    suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
+                >
+                    {constants.create}
+                </Button>
+                <div className="flex-auto">
+                    <Input
+                        onChange={(event) => setFilter(event.target.value)}
+                        placeholder="Search"
+                        prefix={<SearchOutlined />}
                     />
-                )}
-            </Layout>
-        </React.Fragment>
+                </div>
+            </div>
+            {projects && (
+                <Table
+                    loading={status !== 'success'}
+                    dataSource={convertProjects(projects, instanceKey, filter)}
+                    columns={projectsColumn}
+                />
+            )}
+        </div>
     )
 }
 

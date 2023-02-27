@@ -12,8 +12,6 @@ import '../tailwind/tailwind.css'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
-// http://localhost:4000/%7BinstanceKey%7D/workspaces/%7BworkspaceKey%7D/projects/%7BprojectKey%7D/flag/%7BflagKey%7D
-
 export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/workspaces`
 export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects`
