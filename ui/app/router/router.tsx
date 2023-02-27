@@ -15,13 +15,16 @@ const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentK
 // http://localhost:4000/%7BinstanceKey%7D/workspaces/%7BworkspaceKey%7D/projects/%7BprojectKey%7D/flag/%7BflagKey%7D
 
 export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/workspaces`
+export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
+    `/${instanceKey}/workspaces/${workspaceKey}/projects`
 
 const Router: React.FC = () => (
     <BrowserRouter>
-        <PageLayout>
-            <Routes>
-                {/* Instances */}
+        <Routes>
+            {/* Instances */}
+            <Route path="/" element={<PageLayout />}>
                 <Route path="/" element={<Instances />} />
+
                 <Route path="/instances" element={<Instances />} />
                 {/* Workspaces */}
                 <Route path={`/${InstanceKey}/workspaces`} element={<Workspaces />} />
@@ -50,8 +53,8 @@ const Router: React.FC = () => (
                     path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/segments/${SegmentKey}`}
                     element={<>Segment view</>}
                 />
-            </Routes>
-        </PageLayout>
+            </Route>
+        </Routes>
     </BrowserRouter>
 )
 

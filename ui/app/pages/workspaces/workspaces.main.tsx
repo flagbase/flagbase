@@ -16,6 +16,7 @@ import { CreateWorkspace } from './modal'
 import Instances, { useInstances } from '../instances/instances'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { axios } from '../../lib/axios'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 
 type MainWorkspacesType = {
     instances: Instances
@@ -56,11 +57,12 @@ export const useRemoveWorkspace = (instance: Instance) => {
 export const useWorkspaces = (instanceKey: string, options?: any) => {
     const { data: instances } = useInstances({
         select: (instances: Instance[]) =>
-            instances.filter((i) => i.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase()),
+            instances.filter((i) => i.key.toLocaleLowerCase() === instanceKey?.toLocaleLowerCase()),
+        enabled: !!instanceKey,
     })
     const [instance] = instances || []
 
-    const query = useQuery<Workspace[]>(['workspaces', instance?.key], {
+    const query = useQuery<Workspace | Workspace[]>(['workspaces', instance?.key], {
         ...options,
         queryFn: () => fetchWorkspaces(instance.connectionString, instance.accessToken),
         onSuccess: () => {
@@ -100,12 +102,14 @@ const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
         <React.Fragment>
             <CreateWorkspace visible={visible} setVisible={setVisible} instance={instance} />
 
-            <div className="flex flex-col-reverse md:flex-row gap-3 items-center">
-                <div>
-                    <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
-                        {constants.create}
-                    </Button>
-                </div>
+            <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+                <Button
+                    onClick={() => setVisible(true)}
+                    type="button"
+                    suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
+                >
+                    {constants.create}
+                </Button>
                 <div className="flex-auto">
                     <Input
                         onChange={(event) => setFilter(event.target.value)}

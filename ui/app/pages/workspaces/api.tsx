@@ -38,7 +38,6 @@ export const fetchWorkspaces = async (url: string, accessToken: string) => {
             Authorization: `Bearer ${accessToken}`,
         },
     })
-    console.log('workspaces', result.data)
     return result.data
 }
 

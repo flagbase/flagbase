@@ -1,11 +1,13 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { Input, Layout, Modal, Typography } from 'antd'
-import { Content } from 'antd/lib/layout/layout'
-import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
+import { Modal, Typography } from 'antd'
+import { Field, Form, Formik } from 'formik'
+import React, { Dispatch, SetStateAction } from 'react'
 import { useParams } from 'react-router-dom'
+import Button from '../../../components/button'
+import Input from '../../../components/input'
 import { ModalLayout } from '../../../components/layout'
-import { InstanceContext } from '../../context/instance'
-import { createProject, deleteProject } from './api'
+import { deleteProject } from './api'
+import { useAddProject } from './projects'
 
 const { Title, Text } = Typography
 const { confirm } = Modal
@@ -26,84 +28,45 @@ function confirmDeleteProject(workspaceName: string, url: string, workspaceKey: 
     })
 }
 
-const defaultProject = {
-    name: '',
-    description: '',
-    tags: '',
-}
-
 const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateAction<boolean>> }> = ({
     visible,
     setVisible,
 }: WorkspaceModal) => {
-    const [confirmLoading, setConfirmLoading] = useState(false)
-    const [project, setProject] = useState(defaultProject)
-    const { workspaceKey } = useParams<{ workspaceKey: string }>()
-    if (!workspaceKey) {
-        return <> </>
-    }
+    const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
 
-    const { getEntity, selectedEntityId } = useContext(InstanceContext)
-
-    const currInstance = getEntity(selectedEntityId || '')
-    if (!currInstance) {
-        return <></>
-    }
+    const mutation = useAddProject(instanceKey, workspaceKey)
 
     return (
-        <Modal
-            title="Workspace"
-            visible={visible}
-            confirmLoading={confirmLoading}
-            onCancel={() => setVisible(false)}
-            onOk={() =>
-                createProject(
-                    currInstance.connectionString,
-                    project.name,
-                    project.description,
-                    project.tags.split(','),
-                    currInstance.accessToken,
-                    workspaceKey
-                ).then(() => {
-                    setVisible(false)
-                    setProject(defaultProject)
-                })
-            }
-        >
-            <ModalLayout>
-                <Content>
-                    <Title level={3}>Add a new project</Title>
-                    <Text>Connect to a Flagbase project to begin managing your flags</Text>
-                    <Input
-                        onChange={(event) =>
-                            setProject({
-                                ...project,
-                                name: event.target.value,
-                            })
-                        }
-                        placeholder="Project name"
-                    />
-                    <Input
-                        onChange={(event) =>
-                            setProject({
-                                ...project,
-                                description: event.target.value,
-                            })
-                        }
-                        placeholder="Description"
-                    />
-                    <Input
-                        onChange={(event) =>
-                            setProject({
-                                ...project,
-                                tags: event.target.value,
-                            })
-                        }
-                        placeholder="Tags (separate by comma)"
-                    />
-                </Content>
-            </ModalLayout>
-        </Modal>
+        <ModalLayout open={visible} onClose={() => setVisible(false)}>
+            <div className="flex flex-col gap-3">
+                <Title level={3}>Add a new project</Title>
+                <Text>Connect to a Flagbase project to begin managing your flags</Text>
+                <Formik
+                    initialValues={{
+                        name: '',
+                        description: '',
+                        tags: '',
+                    }}
+                    onSubmit={async (values) => {
+                        mutation.mutate({
+                            name: values.name,
+                            description: values.description,
+                            tags: values.tags.split(','),
+                        })
+                        setVisible(false)
+                    }}
+                >
+                    <Form className="flex flex-col gap-3">
+                        <Field component={Input} id="name" name="name" placeholder="Project name" />
+                        <Field component={Input} id="description" name="description" placeholder="Description" />
+                        <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                        <Button className="mt-3" type="submit">
+                            Add Project
+                        </Button>
+                    </Form>
+                </Formik>
+            </div>
+        </ModalLayout>
     )
 }
 

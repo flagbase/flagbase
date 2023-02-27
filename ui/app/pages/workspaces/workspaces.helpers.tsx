@@ -1,9 +1,9 @@
 import { Typography } from 'antd'
 import React from 'react'
 import { Instance } from '../../context/instance'
-import { Workspace } from '../../context/workspace'
 import { Entity } from '../../lib/entity-store/entity-store'
 import { Link } from 'react-router-dom'
+import { Workspace } from './api'
 
 interface ConvertedWorkspace {
     id: number
@@ -34,9 +34,9 @@ export const convertWorkspaces = (
             return {
                 id: index,
                 title: <Text>{currentWorkspace.attributes.name}</Text>,
-                href: `/projects/${instance?.id}/${currentWorkspace?.attributes.key}`,
+                href: `/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`,
                 name: (
-                    <Link to={`/projects/${instance?.id}/${currentWorkspace?.attributes.key}`}>
+                    <Link to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}>
                         <Text strong>{currentWorkspace.attributes.name}</Text>
                     </Link>
                 ),

@@ -1,44 +1,22 @@
 import React, { Fragment } from 'react'
 
 import { PageContainer } from './page-layout.styles'
-import { matchPath, useLocation } from 'react-router-dom'
+import { Outlet, useParams } from 'react-router-dom'
 import { Instance } from '../../app/context/instance'
 import flag from '../../assets/flagbaseLogo.svg'
 import { useState } from 'react'
 import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
-import {
-    ArrowLeftCircleIcon,
-    ArrowPathIcon,
-    Bars3Icon,
-    ChartPieIcon,
-    ChevronDownIcon,
-    ChevronLeftIcon,
-    CursorArrowRaysIcon,
-    FingerPrintIcon,
-    PhoneIcon,
-    PlayCircleIcon,
-    SquaresPlusIcon,
-    XMarkIcon,
-} from '@heroicons/react/24/outline'
+import { ArrowLeftCircleIcon, Bars3Icon, ChevronDownIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { useInstances } from '../../app/pages/instances/instances'
-import { getWorkspacesPath } from '../../app/router/router'
+import { getWorkspacePath, getWorkspacesPath } from '../../app/router/router'
 import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main'
 import { Workspace } from '../../app/pages/workspaces/api'
+import { useProjects } from '../../app/pages/projects/projects'
+import { Project } from '../../app/context/project'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
-const company = [
-    { name: 'About us', href: '#' },
-    { name: 'Careers', href: '#' },
-    { name: 'Support', href: '#' },
-    { name: 'Press', href: '#' },
-    { name: 'Blog', href: '#' },
-]
-
-const callsToAction = [
-    { name: 'Watch demo', href: '#', icon: PlayCircleIcon },
-    { name: 'Contact sales', href: '#', icon: PhoneIcon },
-]
+const projectsDescription = `A project is a collection of feature flags and settings. You can have multiple projects in a single workspace.`
 
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
@@ -149,12 +127,22 @@ const Dropdown = ({
     )
 }
 
-const getWorkspaceDropdown = (data: Workspace[]) => {
+const getProjectDropdown = (data: Project[]) => {
     return data.map((object) => {
         return {
             name: object.attributes.name,
             description: object.attributes.description,
             href: getWorkspacesPath(object.attributes.key),
+        }
+    })
+}
+
+const getWorkspaceDropdown = (data: Workspace[], instanceKey: string) => {
+    return data.map((object) => {
+        return {
+            name: object.attributes.name,
+            description: object.attributes.description,
+            href: getWorkspacePath(instanceKey, object.attributes.key),
         }
     })
 }
@@ -175,11 +163,13 @@ const MobileNavigation = ({
     setMobileMenuOpen,
     instances,
     workspaces,
+    projects,
 }: {
     mobileMenuOpen: boolean
     setMobileMenuOpen: any
     instances?: Instance[]
     workspaces?: Workspace[]
+    projects?: Project[]
 }) => {
     return (
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -215,7 +205,15 @@ const MobileNavigation = ({
                                     name="Workspaces"
                                     description={workspaceDescription}
                                     href="/"
-                                    children={getWorkspaceDropdown(workspaces)}
+                                    children={getProjectDropdown(workspaces)}
+                                />
+                            )}
+                            {projects && (
+                                <MobileDropdown
+                                    name="Workspaces"
+                                    description={workspaceDescription}
+                                    href="/"
+                                    children={getProjectDropdown(projects)}
                                 />
                             )}
                         </div>
@@ -227,12 +225,13 @@ const MobileNavigation = ({
 }
 
 const Header = () => {
-    const { pathname } = useLocation()
-    const match = matchPath({ path: `/:instanceKey/workspaces` }, pathname)
-    const instanceKey = match?.params.instanceKey
+    const { instanceKey, workspaceKey, projectsKey } =
+        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const { data: instances } = useInstances()
     const { data: workspaces } = useWorkspaces(instanceKey || '')
+    const { data: projects } = useProjects(instanceKey, workspaceKey)
 
     return (
         <header className="bg-white shadow">
@@ -267,7 +266,15 @@ const Header = () => {
                             name="Workspaces"
                             description={workspaceDescription}
                             href={getWorkspacesPath(instanceKey || '')}
-                            children={getWorkspaceDropdown(workspaces)}
+                            children={getWorkspaceDropdown(workspaces, instanceKey)}
+                        />
+                    )}
+                    {projects && (
+                        <Dropdown
+                            name="Projects"
+                            description={projectsDescription}
+                            href={getWorkspacesPath(instanceKey || '')}
+                            children={getProjectDropdown(projects)}
                         />
                     )}
                 </Popover.Group>
@@ -287,12 +294,14 @@ const Header = () => {
     )
 }
 
-const PageLayout: React.FC = ({ children }) => {
+const PageLayout: React.FC = () => {
     return (
         <>
             <Header />
 
-            <PageContainer>{children}</PageContainer>
+            <PageContainer>
+                <Outlet />
+            </PageContainer>
         </>
     )
 }

@@ -37,9 +37,7 @@ const Workspaces: React.FC = () => {
             <Tabs defaultActiveKey="1">
                 <TabPane tab="Workspaces" key="1">
                     <Layout>
-                        <Content>
-                            <MainWorkspaces instances={instances} />
-                        </Content>
+                        <MainWorkspaces instances={instances} />
                     </Layout>
                 </TabPane>
             </Tabs>

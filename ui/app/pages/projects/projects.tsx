@@ -1,59 +1,42 @@
-import { Alert, Col, Dropdown, Input, Menu, notification, Row, Typography } from 'antd'
-import { PlusCircleOutlined, SearchOutlined } from '@ant-design/icons'
+import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd'
+import { SearchOutlined } from '@ant-design/icons'
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Attributes, Project, ProjectContext } from '../../context/project'
+import { Attributes, Project } from '../../context/project'
 import Table from '../../../components/table/table'
-import { fetchProjects } from './api'
-import { Instance, InstanceContext } from '../../context/instance'
-import { Entities, Entity } from '../../lib/entity-store/entity-store'
+import { createProject, fetchProjects } from './api'
+import { Instance } from '../../context/instance'
 import { Layout, Content } from '../../../components/layout'
 import Button from '../../../components/button'
 import { CreateProject } from './projects.modal'
 import { Link } from 'react-router-dom'
-import { constants as instanceConstants } from '../instances/instances.constants'
 import { constants, projectsColumn } from './projects.constants'
-import merge from 'lodash.merge'
+import { useInstances } from '../instances/instances'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useWorkspaces } from '../workspaces/workspaces.main'
+import { Workspace } from '../workspaces/api'
+import { axios } from '../../lib/axios'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import Input from '../../../components/input'
 
 const { Title, Text } = Typography
 
-export const convertProjects = (
-    projectList: Entities<Project>,
-    instance: Instance,
-    filter: string = '',
-    addEntity?: (entity: Entity<Project>) => void,
-    removeEntity?: (entityId: string) => void
-) => {
+export const convertProjects = (projectList: Project[], instanceKey: string, filter: string = '') => {
     if (!projectList) {
         return []
     }
 
     return Object.values(projectList)
-        .filter(
-            (project): project is Entity<Project> => project !== undefined && project.attributes.key.includes(filter)
-        )
-        .map((project: Entity<Project>, index: number) => {
-            const updateProject = (update: Partial<Attributes>) => {
-                if (addEntity) {
-                    const mergedEntity = merge(project, { attributes: update })
-                    addEntity(mergedEntity)
-                }
-            }
+        .filter((project): project is Project => project !== undefined && project.attributes.key.includes(filter))
+        .map((project: Project, index: number) => {
+            const updateProject = (update: Partial<Attributes>) => {}
 
-            const menu = (
-                <Menu>
-                    {removeEntity && (
-                        <Menu.Item onClick={() => removeEntity(project.id)} key="1">
-                            Remove
-                        </Menu.Item>
-                    )}
-                </Menu>
-            )
+            const menu = <Menu></Menu>
             return {
                 id: index,
                 title: project.attributes.name,
-                href: `/flags/${instance?.id}/${project?.id}`,
+                href: `/flags/${instanceKey}/${project?.id}`,
                 name: (
                     <Text editable={{ onChange: (value) => updateProject({ name: value }) }}>
                         {project.attributes.name}
@@ -68,12 +51,54 @@ export const convertProjects = (
                 action: (
                     <>
                         <Dropdown overlay={menu}>
-                            <Link to={`/flags/${instance?.id}/${project?.id}`}>Connect</Link>
+                            <Link to={`/flags/${instanceKey}/${project?.id}`}>Connect</Link>
                         </Dropdown>
                     </>
                 ),
+                key: project.attributes.key,
             }
         })
+}
+
+export const useAddProject = (instanceKey: string, workspaceKey: string) => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (values: Omit<Workspace['attributes'], 'key'>) => {
+            await createProject(values.name, values.description, values.tags, workspaceKey)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects', instanceKey, workspaceKey] })
+        },
+    })
+    return mutation
+}
+
+export const useProjects = (instanceKey: string, workspaceKey: string, options?: any) => {
+    const { data: instances } = useInstances({
+        select: (instances: Instance[]) =>
+            instances.filter((i) => i?.key?.toLocaleLowerCase() === instanceKey?.toLocaleLowerCase()),
+    })
+    const [instance] = instances || []
+
+    const { data: workspace } = useWorkspaces(instance?.key, {
+        select: (workspaces: Workspace[]) => {
+            const filtered = workspaces.filter(
+                (w) => w.attributes.key.toLocaleLowerCase() === workspaceKey.toLocaleLowerCase()
+            )
+            return filtered[0]
+        },
+    })
+
+    const query = useQuery<Project[]>(['projects', instance?.key, workspace?.attributes?.key], {
+        ...options,
+        queryFn: () => fetchProjects(workspaceKey),
+        onSuccess: () => {
+            axios.defaults.baseURL = instance.connectionString
+            axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
+        },
+        enabled: !!instance?.key && !!workspace?.attributes?.key,
+    })
+    return query
 }
 
 const Projects: React.FC = () => {
@@ -84,52 +109,8 @@ const Projects: React.FC = () => {
 
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
-    const { getEntity, setSelectedEntityId } = useContext(InstanceContext)
-    const {
-        entities: projects,
-        addEntity,
-        addEntities,
-        setStatus,
-        status,
-        clearEntities,
-        removeEntity,
-    } = useContext(ProjectContext)
 
-    const instance = getEntity(instanceKey)
-    if (!instance) {
-        return <Alert message={instanceConstants.error} type="error" />
-    }
-
-    useEffect(() => {
-        setStatus('loading')
-        setSelectedEntityId(instanceKey)
-        clearEntities()
-        fetchProjects(instance.connectionString, workspaceKey, instance.accessToken)
-            .then((result) => {
-                if (result.length == 0) {
-                    return
-                }
-                const projectList = result.reduce((previous, workspace) => {
-                    return {
-                        ...previous,
-                        [workspace.id]: workspace,
-                    }
-                }, {})
-                addEntities(projectList)
-            })
-            .catch(() => {
-                notification.error({
-                    message: constants.error,
-                })
-            })
-            .finally(() => {
-                setStatus('loaded')
-            })
-
-        return () => {
-            setStatus('idle')
-        }
-    }, [workspaceKey])
+    const { data: projects, status } = useProjects(instanceKey, workspaceKey)
 
     return (
         <React.Fragment>
@@ -138,27 +119,29 @@ const Projects: React.FC = () => {
             <Title level={3}>Join a project</Title>
 
             <Layout>
-                <Content>
-                    <Row wrap={false} gutter={12}>
-                        <Col flex="none">
-                            <Button onClick={() => setVisible(true)} type="primary" icon={<PlusCircleOutlined />}>
-                                {constants.create}
-                            </Button>
-                        </Col>
-                        <Col flex="auto">
-                            <Input
-                                onChange={(event) => setFilter(event.target.value)}
-                                placeholder="Search"
-                                prefix={<SearchOutlined />}
-                            />
-                        </Col>
-                    </Row>
+                <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+                    <Button
+                        onClick={() => setVisible(true)}
+                        type="button"
+                        suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
+                    >
+                        {constants.create}
+                    </Button>
+                    <div className="flex-auto">
+                        <Input
+                            onChange={(event) => setFilter(event.target.value)}
+                            placeholder="Search"
+                            prefix={<SearchOutlined />}
+                        />
+                    </div>
+                </div>
+                {projects && (
                     <Table
-                        loading={status !== 'loaded'}
-                        dataSource={convertProjects(projects, instance, filter, addEntity, removeEntity)}
+                        loading={status !== 'success'}
+                        dataSource={convertProjects(projects, instanceKey, filter)}
                         columns={projectsColumn}
                     />
-                </Content>
+                )}
             </Layout>
         </React.Fragment>
     )
