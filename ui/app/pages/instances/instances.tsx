@@ -12,7 +12,7 @@ import { constants, instanceColumns } from './instances.constants'
 import { Link } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
 import '../../tailwind/tailwind.css'
-import { useMutation, useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { axios } from '../../lib/axios'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import Input from '../../../components/input'
@@ -51,6 +51,24 @@ export const useAddInstance = () => {
     return mutation
 }
 
+export const useRemoveInstance = () => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
+            axios.defaults.baseURL = instance.connectionString
+            const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
+            const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
+            const filteredInstances = currInstances.filter((i: Instance) => i.key !== instance.key)
+            localStorage.setItem('instances', JSON.stringify(filteredInstances))
+            return { ...instance, expiresAt: result.expiresAt }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['instances'])
+        },
+    })
+    return mutation
+}
+
 export const useInstances = (options?: any) => {
     // Define a query to fetch the instances object from the server
     const query = useQuery<Instances>(['instances'], getInstances, {
@@ -66,9 +84,8 @@ const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const { removeEntity, addEntity } = useContext(InstanceContext)
-
     const { data: instances } = useInstances()
+    const removeInstance = useRemoveInstance()
 
     useEffect(() => {
         if (instances) {
@@ -85,7 +102,7 @@ const Instances: React.FC = () => {
     }, [instances])
 
     const deleteInstance = (deletedSession: Instance) => {
-        removeEntity(deletedSession.id)
+        removeInstance.mutate(deletedSession)
     }
 
     const transformInstancesToTableDataSource = (instanceList: Instances): ConvertedInstance[] => {

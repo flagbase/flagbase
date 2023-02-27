@@ -119,8 +119,13 @@ const Dropdown = ({
                 <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
                     <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
                         <a href={href} className="flex items-center gap-1 mb-2">
-                            <ArrowLeftCircleIcon className="h-5 w-5 flex-none text-indigo-600" aria-hidden="true" />
-                            <h3 className="text-base font-semibold leading-6 text-indigo-600">{name}</h3>
+                            <ArrowLeftCircleIcon
+                                className="h-5 w-5 flex-none text-indigo-600 hover:text-indigo-800"
+                                aria-hidden="true"
+                            />
+                            <h3 className="text-base font-semibold leading-6 text-indigo-600 hover:text-indigo-800">
+                                {name}
+                            </h3>
                         </a>
                         <p className="mt-1 text-sm text-gray-500">{description}</p>
                     </div>
@@ -429,13 +434,13 @@ const PageHeading = () => {
                             <>
                                 <Listbox.Label className="sr-only"> Change published status </Listbox.Label>
                                 <div className="relative">
-                                    <div className="inline-flex divide-x divide-purple-600 rounded-md shadow-sm">
-                                        <div className="inline-flex divide-x divide-purple-600 rounded-md shadow-sm">
-                                            <div className="inline-flex items-center rounded-l-md border border-transparent bg-purple-500 py-2 pl-3 pr-4 text-white shadow-sm">
+                                    <div className="inline-flex divide-x divide-green-600 rounded-md shadow-sm">
+                                        <div className="inline-flex divide-x divide-green-600 rounded-md shadow-sm">
+                                            <div className="inline-flex items-center rounded-l-md border border-transparent bg-green-500 py-2 pl-3 pr-4 text-white shadow-sm">
                                                 <CheckIcon className="h-5 w-5" aria-hidden="true" />
                                                 <p className="ml-2.5 text-sm font-medium">{selected.name}</p>
                                             </div>
-                                            <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-purple-500 p-2 text-sm font-medium text-white hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-50">
+                                            <Listbox.Button className="inline-flex items-center rounded-l-none rounded-r-md bg-green-500 p-2 text-sm font-medium text-white hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 focus:ring-offset-gray-50">
                                                 <span className="sr-only">Change published status</span>
                                                 <ChevronDownIcon className="h-5 w-5 text-white" aria-hidden="true" />
                                             </Listbox.Button>
