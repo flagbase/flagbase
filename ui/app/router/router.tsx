@@ -18,6 +18,12 @@ export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/works
 export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects`
 
+export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
+    `/${instanceKey}/workspaces/${workspaceKey}/projects`
+
+export const getProjectPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
+    `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`
+
 const Router: React.FC = () => (
     <BrowserRouter>
         <Routes>
