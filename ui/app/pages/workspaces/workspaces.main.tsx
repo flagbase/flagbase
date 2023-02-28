@@ -103,11 +103,7 @@ const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
             <CreateWorkspace visible={visible} setVisible={setVisible} instance={instance} />
 
             <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
-                <Button
-                    onClick={() => setVisible(true)}
-                    type="button"
-                    suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
-                >
+                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
                     {constants.create}
                 </Button>
                 <div className="flex-auto">

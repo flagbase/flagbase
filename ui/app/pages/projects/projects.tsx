@@ -17,10 +17,11 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useWorkspaces } from '../workspaces/workspaces.main'
 import { Workspace } from '../workspaces/api'
 import { axios } from '../../lib/axios'
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { PlusCircleIcon, PlusIcon } from '@heroicons/react/24/outline'
 import Input from '../../../components/input'
+import EmptyState from '../../../components/empty-state'
 
-const { Title, Text } = Typography
+const { Text } = Typography
 
 export const convertProjects = (projectList: Project[], instanceKey: string, filter: string = '') => {
     if (!projectList) {
@@ -137,6 +138,13 @@ const Projects: React.FC = () => {
                     loading={status !== 'success'}
                     dataSource={convertProjects(projects, instanceKey, filter)}
                     columns={projectsColumn}
+                    emptyState={
+                        <EmptyState
+                            title="No Projects"
+                            description={'Get started by creating a new project.'}
+                            cta={<Button onClick={() => setVisible(true)}>Create Project</Button>}
+                        />
+                    }
                 />
             )}
         </div>

@@ -156,11 +156,7 @@ const Instances: React.FC = () => {
             <AddNewInstanceModal visible={visible} setVisible={setVisible} />
             <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
                 <div>
-                    <Button
-                        onClick={() => setVisible(true)}
-                        type="button"
-                        suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
-                    >
+                    <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
                         Join instance
                     </Button>
                 </div>

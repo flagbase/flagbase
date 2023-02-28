@@ -29,15 +29,9 @@ const Workspaces: React.FC = () => {
     }
 
     return (
-        <React.Fragment>
-            <Tabs defaultActiveKey="1">
-                <TabPane tab="Workspaces" key="1">
-                    <Layout>
-                        <MainWorkspaces instances={instances} />
-                    </Layout>
-                </TabPane>
-            </Tabs>
-        </React.Fragment>
+        <div className="mt-5">
+            <MainWorkspaces instances={instances} />
+        </div>
     )
 }
 
