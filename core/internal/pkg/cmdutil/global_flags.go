@@ -2,6 +2,8 @@ package cmdutil
 
 import (
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/osenv"
+	"strconv"
 
 	"github.com/urfave/cli/v2"
 )
@@ -10,11 +12,11 @@ const (
 	// PGConnStrFlag Postgres URL Flag
 	PGConnStrFlag = "pg-url"
 	// RedisAddr Redis address (host:port)
-	RedisAddr = "redis-addr"
+	RedisAddrFlag = "redis-addr"
 	// RedisPassword Redis password
-	RedisPassword = "redis-pw"
+	RedisPasswordFlag = "redis-pw"
 	// RedisDB Redis DB number
-	RedisDB = "redis-db"
+	RedisDBFlag = "redis-db"
 	// VerboseFlag Verbose flag (show debug logging)
 	VerboseFlag = "verbose"
 )
@@ -24,22 +26,28 @@ var GlobalFlags []cli.Flag = []cli.Flag{
 	&cli.StringFlag{
 		Name:  PGConnStrFlag,
 		Usage: "Postgres Connection URL",
-		Value: cons.DefaultPGConnStr,
+		Value: osenv.GetEnvOrDefault(osenv.PGConnStrEnv, cons.DefaultPGConnStr),
 	},
 	&cli.StringFlag{
-		Name:  RedisAddr,
+		Name:  RedisAddrFlag,
 		Usage: "Redis address (host:port)",
-		Value: cons.DefaultRedisAddr,
+		Value: osenv.GetEnvOrDefault(osenv.RedisAddrEnv, cons.DefaultRedisAddr),
 	},
 	&cli.StringFlag{
-		Name:  RedisPassword,
+		Name:  RedisPasswordFlag,
 		Usage: "Redis password",
-		Value: cons.DefaultRedisPassword,
+		Value: osenv.GetEnvOrDefault(osenv.RedisPasswordEnv, cons.DefaultRedisPassword),
 	},
 	&cli.UintFlag{
-		Name:  RedisDB,
+		Name:  RedisDBFlag,
 		Usage: "Redis database (default: 0)",
-		Value: uint(cons.DefaultRedisDB),
+		Value: func() uint {
+			val, err := strconv.ParseUint(osenv.GetEnvOrDefault(osenv.RedisDBEnv, strconv.FormatUint(uint64(cons.DefaultRedisDB), 10)), 10, 0)
+			if err != nil {
+				panic(err)
+			}
+			return uint(val)
+		}(),
 	},
 	&cli.BoolFlag{
 		Name:    VerboseFlag,

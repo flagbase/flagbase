@@ -28,9 +28,9 @@ func StartAPI(ctx *cli.Context, senv *srvenv.Env, wg *sync.WaitGroup) {
 		Host:          ctx.String(HostFlag),
 		APIPort:       ctx.Int(APIPortFlag),
 		PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
-		RedisAddr:     ctx.String(cmdutil.RedisAddr),
-		RedisPassword: ctx.String(cmdutil.RedisPassword),
-		RedisDB:       int(ctx.Uint(cmdutil.RedisDB)),
+		RedisAddr:     ctx.String(cmdutil.RedisAddrFlag),
+		RedisPassword: ctx.String(cmdutil.RedisPasswordFlag),
+		RedisDB:       int(ctx.Uint(cmdutil.RedisDBFlag)),
 		Verbose:       ctx.Bool(cmdutil.VerboseFlag),
 	}
 
