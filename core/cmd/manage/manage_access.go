@@ -67,9 +67,9 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 		senv, err := srv.Setup(srv.Config{
 			Ctx:           context.Background(),
 			PGConnStr:     ctx.String(cmdutil.PGConnStrFlag),
-			RedisAddr:     ctx.String(cmdutil.RedisAddr),
-			RedisPassword: ctx.String(cmdutil.RedisPassword),
-			RedisDB:       int(ctx.Uint(cmdutil.RedisDB)),
+			RedisAddr:     ctx.String(cmdutil.RedisAddrFlag),
+			RedisPassword: ctx.String(cmdutil.RedisPasswordFlag),
+			RedisDB:       int(ctx.Uint(cmdutil.RedisDBFlag)),
 			Verbose:       ctx.Bool(cmdutil.VerboseFlag),
 		})
 		if err != nil {

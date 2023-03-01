@@ -14,7 +14,7 @@ var (
 	// DefaultRedisPassword default redis password
 	DefaultRedisPassword string = ""
 	// DefaultRedisDB default redis database number
-	DefaultRedisDB int = 0
+	DefaultRedisDB uint = 0
 	// DefaultAPIPort default HTTP API server port
 	DefaultAPIPort int = 5051
 	// DefaultStreamerPort default streamer server port
