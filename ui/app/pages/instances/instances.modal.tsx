@@ -1,5 +1,5 @@
-import { Modal, Typography } from 'antd'
-import React, { useEffect } from 'react'
+import { Typography } from 'antd'
+import React, { useEffect, useState } from 'react'
 import { Instance } from '../../context/instance'
 import { ReactState } from '../workspaces/modal'
 import { ModalLayout } from '../../../components/layout'
@@ -9,6 +9,8 @@ import Input from '../../../components/input'
 import Button from '../../../components/button/button'
 import { useQueryClient } from 'react-query'
 import { useAddInstance } from './instances'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { Notification } from '../../../components/notification/notification'
 
 type OmittedInstance = Omit<Instance, 'expiresAt'>
 
@@ -39,8 +41,13 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
                             name="accessSecret"
                             label="Access Secret"
                             placeholder="Secret"
+                            type="password"
                         />
-                        <Button className="mt-3" onClick={() => submitForm()}>
+                        <Button
+                            className="mt-3 py-2 justify-center"
+                            suffix={PlusCircleIcon}
+                            onClick={() => submitForm()}
+                        >
                             Add Instance
                         </Button>
                     </Form>
@@ -51,6 +58,7 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
 }
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
+    const [showError, setShowError] = useState(false)
     const mutation = useAddInstance()
     const { isSuccess, isError } = mutation
     const queryClient = useQueryClient()
@@ -69,28 +77,36 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     }, [isSuccess])
 
     useEffect(() => {
-        if (isError) {
-            Modal.error({
-                title: 'Could not add this instance',
-                content: `Did you make sure you added the correct key and secret? Error: ${mutation.error}`,
-            })
-        }
+        setShowError(isError)
     }, [isError])
 
     return (
-        <Formik
-            initialValues={{
-                id: '',
-                connectionString: '',
-                key: '',
-                accessToken: '',
-                accessSecret: '',
-                accessKey: '',
-            }}
-            onSubmit={onSubmit}
-            validationSchema={InstanceSchema}
-        >
-            {({ errors, touched }) => <InstanceForm visible={visible} setVisible={setVisible} errors={errors} />}
-        </Formik>
+        <>
+            <Notification
+                title="Could not add this instance"
+                content="Did you make sure you added the correct key and secret?"
+                show={showError}
+                setShow={setShowError}
+            />
+            <Notification
+                title="Successfully added this instance"
+                content="You can now manage your flags"
+                show={isSuccess}
+            />
+            <Formik
+                initialValues={{
+                    id: '',
+                    connectionString: '',
+                    key: '',
+                    accessToken: '',
+                    accessSecret: '',
+                    accessKey: '',
+                }}
+                onSubmit={onSubmit}
+                validationSchema={InstanceSchema}
+            >
+                {({ errors }) => <InstanceForm visible={visible} setVisible={setVisible} errors={errors} />}
+            </Formik>
+        </>
     )
 }

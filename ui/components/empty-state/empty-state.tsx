@@ -1,4 +1,4 @@
-import { BackspaceIcon, BackwardIcon, PlusIcon } from '@heroicons/react/24/outline'
+import { BackspaceIcon } from '@heroicons/react/24/outline'
 import React from 'react'
 import Button from '../button/button'
 
@@ -6,8 +6,7 @@ const EmptyProject = ({
     title,
     description,
     cta = (
-        <Button prefix={BackspaceIcon} goBack>
-            {' '}
+        <Button className="py-2" prefix={BackspaceIcon} goBack>
             Go back
         </Button>
     ),

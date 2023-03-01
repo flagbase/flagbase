@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom'
 
 import { RouteParams } from './router.types'
 import Instances from '../pages/instances'
@@ -9,6 +9,7 @@ import Flags from '../pages/flags'
 import Segments from '../pages/segments'
 import PageLayout from '../../components/page-layout'
 import '../tailwind/tailwind.css'
+import { PageHeadings } from '../../components/page-layout/page-layout'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -27,14 +28,23 @@ const Router: React.FC = () => (
         <Routes>
             {/* Instances */}
             <Route path="/" element={<PageLayout />}>
-                <Route path="/" element={<Instances />} />
-
-                <Route path="/instances" element={<Instances />} />
+                <Route path="/" element={<Navigate to="/instances" />} />
+                <Route path="/instances" element={<PageHeadings />}>
+                    <Route path=":activeTab" element={<Instances />} />
+                    <Route path="" element={<Instances />} />
+                </Route>
                 {/* Workspaces */}
-                <Route path={`/${InstanceKey}/workspaces`} element={<Workspaces />} />
-                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}`} element={<>Workspace view</>} />
+                <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
+                    <Route path="" element={<Workspaces />} />
+                    <Route path=":activeTab" element={<Workspaces />} />
+
+                    <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}`} element={<>Workspace view</>} />
+                </Route>
                 {/* Projects */}
-                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects`} element={<Projects />} />
+                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects`} element={<PageHeadings />}>
+                    <Route path="" element={<Projects />} />
+                    <Route path=":activeTab" element={<Projects />} />
+                </Route>
                 <Route
                     path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}`}
                     element={<>Project view</>}

@@ -1,4 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Modal, Typography } from 'antd'
 import { Field, Form, Formik } from 'formik'
 import React, { Dispatch, SetStateAction } from 'react'
@@ -39,8 +40,10 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
     return (
         <ModalLayout open={visible} onClose={() => setVisible(false)}>
             <div className="flex flex-col gap-3">
-                <Title level={3}>Add a new project</Title>
-                <Text>Connect to a Flagbase project to begin managing your flags</Text>
+                <div className="text-center">
+                    <Title level={3}>Add a new project</Title>
+                    <Text>Connect to a Flagbase project to begin managing your flags</Text>
+                </div>
                 <Formik
                     initialValues={{
                         name: '',
@@ -60,7 +63,7 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
                         <Field component={Input} id="name" name="name" placeholder="Project name" />
                         <Field component={Input} id="description" name="description" placeholder="Description" />
                         <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
-                        <Button className="mt-3" type="submit">
+                        <Button className="mt-3 py-2 justify-center" type="submit" suffix={PlusCircleIcon}>
                             Add Project
                         </Button>
                     </Form>

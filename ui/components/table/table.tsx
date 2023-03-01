@@ -21,9 +21,16 @@ const Table: React.FC<TableProps> = ({
     loading,
     columns,
     dataSource,
-    emptyState = <EmptyState title="Nada" description="Nothing" button={<Button> Go back</Button>} callback={null} />,
+    emptyState = (
+        <EmptyState
+            title="Nada"
+            description="Nothing"
+            button={<Button className="py-2"> Go back</Button>}
+            callback={null}
+        />
+    ),
 }) => {
-    return (dataSource?.length || 0) > 0 ? (
+    return (loading || dataSource?.length || 0) > 0 ? (
         <StyledTable loading={loading} dataSource={dataSource} columns={columns}></StyledTable>
     ) : (
         emptyState

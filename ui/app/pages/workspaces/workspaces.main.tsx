@@ -1,11 +1,9 @@
 import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { PlusCircleOutlined } from '@ant-design/icons'
 import { Alert, notification } from 'antd'
 import Table from '../../../components/table/table'
 import { Instance } from '../../context/instance'
-import { Workspace } from '../../context/workspace'
-import { createWorkspace, deleteWorkspace, fetchWorkspaces } from './api'
+import { createWorkspace, deleteWorkspace, fetchWorkspaces, Workspace } from './api'
 import Button from '../../../components/button'
 import { constants, workspaceColumns } from './workspace.constants'
 import { constants as instanceConstants } from '../instances/instances.constants'
@@ -74,7 +72,7 @@ export const useWorkspaces = (instanceKey: string, options?: any) => {
     return query
 }
 
-const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
+const MainWorkspaces = ({ instances }: { instances: Instance[] }) => {
     const { instanceKey } = useParams<{ instanceKey: string }>()
 
     if (!instanceKey) {
@@ -102,7 +100,7 @@ const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
         <React.Fragment>
             <CreateWorkspace visible={visible} setVisible={setVisible} instance={instance} />
 
-            <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
+            <div className="flex flex-col-reverse md:flex-row gap-3 pb-5 items-stretch">
                 <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
                     {constants.create}
                 </Button>
@@ -110,7 +108,7 @@ const MainWorkspaces: React.FC<MainWorkspacesType> = ({ instances }) => {
                     <Input
                         onChange={(event) => setFilter(event.target.value)}
                         placeholder="Search"
-                        prefix={<SearchOutlined />}
+                        prefix={SearchOutlined}
                     />
                 </div>
             </div>

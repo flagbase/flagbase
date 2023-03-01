@@ -31,31 +31,14 @@ export const convertProjects = (projectList: Project[], instanceKey: string, fil
     return Object.values(projectList)
         .filter((project): project is Project => project !== undefined && project.attributes.key.includes(filter))
         .map((project: Project, index: number) => {
-            const updateProject = (update: Partial<Attributes>) => {}
-
-            const menu = <Menu></Menu>
             return {
                 id: index,
                 title: project.attributes.name,
                 href: `/flags/${instanceKey}/${project?.id}`,
-                name: (
-                    <Text editable={{ onChange: (value) => updateProject({ name: value }) }}>
-                        {project.attributes.name}
-                    </Text>
-                ),
-                description: (
-                    <Text editable={{ onChange: (value) => updateProject({ description: value }) }}>
-                        {project.attributes.description}
-                    </Text>
-                ),
+                name: <Text>{project.attributes.name}</Text>,
+                description: <Text>{project.attributes.description}</Text>,
                 tags: project.attributes.tags?.join(', '),
-                action: (
-                    <>
-                        <Dropdown overlay={menu}>
-                            <Link to={`/flags/${instanceKey}/${project?.id}`}>Connect</Link>
-                        </Dropdown>
-                    </>
-                ),
+                action: <Link to={`/flags/${instanceKey}/${project?.id}`}>Connect</Link>,
                 key: project.attributes.key,
             }
         })
@@ -83,10 +66,10 @@ export const useProjects = (instanceKey: string, workspaceKey: string, options?:
 
     const { data: workspace } = useWorkspaces(instance?.key, {
         select: (workspaces: Workspace[]) => {
-            const filtered = workspaces.filter(
-                (w) => w.attributes.key.toLocaleLowerCase() === workspaceKey.toLocaleLowerCase()
+            const [filtered] = workspaces.filter(
+                (workspace) => workspace?.attributes?.key.toLocaleLowerCase() === workspaceKey?.toLocaleLowerCase()
             )
-            return filtered[0]
+            return filtered
         },
     })
 
@@ -117,19 +100,15 @@ const Projects: React.FC = () => {
         <div className="mt-5">
             <CreateProject visible={visible} setVisible={setVisible} />
 
-            <div className="flex flex-col-reverse md:flex-row gap-3 items-center pb-5">
-                <Button
-                    onClick={() => setVisible(true)}
-                    type="button"
-                    suffix={<PlusCircleIcon className="ml-3 -mr-1 h-5 w-5" aria-hidden="true" />}
-                >
+            <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
+                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
                     {constants.create}
                 </Button>
                 <div className="flex-auto">
                     <Input
                         onChange={(event) => setFilter(event.target.value)}
                         placeholder="Search"
-                        prefix={<SearchOutlined />}
+                        prefix={SearchOutlined}
                     />
                 </div>
             </div>
@@ -142,7 +121,11 @@ const Projects: React.FC = () => {
                         <EmptyState
                             title="No Projects"
                             description={'Get started by creating a new project.'}
-                            cta={<Button onClick={() => setVisible(true)}>Create Project</Button>}
+                            cta={
+                                <Button className="py-2" suffix={PlusCircleIcon} onClick={() => setVisible(true)}>
+                                    Create Project
+                                </Button>
+                            }
                         />
                     }
                 />
