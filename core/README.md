@@ -32,7 +32,7 @@ docker-compose down -v
 ### Linting
 To lint locally via docker:
 ```
-golangci-lintdocker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.51.2 golangci-lint run
+docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.51.2 golangci-lint run
 ```
 
 ## Contributing
