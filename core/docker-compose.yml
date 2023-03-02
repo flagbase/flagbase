@@ -26,7 +26,7 @@ services:
     container_name: flagbase-cache
     image: redis:latest
     ports:
-      - 6379:6379
+      - 6380:6379
 
   db:
     container_name: flagbase-db
@@ -43,12 +43,10 @@ services:
 
   migrations:
     container_name: flagbase-migrations
-    image: migrate/migrate
-    entrypoint: ["/bin/sh"]
-    command: ["/scripts/wait-for.sh", "db:5432", "--", "./migrate", "-path", "/migrations", "-database",  "postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable", "up"]
-    volumes:
-      - ./scripts/wait-for.sh:/scripts/wait-for.sh
-      - ./migrations:/migrations
+    build: .
+    command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; ./bin/flagbased manage migrate up'
+    environment:
+      FLAGBASE_CORE_PG_URL: postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable
     depends_on:
       - db
     links:
