@@ -3,12 +3,17 @@ version: "3"
 services:
   core:
     container_name: flagbase-core
-    build: .
-    command: ["air"]
+    image: cosmtrek/air
+    working_dir: /go/src/github.com/flagbase/flagbase/core
     ports:
       - 5051:5051
       - 7051:7051
       - 9051:9051
+    environment:
+      FLAGBASE_CORE_PG_URL: postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable
+      FLAGBASE_CORE_REDIR_ADDR: redis:6379
+      FLAGBASE_CORE_REDIS_PASSWORD: ""
+      FLAGBASE_CORE_REDIS_DB: 0
     volumes:
       - ./:/go/src/github.com/flagbase/flagbase/core
     depends_on:

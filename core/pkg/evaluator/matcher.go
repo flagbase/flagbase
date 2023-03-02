@@ -11,7 +11,7 @@ import (
 type EvalMapper map[model.Operator](func(input interface{}, rule string) bool)
 
 // Matcher instance of EvalMapper, used to select the appropriate comparator given the operand
-var Matcher EvalMapper = EvalMapper{
+var Matcher = EvalMapper{
 	(model.OPEqual): func(i interface{}, r string) bool {
 		iS, ok := i.(string)
 		if !ok {

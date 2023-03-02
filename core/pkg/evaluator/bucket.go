@@ -15,7 +15,7 @@ func deriveVariation(
 	saltVal := binary.LittleEndian.Uint16([]byte(salt))
 	userBucket := int8(saltVal % BucketSize)
 
-	var currentBucket int8 = 0
+	var currentBucket = int8(0)
 	for _, v := range variations {
 		currentBucket += v.Weight
 		if userBucket < currentBucket {

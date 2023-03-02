@@ -38,7 +38,7 @@ func (s *Service) createChildren(
 		ctx,
 		sdkkeymodel.SDKKey{
 			Enabled:     true,
-			ExpiresAt:   cons.MaxUnixTime,
+			ExpiresAt:   int64(cons.MaxUnixTime),
 			Name:        envProd.Name + " SDK Key",
 			Description: rsc.Description("Default SDK key for " + envProd.Name),
 			Tags:        rsc.Tags{"generated"},
@@ -74,7 +74,7 @@ func (s *Service) createChildren(
 		ctx,
 		sdkkeymodel.SDKKey{
 			Enabled:     true,
-			ExpiresAt:   cons.MaxUnixTime,
+			ExpiresAt:   int64(cons.MaxUnixTime),
 			Name:        envStg.Name + " SDK Key",
 			Description: rsc.Description("Default SDK key for " + envStg.Name),
 			Tags:        rsc.Tags{"generated"},

@@ -84,7 +84,7 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 			Secret:    ctx.String(SecretFlag),
 			Type:      ctx.String(TypeFlag),
 			Tags:      []string{},
-			ExpiresAt: cons.MaxUnixTime,
+			ExpiresAt: int64(cons.MaxUnixTime),
 		}); err.IsEmpty() {
 			// TODO: add error reasons
 			senv.Log.Error().Msg("Unable to create access")

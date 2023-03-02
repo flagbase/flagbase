@@ -6,32 +6,32 @@ import (
 
 var (
 	// DefaultPGConnStr the default postgres database connection string
-	DefaultPGConnStr string = "postgres://flagbase:BjrvWmjQ3dykPu@" +
+	DefaultPGConnStr = "postgres://flagbase:BjrvWmjQ3dykPu@" +
 		"db:5432/flagbase" +
 		"?sslmode=disable"
 	// DefaultRedisAddr default redis address
-	DefaultRedisAddr string = "redis:6379"
+	DefaultRedisAddr = "redis:6379"
 	// DefaultRedisPassword default redis password
-	DefaultRedisPassword string = ""
+	DefaultRedisPassword = ""
 	// DefaultRedisDB default redis database number
-	DefaultRedisDB uint = 0
+	DefaultRedisDB = 0
 	// DefaultAPIPort default HTTP API server port
-	DefaultAPIPort int = 5051
+	DefaultAPIPort = 5051
 	// DefaultStreamerPort default streamer server port
-	DefaultStreamerPort int = 7051
+	DefaultStreamerPort = 7051
 	// DefaultPollingPort default polling server port
-	DefaultPollingPort int = 9051
+	DefaultPollingPort = 9051
 	// DefaultVerbose should log verbosely by default
-	DefaultVerbose bool = false
+	DefaultVerbose = false
 	// DefaultRootKey default root access key
-	DefaultRootKey string = "root"
+	DefaultRootKey = "root"
 	// DefaultRootSecret default root access secret
-	DefaultRootSecret string = "toor"
+	DefaultRootSecret = "toor"
 	// MaxUnixTime The maxiumum unix time
 	// TODO: come up with better method in year 2038
-	MaxUnixTime int64 = 9223372036854775807
+	MaxUnixTime = 9223372036854775807
 	// JWTKey used to encode jwt
-	JWTKey string = "bad_secret"
+	JWTKey = "bad_secret"
 	// JWTExpiryMinutes default JWT lifetime (in minutes)
 	JWTExpiryMinutes time.Duration = 5000
 	// DefaultCacheExpiry default Cache lifetime (in seconds)

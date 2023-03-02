@@ -42,7 +42,14 @@ var GlobalFlags []cli.Flag = []cli.Flag{
 		Name:  RedisDBFlag,
 		Usage: "Redis database (default: 0)",
 		Value: func() uint {
-			val, err := strconv.ParseUint(osenv.GetEnvOrDefault(osenv.RedisDBEnv, strconv.FormatUint(uint64(cons.DefaultRedisDB), 10)), 10, 0)
+			val, err := strconv.ParseUint(
+				osenv.GetEnvOrDefault(
+					osenv.RedisDBEnv,
+					strconv.FormatUint(uint64(cons.DefaultRedisDB), 10),
+				),
+				10,
+				0,
+			)
 			if err != nil {
 				panic(err)
 			}

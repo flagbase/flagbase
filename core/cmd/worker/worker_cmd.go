@@ -72,7 +72,14 @@ var StartCommand cli.Command = cli.Command{
 func startCommand(ctx *cli.Context) error {
 	var wg sync.WaitGroup
 	var senv *srvenv.Env
-	defer srv.Cleanup(senv)
+	var success = true
+
+	// clean up upon successfully running a worker
+	defer func() {
+		if success {
+			srv.Cleanup(senv)
+		}
+	}()
 
 	switch mode := ctx.String("mode"); mode {
 	case string(workermode.AllMode):
@@ -101,12 +108,11 @@ func startCommand(ctx *cli.Context) error {
 		wg.Add(1)
 		StartPoller(ctx, senv, &wg)
 	default:
-		log.Fatal(
-			fmt.Sprintf(
-				"Unknown mode '%s'. Please choose either one of these: %s",
-				mode,
-				workermode.StrListModes(),
-			),
+		success = false
+		log.Printf(
+			"Unknown mode '%s'. Please choose either one of these: %s",
+			mode,
+			workermode.StrListModes(),
 		)
 	}
 	return nil
