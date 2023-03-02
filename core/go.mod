@@ -3,7 +3,6 @@ module core
 go 1.16
 
 require (
-	github.com/casbin/casbin-pg-adapter v1.0.4
 	github.com/casbin/casbin/v2 v2.40.4
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/evanphx/json-patch v4.11.0+incompatible
@@ -15,13 +14,10 @@ require (
 	github.com/google/jsonapi v1.0.0
 	github.com/google/uuid v1.3.0
 	github.com/jackc/pgx/v4 v4.14.1
-	github.com/kr/text v0.2.0 // indirect
 	github.com/lib/pq v1.10.4
-	github.com/pckhoi/casbin-pgx-adapter v1.0.1 // indirect
-	github.com/prometheus/client_golang v1.11.0 // indirect
+	github.com/pckhoi/casbin-pgx-adapter v1.0.1
 	github.com/rs/zerolog v1.26.1
-	github.com/urfave/cli/v2 v2.3.0
+	github.com/urfave/cli/v2 v2.24.4
 	github.com/zsais/go-gin-prometheus v0.1.0
-	go.opentelemetry.io/otel v1.3.0 // indirect
 	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e
 )
