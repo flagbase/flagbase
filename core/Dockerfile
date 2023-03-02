@@ -18,4 +18,4 @@ EXPOSE 7051
 EXPOSE 8080
 EXPOSE 9051
 
-ENTRYPOINT ["./bin/flagbased"]
+ENTRYPOINT ["/go/src/github.com/flagbase/flagbase/core/bin/flagbased"]
