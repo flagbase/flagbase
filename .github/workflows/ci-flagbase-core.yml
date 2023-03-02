@@ -44,6 +44,6 @@ jobs:
       - uses: actions/checkout@v2
       - uses: golangci/golangci-lint-action@v2
         with:
-          version: v1.29
+          version: v1.51.2
           working-directory: core
           args: --config=.golangci.yml
