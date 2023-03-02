@@ -10,7 +10,7 @@ services:
       - 7051:7051
       - 9051:9051
     environment:
-      FLAGBASE_CORE_PG_URL: postgres://flagbase:BjrvWmjQ3dykPu@db:5432/flagbase?sslmode=disable
+      FLAGBASE_CORE_PG_URL: user=flagbase password=BjrvWmjQ3dykPu database=flagbase host=db port=5432
       FLAGBASE_CORE_REDIR_ADDR: redis:6379
       FLAGBASE_CORE_REDIS_PASSWORD: ""
       FLAGBASE_CORE_REDIS_DB: 0

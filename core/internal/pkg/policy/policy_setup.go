@@ -1,8 +1,8 @@
 package policy
 
 import (
-	pgadapter "github.com/casbin/casbin-pg-adapter"
 	"github.com/casbin/casbin/v2"
+	pgadapter "github.com/pckhoi/casbin-pgx-adapter"
 )
 
 // Config policy setup configuration
