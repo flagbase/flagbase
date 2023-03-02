@@ -1,5 +1,5 @@
-import React from 'react'
-import { useParams } from 'react-router-dom'
+import React, { Suspense } from 'react'
+import { Await, useParams } from 'react-router-dom'
 import { Alert } from 'antd'
 import { constants as instanceConstants } from '../instances/instances.constants'
 import MainWorkspaces from './workspaces.main'
@@ -15,21 +15,19 @@ const Workspaces: React.FC = () => {
         },
     })
 
-    if (isLoading) {
-        return <Alert message={instanceConstants.loading} />
-    }
-
-    if (!instanceKey || !instances) {
-        return <Alert message={instanceConstants.error} />
-    }
-
     if (activeTab === 'settings') {
         return <EditInstance instanceKey={instanceKey} />
     }
 
     return (
         <div className="mt-5">
-            <MainWorkspaces instances={instances} />
+            <Suspense fallback={<Alert message={instanceConstants.loading} />}>
+                <Await
+                    resolve={instances}
+                    errorElement={<Alert message={instanceConstants.error} />}
+                    children={(instances) => <MainWorkspaces instances={instances} />}
+                />
+            </Suspense>
         </div>
     )
 }

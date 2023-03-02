@@ -19,7 +19,7 @@ const Button: React.FC<ButtonProps> = ({ className = '', prefix, suffix, goBack 
                 if (props.onClick) {
                     props.onClick(e)
                 }
-                if (props.goBack) {
+                if (goBack) {
                     navigate(-1)
                 }
             }}

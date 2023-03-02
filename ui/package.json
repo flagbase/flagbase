@@ -105,7 +105,7 @@
         "react-context-devtool": "^2.0.3",
         "react-dom": "^16.14.0",
         "react-query": "^3.39.3",
-        "react-router-dom": "^6.2.1",
+        "react-router-dom": "^6.8.2",
         "tsconfig-paths": "^4.1.0",
         "yup": "^0.32.11"
     },

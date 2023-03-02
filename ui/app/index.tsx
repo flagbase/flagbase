@@ -6,6 +6,8 @@ import 'antd/dist/antd.less'
 import Router from './router'
 import Context from './context'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+import { newRouter } from './router/router'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
@@ -17,7 +19,7 @@ const queryClient = new QueryClient()
 render(
     <Context>
         <QueryClientProvider client={queryClient}>
-            <Router />
+            <RouterProvider router={newRouter} />
         </QueryClientProvider>
     </Context>,
     container

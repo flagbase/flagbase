@@ -1,4 +1,5 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Modal, notification, Typography } from 'antd'
 import { Content } from 'antd/lib/layout/layout'
 import { Field, Form, Formik } from 'formik'
@@ -75,7 +76,7 @@ const CreateWorkspace = ({ visible, setVisible, instance }: WorkspaceModal) => {
                             <Field component={Input} id="name" name="name" placeholder="Workspace name" />
                             <Field component={Input} id="description" name="description" placeholder="Description" />
                             <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
-                            <Button className="mt-3" type="submit">
+                            <Button className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} type="submit">
                                 Add Workspace
                             </Button>
                         </Form>

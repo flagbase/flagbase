@@ -1,5 +1,13 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route, Outlet, Navigate } from 'react-router-dom'
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    Outlet,
+    Navigate,
+    createBrowserRouter,
+    createRoutesFromElements,
+} from 'react-router-dom'
 
 import { RouteParams } from './router.types'
 import Instances from '../pages/instances'
@@ -10,6 +18,8 @@ import Segments from '../pages/segments'
 import PageLayout from '../../components/page-layout'
 import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
+import EditInstance from '../pages/workspaces/workspaces.edit'
+import EditProject from '../pages/projects/projects.edit'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -70,6 +80,34 @@ const Router: React.FC = () => (
             </Route>
         </Routes>
     </BrowserRouter>
+)
+
+export const newRouter = createBrowserRouter(
+    createRoutesFromElements(
+        <Route path="/" element={<PageLayout />}>
+            <Route path="/" element={<Navigate to="/instances" />} />
+            <Route path="/instances" element={<PageHeadings />}>
+                <Route path=":activeTab" element={<Instances />} />
+                <Route path="" element={<Instances />} />
+            </Route>
+            <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
+                <Route path="" element={<Workspaces />} />
+                <Route path="settings" element={<EditInstance />} />
+                <Route path={`${WorkspaceKey}`}>
+                    <Route path="" element={<>Workspace view</>} />
+                    <Route path="projects">
+                        <Route path="" element={<Projects />} />
+                        <Route path="settings" element={<EditProject />} />
+                        <Route path={`${ProjectKey}`}>
+                            <Route path="" element={<>Project view</>} />
+                            <Route path={`flags/${EnvironmentKey}`} element={<Flags />} />
+                            <Route path={`flags/${FlagKey}/${EnvironmentKey}`} element={<>Flag view</>} />
+                        </Route>
+                    </Route>
+                </Route>
+            </Route>
+        </Route>
+    )
 )
 
 export default Router

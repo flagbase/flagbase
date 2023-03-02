@@ -1,15 +1,15 @@
-import { MinusCircleIcon } from '@heroicons/react/24/outline'
 import { Field, Form, Formik } from 'formik'
-import React, { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
 import { Instance } from '../../context/instance'
 import { useAddInstance, useInstance, useRemoveInstance, useUpdateInstance } from '../instances/instances'
 import { InstanceSchema } from '../instances/instances.constants'
 
-useAddInstance
-const EditInstance = ({ instanceKey }: { instanceKey: string }) => {
+const EditInstance = () => {
+    const { instanceKey } = useParams<{ instanceKey: string }>()
+
     const instance = useInstance(instanceKey)
     const navigate = useNavigate()
     const { mutate: update } = useUpdateInstance()
@@ -60,12 +60,6 @@ const EditInstance = ({ instanceKey }: { instanceKey: string }) => {
                                 className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
                             >
                                 Update
-                            </Button>
-                            <Button
-                                type="button"
-                                className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-                            >
-                                Cancel
                             </Button>
                         </div>
                     </Form>

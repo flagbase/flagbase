@@ -1,6 +1,15 @@
 import React, { Fragment, useEffect } from 'react'
 
-import { Link, Outlet, useLocation, useOutletContext, useParams } from 'react-router-dom'
+import {
+    Link,
+    Outlet,
+    useLocation,
+    useMatch,
+    useMatches,
+    useNavigate,
+    useOutletContext,
+    useParams,
+} from 'react-router-dom'
 import { Instance } from '../../app/context/instance'
 import flag from '../../assets/flagbaseLogo.svg'
 import { useState } from 'react'
@@ -256,57 +265,8 @@ const Header = () => {
     const { data: instances } = useInstances()
     const { data: workspaces } = useWorkspaces(instanceKey || '')
     const { data: projects } = useProjects(instanceKey, workspaceKey)
-
-    const buildBreadCrumbs = () => {
-        let breadcrumbs = []
-        if (instanceKey && instances) {
-            breadcrumbs.push({
-                name: 'Instances',
-                href: '/instances',
-            })
-        }
-        if (workspaces) {
-            breadcrumbs.push({
-                name: 'Workspaces',
-                href: getWorkspacesPath(instanceKey || ''),
-            })
-        }
-
-        if (projects) {
-            breadcrumbs.push({
-                name: 'Projects',
-                href: getProjectsPath(instanceKey || '', workspaceKey || ''),
-            })
-        }
-
-        return (
-            <nav className="flex" aria-label="Breadcrumb">
-                <ol role="list" className="flex items-center space-x-4">
-                    {breadcrumbs.map((crumb, index) => (
-                        <li key={crumb.name}>
-                            <div className="flex items-center">
-                                {index !== 0 && (
-                                    <ChevronRightIcon
-                                        className="h-5 w-5 flex-shrink-0 text-gray-400"
-                                        aria-hidden="true"
-                                    />
-                                )}
-                                <a
-                                    href={crumb.href}
-                                    className={`${
-                                        index !== 0 && 'ml-4'
-                                    } text-sm font-medium text-gray-500 hover:text-gray-700`}
-                                >
-                                    {crumb.name}
-                                </a>
-                            </div>
-                        </li>
-                    ))}
-                </ol>
-            </nav>
-        )
-    }
-
+    const match = useMatches()
+    console.table(match)
     return (
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
@@ -371,12 +331,18 @@ const Header = () => {
     )
 }
 
-const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; href: string; current: boolean }[] }) => {
+const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; href: string }[] }) => {
+    const navigate = useNavigate()
+    const { pathname } = useLocation()
+
     return (
         <header className={`bg-gray-50 pt-8 border-b border-gray-200 ${!tabs || (tabs.length === 0 && 'pb-8')}`}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
-                <div className="min-w-0 flex-1">
-                    <h1 className="mt-2 text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                <div className="min-w-0 flex-1 flex flex-row items-center gap-5">
+                    <button onClick={() => navigate(-1)}>
+                        <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
+                    </button>
+                    <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight capitalize">
                         {title}
                     </h1>
                 </div>
@@ -393,14 +359,12 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
                             id="tabs"
                             name="tabs"
                             className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                            defaultValue={tabs.find((tab) => tab.current)?.name || tabs[0]}
                         >
                             {tabs.map((tab) => (
                                 <option key={tab.name}>{tab.name}</option>
                             ))}
                         </select>
                     </div>
-
                     {/* Desktop View */}
                     <div className="hidden sm:block">
                         <div>
@@ -410,12 +374,12 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
                                         key={tab.name}
                                         to={tab.href}
                                         className={classNames(
-                                            tab.current
+                                            tab.href === pathname
                                                 ? 'border-indigo-500 text-indigo-600'
                                                 : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
                                             'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium'
                                         )}
-                                        aria-current={tab.current ? 'page' : undefined}
+                                        aria-current={tab.href === pathname ? 'page' : undefined}
                                     >
                                         {tab.name}
                                     </Link>
@@ -431,7 +395,7 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
 
 type PageHeadingType = {
     title: string
-    tabs?: { name: string; href: string; current: boolean }[]
+    tabs?: { name: string; href: string }[]
 }
 
 export const PageHeadings = () => {
@@ -459,12 +423,10 @@ export const PageHeadings = () => {
                     {
                         name: 'Projects',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
-                        current: !activeTab || activeTab === 'overview',
                     },
                     {
                         name: 'Settings',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects/settings`,
-                        current: activeTab === 'settings',
                     },
                 ],
             })
@@ -475,12 +437,10 @@ export const PageHeadings = () => {
                     {
                         name: 'Workspaces',
                         href: `/${instanceKey}/workspaces`,
-                        current: !activeTab || activeTab === 'projects',
                     },
                     {
                         name: 'Settings',
                         href: `/${instanceKey}/workspaces/settings`,
-                        current: activeTab === 'settings',
                     },
                 ],
             })
