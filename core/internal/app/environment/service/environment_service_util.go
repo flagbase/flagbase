@@ -25,7 +25,7 @@ func (s *Service) createChildren(
 		ctx,
 		sdkkeymodel.SDKKey{
 			Enabled:     true,
-			ExpiresAt:   cons.MaxUnixTime,
+			ExpiresAt:   int64(cons.MaxUnixTime),
 			Name:        i.Name + " SDK Key",
 			Description: rsc.Description("Default SDK key for " + i.Name),
 			Tags:        rsc.Tags{"generated"},

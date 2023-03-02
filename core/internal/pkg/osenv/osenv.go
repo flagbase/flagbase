@@ -10,6 +10,7 @@ const (
 	// RedisAddr Redis address (host:port) environment variable
 	RedisAddrEnv = "FLAGBASE_CORE_REDIR_ADDR"
 	// RedisPassword Redis password environment variable
+	//nolint:gosec
 	RedisPasswordEnv = "FLAGBASE_CORE_REDIS_PASSWORD"
 	// RedisDB Redis DB number environment variable
 	RedisDBEnv = "FLAGBASE_CORE_REDIS_DB"

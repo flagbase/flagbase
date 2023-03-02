@@ -28,6 +28,13 @@ curl -P GET http://localhost:5051/healthcheck
 docker-compose down -v
 ```
 
+## Other practices
+### Linting
+To lint locally via docker:
+```
+golangci-lintdocker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.51.2 golangci-lint run
+```
+
 ## Contributing
 We encourage community contributions via pull requests. Before opening up a PR, please read our [contributor guidelines](https://flagbase.com/dev/intro/workflow#contributing).
 
