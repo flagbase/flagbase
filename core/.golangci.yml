@@ -35,6 +35,7 @@ linters:
     - unused
     - whitespace
 
+
 linters-settings:
   revive:
     ignore-generated-header: true

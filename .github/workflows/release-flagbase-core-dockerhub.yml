@@ -8,7 +8,7 @@ on:
       - 'core/**'
 
 jobs:
-  build:
+  release:
     runs-on: ubuntu-latest
     steps:
       -
@@ -28,6 +28,5 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: ./core
-          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/core:latest
