@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-var (
+const (
 	// DefaultPGConnStr the default postgres database connection string
 	DefaultPGConnStr = "postgres://flagbase:BjrvWmjQ3dykPu@" +
 		"db:5432/flagbase" +

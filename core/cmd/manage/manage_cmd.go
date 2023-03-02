@@ -11,5 +11,6 @@ var Command cli.Command = cli.Command{
 	Description: "Manage flagbase resources.",
 	Subcommands: []*cli.Command{
 		&ManageAccessCommand,
+		&ManageMigrateCommand,
 	},
 }

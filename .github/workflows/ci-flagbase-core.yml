@@ -46,4 +46,4 @@ jobs:
         with:
           version: v1.51.2
           working-directory: core
-          args: --config=.golangci.yml
+          args: --config=.golangci.yml --timeout 5m
