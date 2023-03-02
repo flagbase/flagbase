@@ -14,6 +14,6 @@ type Env struct {
 	DB                *pgxpool.Pool
 	Log               *logger.Logger
 	Policy            *policy.Policy
-	Metric            string // TODO: add metric interface
+	Metric            string // TODO: add metric interface for telemetry
 	SecureRuntimeHash string
 }

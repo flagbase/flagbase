@@ -14,5 +14,8 @@ RUN go build -o ./bin/flagbased ./cmd/flagbased
 
 # Expose relevant ports
 EXPOSE 5051
+EXPOSE 7051
+EXPOSE 8080
+EXPOSE 9051
 
 ENTRYPOINT ["./bin/flagbased"]
