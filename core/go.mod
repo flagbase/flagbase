@@ -17,6 +17,7 @@ require (
 	github.com/jackc/pgx/v4 v4.14.1
 	github.com/kr/text v0.2.0 // indirect
 	github.com/lib/pq v1.10.4
+	github.com/pckhoi/casbin-pgx-adapter v1.0.1 // indirect
 	github.com/prometheus/client_golang v1.11.0 // indirect
 	github.com/rs/zerolog v1.26.1
 	github.com/urfave/cli/v2 v2.3.0
