@@ -1,4 +1,4 @@
-FROM node:16.13.0
+FROM node:16.14
 LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
 RUN npx create-docusaurus@2.0.0-beta.9 docusaurus classic --typescript
