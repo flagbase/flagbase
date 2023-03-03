@@ -13,6 +13,6 @@ export type Config = {
 export const DEFAULT_CONFIG: Config = {
   mode: Mode.POLLING,
   clientKey: '',
-  pollingServiceUrl: 'https://polling.flagbase.io',
+  pollingServiceUrl: 'https://poller.core.flagbase.com',
   pollingIntervalMs: 300000
 }
