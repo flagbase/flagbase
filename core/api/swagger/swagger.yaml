@@ -1455,8 +1455,8 @@ paths:
       security:
         - Access Token: []
 servers:
-  - url: 'https://api.flagbase.io'
-    description: Flagbase Cloud
+  - url: 'https://api.core.flagbase.com'
+    description: Flagbase Core API
   - url: 'http://127.0.0.1:5051'
     description: Localhost
 components:
