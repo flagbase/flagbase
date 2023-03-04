@@ -5,10 +5,10 @@ authors: cjoy
 tags: [announcement]
 ---
 
-We're happy to introduce [Flagbase](https://github.com/flagbase/flagbase). Flagbase is an open-source feature management solution, helping teams release feature safely through the use of feature flags.
+We are pleased to introduce Flagbase, an open-source feature management solution that enables teams to safely release features by utilizing feature flags. You can find Flagbase on GitHub at [https://github.com/flagbase/flagbase](https://github.com/flagbase/flagbase).
 
 :::info
-This project is still under development and is **NOT** at a usable state as of writing this blog post. This project is on [Github](https://github.com/flagbase/flagbase) - please star the project to keep updated 🙂
+At the time of writing this blog post, the project is still in development and is **NOT** yet at a usable state.
 :::
 
 <!--truncate-->
@@ -16,23 +16,22 @@ This project is still under development and is **NOT** at a usable state as of w
 
 ## The Plan
 
-Everything below is just a collation of my thoughts when initially starting Flagbase. I attempt to structure a journey for the team. This is essentially an in-formal roadmap disguised as a blog post. This journey has been split into well-defined stages. These stages are not meant to be linear, but should run in parallel. However, the execution of some stages are dependent on the success of other stages.
-
+The following is a collection of my thoughts when initially starting Flagbase. I have attempted to structure a journey for the team, which essentially serves as an informal roadmap disguised as a blog post. This journey has been divided into well-defined stages. Although these stages are not intended to be linear, they should be executed in parallel. However, the success of some stages may depend on the progress of other stages.
 
 ### Vision
-The vision statements and stages that are defined below, are subject to change in the future.
-- Flagbase becomes the industry standard feature management solution. We define best-practices for feature flag delivery, targeting attributes management and feature evaluation. The *Flagbase Protocol* becomes synonymous with the “gold-standard” in how flagsets and rulesets should be serialised, transported and evaluated.
-- Flagbase is not only know for being open-source, but is known for being the most efficient and flexible solution (flexibility as in developers are able to adapt Flagbase core to their own needs - i.e. change management and experimentation require slightly different solutions from a technical standpoint - Flagbase aims to bring the divide between these different use-case).
-- Flagbase provides advanced auditing capabilities by leveraging resource temporality via Postgres triggers. All time-series queries are highly optimised since we’re relying on Hypertables (PG with TimescaleDB extension). All resource mutations are automatically tracked. We have data-layer fail safes which prevent unauthorised mutations (preventing service-level resource misuse - in case service-layer Casbin Enforcer fails).
-- Flagbase adopts a minimal resource access management layer that is mimicked by competitors, getting rid off permanent pre-generated SDK keys (currently used by competitors - LaunchDarkly, Split, ConfigCat, Optimizely, Rollout.io etc). Temporary user-generated access tokens become the standard which unifies resource authorisation across different our transports.
-
+Please note that the vision statements and stages outlined below are subject to change in the future.
+- The vision for Flagbase is to become the industry standard feature management solution. We aim to define best practices for feature flag delivery, targeting attributes management and feature evaluation. The Flagbase Protocol is intended to become synonymous with the "gold-standard" for serializing, transporting, and evaluating flagsets and rulesets.
+- We strive for Flagbase to be recognized not only for being open-source but also for being the most efficient and flexible solution available. We believe that developers should be able to adapt Flagbase core to their own needs, given that change management and experimentation require slightly different solutions from a technical standpoint. Our goal is to bridge the divide between these different use cases and offer unparalleled flexibility.
+- To provide advanced auditing capabilities, Flagbase leverages resource temporality via Postgres triggers. We use Hypertables (PG with TimescaleDB extension) to highly optimize all time-series queries. All resource mutations are automatically tracked, and we have data-layer fail-safes in place to prevent unauthorized mutations, preventing service-level resource misuse in case the service-layer Casbin Enforcer fails.
+- Flagbase adopts a minimal resource access management layer, unlike some competitors who use permanent pre-generated SDK keys (such as LaunchDarkly, Split, ConfigCat, Optimizely, Rollout.io, etc.). Temporary user-generated access tokens are intended to become the standard, unifying resource authorization across different transports.
+    
 ### Stage 0 - OSS Initialisation
 
-In this stage, we focus on all-things open source. This includes our open source software and the community that maintains it. The outcome of stage 0 will determine whether we continue pursuing this endeavour or not. We will use this stage to validate the idea. During this stage we will focus on developing our OSS products. We will also lay the foundations for our development practices and build a strong engineering community.
+During this stage, our focus will be on all things related to open source, including our open source software and the community that maintains it. The success of Stage 0 will determine whether we will continue to pursue this endeavor or not. Our main objective during this stage will be to validate the idea of Flagbase. We will focus on developing our OSS products, laying the foundation for our development practices, and building a strong engineering community.
 
 #### The Flagbase Protocol
 
-“The Flagbase Protocol” - will be the name of the whitepaper that describes our take on designing a efficient feature delivery protocol. The whitepaper will explore different evaluation techniques and do a cost-benefit analysis for evaluating flags in the different context (ie. provider-side evaluation and consumer-side evaluation). It’s important for us to publish a technical whitepaper which will bring in an air of legitimacy to this entire endeavour. The whitepaper will be available from our landing page (ie. [flagbase.com](https://flagbase.com)).
+We plan to call our whitepaper "The Flagbase Protocol." This document will describe our approach to designing an efficient feature delivery protocol. It will explore various evaluation techniques and conduct a cost-benefit analysis for evaluating flags in different contexts, such as provider-side evaluation and consumer-side evaluation. It is essential for us to publish a technical whitepaper to bring legitimacy to our entire endeavor. The whitepaper will be available for download from our landing page, flagbase.com.
 
 **_Client-side Evaluation_**
 ![Client-side Evaluation Diagram](/assets/blog/introducing-flagbase/client-side-evaluation.png)
@@ -40,39 +39,36 @@ In this stage, we focus on all-things open source. This includes our open source
 **_Server-side Evaluation_**
 ![Server-side Evaluation](/assets/blog/introducing-flagbase/server-side-evaluation.png)
 
-In our white paper we will use a toy problem to describe the requirements of a feature management service. We will go further in-depth in the system design and describe an efficient serialisation technique - specifically designed for flagsets and rulesets so they can be transported to the client and evaluated efficiently on the client. We will evaluate varies transports (i.e. Server-Sent Event / Polling) and highlight the pros and cons of each method.
+In our white paper, we will use a toy problem to illustrate the requirements of a feature management service. We will delve deeper into the system design and describe an efficient serialization technique specifically designed for flagsets and rulesets, making them transportable to the client and easily evaluated. We will evaluate various transports, such as Server-Sent Event and Polling, and highlight the advantages and disadvantages of each method.
 
-**_Note:_** The white paper aim of this white paper will be to address the technical challenges faced by feature management services. It should be very low-level and technical in nature. We need to actually prove our claims by testing them in a simulated environment. The white paper will not advertise our OSS product.
+It's important to note that the purpose of this white paper is to address the technical challenges faced by feature management services. The content should be very low-level and technical in nature. To substantiate our claims, we will test them in a simulated environment. Our white paper will not advertise our OSS product.
 
 #### Flagbase OSS
 
-The crux of stage 0 will consist of the development of our open-source products. We will aim to get a fully-functioning service out before Feb, 2021. We have 2 start-ups and 1 SME willing to trial our solution.
+The primary focus of stage 0 is the development of our open-source products, and we aim to have a fully-functioning service by February 2021. We have already secured interest from two startups and one SME who are willing to trial our solution.
 
 ##### Core
 
-The core is essentially the feature flagging micro-service that’ll handle requests from the SDK. MVP features for the core consist of:
-
-- JSON API that’ll help manage the following resources:
+The core of Flagbase is the feature flagging micro-service that handles requests from the SDK. The minimum viable product (MVP) for the core includes the following features:
+* A JSON API to manage the following resources:
   - Workspaces
   - Projects
-  - Environment
+  - Environments
   - Flags
-  - Targeting (/ Rules)
-  - Segments (/ Rules)
-- Auditing capabilities
-- Resource access management via Casbin
-- Service monitoring via Prometheus
-- Two transports:
-  - Polling
-  - Streaming via SSE
+  - Targeting/Rules
+  - Segments/Rules
+* Auditing capabilities
+* Resource access management via Casbin
+* Service monitoring via Prometheus
+* Two transports: polling and streaming via Server-Sent Events (SSE).
 
-##### Core
+##### CLI
 
-CLI will be a simple go-based executable which will make managing resources easier. Developers will be encouraged to use the CLI over the JSON API as it’ll be stateful (i.e.. keep track of workspaces, projects, environments etc).
+The CLI is a Go-based executable that will provide an easier way to manage resources for developers. It will be stateful and keep track of workspaces, projects, environments, etc. We encourage developers to use the CLI over the JSON API for better management of resources.
 
 ##### SDKs
 
-We’ll write basic SDKs in 3 most popular languages (JS, Python & Java), that’ll allow both polling and streaming modes.
+We will develop basic SDKs in the three most popular programming languages: JavaScript, Python, and Java. These SDKs will enable both polling and streaming modes.
 
 ### Development Practices
 
@@ -86,8 +82,7 @@ During this stage, it’s vital for us to establish engineering practices that�
 
 #### Distributed Development
 
-Flagbase will be a fully decentralised organisation. During this stage, we will collate a set of heuristics that’ll enable use to effectively collaborate remotely, regardless of time zone. We will also need to set up supporting IT infrastructure that’ll help us collaborate. Since the company will be bootstrapped during stage 0, we need to find low/zero-cost solutions. Our initial business stack my consist of the following:
-
+Flagbase will be a fully decentralized organization, and during this stage, we will develop a set of heuristics to enable us to collaborate effectively remotely, regardless of time zone. We will also set up supporting IT infrastructure that will help us collaborate. Since we will be bootstrapped during stage 0, we need to find low/zero-cost solutions. Our initial business stack may consist of the following:
 - Email → ZohoMail
 - Documentation
   - Internal → Confluence
