@@ -10,7 +10,7 @@ on:
 
 jobs:
   release:
-    name: Release website
+    name: "Deploy: www.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch
