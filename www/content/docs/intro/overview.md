@@ -4,11 +4,6 @@ sidebar_position: 1
 
 # Overview
 
-:::caution CURRENTLY IN DEVELOPMENT
-Flagbase is **NOT** production ready yet. You can check out and subscribe to the project on [Github](https://github.com/flagbase/flagbase) for updates.
-:::
-
-
 [Flagbase](https://flagbase.com) is a open-source feature management platform. In essence, Flagbase allows you to manage, audit and transport feature flags efficiently to your applications.
 
 <div align="center">

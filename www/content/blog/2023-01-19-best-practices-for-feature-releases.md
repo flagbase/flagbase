@@ -6,7 +6,6 @@ tags: [howto, practices]
 ---
 
 Feature flags are a powerful tool for releasing new features to your users gradually and with greater control. By using feature flags, you can easily turn features on or off for specific groups of users, test new features in production, and roll back features if necessary. In this article, we will explore some best practices for using feature flags to release features.
-Plan Your Rollout Strategy
 
 ## Plan Your Rollout Strategy
 

@@ -9,17 +9,12 @@
   <img width="570px"  src="./www/content/assets/docs/intro/readme-banner.svg" /></br>
 </div>
 
-## Status
-Flagbase is **NOT production** ready.
-
-We're still in the process of building the MVP. You can join us on [slack](https://flagbase.slack.com) in the [#oss-team](https://flagbase.slack.com/archives/C01A58GCR9Q) channel.
-
 ## Features
 
 Flagbase is quite minimal at its core, yet extendable to suite your organisation's needs. Flagbase offers the following features:
 * Minimalist/composable targeting rules
 * Percentage rollouts + configurable hashing function (used for bucketing)
-* Multiple transports (HTTP long-polling, SSE, gRPC)
+* Multiple transports (HTTP long-polling, SSE)
 * Robust Identity & Access Management (IAM) that uses a hybrid RBAC/ABAC design policy based access control
 * Extend to use additional contextual data from flag evaluations, using your own data sources
 * Self hosted: can be provisioned to the cloud of your choice or run on-prem
