@@ -9,7 +9,7 @@ import Button from '../../../components/button'
 import { Entity } from '../../lib/entity-store/entity-store'
 import { SearchOutlined } from '@ant-design/icons'
 import { constants, instanceColumns } from './instances.constants'
-import { Link, useOutletContext } from 'react-router-dom'
+import { Link, useLoaderData, useOutletContext } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
 import '../../tailwind/tailwind.css'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -114,8 +114,9 @@ const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const { data: instances } = useInstances()
     const removeInstance = useRemoveInstance()
+    const instances = useLoaderData()
+    console.log('instances', instances)
 
     useEffect(() => {
         if (instances) {

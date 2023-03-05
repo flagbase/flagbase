@@ -33,11 +33,7 @@ export interface Workspace {
 }
 
 export const fetchWorkspaces = async (url: string, accessToken: string) => {
-    const result = await axios.get<Workspace[]>(new URL('/workspaces', url).toString(), {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    })
+    const result = await axios.get<Workspace[]>(new URL('/workspaces', url).toString())
     return result.data
 }
 

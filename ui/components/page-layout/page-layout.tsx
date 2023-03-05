@@ -265,8 +265,6 @@ const Header = () => {
     const { data: instances } = useInstances()
     const { data: workspaces } = useWorkspaces(instanceKey || '')
     const { data: projects } = useProjects(instanceKey, workspaceKey)
-    const match = useMatches()
-    console.table(match)
     return (
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">

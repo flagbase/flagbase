@@ -14,7 +14,7 @@ mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 const container = document.getElementById('root')
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
 render(
     <Context>

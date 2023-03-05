@@ -11,14 +11,11 @@ import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
 import { CreateWorkspace } from './modal'
-import Instances, { useInstances } from '../instances/instances'
+import { useInstances } from '../instances/instances'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { axios } from '../../lib/axios'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-
-type MainWorkspacesType = {
-    instances: Instances
-}
+import EmptyState from '../../../components/empty-state'
 
 export const useAddWorkspace = (instance: Instance) => {
     const queryClient = useQueryClient()
@@ -62,10 +59,11 @@ export const useWorkspaces = (instanceKey: string, options?: any) => {
 
     const query = useQuery<Workspace | Workspace[]>(['workspaces', instance?.key], {
         ...options,
-        queryFn: () => fetchWorkspaces(instance.connectionString, instance.accessToken),
-        onSuccess: () => {
+
+        queryFn: () => {
             axios.defaults.baseURL = instance.connectionString
             axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
+            return fetchWorkspaces(instance.connectionString, instance.accessToken)
         },
         enabled: !!instance?.key,
     })
@@ -116,6 +114,17 @@ const MainWorkspaces = ({ instances }: { instances: Instance[] }) => {
                 loading={isLoading}
                 dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
                 columns={workspaceColumns}
+                emptyState={
+                    <EmptyState
+                        title="No workspaces found"
+                        description="This workspace does not have any workspaces yet."
+                        cta={
+                            <Button onClick={() => setVisible(true)} className="py-2" suffix={PlusCircleIcon}>
+                                {constants.create}
+                            </Button>
+                        }
+                    />
+                }
             />
         </React.Fragment>
     )

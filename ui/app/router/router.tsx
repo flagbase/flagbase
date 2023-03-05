@@ -1,13 +1,5 @@
 import React from 'react'
-import {
-    BrowserRouter,
-    Routes,
-    Route,
-    Outlet,
-    Navigate,
-    createBrowserRouter,
-    createRoutesFromElements,
-} from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 import { RouteParams } from './router.types'
 import Instances from '../pages/instances'
@@ -20,6 +12,8 @@ import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
 import EditInstance from '../pages/workspaces/workspaces.edit'
 import EditProject from '../pages/projects/projects.edit'
+import { instancesLoader, workspacesLoader } from './loaders'
+import { QueryClient } from 'react-query'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -45,7 +39,7 @@ const Router: React.FC = () => (
                 </Route>
                 {/* Workspaces */}
                 <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
-                    <Route path="" element={<Workspaces />} />
+                    <Route loader={workspacesLoader} path="" element={<Workspaces />} />
                     <Route path=":activeTab" element={<Workspaces />} />
 
                     <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}`} element={<>Workspace view</>} />
@@ -82,16 +76,18 @@ const Router: React.FC = () => (
     </BrowserRouter>
 )
 
+const queryClient = new QueryClient()
+
 export const newRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<PageLayout />}>
             <Route path="/" element={<Navigate to="/instances" />} />
             <Route path="/instances" element={<PageHeadings />}>
                 <Route path=":activeTab" element={<Instances />} />
-                <Route path="" element={<Instances />} />
+                <Route loader={instancesLoader(queryClient)} path="" element={<Instances />} />
             </Route>
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
-                <Route path="" element={<Workspaces />} />
+                <Route loader={workspacesLoader} errorElement path="" element={<Workspaces />} />
                 <Route path="settings" element={<EditInstance />} />
                 <Route path={`${WorkspaceKey}`}>
                     <Route path="" element={<>Workspace view</>} />
