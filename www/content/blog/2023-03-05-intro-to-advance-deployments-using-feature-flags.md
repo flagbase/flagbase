@@ -26,6 +26,9 @@ The release branch contains the most stable version of the application and is wh
 
 Git flow solves the problem of deploying directly to production, which could introduce bugs and other issues. However, it has its own problems. Hotfixes take time to fix and merge into the release branch, then re-deploy. All users would be affected if the release branch has some bad code.
 
+![Git Flow Problem](/assets/blog/intro-to-advance-deployments-using-feature-flags/git-flow-problem.png)
+
+
 ### Traffic Splitting Strategies
 
 To address these issues, traffic splitting strategies became popular. These strategies involve directing traffic between different versions of an application in order to test out new features or fixes.
@@ -65,13 +68,19 @@ Feature flags (also known as feature toggles or feature gates) are points in cod
 ![Introducing Feature Flags](/assets/blog/intro-to-advance-deployments-using-feature-flags/what-is-a-feature-flag.png)
 
 
+![If statement containing feature flag](/assets/blog/intro-to-advance-deployments-using-feature-flags/if-statement.png)
+
+
 ### Basic Concepts
 
 #### Local Feature Store
 
+![Local Feature Store](/assets/blog/intro-to-advance-deployments-using-feature-flags/local-feature-store.png)
+
+
 A local feature store is where feature flag values are stored on the user’s device. These values are often configurable by application users. Examples of local feature stores include `chrome://flags` and `firefox://about:config`.
 
-![Local Feature Store](/assets/blog/intro-to-advance-deployments-using-feature-flags/local-feature-store.png)
+![Local Feature Store Example](/assets/blog/intro-to-advance-deployments-using-feature-flags/local-feature-store-example.png)
 
 
 The problem with local feature stores is that once the application is released to users, flags can no longer be configured by the developer - unless they release a new application with different feature flag values.
