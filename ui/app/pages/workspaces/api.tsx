@@ -32,7 +32,7 @@ export interface Workspace {
     }
 }
 
-export const fetchWorkspaces = async (url: string, accessToken: string) => {
+export const fetchWorkspaces = async (url: string) => {
     const result = await axios.get<Workspace[]>(new URL('/workspaces', url).toString())
     return result.data
 }

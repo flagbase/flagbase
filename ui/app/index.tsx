@@ -7,14 +7,12 @@ import Router from './router'
 import Context from './context'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
-import { newRouter } from './router/router'
+import { newRouter, queryClient } from './router/router'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 const container = document.getElementById('root')
-
-export const queryClient = new QueryClient()
 
 render(
     <Context>

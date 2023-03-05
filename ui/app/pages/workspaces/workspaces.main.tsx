@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLoaderData, useParams } from 'react-router-dom'
 import { Alert, notification } from 'antd'
 import Table from '../../../components/table/table'
 import { Instance } from '../../context/instance'
@@ -70,36 +70,18 @@ export const useWorkspaces = (instanceKey: string, options?: any) => {
     return query
 }
 
-const MainWorkspaces = ({ instances }: { instances: Instance[] }) => {
-    const { instanceKey } = useParams<{ instanceKey: string }>()
+const MainWorkspaces = () => {
+    const { workspaces, instance } = useLoaderData() as { workspaces: Workspace[]; instance: Instance }
 
-    if (!instanceKey) {
-        return <Alert message={instanceConstants.error} type="error" />
-    }
-
-    const [visible, setVisible] = useState(false)
+    const [createWorkspace, showCreateWorkspace] = useState(false)
     const [filter, setFilter] = useState('')
-
-    const instance = instances && instances.length > 0 ? instances[0] : null
-
-    if (!instance) {
-        return <Alert message={instanceConstants.error} type="error" />
-    }
-
-    const { data: workspaces, isError, isLoading } = useWorkspaces(instance.key)
-
-    if (isError) {
-        notification.error({
-            message: constants.error,
-        })
-    }
 
     return (
         <React.Fragment>
-            <CreateWorkspace visible={visible} setVisible={setVisible} instance={instance} />
+            <CreateWorkspace visible={createWorkspace} setVisible={showCreateWorkspace} instance={instance} />
 
             <div className="flex flex-col-reverse md:flex-row gap-3 pb-5 items-stretch">
-                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
+                <Button onClick={() => showCreateWorkspace(true)} type="button" suffix={PlusCircleIcon}>
                     {constants.create}
                 </Button>
                 <div className="flex-auto">
@@ -111,7 +93,7 @@ const MainWorkspaces = ({ instances }: { instances: Instance[] }) => {
                 </div>
             </div>
             <Table
-                loading={isLoading}
+                loading={false}
                 dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
                 columns={workspaceColumns}
                 emptyState={
@@ -119,7 +101,7 @@ const MainWorkspaces = ({ instances }: { instances: Instance[] }) => {
                         title="No workspaces found"
                         description="This workspace does not have any workspaces yet."
                         cta={
-                            <Button onClick={() => setVisible(true)} className="py-2" suffix={PlusCircleIcon}>
+                            <Button onClick={() => showCreateWorkspace(true)} className="py-2" suffix={PlusCircleIcon}>
                                 {constants.create}
                             </Button>
                         }

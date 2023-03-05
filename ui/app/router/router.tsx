@@ -76,18 +76,22 @@ const Router: React.FC = () => (
     </BrowserRouter>
 )
 
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 
 export const newRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<PageLayout />}>
             <Route path="/" element={<Navigate to="/instances" />} />
             <Route path="/instances" element={<PageHeadings />}>
-                <Route path=":activeTab" element={<Instances />} />
-                <Route loader={instancesLoader(queryClient)} path="" element={<Instances />} />
+                <Route shouldRevalidate={true} loader={instancesLoader(queryClient)} path="" element={<Instances />} />
             </Route>
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
-                <Route loader={workspacesLoader} errorElement path="" element={<Workspaces />} />
+                <Route
+                    loader={({ params }) => workspacesLoader({ queryClient, params })}
+                    errorElement={<div>Error</div>}
+                    path=""
+                    element={<Workspaces />}
+                />
                 <Route path="settings" element={<EditInstance />} />
                 <Route path={`${WorkspaceKey}`}>
                     <Route path="" element={<>Workspace view</>} />
