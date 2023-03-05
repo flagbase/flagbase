@@ -1,7 +1,7 @@
 # Flagbase
 ![Status](https://img.shields.io/badge/status-MVP-inactive)
 ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
-![Build](https://img.shields.io/github/workflow/status/flagbase/flagbase/ci-flagbase-core)
+![Build](https://img.shields.io/github/actions/workflow/status/flagbase/flagbase/release-flagbase-core.yml?branch=master)
 
 [Flagbase](https://flagbase.com) is an open source feature management platform, enabling you to manage, track and deliver feature flags to all your applications.
 
