@@ -7,6 +7,8 @@ tags: [howto, practices]
 
 Feature flags are a powerful tool for releasing new features to your users gradually and with greater control. By using feature flags, you can easily turn features on or off for specific groups of users, test new features in production, and roll back features if necessary. In this article, we will explore some best practices for using feature flags to release features.
 
+<!--truncate-->
+
 ## Plan Your Rollout Strategy
 
 Before releasing a new feature, you should plan your rollout strategy. Determine which users will have access to the feature, and how you will roll it out to different user groups. Consider using a phased rollout approach, where you gradually enable the feature for more users over time. This allows you to monitor the impact of the feature on your system and fix any issues before enabling it for all users.

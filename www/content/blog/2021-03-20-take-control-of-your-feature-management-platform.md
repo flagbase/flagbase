@@ -10,6 +10,8 @@ What is a Centralised Feature Flagging Platform?
 
 A centralised feature flagging platform is a feature flagging service hosted by a third-party provider, which developers can use to control the release of features in their application or model. These platforms provide a variety of features and benefits, such as scalability, reliability, and ease of use.
 
+<!--truncate-->
+
 ## Why You Shouldn't Use a Centralised Feature Flagging Platform
 - **Security Risks**: When you use a centralised feature flagging platform, you're trusting a third-party provider with access to your codebase and user data. This can create security risks, as the provider may not have the same level of security protocols as your own company, and there is a greater risk of data breaches and cyber attacks.
 - **Limited Customisation**: Centralised feature flagging platforms often have limitations on the level of customisation that you can achieve. This can be particularly problematic when you have specific requirements that the platform doesn't support, or when you need to integrate with other systems that aren't compatible with the platform.
