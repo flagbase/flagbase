@@ -12,8 +12,9 @@ import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
 import EditInstance from '../pages/workspaces/workspaces.edit'
 import EditProject from '../pages/projects/projects.edit'
-import { instancesLoader, workspacesLoader } from './loaders'
+import { instancesLoader, projectsLoader, workspacesLoader } from './loaders'
 import { QueryClient } from 'react-query'
+import MainWorkspaces from '../pages/workspaces/workspaces.main'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -83,20 +84,26 @@ export const newRouter = createBrowserRouter(
         <Route path="/" element={<PageLayout />}>
             <Route path="/" element={<Navigate to="/instances" />} />
             <Route path="/instances" element={<PageHeadings />}>
-                <Route shouldRevalidate={true} loader={instancesLoader(queryClient)} path="" element={<Instances />} />
+                <Route loader={instancesLoader(queryClient)} path="" element={<Instances />} />
             </Route>
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
                 <Route
                     loader={({ params }) => workspacesLoader({ queryClient, params })}
                     errorElement={<div>Error</div>}
                     path=""
-                    element={<Workspaces />}
+                    element={<MainWorkspaces />}
                 />
                 <Route path="settings" element={<EditInstance />} />
                 <Route path={`${WorkspaceKey}`}>
                     <Route path="" element={<>Workspace view</>} />
                     <Route path="projects">
-                        <Route path="" element={<Projects />} />
+                        <Route
+                            loader={({ params }) => projectsLoader({ queryClient, params })}
+                            path=""
+                            element={<Projects />}
+                        />
+                        <Route path="environments" element={<EditProject />} />
+
                         <Route path="settings" element={<EditProject />} />
                         <Route path={`${ProjectKey}`}>
                             <Route path="" element={<>Project view</>} />

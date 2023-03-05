@@ -331,7 +331,8 @@ const Header = () => {
 
 const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; href: string }[] }) => {
     const navigate = useNavigate()
-    const { pathname } = useLocation()
+    const location = useLocation()
+    const pathname = decodeURI(location.pathname)
 
     return (
         <header className={`bg-gray-50 pt-8 border-b border-gray-200 ${!tabs || (tabs.length === 0 && 'pb-8')}`}>

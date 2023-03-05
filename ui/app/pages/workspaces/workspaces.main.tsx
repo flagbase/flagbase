@@ -1,12 +1,10 @@
-import React, { useState } from 'react'
-import { useLoaderData, useParams } from 'react-router-dom'
-import { Alert, notification } from 'antd'
+import React, { Suspense, useState } from 'react'
+import { Await, useLoaderData } from 'react-router-dom'
 import Table from '../../../components/table/table'
 import { Instance } from '../../context/instance'
 import { createWorkspace, deleteWorkspace, fetchWorkspaces, Workspace } from './api'
 import Button from '../../../components/button'
 import { constants, workspaceColumns } from './workspace.constants'
-import { constants as instanceConstants } from '../instances/instances.constants'
 import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
@@ -59,11 +57,10 @@ export const useWorkspaces = (instanceKey: string, options?: any) => {
 
     const query = useQuery<Workspace | Workspace[]>(['workspaces', instance?.key], {
         ...options,
-
         queryFn: () => {
             axios.defaults.baseURL = instance.connectionString
             axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
-            return fetchWorkspaces(instance.connectionString, instance.accessToken)
+            return fetchWorkspaces(instance.connectionString)
         },
         enabled: !!instance?.key,
     })
@@ -77,38 +74,52 @@ const MainWorkspaces = () => {
     const [filter, setFilter] = useState('')
 
     return (
-        <React.Fragment>
-            <CreateWorkspace visible={createWorkspace} setVisible={showCreateWorkspace} instance={instance} />
+        <Suspense fallback={<div>Loading...</div>}>
+            <Await resolve={workspaces} errorElement={<p>Error loading package location!</p>}>
+                {(workspaces) => (
+                    <React.Fragment>
+                        <CreateWorkspace
+                            visible={createWorkspace}
+                            setVisible={showCreateWorkspace}
+                            instance={instance}
+                        />
 
-            <div className="flex flex-col-reverse md:flex-row gap-3 pb-5 items-stretch">
-                <Button onClick={() => showCreateWorkspace(true)} type="button" suffix={PlusCircleIcon}>
-                    {constants.create}
-                </Button>
-                <div className="flex-auto">
-                    <Input
-                        onChange={(event) => setFilter(event.target.value)}
-                        placeholder="Search"
-                        prefix={SearchOutlined}
-                    />
-                </div>
-            </div>
-            <Table
-                loading={false}
-                dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
-                columns={workspaceColumns}
-                emptyState={
-                    <EmptyState
-                        title="No workspaces found"
-                        description="This workspace does not have any workspaces yet."
-                        cta={
-                            <Button onClick={() => showCreateWorkspace(true)} className="py-2" suffix={PlusCircleIcon}>
+                        <div className="flex flex-col-reverse md:flex-row gap-3 pb-5 items-stretch">
+                            <Button onClick={() => showCreateWorkspace(true)} type="button" suffix={PlusCircleIcon}>
                                 {constants.create}
                             </Button>
-                        }
-                    />
-                }
-            />
-        </React.Fragment>
+                            <div className="flex-auto">
+                                <Input
+                                    onChange={(event) => setFilter(event.target.value)}
+                                    placeholder="Search"
+                                    prefix={SearchOutlined}
+                                />
+                            </div>
+                        </div>
+                        <Table
+                            loading={false}
+                            dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
+                            columns={workspaceColumns}
+                            emptyState={
+                                <EmptyState
+                                    title="No workspaces found"
+                                    description="This workspace does not have any workspaces yet."
+                                    cta={
+                                        <Button
+                                            onClick={() => showCreateWorkspace(true)}
+                                            className="py-2"
+                                            suffix={PlusCircleIcon}
+                                        >
+                                            {constants.create}
+                                        </Button>
+                                    }
+                                />
+                            }
+                        />
+                    </React.Fragment>
+                )}
+            </Await>
+        </Suspense>
     )
 }
 

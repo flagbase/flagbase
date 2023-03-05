@@ -1,8 +1,8 @@
 import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd'
 import { SearchOutlined } from '@ant-design/icons'
 
-import React, { useState } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { Suspense, useState } from 'react'
+import { Await, useLoaderData, useParams } from 'react-router-dom'
 import { Attributes, Project } from '../../context/project'
 import Table from '../../../components/table/table'
 import { createProject, fetchProjects } from './api'
@@ -86,51 +86,55 @@ export const useProjects = (instanceKey: string, workspaceKey: string, options?:
 }
 
 const Projects: React.FC = () => {
-    const { workspaceKey, instanceKey } = useParams<{ workspaceKey: string; instanceKey: string }>()
-    if (!workspaceKey || !instanceKey) {
-        return <Alert message="Could not load this instance" type="error" />
-    }
-
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
-
-    const { data: projects, status } = useProjects(instanceKey, workspaceKey)
+    const { projects } = useLoaderData() as { projects: Project[] }
+    const { instanceKey } = useParams() as { instanceKey: string }
 
     return (
-        <div className="mt-5">
-            <CreateProject visible={visible} setVisible={setVisible} />
+        <Suspense fallback={<div>Loading...</div>}>
+            <Await resolve={projects} errorElement={<p>Error loading package location!</p>}>
+                {(projects) => (
+                    <div className="mt-5">
+                        <CreateProject visible={visible} setVisible={setVisible} />
 
-            <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
-                    {constants.create}
-                </Button>
-                <div className="flex-auto">
-                    <Input
-                        onChange={(event) => setFilter(event.target.value)}
-                        placeholder="Search"
-                        prefix={SearchOutlined}
-                    />
-                </div>
-            </div>
-            {projects && (
-                <Table
-                    loading={status !== 'success'}
-                    dataSource={convertProjects(projects, instanceKey, filter)}
-                    columns={projectsColumn}
-                    emptyState={
-                        <EmptyState
-                            title="No Projects"
-                            description={'Get started by creating a new project.'}
-                            cta={
-                                <Button className="py-2" suffix={PlusCircleIcon} onClick={() => setVisible(true)}>
-                                    Create Project
-                                </Button>
+                        <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
+                            <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
+                                {constants.create}
+                            </Button>
+                            <div className="flex-auto">
+                                <Input
+                                    onChange={(event) => setFilter(event.target.value)}
+                                    placeholder="Search"
+                                    prefix={SearchOutlined}
+                                />
+                            </div>
+                        </div>
+
+                        <Table
+                            loading={false}
+                            dataSource={convertProjects(projects, instanceKey, filter)}
+                            columns={projectsColumn}
+                            emptyState={
+                                <EmptyState
+                                    title="No Projects"
+                                    description={'Get started by creating a new project.'}
+                                    cta={
+                                        <Button
+                                            className="py-2"
+                                            suffix={PlusCircleIcon}
+                                            onClick={() => setVisible(true)}
+                                        >
+                                            Create Project
+                                        </Button>
+                                    }
+                                />
                             }
                         />
-                    }
-                />
-            )}
-        </div>
+                    </div>
+                )}
+            </Await>
+        </Suspense>
     )
 }
 

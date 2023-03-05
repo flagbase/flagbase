@@ -114,8 +114,7 @@ const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const removeInstance = useRemoveInstance()
-    const instances = useLoaderData()
+    const instances = useLoaderData() as Instances
     console.log('instances', instances)
 
     useEffect(() => {
@@ -131,10 +130,6 @@ const Instances: React.FC = () => {
             }
         }
     }, [instances])
-
-    const deleteInstance = (deletedSession: Instance) => {
-        removeInstance.mutate(deletedSession)
-    }
 
     const transformInstancesToTableDataSource = (instanceList: Instances): ConvertedInstance[] => {
         const instances = instanceList

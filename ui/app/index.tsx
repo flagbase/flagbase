@@ -2,6 +2,7 @@ import React from 'react'
 import { render } from 'react-dom'
 import { debugContextDevtool } from 'react-context-devtool'
 import 'antd/dist/antd.less'
+import { createRoot } from 'react-dom/client'
 
 import Router from './router'
 import Context from './context'
@@ -13,13 +14,12 @@ const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 const container = document.getElementById('root')
+const root = createRoot(container) // createRoot(container!) if you use TypeScript
 
-render(
-    <Context>
-        <QueryClientProvider client={queryClient}>
-            <RouterProvider router={newRouter} />
-        </QueryClientProvider>
-    </Context>,
+root.render(
+    <QueryClientProvider client={queryClient}>
+        <RouterProvider router={newRouter} />
+    </QueryClientProvider>,
     container
 )
 

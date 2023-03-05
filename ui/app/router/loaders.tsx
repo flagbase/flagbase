@@ -1,6 +1,8 @@
 import { QueryClient } from 'react-query'
+import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { axios } from '../lib/axios'
+import { fetchProjects } from '../pages/projects/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
 
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
@@ -34,12 +36,28 @@ export const workspacesLoader = async ({
     if (!instance) {
         throw new Error('Instance not found')
     }
-    const workspaces = await queryClient.fetchQuery(['workspaces', instanceKey.toLocaleLowerCase()], {
+    const workspaces = queryClient.fetchQuery(['workspaces', instanceKey.toLocaleLowerCase()], {
         queryFn: () => {
             axios.defaults.baseURL = instance.connectionString
             axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
             return fetchWorkspaces(instance.connectionString)
         },
     })
-    return { workspaces, instance }
+    return defer({ workspaces, instance })
+}
+
+export const projectsLoader = async ({
+    queryClient,
+    params,
+}: {
+    queryClient: QueryClient
+    params: { instanceKey: string; workspaceKey: string }
+}) => {
+    const { instanceKey, workspaceKey } = params
+    const projects = queryClient.fetchQuery(['projects', instanceKey, workspaceKey], {
+        queryFn: () => {
+            return fetchProjects(workspaceKey)
+        },
+    })
+    return defer({ projects })
 }
