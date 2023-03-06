@@ -5,7 +5,9 @@ authors: cjoy
 tags: [howto, practices]
 ---
 
-Deployments are a critical part of software development. With so many moving parts involved in a deployment, developers have to rely on different strategies to ensure everything goes smoothly. In this post, we will explore traditional branch-based deployment strategies like Git flow and how it led to the emergence of traffic splitting strategies like Blue/Green and Canary deployment. We'll also dive deep into feature flags and how they are a powerful tool for developers to control the release of new features, decoupling releasing features from deployments. 
+In traditional software development, new features and updates are released to all users simultaneously. This approach has some limitations, such as the risk of introducing bugs and errors that can negatively affect users' experiences. Additionally, it can be challenging to test and optimize new features before releasing them to everyone.
+
+Feature flags provide a solution to these problems by allowing developers to release new features to specific groups of users or enable them on a gradual basis. This approach enables developers to test and optimize features before releasing them to everyone, reducing the risk of introducing bugs and ensuring a smoother rollout.
 
 <!--truncate-->
 
