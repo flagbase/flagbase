@@ -12,7 +12,7 @@ const Template: Story<PollingAppProps> = (args) => <PollingApp {...args} />;
 
 export const DefaultPollingApp = Template.bind({});
 DefaultPollingApp.args = {
-  clientKey: 'sdk-client_4fbb5464-0a71-4fb0-9268-b426d6b710e5',
+  clientKey: 'sdk-server_5121db29-a7c9-4dde-ba52-4b6fed4247b2',
   identity: {
     identifier: "cool-user",
     traits: {
@@ -20,7 +20,7 @@ DefaultPollingApp.args = {
     },
   },
   opts: {
-    pollingServiceUrl: "http://127.0.0.1:9051",
+    pollingServiceUrl: "https://poller.core.flagbase.xyz",
     pollingIntervalMs: 5000,
   }
 };
