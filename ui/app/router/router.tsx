@@ -1,20 +1,22 @@
 import React from 'react'
-import { BrowserRouter, Routes, Route, Navigate, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
+import { Route, Navigate, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 import { RouteParams } from './router.types'
 import Instances from '../pages/instances'
-import Workspaces from '../pages/workspaces'
 import Projects from '../pages/projects'
 import Flags from '../pages/flags'
-import Segments from '../pages/segments'
 import PageLayout from '../../components/page-layout'
 import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
-import EditInstance from '../pages/workspaces/workspaces.edit'
 import EditProject from '../pages/projects/projects.edit'
-import { instancesLoader, projectsLoader, workspacesLoader } from './loaders'
+import { environmentsLoader, instancesLoader, projectsLoader, workspacesLoader } from './loaders'
 import { QueryClient } from 'react-query'
 import MainWorkspaces from '../pages/workspaces/workspaces.main'
+import Environments from '../pages/projects/environments'
+import { Error } from '../pages/error'
+import { Project } from '../pages/projects/project'
+import { EditInstance } from '../pages/instances/instances.settings'
+import { EditWorkspace } from '../pages/workspaces/workspaces.edit'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -28,55 +30,6 @@ export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
 export const getProjectPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`
 
-const Router: React.FC = () => (
-    <BrowserRouter>
-        <Routes>
-            {/* Instances */}
-            <Route path="/" element={<PageLayout />}>
-                <Route path="/" element={<Navigate to="/instances" />} />
-                <Route path="/instances" element={<PageHeadings />}>
-                    <Route path=":activeTab" element={<Instances />} />
-                    <Route path="" element={<Instances />} />
-                </Route>
-                {/* Workspaces */}
-                <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
-                    <Route loader={workspacesLoader} path="" element={<Workspaces />} />
-                    <Route path=":activeTab" element={<Workspaces />} />
-
-                    <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}`} element={<>Workspace view</>} />
-                </Route>
-                {/* Projects */}
-                <Route path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects`} element={<PageHeadings />}>
-                    <Route path="" element={<Projects />} />
-                    <Route path=":activeTab" element={<Projects />} />
-                </Route>
-                <Route
-                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}`}
-                    element={<>Project view</>}
-                />
-                {/* Flags */}
-                <Route
-                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/flags/${EnvironmentKey}`}
-                    element={<Flags />}
-                />
-                <Route
-                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/flags/${FlagKey}/${EnvironmentKey}`}
-                    element={<>Flag view</>}
-                />
-                {/* Segments */}
-                <Route
-                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/segments`}
-                    element={<Segments />}
-                />
-                <Route
-                    path={`/${InstanceKey}/workspaces/${WorkspaceKey}/projects/${ProjectKey}/segments/${SegmentKey}`}
-                    element={<>Segment view</>}
-                />
-            </Route>
-        </Routes>
-    </BrowserRouter>
-)
-
 export const queryClient = new QueryClient()
 
 export const newRouter = createBrowserRouter(
@@ -89,12 +42,13 @@ export const newRouter = createBrowserRouter(
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
                 <Route
                     loader={({ params }) => workspacesLoader({ queryClient, params })}
-                    errorElement={<div>Error</div>}
+                    errorElement={<Error />}
                     path=""
                     element={<MainWorkspaces />}
                 />
                 <Route path="settings" element={<EditInstance />} />
                 <Route path={`${WorkspaceKey}`}>
+                    <Route path="settings" element={<EditWorkspace />} />
                     <Route path="" element={<>Workspace view</>} />
                     <Route path="projects">
                         <Route
@@ -102,11 +56,16 @@ export const newRouter = createBrowserRouter(
                             path=""
                             element={<Projects />}
                         />
-                        <Route path="environments" element={<EditProject />} />
 
-                        <Route path="settings" element={<EditProject />} />
                         <Route path={`${ProjectKey}`}>
-                            <Route path="" element={<>Project view</>} />
+                            <Route path="settings" element={<EditProject />} />
+                            <Route path="" element={<Project />} />
+
+                            <Route
+                                loader={({ params }) => environmentsLoader({ queryClient, params })}
+                                path="environments"
+                                element={<Environments />}
+                            />
                             <Route path={`flags/${EnvironmentKey}`} element={<Flags />} />
                             <Route path={`flags/${FlagKey}/${EnvironmentKey}`} element={<>Flag view</>} />
                         </Route>
@@ -116,5 +75,3 @@ export const newRouter = createBrowserRouter(
         </Route>
     )
 )
-
-export default Router

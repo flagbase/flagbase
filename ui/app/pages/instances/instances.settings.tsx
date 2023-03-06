@@ -3,58 +3,56 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
+import { Instance } from '../../context/instance'
+import { useAddInstance, useInstance, useRemoveInstance, useUpdateInstance } from '../instances/instances'
 import { InstanceSchema } from '../instances/instances.constants'
-import { useRemoveWorkspace, useUpdateWorkspace, useWorkspaces } from './workspaces.main'
 
-export const EditWorkspace = () => {
-    const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
-    const { data: workspaces, isLoading } = useWorkspaces(instanceKey)
+export const EditInstance = () => {
+    const { instanceKey } = useParams<{ instanceKey: string }>()
+
+    const instance = useInstance(instanceKey)
     const navigate = useNavigate()
-    const { mutate: update } = useUpdateWorkspace(instanceKey)
-    const { mutate: remove } = useRemoveWorkspace(instanceKey)
+    const { mutate: update } = useUpdateInstance()
+    const { mutate: remove } = useRemoveInstance()
 
-    const workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    if (!instance) return <div>Loading...</div>
 
-    const removeWorkspace = () => {
-        if (!workspace) {
-            throw new Error('Workspace not found')
-        }
-        remove(workspace?.attributes.key)
-        navigate(`/${instanceKey}/workspaces`)
+    const removeInstance = () => {
+        remove(instance)
+        navigate('/instances')
     }
 
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
     return (
         <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
                 <div className="mb-4">
-                    <h1 className="text-lg font-medium leading-6 text-gray-900">Workspace Settings</h1>
-                    <p className="mt-1 text-sm text-gray-500">{workspace?.attributes.key}</p>
+                    <h1 className="text-lg font-medium leading-6 text-gray-900">Instance Settings </h1>
+                    <p className="mt-1 text-sm text-gray-500">{instance.key}</p>
                 </div>
 
                 <Formik
                     initialValues={{
-                        name: workspace?.attributes.key!,
-                        description: workspace?.attributes.description!,
-                        tags: workspace?.attributes.tags!,
+                        key: instance.key,
+                        connectionString: instance.connectionString,
+                        accessKey: instance.accessKey,
+                        accessSecret: instance.accessSecret,
                     }}
-                    onSubmit={(values: { name: string; description: string; tags: string }) => {
-                        for (const [key, value] of Object.entries(values)) {
-                            update({
-                                workspaceKey: workspace?.attributes.key!,
-                                path: key,
-                                value: value,
-                            })
-                        }
-                        navigate(`/${instanceKey}/workspaces`)
+                    onSubmit={(values: Omit<Instance, 'expiresAt' | 'id' | 'accessToken'>) => {
+                        update({
+                            ...instance,
+                            ...values,
+                            key: instance.key,
+                            newKey: values.key,
+                        })
+                        navigate('/instances')
                     }}
+                    validationSchema={InstanceSchema}
                 >
                     <Form className="flex flex-col gap-5 mb-14">
-                        <Field component={Input} name="name" label="Workspace Name" />
-                        <Field component={Input} name="description" label="Description" />
-                        <Field component={Input} name="tags" label="Tags" />
+                        <Field component={Input} name="key" label="Instance Name" />
+                        <Field component={Input} name="connectionString" label="Connection String" />
+                        <Field component={Input} name="accessKey" label="Access Key" />
+                        <Field component={Input} name="accessSecret" label="Access Secret" type="password" />
 
                         <div className="flex justify-start gap-3">
                             <Button
@@ -79,17 +77,17 @@ export const EditWorkspace = () => {
                 </div>
                 <div className="bg-white shadow sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6">
-                        <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this workspace</h3>
+                        <h3 className="text-base font-semibold leading-6 text-gray-900">Remove this instance</h3>
                         <div className="mt-2 max-w-xl text-sm text-gray-500">
-                            <p>Delete</p>
+                            <p>This will only delete the connection to the instance. You can re-add it later.</p>
                         </div>
                         <div className="mt-5">
                             <button
-                                onClick={removeWorkspace}
+                                onClick={removeInstance}
                                 type="button"
                                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
                             >
-                                Delete workspace
+                                Delete instance
                             </button>
                         </div>
                     </div>

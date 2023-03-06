@@ -1,13 +1,10 @@
 import React from 'react'
-import { render } from 'react-dom'
 import { debugContextDevtool } from 'react-context-devtool'
 import 'antd/dist/antd.less'
 import { createRoot } from 'react-dom/client'
 
-import Router from './router'
-import Context from './context'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import { createBrowserRouter, createRoutesFromElements, RouterProvider } from 'react-router-dom'
+import { QueryClientProvider } from 'react-query'
+import { RouterProvider } from 'react-router-dom'
 import { newRouter, queryClient } from './router/router'
 
 const mainElement = document.createElement('div')
@@ -19,8 +16,7 @@ const root = createRoot(container) // createRoot(container!) if you use TypeScri
 root.render(
     <QueryClientProvider client={queryClient}>
         <RouterProvider router={newRouter} />
-    </QueryClientProvider>,
-    container
+    </QueryClientProvider>
 )
 
 debugContextDevtool(container, {

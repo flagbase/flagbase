@@ -14,8 +14,6 @@ interface ConvertedWorkspace {
     tags: string
 }
 
-const { Text } = Typography
-
 export const convertWorkspaces = (
     workspaceList: Workspace[],
     instance: Instance,
@@ -33,14 +31,14 @@ export const convertWorkspaces = (
         .map((currentWorkspace, index) => {
             return {
                 id: index,
-                title: <Text>{currentWorkspace.attributes.name}</Text>,
+                title: <span>{currentWorkspace.attributes.name}</span>,
                 href: `/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`,
                 name: (
                     <Link to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}>
-                        <Text strong>{currentWorkspace.attributes.name}</Text>
+                        <span>{currentWorkspace.attributes.name}</span>
                     </Link>
                 ),
-                description: <Text>{currentWorkspace.attributes.description}</Text>,
+                description: <span>{currentWorkspace.attributes.description}</span>,
                 tags: currentWorkspace.attributes.tags.join(', '),
                 key: currentWorkspace.attributes.key,
             }

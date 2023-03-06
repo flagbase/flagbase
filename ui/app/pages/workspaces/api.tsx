@@ -32,39 +32,52 @@ export interface Workspace {
     }
 }
 
-export const fetchWorkspaces = async (url: string) => {
-    const result = await axios.get<Workspace[]>(new URL('/workspaces', url).toString())
+export const fetchWorkspaces = async () => {
+    const result = await axios.get<Workspace[]>(`/workspaces`)
     return result.data
 }
 
-export const deleteWorkspace = async (workspaceKey: string) => {
-    return axios.delete(`/workspaces/${workspaceKey}`, {
-        headers: {
-            'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
-        },
-    })
-}
-
-export const createWorkspace = async (
-    url: string,
-    name: string,
-    description: string,
-    tags: string[],
-    accessToken: string
-) => {
-    return axios.post(
-        `/workspaces`,
+export const updateWorkspace = async ({
+    workspaceKey,
+    path,
+    value,
+}: {
+    workspaceKey: string
+    path: string
+    value: string
+}) => {
+    return axios.patch(
+        `/workspaces/${workspaceKey}`,
         {
-            key: name.toLowerCase().replace(' ', '-'),
-            name,
-            description,
-            tags,
+            op: 'replace',
+            path,
+            value,
         },
         {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
-                'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
+                'Access-Control-Allow-Methods': 'GET, PUT, POST, PATCH, DELETE',
             },
         }
     )
+}
+
+export const deleteWorkspace = async (workspaceKey: string) => {
+    return axios.delete(`/workspaces/${workspaceKey}`)
+}
+
+export const createWorkspace = async ({
+    name,
+    description,
+    tags,
+}: {
+    name: string
+    description: string
+    tags: string[]
+}) => {
+    return axios.post(`/workspaces`, {
+        key: name.toLowerCase().replace(' ', '-'),
+        name,
+        description,
+        tags,
+    })
 }

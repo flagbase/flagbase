@@ -1,16 +1,13 @@
 import React, { createElement } from 'react'
 import { FieldInputProps, FormikFormProps, FormikProps } from 'formik'
+import { classNames } from '../../helpers'
 
 export type InputProps = {
     prefix?: React.ReactNode
     field: FieldInputProps<any>
     form: FormikProps<any>
     label?: string
-} & FormikFormProps
-
-function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ')
-}
+} & Omit<FormikFormProps, 'prefix'>
 
 const Input: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) => {
     const { placeholder } = props
@@ -45,4 +42,31 @@ const Input: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) =
     )
 }
 
+type RawInputProps = {
+    prefix?: any
+    label?: string
+} & React.InputHTMLAttributes<HTMLInputElement>
+
+export const RawInput: React.FC<RawInputProps> = ({ prefix, label, ...props }) => {
+    const { placeholder } = props
+
+    return (
+        <div className="relative rounded-md shadow-sm">
+            {prefix && (
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    {createElement(prefix, { className: 'h-5 w-5' })}
+                </div>
+            )}
+            <input
+                type="text"
+                className={classNames(
+                    `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
+                    prefix ? 'pl-10' : ''
+                )}
+                placeholder={placeholder}
+                {...props}
+            />
+        </div>
+    )
+}
 export default Input

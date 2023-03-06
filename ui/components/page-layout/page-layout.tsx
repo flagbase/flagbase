@@ -258,12 +258,12 @@ const MobileNavigation = ({
 }
 
 const Header = () => {
-    const { instanceKey, workspaceKey, projectsKey } =
+    const { instanceKey, workspaceKey } =
         useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const { data: instances } = useInstances()
-    const { data: workspaces } = useWorkspaces(instanceKey || '')
+    const { data: workspaces } = useWorkspaces(instanceKey)
     const { data: projects } = useProjects(instanceKey, workspaceKey)
     return (
         <header className="bg-gray-50 border-b border-gray-200">
@@ -415,6 +415,20 @@ export const PageHeadings = () => {
                 title: 'Instances',
                 tabs: [],
             })
+        } else if (instanceKey && workspaceKey && projectsKey) {
+            setPageHeading({
+                title: projectsKey,
+                tabs: [
+                    {
+                        name: 'Environments',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectsKey}/environments`,
+                    },
+                    {
+                        name: 'Settings',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectsKey}/settings`,
+                    },
+                ],
+            })
         } else if (instanceKey && workspaceKey) {
             setPageHeading({
                 title: workspaceKey,
@@ -424,8 +438,12 @@ export const PageHeadings = () => {
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
                     },
                     {
+                        name: 'Environments',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/environments`,
+                    },
+                    {
                         name: 'Settings',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/settings`,
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/settings`,
                     },
                 ],
             })
@@ -445,10 +463,6 @@ export const PageHeadings = () => {
             })
         }
     }, [location.pathname, activeTab])
-
-    const { data: instances } = useInstances()
-    const { data: workspaces } = useWorkspaces(instanceKey || '')
-    const { data: projects } = useProjects(instanceKey || '', workspaceKey || '')
 
     return (
         <>

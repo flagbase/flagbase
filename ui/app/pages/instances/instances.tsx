@@ -1,32 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 
-import { Layout } from '../../../components/layout'
-import Table from '../../../components/table/table'
-import { Dropdown, Menu, Typography } from 'antd'
-import { Instance, InstanceContext } from '../../context/instance'
+import { Instance } from '../../context/instance'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
-import { Entity } from '../../lib/entity-store/entity-store'
 import { SearchOutlined } from '@ant-design/icons'
-import { constants, instanceColumns } from './instances.constants'
-import { Link, useLoaderData, useOutletContext } from 'react-router-dom'
+import { Await, useLoaderData } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
-import '../../tailwind/tailwind.css'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { axios } from '../../lib/axios'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import Input from '../../../components/input'
 import EmptyProject from '../../../components/empty-state/empty-state'
+import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
 
 type Instances = Instance[]
-
-const { Text } = Typography
-
-interface ConvertedInstance {
-    connectionString: JSX.Element
-    accessKey: string
-    accessSecret: string
-}
 
 export const useUpdateInstance = () => {
     const queryClient = useQueryClient()
@@ -91,13 +78,18 @@ export const useRemoveInstance = () => {
     return mutation
 }
 
-export const useInstance = (instanceKey: string) => {
+export const useInstance = (instanceKey: string | undefined) => {
     const { data: instances } = useInstances({
         refetchOnWindowFocus: false,
+        enabled: !!instanceKey,
     })
-    const instance = instances?.find((i) => i.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase())
+    const instance = instanceKey
+        ? instances?.find((i) => i.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase())
+        : null
     return instance
 }
+
+export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
 
 export const useInstances = (options?: any) => {
     // Define a query to fetch the instances object from the server
@@ -108,90 +100,74 @@ export const useInstances = (options?: any) => {
     return query
 }
 
-export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
-
 const Instances: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const instances = useLoaderData() as Instances
-    console.log('instances', instances)
+    const { instances: initialInstances } = useLoaderData() as { instances: Instances }
 
-    useEffect(() => {
-        if (instances) {
-            for (const instance of instances) {
-                if (instance && instance.expiresAt < new Date()) {
-                    fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret).then(
-                        (result) => {
-                            setVisible(false)
-                        }
-                    )
-                }
-            }
-        }
-    }, [instances])
-
-    const transformInstancesToTableDataSource = (instanceList: Instances): ConvertedInstance[] => {
+    const { data: instances } = useInstances()
+    const transformInstancesToList = (instanceList: Instances): StackedEntityListProps['entities'] => {
         const instances = instanceList
         if (!instances) {
             return []
         }
         return instances
-            ?.filter(
-                (instance): instance is Entity<Instance> => instance !== undefined && instance?.key?.includes(filter)
-            )
+            .filter((instance) => instance.key.includes(filter))
             .map((instance) => {
                 return {
-                    name: <Link to={`/${instance.key.toLowerCase()}/workspaces`}>{instance.key}</Link>,
-                    connectionString: <Text>{instance.connectionString}</Text>,
-                    key: instance.key,
-                    accessKey: instance.accessKey,
-                    accessSecret: instance.accessSecret,
+                    id: instance.key,
+                    href: `/${instance.key.toLowerCase()}/workspaces`,
+                    status: 'Active',
+                    title: instance.key,
+                    location: instance.connectionString,
                 }
             })
     }
 
     return (
-        <div className="mt-5">
-            <AddNewInstanceModal visible={visible} setVisible={setVisible} />
-            {instances && instances.length > 0 && (
-                <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                    <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
-                        Join instance
-                    </Button>
-                    <div className="flex-auto">
-                        <Input
-                            onChange={(event) => setFilter(event.target.value)}
-                            placeholder="Search"
-                            prefix={SearchOutlined}
-                        />
-                    </div>
-                </div>
-            )}
-            {instances && (
-                <Table
-                    dataSource={transformInstancesToTableDataSource(instances)}
-                    loading={false}
-                    columns={instanceColumns}
-                    emptyState={
-                        <EmptyProject
-                            title="You haven't added an instance yet"
-                            description="Add an instance now"
-                            cta={
-                                <Button
-                                    className="py-2"
-                                    onClick={() => setVisible(true)}
-                                    type="button"
-                                    suffix={PlusCircleIcon}
-                                >
+        <Suspense fallback={<div>Loading...</div>}>
+            <Await resolve={initialInstances} errorElement={<div>Error</div>}>
+                {(initialInstances: Instances) => (
+                    <div className="mt-5">
+                        <AddNewInstanceModal visible={visible} setVisible={setVisible} />
+                        {initialInstances.length > 0 && (
+                            <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
+                                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
                                     Join instance
                                 </Button>
-                            }
-                        />
-                    }
-                />
-            )}
-        </div>
+                                <div className="flex-auto">
+                                    <Input
+                                        onChange={(event) => setFilter(event.target.value)}
+                                        placeholder="Search"
+                                        prefix={SearchOutlined}
+                                    />
+                                </div>
+                            </div>
+                        )}
+                        {initialInstances && (
+                            <StackedEntityList entities={transformInstancesToList(instances || initialInstances)} />
+                        )}
+                        {instances && instances.length === 0 && (
+                            <EmptyProject
+                                title="You haven't joined an instance yet"
+                                description="Join an instance now"
+                                cta={
+                                    <Button
+                                        className="py-2"
+                                        onClick={() => setVisible(true)}
+                                        type="button"
+                                        suffix={PlusCircleIcon}
+                                    >
+                                        Join instance
+                                    </Button>
+                                }
+                            />
+                        )}
+                    </div>
+                )}
+            </Await>
+        </Suspense>
     )
 }
 

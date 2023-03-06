@@ -1,13 +1,11 @@
-import { Alert, Col, Dropdown, Menu, Row, Typography } from 'antd'
-import { SearchOutlined } from '@ant-design/icons'
+import { Typography } from 'antd'
 
 import React, { Suspense, useState } from 'react'
 import { Await, useLoaderData, useParams } from 'react-router-dom'
-import { Attributes, Project } from '../../context/project'
+import { Project } from '../../context/project'
 import Table from '../../../components/table/table'
 import { createProject, fetchProjects } from './api'
 import { Instance } from '../../context/instance'
-import { Layout, Content } from '../../../components/layout'
 import Button from '../../../components/button'
 import { CreateProject } from './projects.modal'
 import { Link } from 'react-router-dom'
@@ -16,19 +14,29 @@ import { useInstances } from '../instances/instances'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { useWorkspaces } from '../workspaces/workspaces.main'
 import { Workspace } from '../workspaces/api'
-import { axios } from '../../lib/axios'
-import { PlusCircleIcon, PlusIcon } from '@heroicons/react/24/outline'
-import Input from '../../../components/input'
+import { axios, configureAxios } from '../../lib/axios'
+import { MagnifyingGlassCircleIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
+import { RawInput } from '../../../components/input/input'
 
 const { Text } = Typography
 
-export const convertProjects = (projectList: Project[], instanceKey: string, filter: string = '') => {
-    if (!projectList) {
+export const convertProjects = ({
+    projects,
+    instanceKey,
+    workspaceKey,
+    filter = '',
+}: {
+    projects: Project[]
+    instanceKey: string
+    workspaceKey: string
+    filter: string
+}) => {
+    if (!projects) {
         return []
     }
 
-    return Object.values(projectList)
+    return Object.values(projects)
         .filter((project): project is Project => project !== undefined && project.attributes.key.includes(filter))
         .map((project: Project, index: number) => {
             return {
@@ -38,7 +46,11 @@ export const convertProjects = (projectList: Project[], instanceKey: string, fil
                 name: <Text>{project.attributes.name}</Text>,
                 description: <Text>{project.attributes.description}</Text>,
                 tags: project.attributes.tags?.join(', '),
-                action: <Link to={`/flags/${instanceKey}/${project?.id}`}>Connect</Link>,
+                action: (
+                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project?.attributes.key}`}>
+                        Connect
+                    </Link>
+                ),
                 key: project.attributes.key,
             }
         })
@@ -57,30 +69,14 @@ export const useAddProject = (instanceKey: string, workspaceKey: string) => {
     return mutation
 }
 
-export const useProjects = (instanceKey: string, workspaceKey: string, options?: any) => {
-    const { data: instances } = useInstances({
-        select: (instances: Instance[]) =>
-            instances.filter((i) => i?.key?.toLocaleLowerCase() === instanceKey?.toLocaleLowerCase()),
-    })
-    const [instance] = instances || []
-
-    const { data: workspace } = useWorkspaces(instance?.key, {
-        select: (workspaces: Workspace[]) => {
-            const [filtered] = workspaces.filter(
-                (workspace) => workspace?.attributes?.key.toLocaleLowerCase() === workspaceKey?.toLocaleLowerCase()
-            )
-            return filtered
-        },
-    })
-
-    const query = useQuery<Project[]>(['projects', instance?.key, workspace?.attributes?.key], {
+export const useProjects = (instanceKey: string | undefined, workspaceKey: string | undefined, options?: any) => {
+    const query = useQuery<Project[]>(['projects', instanceKey, workspaceKey], {
         ...options,
-        queryFn: () => fetchProjects(workspaceKey),
-        onSuccess: () => {
-            axios.defaults.baseURL = instance.connectionString
-            axios.defaults.headers.common['Authorization'] = `Bearer ${instance.accessToken}`
+        queryFn: async () => {
+            await configureAxios(instanceKey!)
+            return fetchProjects(workspaceKey!)
         },
-        enabled: !!instance?.key && !!workspace?.attributes?.key,
+        enabled: !!instanceKey && !!workspaceKey,
     })
     return query
 }
@@ -88,8 +84,9 @@ export const useProjects = (instanceKey: string, workspaceKey: string, options?:
 const Projects: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
-    const { projects } = useLoaderData() as { projects: Project[] }
-    const { instanceKey } = useParams() as { instanceKey: string }
+    const { instanceKey, workspaceKey } = useParams() as { instanceKey: string; workspaceKey: string }
+
+    const { data: projects } = useProjects(instanceKey, workspaceKey)
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
@@ -103,17 +100,17 @@ const Projects: React.FC = () => {
                                 {constants.create}
                             </Button>
                             <div className="flex-auto">
-                                <Input
+                                <RawInput
                                     onChange={(event) => setFilter(event.target.value)}
                                     placeholder="Search"
-                                    prefix={SearchOutlined}
+                                    prefix={MagnifyingGlassIcon as any}
                                 />
                             </div>
                         </div>
 
                         <Table
                             loading={false}
-                            dataSource={convertProjects(projects, instanceKey, filter)}
+                            dataSource={convertProjects({ projects, workspaceKey, instanceKey, filter })}
                             columns={projectsColumn}
                             emptyState={
                                 <EmptyState
