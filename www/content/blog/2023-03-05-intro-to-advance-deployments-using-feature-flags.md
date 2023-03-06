@@ -107,7 +107,7 @@ There are several proprietary platforms available for managing your feature flag
 
 ![Proprietary vendors](/assets/blog/intro-to-advance-deployments-using-feature-flags/proprietary-vendors.png)
 
-An obviously there is Flagbase. Our platform is free to use and fully open source. It's highly performant and uses a unique compression & transport mechanism. It's written in Go and has a developer-friendly design.
+And obviously there is Flagbase. Our platform is free to use and fully open source. The core was built with performance in mind. [Try it out in your application today!](https://flagbase.com/docs/intro/overview)
 
 ![Flagbase for the win](/assets/blog/intro-to-advance-deployments-using-feature-flags/flagbase.png)
 
