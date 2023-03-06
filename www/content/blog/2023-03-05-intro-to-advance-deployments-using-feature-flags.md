@@ -5,13 +5,13 @@ authors: cjoy
 tags: [howto, practices]
 ---
 
-Deployments are a critical part of software development, and they can make or break the success of a project. With so many moving parts involved in a deployment, developers have to rely on different strategies to ensure everything goes smoothly. In this post, we will explore traditional branch-based deployment strategies like Git flow and how it led to the emergence of traffic splitting strategies like Blue/Green and Canary deployment. We'll also dive deep into feature flags, a powerful tool for developers to control the release of new features and target specific users. 
+Deployments are a critical part of software development. With so many moving parts involved in a deployment, developers have to rely on different strategies to ensure everything goes smoothly. In this post, we will explore traditional branch-based deployment strategies like Git flow and how it led to the emergence of traffic splitting strategies like Blue/Green and Canary deployment. We'll also dive deep into feature flags and how they are a powerful tool for developers to control the release of new features, decoupling releasing features from deployments. 
 
 <!--truncate-->
 
 ## Traditional Deployment Strategies
 
-Deployments are a crucial part of software development. They involve moving code from one environment to another, such as from a staging environment to production. Deployments are the product of branching strategies. One such strategy is Git flow.
+Deployments are a crucial part of software development. They involve moving code from one environment to another, such as from a staging environment to production. Some traditional deployment strategies were the product of branching patterns. One such pattern is Git flow.
 
 
 ### Git Flow
@@ -24,7 +24,7 @@ Hotfix branches are used to address bugs and help bypass the develop branch. Thi
 
 The release branch contains the most stable version of the application and is what is released to users. This ensures that users always have access to a stable version of the application.
 
-Git flow solves the problem of deploying directly to production, which could introduce bugs and other issues. However, it has its own problems. Hotfixes take time to fix and merge into the release branch, then re-deploy. All users would be affected if the release branch has some bad code.
+Git flow-based deployments solves the problem of deploying directly to production, which could introduce bugs and other issues. However, it has its own problems. Hotfixes take time to fix and merge into the release branch, then re-deploy. All users would be affected if the release branch has some bad code.
 
 ![Git Flow Problem](/assets/blog/intro-to-advance-deployments-using-feature-flags/git-flow-problem.png)
 
@@ -41,7 +41,7 @@ In Blue/Green deployment, two separate but identical environments are created: B
 
 Traffic is directed between these two environments in order to test out new features or fixes before rolling them out to all users.
 
-However, this strategy still has a problem: all users would be affected if there's some bad code in either environment.
+However, this strategy still has a problem: all users would be affected if there's some bad code in either environment. All new features that were released would have to be rolled back, even if it was just one feature causing the issue. 
 
 ![Blue/Green Deployment Problems](/assets/blog/intro-to-advance-deployments-using-feature-flags/blue-green-deployments-problems.png)
 
@@ -113,4 +113,4 @@ An obviously there is Flagbase. Our platform is free to use and fully open sourc
 
 ## Conclusion
 
-In conclusion, feature flags are a powerful tool for developers to control the release of new features and target specific users. By using a feature management platform like Flagbase, developers can easily manage their feature flags and ensure that their application remains performant. Whether you're using a local or remote feature store, it's important to remember to remove your feature flags once they've served their purpose. Happy coding!
+In conclusion, feature flags are a powerful tool for developers to control the release of new features and target specific users. Feature flags allow for the **decoupling of feature releases with deployments**. By using a feature management platform like Flagbase, developers can easily manage their feature flags and ensure that their application remains performant. Whether you're using a local or remote feature store, it's important to remember to remove your feature flags once they've served their purpose. Happy coding!
