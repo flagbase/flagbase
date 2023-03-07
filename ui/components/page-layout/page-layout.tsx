@@ -412,8 +412,8 @@ export const PageHeadings = () => {
         tabs: [],
     })
 
-    const { instanceKey, workspaceKey, projectsKey } =
-        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+    const { instanceKey, workspaceKey, projectKey } =
+        useParams<{ instanceKey: string; workspaceKey: string; projectKey: string }>()
 
     useEffect(() => {
         if (location.pathname.includes('instances')) {
@@ -421,17 +421,21 @@ export const PageHeadings = () => {
                 title: 'Instances',
                 tabs: [],
             })
-        } else if (instanceKey && workspaceKey && projectsKey) {
+        } else if (instanceKey && workspaceKey && projectKey) {
             setPageHeading({
-                title: projectsKey,
+                title: projectKey,
                 tabs: [
                     {
+                        name: 'Info',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`,
+                    },
+                    {
                         name: 'Environments',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectsKey}/environments`,
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
                     },
                     {
                         name: 'Settings',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectsKey}/settings`,
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/settings`,
                     },
                 ],
             })
@@ -442,10 +446,6 @@ export const PageHeadings = () => {
                     {
                         name: 'Projects',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
-                    },
-                    {
-                        name: 'Environments',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/environments`,
                     },
                     {
                         name: 'Settings',

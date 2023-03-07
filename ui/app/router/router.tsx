@@ -50,13 +50,16 @@ export const newRouter = createBrowserRouter(
                 <Route path={`${WorkspaceKey}`}>
                     <Route path="settings" element={<EditWorkspace />} />
                     <Route path="" element={<>Workspace view</>} />
-                    <Route
-                        path="projects"
-                        loader={({ params }) => projectsLoader({ queryClient, params })}
-                        element={<Projects />}
-                    >
-                        <Route path={ProjectKey} element={<Project />}>
+                    <Route path="projects">
+                        <Route
+                            loader={({ params }) => projectsLoader({ queryClient, params })}
+                            path=""
+                            element={<Projects />}
+                        />
+
+                        <Route path={`${ProjectKey}`}>
                             <Route path="settings" element={<EditProject />} />
+                            <Route path="" element={<Project />} />
 
                             <Route
                                 loader={({ params }) => environmentsLoader({ queryClient, params })}
