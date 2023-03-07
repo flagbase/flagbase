@@ -12,7 +12,7 @@ const Template: Story<PollingAppProps> = (args) => <PollingApp {...args} />;
 
 export const DefaultPollingApp = Template.bind({});
 DefaultPollingApp.args = {
-  clientKey: 'sdk-server_5121db29-a7c9-4dde-ba52-4b6fed4247b2',
+  clientKey: 'sdk-client_eb64a3a3-8157-41dc-922a-a7fc8e05b377',
   identity: {
     identifier: "cool-user",
     traits: {

@@ -2,8 +2,10 @@ package transport
 
 import (
 	healthcheckservice "core/internal/app/healthcheck/service"
+	res "core/pkg/response"
 	"net/http"
 
+	"core/internal/pkg/httputil"
 	"core/internal/pkg/srvenv"
 
 	"github.com/gin-gonic/gin"
@@ -29,10 +31,15 @@ func ApplyRoutes(senv *srvenv.Env, r *gin.RouterGroup) {
 }
 
 func (h *APIHandler) healthCheckAPIHandler(ctx *gin.Context) {
-	pong, err := h.HealthCheckService.HealthCheck()
-	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
-		return
-	}
-	ctx.Data(http.StatusOK, "text/plain", []byte(pong))
+	r := h.HealthCheckService.HealthCheck()
+
+	httputil.SendJSON(
+		ctx,
+		http.StatusOK,
+		r,
+		http.StatusInternalServerError,
+		res.Errors{
+			Errors: []*res.Error{},
+		},
+	)
 }
