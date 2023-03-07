@@ -2,7 +2,6 @@ import React from 'react'
 import { Route, Navigate, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 import { RouteParams } from './router.types'
-import Instances from '../pages/instances'
 import Projects from '../pages/projects'
 import Flags from '../pages/flags'
 import PageLayout from '../../components/page-layout'
@@ -17,6 +16,7 @@ import { Error } from '../pages/error'
 import { Project } from '../pages/projects/project'
 import { EditInstance } from '../pages/instances/instances.settings'
 import { EditWorkspace } from '../pages/workspaces/workspaces.edit'
+import Instances from '../pages/instances/instances'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
 
@@ -50,16 +50,13 @@ export const newRouter = createBrowserRouter(
                 <Route path={`${WorkspaceKey}`}>
                     <Route path="settings" element={<EditWorkspace />} />
                     <Route path="" element={<>Workspace view</>} />
-                    <Route path="projects">
-                        <Route
-                            loader={({ params }) => projectsLoader({ queryClient, params })}
-                            path=""
-                            element={<Projects />}
-                        />
-
-                        <Route path={`${ProjectKey}`}>
+                    <Route
+                        path="projects"
+                        loader={({ params }) => projectsLoader({ queryClient, params })}
+                        element={<Projects />}
+                    >
+                        <Route path={ProjectKey} element={<Project />}>
                             <Route path="settings" element={<EditProject />} />
-                            <Route path="" element={<Project />} />
 
                             <Route
                                 loader={({ params }) => environmentsLoader({ queryClient, params })}

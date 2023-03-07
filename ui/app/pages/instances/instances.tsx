@@ -20,7 +20,7 @@ export const useUpdateInstance = () => {
     const mutation = useMutation({
         mutationFn: async (instance: Instance & { newKey: string }) => {
             axios.defaults.baseURL = instance.connectionString
-            const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
+            const result = await fetchAccessToken(instance.accessKey, instance.accessSecret)
             const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
             const filteredInstances = currInstances.filter((i: Instance) => i.key !== instance.key)
             localStorage.setItem(
@@ -40,7 +40,7 @@ export const useAddInstance = () => {
     const mutation = useMutation({
         mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
             axios.defaults.baseURL = instance.connectionString
-            const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
+            const result = await fetchAccessToken(instance.accessKey, instance.accessSecret)
             const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
             localStorage.setItem(
                 'instances',
@@ -64,12 +64,10 @@ export const useRemoveInstance = () => {
     const queryClient = useQueryClient()
     const mutation = useMutation({
         mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
-            axios.defaults.baseURL = instance.connectionString
-            const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
             const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
             const filteredInstances = currInstances.filter((i: Instance) => i.key !== instance.key)
             localStorage.setItem('instances', JSON.stringify(filteredInstances))
-            return { ...instance, expiresAt: result.expiresAt }
+            return { ...instance }
         },
         onSuccess: () => {
             queryClient.invalidateQueries(['instances'])

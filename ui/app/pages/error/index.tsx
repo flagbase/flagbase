@@ -1,31 +1,31 @@
 import React from 'react'
-import { useAsyncError } from 'react-router-dom'
+import { useAsyncError, useRouteError } from 'react-router-dom'
+import Button from '../../../components/button'
 
+type ErrorType = {
+    message: string
+    status: number
+}
 export const Error = () => {
     const error = useAsyncError() as any
-    console.log('ERROR', error)
-
-    const errors = error?.response?.data?.errors || []
-    console.log(error)
+    const { message, status } = (useRouteError() as ErrorType) || {
+        message: 'Page not found',
+        status: 404,
+    }
     return (
-        <div>
-            <h1>Something went wrong</h1>
-            <ul role="list" className="-my-5 divide-y divide-gray-200">
-                {errors.map((error) => (
-                    <li key={error.code} className="py-5">
-                        <div className="relative focus-within:ring-2 focus-within:ring-indigo-500">
-                            <h3 className="text-sm font-semibold text-gray-800">
-                                <span>
-                                    {/* Extend touch target to entire panel */}
-                                    <span className="absolute inset-0" aria-hidden="true" />
-                                    {error.code}
-                                </span>
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{error.message}</p>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <main className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">
+            <div className="text-center">
+                <p className="text-base font-semibold text-indigo-600">{status}</p>
+                <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">{message}</h1>
+                <p className="mt-6 text-base leading-7 text-gray-600">
+                    Sorry, we couldn’t find the page you’re looking for.
+                </p>
+                <div className="mt-10 flex items-center justify-center gap-x-6">
+                    <Button goBack className="py-2">
+                        Go back
+                    </Button>
+                </div>
+            </div>
+        </main>
     )
 }

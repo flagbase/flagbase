@@ -71,36 +71,43 @@ export const useWorkspaces = (instanceKey: string | undefined, options?: any) =>
 
 const WorkspacesError = () => {
     const error = useAsyncError() as any
+    console.log('error', error)
     const errors = error?.response?.data?.errors || []
     return (
-        <ul role="list" className="-my-5 divide-y divide-gray-200">
-            {errors.map((error) => (
-                <li key={error.code} className="py-5">
-                    <div className="relative focus-within:ring-2 focus-within:ring-indigo-500">
-                        <h3 className="text-sm font-semibold text-gray-800">
-                            <span>
-                                {/* Extend touch target to entire panel */}
-                                <span className="absolute inset-0" aria-hidden="true" />
-                                {error.code}
-                            </span>
-                        </h3>
-                        <p className="mt-1 text-sm text-gray-600 line-clamp-2">{error.message}</p>
-                    </div>
-                </li>
-            ))}
-        </ul>
+        <div>
+            CODE RED
+            <ul role="list" className="-my-5 divide-y divide-gray-200">
+                {errors.map((error) => (
+                    <li key={error.code} className="py-5">
+                        <div className="relative focus-within:ring-2 focus-within:ring-indigo-500">
+                            <h3 className="text-sm font-semibold text-gray-800">
+                                <span>
+                                    {/* Extend touch target to entire panel */}
+                                    <span className="absolute inset-0" aria-hidden="true" />
+                                    {error.code}
+                                </span>
+                            </h3>
+                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{error.message}</p>
+                        </div>
+                    </li>
+                ))}
+            </ul>
+        </div>
     )
 }
 
 const MainWorkspaces = () => {
     const { instanceKey } = useParams() as { instanceKey: string }
-    const { instance } = useLoaderData() as { workspaces: Workspace[]; instance: Instance }
+    const { instance, workspaces: prefetchedWorkspaces } = useLoaderData() as {
+        workspaces: Workspace[]
+        instance: Instance
+    }
     const [createWorkspace, showCreateWorkspace] = useState(false)
     const [filter, setFilter] = useState('')
     const { data: workspaces } = useWorkspaces(instanceKey)
     return (
         <Suspense fallback={<div>Loading...</div>}>
-            <Await resolve={instance} errorElement={<WorkspacesError />}>
+            <Await resolve={prefetchedWorkspaces}>
                 {() => (
                     <React.Fragment>
                         <CreateWorkspace

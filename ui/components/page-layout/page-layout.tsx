@@ -204,6 +204,9 @@ const MobileNavigation = ({
     workspaces?: Workspace[]
     projects?: Project[]
 }) => {
+    const { instanceKey, workspaceKey } =
+        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+
     return (
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
             <div className="fixed inset-0 z-10" />
@@ -238,7 +241,7 @@ const MobileNavigation = ({
                                     name="Workspaces"
                                     description={workspaceDescription}
                                     href="/"
-                                    children={getProjectDropdown(workspaces)}
+                                    children={getWorkspaceDropdown(workspaces, instanceKey)}
                                 />
                             )}
                             {projects && (
@@ -324,6 +327,7 @@ const Header = () => {
                 setMobileMenuOpen={setMobileMenuOpen}
                 instances={instances}
                 workspaces={workspaces}
+                projects={projects}
             />
         </header>
     )
@@ -400,6 +404,8 @@ type PageHeadingType = {
 export const PageHeadings = () => {
     const { activeTab } = useParams<{ activeTab: string }>()
     const location = useLocation()
+    const matches = useMatches()
+    console.table(matches)
 
     const [pageHeading, setPageHeading] = useState<PageHeadingType>({
         title: '',

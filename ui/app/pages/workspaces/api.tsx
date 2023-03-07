@@ -7,7 +7,7 @@ interface AccessToken {
     accessToken: string
 }
 
-export const fetchAccessToken = async (url: string, key: string, secret: string): Promise<AccessToken> => {
+export const fetchAccessToken = async (key: string, secret: string): Promise<AccessToken> => {
     const result = await axios.post(`/access/token`, {
         key,
         secret,
