@@ -1,23 +1,20 @@
 import { Typography } from 'antd'
 
 import React, { Suspense, useState } from 'react'
-import { Await, useLoaderData, useParams } from 'react-router-dom'
-import { Project } from '../../context/project'
+import { Await, useParams } from 'react-router-dom'
 import Table from '../../../components/table/table'
-import { createProject, fetchProjects } from './api'
-import { Instance } from '../../context/instance'
+import { createProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
 import { CreateProject } from './projects.modal'
 import { Link } from 'react-router-dom'
 import { constants, projectsColumn } from './projects.constants'
-import { useInstances } from '../instances/instances'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { useWorkspaces } from '../workspaces/workspaces.main'
 import { Workspace } from '../workspaces/api'
-import { axios, configureAxios } from '../../lib/axios'
-import { MagnifyingGlassCircleIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
+import { configureAxios } from '../../lib/axios'
+import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
 import { RawInput } from '../../../components/input/input'
+import Tag from '../../../components/tag'
 
 const { Text } = Typography
 
@@ -45,10 +42,20 @@ export const convertProjects = ({
                 href: `/flags/${instanceKey}/${project?.id}`,
                 name: <Text>{project.attributes.name}</Text>,
                 description: <Text>{project.attributes.description}</Text>,
-                tags: project.attributes.tags?.join(', '),
+                tags: (
+                    <div>
+                        {project.attributes.tags.map((tag) => (
+                            <Tag key={tag} className="mr-2">
+                                {tag}
+                            </Tag>
+                        ))}
+                    </div>
+                ),
                 action: (
                     <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project?.attributes.key}`}>
-                        Connect
+                        <Button secondary className="py-2">
+                            Connect
+                        </Button>
                     </Link>
                 ),
                 key: project.attributes.key,

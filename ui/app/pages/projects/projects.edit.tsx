@@ -3,7 +3,6 @@ import React from 'react'
 import { Form } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
-import { Project } from '../../context/project'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { useProjects } from './projects'
 

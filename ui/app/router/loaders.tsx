@@ -89,8 +89,6 @@ export const environmentsLoader = async ({
     params: { instanceKey: string; workspaceKey: string; projectKey: string }
 }) => {
     const { instanceKey, workspaceKey, projectKey } = params
-    const [instance] = await instancesQuery(queryClient, instanceKey)
-    const { connectionString, accessToken } = instance
     const environments = queryClient.fetchQuery(['environments', instanceKey, workspaceKey, projectKey], {
         queryFn: async () => {
             await configureAxios(instanceKey)

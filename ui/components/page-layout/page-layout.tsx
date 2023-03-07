@@ -404,8 +404,6 @@ type PageHeadingType = {
 export const PageHeadings = () => {
     const { activeTab } = useParams<{ activeTab: string }>()
     const location = useLocation()
-    const matches = useMatches()
-    console.table(matches)
 
     const [pageHeading, setPageHeading] = useState<PageHeadingType>({
         title: '',

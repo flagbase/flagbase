@@ -47,7 +47,7 @@ export const createProject = async (name: string, description: string, tags: str
 }
 
 export const fetchEnvironments = async (workspaceKey: string, projectsKey: string) => {
-    if (!workspaceKey || !projectsKey) return Promise.resolve([])
-    const result = await axios.get(`/workspaces/${workspaceKey}/projects/${projectsKey}/environments`)
+    if (!workspaceKey || !projectsKey) return Promise.reject('Missing workspaceKey or projectsKey')
+    const result = await axios.get(`/projects/${workspaceKey}/${projectsKey}/environments`)
     return result.data
 }

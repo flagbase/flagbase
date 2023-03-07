@@ -4,6 +4,8 @@ import { Instance } from '../../context/instance'
 import { Entity } from '../../lib/entity-store/entity-store'
 import { Link } from 'react-router-dom'
 import { Workspace } from './api'
+import Button from '../../../components/button/button'
+import Tag from '../../../components/tag'
 
 interface ConvertedWorkspace {
     id: number
@@ -38,8 +40,19 @@ export const convertWorkspaces = (
                         <span>{currentWorkspace.attributes.name}</span>
                     </Link>
                 ),
+                action: (
+                    <Link to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}>
+                        <Button secondary className="py-2">
+                            Connect
+                        </Button>
+                    </Link>
+                ),
                 description: <span>{currentWorkspace.attributes.description}</span>,
-                tags: currentWorkspace.attributes.tags.join(', '),
+                tags: currentWorkspace.attributes.tags.map((tag: string) => (
+                    <Tag key={tag} className="mr-2">
+                        {tag}
+                    </Tag>
+                )),
                 key: currentWorkspace.attributes.key,
             }
         })
