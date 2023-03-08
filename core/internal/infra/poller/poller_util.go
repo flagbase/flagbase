@@ -55,7 +55,7 @@ func getAndSetCache(args CachedServiceArgs) (
 		retag,
 		cons.DefaultCacheExpiry,
 	).Err(); err != nil {
-		panic(err)
+		sks.Senv.Log.Error().Msgf("Unable to set raw flags in cache: " + err.Error())
 	}
 
 	return o, e, retag
@@ -103,7 +103,7 @@ func evaluateAndSetCache(args CachedServiceArgs) (
 		retag,
 		cons.DefaultCacheExpiry,
 	).Err(); err != nil {
-		panic(err)
+		sks.Senv.Log.Error().Msgf("Unable to set evaluation results in cache: " + err.Error())
 	}
 
 	return r, e, retag
