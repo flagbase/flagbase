@@ -31,12 +31,15 @@ func New(
 
 	r := gin.New()
 
-	// r.Use(cors.New(cors.Config{
-	// 	AllowAllOrigins: true,
-	// 	AllowHeaders:    []string{"*"},
-	// 	ExposeHeaders:   []string{"x-sdk-key", "Authorization", "ETag"},
-	// }))
-	r.Use(cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.AllowCredentials = true
+	config.AllowWildcard = true
+	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowHeaders = []string{"*"}
+	config.ExposeHeaders = []string{"*"}
+
+	r.Use(cors.New(config))
 
 	r.Use(gin.Recovery())
 
