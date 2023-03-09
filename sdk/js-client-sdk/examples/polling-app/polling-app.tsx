@@ -6,7 +6,7 @@ import FlagbaseClient, {
   Identity,
   InternalData,
   EventType,
-} from "../src/index";
+} from "../../src/index";
 
 const BORDER_STYLE = { border: "1px solid black" };
 
