@@ -1,8 +1,10 @@
 import { fetchFlagsViaPoller } from "../fetch";
-import { Flagset, IContext } from "../context";
+import { Evaluations, Flagset, IContext } from "../context";
 import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
+import { PollerWorkerRequestType, PollerWorkerResponse, PollerWorkerResponseType } from './types';
+import PollerWorker from 'worker-loader!./poller.worker';
 
 const INITIAL_ETAG = "initial";
 
@@ -13,15 +15,43 @@ export default function Poller(
   const config = context.getConfig();
   const pollingServiceUrl = config.pollingServiceUrl;
   const clientKey = config.clientKey;
-
-  let interval = setInterval(() => {});
   let etag = INITIAL_ETAG;
 
-  const onFullRequest = () => {
-    context.setInternalData({
-      consecutiveCachedRequests: 0,
-      consecutiveFailedRequests: 0,
-    });
+  const onFullResponse = (retag: string, evaluations: Evaluations) => {
+    if (evaluations?.length) {
+      evaluations.forEach((evaluation) =>
+        context.setFlag(evaluation.attributes.flagKey, evaluation.attributes)
+      );
+      const {
+        flagsetChanges: prevFlagsetChanges,
+      } = context.getInternalData();
+      context.setInternalData({
+        flagsetChanges: prevFlagsetChanges + 1,
+      });
+      events.emit(EventType.FLAG_CHANGE, "Flagset has changed");
+    }
+
+    if (etag === INITIAL_ETAG && retag !== etag) {
+      context.setInternalData({
+        consecutiveCachedRequests: 0,
+        consecutiveFailedRequests: 0,
+      });
+      events.emit(
+        EventType.CLIENT_READY,
+        "Client is ready! Initial flagset has been retrieved.",
+        context.getAllFlags()
+      );
+    }
+
+    etag = retag;
+
+    events.emit(
+      EventType.NETWORK_FETCH,
+      "Fetched flags from service via polling.",
+      context.getInternalData()
+    );
+
+
     events.emit(
       EventType.NETWORK_FETCH_FULL,
       "Retrieved full flagset from service.",
@@ -29,7 +59,7 @@ export default function Poller(
     );
   };
 
-  const onCachedRequest = () => {
+  const onCachedResponse = () => {
     const {
       consecutiveCachedRequests: prevConsecutiveCachedRequests,
     } = context.getInternalData();
@@ -44,7 +74,7 @@ export default function Poller(
     );
   };
 
-  const onErrorRequest = () => {
+  const onErrorResponse = () => {
     const {
       consecutiveFailedRequests: prevConsecutiveFailedRequests,
     } = context.getInternalData();
@@ -59,72 +89,92 @@ export default function Poller(
     );
   };
 
-  const start = async () => {
-    await fetchFlagsViaPoller(
-      pollingServiceUrl,
-      clientKey,
-      context.getIdentity(),
-      etag
-    );
-    events.emit(
-      EventType.NETWORK_FETCH,
-      "Initial flags from service.",
-      context.getInternalData()
-    );
+  let start: () => void = () => {};
+  let stop: () => void = () => {};
 
-    interval = setInterval(async () => {
+  if (typeof(Worker) !== "undefined") {
+    // WebWorkers is supported then start polling via web worker
+    const pollerWorker = new PollerWorker();
+    const requestKey = `${pollingServiceUrl}-${clientKey}`;
+
+    start = async () => {
+      events.emit(
+        EventType.NETWORK_FETCH,
+        "Starting to fetch initial flags from poller.",
+        context.getInternalData()
+      );
+  
+      pollerWorker.postMessage({
+        requestType: PollerWorkerRequestType.START,
+        requestKey,
+        requestPayload: {
+          pollingServiceUrl,
+          clientKey,
+          identity: context.getIdentity(),
+          etag,
+          pollingIntervalMs: config.pollingIntervalMs
+        }
+      });
+  
+      pollerWorker.onmessage = (e: MessageEvent) => {
+        const {
+          responseType,
+          responsePayload
+        } = e.data as PollerWorkerResponse;
+        switch (responseType) {
+          case PollerWorkerResponseType.FULL:
+            const { retag, evaluations } = responsePayload;
+            onFullResponse(retag, evaluations);
+            break;
+          case PollerWorkerResponseType.CACHED:
+            onCachedResponse();
+            break;
+          case PollerWorkerResponseType.ERROR:
+            onErrorResponse();
+            break;
+          default: 
+            console.error(`Unknown response type emitted by poller-worker: ${responseType}`);
+        }
+      };
+    };
+
+    stop = async () => {
+      pollerWorker.postMessage({
+        requestType: PollerWorkerRequestType.RESET,
+        requestKey,
+        requestPayload: {
+          pollingServiceUrl,
+          clientKey,
+          identity: context.getIdentity(),
+          etag,
+          pollingIntervalMs: config.pollingIntervalMs
+        }
+      });
+      pollerWorker.terminate()
+    }
+  } else {
+    // Otherwise fallback to using main thread
+    let timerId: number;
+
+    start = async () => {
       const [retag, evaluations] = await fetchFlagsViaPoller(
         pollingServiceUrl,
         clientKey,
         context.getIdentity(),
         etag,
-        onFullRequest,
-        onCachedRequest,
-        onErrorRequest
+        onFullResponse,
+        onCachedResponse,
+        onErrorResponse
       );
-      if (evaluations?.length) {
-        const flagset: Flagset = evaluations.reduce(
-          (acc, evaluation) => ({
-            [evaluation.attributes.flagKey]: evaluation.attributes,
-            ...acc,
-          }),
-          {}
-        );
-        if (JSON.stringify(context.getAllFlags()) === JSON.stringify(flagset)) {
-          return;
-        }
-
-        Object.keys(flagset).forEach((flagKey) =>
-          context.setFlag(flagKey, flagset[flagKey])
-        );
-        const {
-          flagsetChanges: prevFlagsetChanges,
-        } = context.getInternalData();
-        context.setInternalData({
-          flagsetChanges: prevFlagsetChanges + 1,
-        });
-        events.emit(EventType.FLAG_CHANGE, "Flagset has changed");
-      }
-
-      if (etag === INITIAL_ETAG && retag !== etag) {
-        events.emit(
-          EventType.CLIENT_READY,
-          "Client is ready! Initial flagset has been retrieved.",
-          context.getAllFlags()
-        );
-      }
-
       etag = retag;
 
-      events.emit(
-        EventType.NETWORK_FETCH,
-        "Fetched flags from service via polling.",
-        context.getInternalData()
-      );
-    }, config.pollingIntervalMs);
-  };
-
-  const stop = async () => clearInterval(interval);
+      timerId = setTimeout(start, config.pollingIntervalMs);
+    };
+    
+    stop = async () => {
+      clearTimeout(timerId);
+    };
+  }
 
   return {
     start,

@@ -46,9 +46,9 @@ export const fetchFlagsViaPoller = async (
   clientKey: Config["clientKey"],
   identity: Identity,
   etag: string,
-  onFullRequest?: () => void,
-  onCachedRequest?: () => void,
-  onErrorRequest?: () => void
+  onFullResponse?: (retag: string, evals: Evaluations) => void,
+  onCachedResponse?: () => void,
+  onErrorResponse?: () => void
 ): Promise<[string, Evaluations]> => {
   const {
     etag: retag,
@@ -65,11 +65,11 @@ export const fetchFlagsViaPoller = async (
   );
 
   if (!hasFailed && status === 200) {
-    typeof onFullRequest === "function" && onFullRequest();
+    typeof onFullResponse === "function" && onFullResponse(retag, evaluations as Evaluations);
   } else if (!hasFailed && status === 304) {
-    typeof onCachedRequest === "function" && onCachedRequest();
+    typeof onCachedResponse === "function" && onCachedResponse();
   } else if (hasFailed) {
-    typeof onErrorRequest === "function" && onErrorRequest();
+    typeof onErrorResponse === "function" && onErrorResponse();
   }
 
   return [retag, Array.isArray(evaluations) ? evaluations : []];

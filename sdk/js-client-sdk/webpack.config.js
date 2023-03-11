@@ -6,19 +6,24 @@ module.exports = {
 
   module: {
     rules: [
-
-      // use ts-loader to transpile .ts files
+      {
+        test: /\.worker\.(js|ts)$/,
+        loader: 'worker-loader',  
+        options: {
+          inline: 'no-fallback',
+          esModule: true,
+        }
+      },
       {
         test: /\.ts/,
         use: "ts-loader",
         exclude: /node_modules/,
       },
-
     ],
   },
 
   resolve: {
-    extensions: [".ts"],
+    extensions: [".js", ".ts"],
   },
 
   output: {
