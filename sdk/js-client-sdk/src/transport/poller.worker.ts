@@ -88,3 +88,5 @@ ctx.onmessage = async (e: MessageEvent<PollerWorkerRequest>) => {
       break;
   }
 };
+
+export default null as any;

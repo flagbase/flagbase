@@ -4,7 +4,7 @@ import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
 import { PollerWorkerRequestType, PollerWorkerResponse, PollerWorkerResponseType } from './types';
-import PollerWorker from 'worker-loader!./poller.worker';
+import PollerWorker from './poller.worker.ts';
 
 const INITIAL_ETAG = "initial";
 

@@ -10,8 +10,7 @@ module.exports = {
         test: /\.worker\.(js|ts)$/,
         loader: 'worker-loader',  
         options: {
-          inline: 'no-fallback',
-          esModule: true,
+          inline: 'no-fallback'
         }
       },
       {
@@ -29,23 +28,15 @@ module.exports = {
   output: {
     // empty the output directory on every build
     clean: true,
-
     // the dir of output bundle
     path: path.resolve(__dirname, "dist"),
-
     // output bundle name
     filename: "index.js",
-
-    globalObject: "this",
-
+    // globalObject: "this",
     library: {
       // your lib name if imported with the <script> tag
-      // for this library it will be available as `window.char_series`
-      name: "char_series", 
-
-      // the module type
+      name: "FlagbaseClient", 
       type: "umd",
-
       export: "default",
     },
   },
