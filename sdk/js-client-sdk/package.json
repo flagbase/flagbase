@@ -1,5 +1,5 @@
 {
-  "name": "flagbase",
+  "name": "@flagbase/js-client-sdk",
   "version": "0.0.1",
   "description": "Interoperable Client-Side Feature Flag SDK",
   "main": "./dist/index.js",
