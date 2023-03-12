@@ -1,7 +1,6 @@
 import { Evaluations } from "../context";
 import { fetchFlagsViaPoller } from "../fetch";
 import {
-  PollerWorkerRequest,
   PollerWorkerRequestType,
   PollerWorkerResponseType,
 } from "./types";

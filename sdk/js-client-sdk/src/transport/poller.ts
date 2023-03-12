@@ -3,11 +3,11 @@ import { Evaluations, Flagset, IContext } from "../context";
 import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
-import {
-  PollerWorkerRequestType,
-  PollerWorkerResponse,
-  PollerWorkerResponseType,
-} from "./types";
+// import {
+//   PollerWorkerRequestType,
+//   PollerWorkerResponse,
+//   PollerWorkerResponseType,
+// } from "./types";
 // import PollerWorker from "./poller.worker";
 
 const INITIAL_ETAG = "initial";
