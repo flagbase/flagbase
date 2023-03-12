@@ -1,6 +1,6 @@
 {
   "name": "flagbase",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Interoperable Client-Side Feature Flag SDK",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
