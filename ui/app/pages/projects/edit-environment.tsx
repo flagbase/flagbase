@@ -1,30 +1,18 @@
-import { Field, Form, Formik } from 'formik'
+import { Formik, Field } from 'formik'
 import React from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import Button from '../../../components/button/button'
-import Input from '../../../components/input/input'
-import { useRemoveWorkspace, useUpdateWorkspace, useWorkspaces } from './workspaces.main'
+import { Form } from 'react-router-dom'
+import Button from '../../../components/button'
+import Input from '../../../components/input'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { useWorkspaces } from '../workspaces/workspaces.main'
+import { useEnvironments } from './environments'
 
-export const EditWorkspace = () => {
-    const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
-    const { data: workspaces, isLoading } = useWorkspaces(instanceKey)
-    const navigate = useNavigate()
-    const { mutate: update } = useUpdateWorkspace(instanceKey)
-    const { mutate: remove } = useRemoveWorkspace(instanceKey)
+export const EditEnvironment = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
 
-    const workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    const { data: environments } = useEnvironments(instanceKey, workspaceKey, projectKey)
+    const environment = environments?.find((environment) => environment.attributes.key === environmentKey)
 
-    const removeWorkspace = () => {
-        if (!workspace) {
-            throw new Error('Workspace not found')
-        }
-        remove(workspace?.attributes.key)
-        navigate(`/${instanceKey}/workspaces`)
-    }
-
-    if (isLoading) {
-        return <div>Loading...</div>
-    }
     return (
         <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
@@ -78,17 +66,16 @@ export const EditWorkspace = () => {
                 </div>
                 <div className="bg-white shadow sm:rounded-lg">
                     <div className="px-4 py-5 sm:p-6">
-                        <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this workspace</h3>
+                        <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this environment</h3>
                         <div className="mt-2 max-w-xl text-sm text-gray-500">
                             <p>Delete</p>
                         </div>
                         <div className="mt-5">
                             <button
-                                onClick={removeWorkspace}
                                 type="button"
                                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
                             >
-                                Delete workspace
+                                Delete environment
                             </button>
                         </div>
                     </div>

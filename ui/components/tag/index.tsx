@@ -2,11 +2,11 @@ import React from 'react'
 import { classNames } from '../../helpers'
 export default function Tag({
     children,
-    className,
+    className = '',
     color = 'blue',
 }: {
     children: React.ReactNode
-    className: string
+    className?: string
     color?: keyof typeof colors
 }) {
     const colors = {

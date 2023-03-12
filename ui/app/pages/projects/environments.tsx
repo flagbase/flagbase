@@ -2,9 +2,8 @@ import React, { Suspense } from 'react'
 import { useQuery } from 'react-query'
 import { Await, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
-import { Divider } from '../../../components/divider'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
-import { Heading } from '../../../components/text/heading'
+import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { fetchEnvironments } from './api'
@@ -33,6 +32,7 @@ export const useEnvironments = (
             return fetchEnvironments(workspaceKey!, projectKey!)
         },
         enabled: !!instanceKey && !!workspaceKey,
+        staleTime: Infinity,
     })
     return query
 }
@@ -46,10 +46,10 @@ const Environments = () => {
             return {
                 id: environment.id,
                 title: environment.attributes.name,
-                href: `/environments/${instanceKey}/${workspaceKey}/${projectKey}/${environment.attributes.key}`,
+                href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environment.attributes.key}/sdk-keys`,
                 name: environment.attributes.name,
                 description: environment.attributes.description,
-                tags: environment.attributes.tags,
+                tags: environment.attributes.tags.map((tag) => <Tag key={tag}>{tag}</Tag>),
                 action: (
                     <div>
                         <Button secondary className="py-2">
@@ -63,19 +63,14 @@ const Environments = () => {
     }
 
     const { data: environments } = useEnvironments(instanceKey, workspaceKey, projectKey)
-    console.log('received', environments)
 
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Await resolve={prefetchedEnvironments}>
                 {(environments: Environment) => (
-                    <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
-                        <div>
-                            <Heading className="mb-4" text="Environments" />
-                            <Divider />
-                            <StackedEntityList entities={convertEnvironmentsToList(environments)} />
-                        </div>
-                    </main>
+                    <div className="mt-5">
+                        <StackedEntityList entities={convertEnvironmentsToList(environments)} />
+                    </div>
                 )}
             </Await>
         </Suspense>

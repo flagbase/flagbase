@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom'
 
-type FlagbaseParams = {
+export type FlagbaseParams = {
     instanceKey: string | undefined
     workspaceKey: string | undefined
     projectKey: string | undefined

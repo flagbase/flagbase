@@ -1,5 +1,6 @@
 import Axios from 'axios'
 import { Instance } from '../context/instance'
+import { fetchAccessToken } from '../pages/workspaces/api'
 import { getInstances } from '../router/loaders'
 import { queryClient } from '../router/router'
 
@@ -20,6 +21,20 @@ axios.interceptors.response.use(
 )
 axios.defaults.baseURL = 'http://localhost:3000/'
 
+const getCachedAccessToken = async (connectionString: string, accessKey: string, accessSecret: string) => {
+    const hashKey = `${connectionString}-${accessKey}-${accessSecret}`
+    const cachedAccessToken = sessionStorage.getItem(hashKey)
+    if (!!cachedAccessToken) {
+        return {
+            accessToken: cachedAccessToken,
+        }
+    } else {
+        const { accessToken } = await fetchAccessToken(accessKey, accessSecret)
+        sessionStorage.setItem(hashKey, accessToken)
+        return { accessToken }
+    }
+}
+
 export const configureAxios = async (instanceKey: string) => {
     const instances = await queryClient.fetchQuery({
         queryKey: ['instances'],
@@ -33,5 +48,10 @@ export const configureAxios = async (instanceKey: string) => {
     }
 
     axios.defaults.baseURL = instance?.connectionString
-    axios.defaults.headers.common['Authorization'] = `Bearer ${instance?.accessToken}`
+    const { accessToken } = await getCachedAccessToken(
+        instance.connectionString,
+        instance.accessKey,
+        instance.accessSecret
+    )
+    axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`
 }

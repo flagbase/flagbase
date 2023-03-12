@@ -3,7 +3,7 @@ import { Typography } from 'antd'
 import React, { Suspense, useState } from 'react'
 import { Await, useParams } from 'react-router-dom'
 import Table from '../../../components/table/table'
-import { createProject, fetchProjects, Project } from './api'
+import { createProject, deleteProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
 import { CreateProject } from './projects.modal'
 import { Link } from 'react-router-dom'
@@ -52,7 +52,9 @@ export const convertProjects = ({
                     </div>
                 ),
                 action: (
-                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project?.attributes.key}`}>
+                    <Link
+                        to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project?.attributes.key}/environments`}
+                    >
                         <Button secondary className="py-2">
                             Connect
                         </Button>
@@ -61,6 +63,19 @@ export const convertProjects = ({
                 key: project.attributes.key,
             }
         })
+}
+
+export const useRemoveProject = (instanceKey: string, workspaceKey: string) => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (projectKey: string) => {
+            await deleteProject(projectKey)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['projects', instanceKey, workspaceKey] })
+        },
+    })
+    return mutation
 }
 
 export const useAddProject = (instanceKey: string, workspaceKey: string) => {
@@ -84,6 +99,7 @@ export const useProjects = (instanceKey: string | undefined, workspaceKey: strin
             return fetchProjects(workspaceKey!)
         },
         enabled: !!instanceKey && !!workspaceKey,
+        refetchOnWindowFocus: false,
     })
     return query
 }
@@ -94,7 +110,7 @@ const Projects: React.FC = () => {
     const { instanceKey, workspaceKey } = useParams() as { instanceKey: string; workspaceKey: string }
 
     const { data: projects } = useProjects(instanceKey, workspaceKey)
-
+    console.log('projects', projects)
     return (
         <Suspense fallback={<div>Loading...</div>}>
             <Await resolve={projects} errorElement={<p>Error loading package location!</p>}>

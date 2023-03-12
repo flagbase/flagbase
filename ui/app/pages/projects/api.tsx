@@ -20,10 +20,9 @@ export const fetchProjects = async (workspaceKey: string) => {
     return result.data
 }
 
-export const deleteProject = async (url: string, ProjectKey: string, accessToken: string) => {
+export const deleteProject = async (ProjectKey: string) => {
     return axios.delete(`/projects/${ProjectKey}`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
         },
     })

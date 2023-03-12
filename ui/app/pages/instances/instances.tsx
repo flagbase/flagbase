@@ -12,6 +12,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import Input from '../../../components/input'
 import EmptyProject from '../../../components/empty-state/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
+import { Loader } from '../../../components/loader'
 
 type Instances = Instance[]
 
@@ -124,7 +125,7 @@ const Instances: React.FC = () => {
     }
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
             <Await resolve={initialInstances} errorElement={<div>Error</div>}>
                 {(initialInstances: Instances) => (
                     <div className="mt-5">

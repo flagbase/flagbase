@@ -28,6 +28,7 @@ import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main'
 import { Workspace } from '../../app/pages/workspaces/api'
 import { useProjects } from '../../app/pages/projects/projects'
 import { Project } from '../../app/context/project'
+import { useFlagbaseParams } from '../../app/lib/use-flagbase-params'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -410,8 +411,7 @@ export const PageHeadings = () => {
         tabs: [],
     })
 
-    const { instanceKey, workspaceKey, projectKey } =
-        useParams<{ instanceKey: string; workspaceKey: string; projectKey: string }>()
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
 
     useEffect(() => {
         if (location.pathname.includes('instances')) {
@@ -419,14 +419,24 @@ export const PageHeadings = () => {
                 title: 'Instances',
                 tabs: [],
             })
+        } else if (instanceKey && workspaceKey && projectKey && environmentKey) {
+            setPageHeading({
+                title: environmentKey,
+                tabs: [
+                    {
+                        name: 'SDKs',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
+                    },
+                    {
+                        name: 'Settings',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/settings`,
+                    },
+                ],
+            })
         } else if (instanceKey && workspaceKey && projectKey) {
             setPageHeading({
                 title: projectKey,
                 tabs: [
-                    {
-                        name: 'Info',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`,
-                    },
                     {
                         name: 'Environments',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,

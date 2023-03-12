@@ -12,6 +12,10 @@ export const Error = () => {
         message: 'Page not found',
         status: 404,
     }
+
+    const errors = useRouteError()
+
+    console.log('test', errors, error)
     return (
         <main className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">
             <div className="text-center">

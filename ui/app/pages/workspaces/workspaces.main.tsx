@@ -13,6 +13,7 @@ import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
 import { configureAxios } from '../../lib/axios'
+import { Loader } from '../../../components/loader'
 
 export const useAddWorkspace = (instance: Instance) => {
     const queryClient = useQueryClient()
@@ -65,35 +66,9 @@ export const useWorkspaces = (instanceKey: string | undefined, options?: any) =>
             return fetchWorkspaces()
         },
         enabled: !!instanceKey,
+        staleTime: Infinity,
     })
     return query
-}
-
-const WorkspacesError = () => {
-    const error = useAsyncError() as any
-    console.log('error', error)
-    const errors = error?.response?.data?.errors || []
-    return (
-        <div>
-            CODE RED
-            <ul role="list" className="-my-5 divide-y divide-gray-200">
-                {errors.map((error) => (
-                    <li key={error.code} className="py-5">
-                        <div className="relative focus-within:ring-2 focus-within:ring-indigo-500">
-                            <h3 className="text-sm font-semibold text-gray-800">
-                                <span>
-                                    {/* Extend touch target to entire panel */}
-                                    <span className="absolute inset-0" aria-hidden="true" />
-                                    {error.code}
-                                </span>
-                            </h3>
-                            <p className="mt-1 text-sm text-gray-600 line-clamp-2">{error.message}</p>
-                        </div>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    )
 }
 
 const MainWorkspaces = () => {
@@ -106,7 +81,7 @@ const MainWorkspaces = () => {
     const [filter, setFilter] = useState('')
     const { data: workspaces } = useWorkspaces(instanceKey)
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedWorkspaces}>
                 {() => (
                     <React.Fragment>

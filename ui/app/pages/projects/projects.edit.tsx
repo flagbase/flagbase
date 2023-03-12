@@ -1,18 +1,30 @@
 import { Formik, Field } from 'formik'
 import React from 'react'
-import { Form } from 'react-router-dom'
+import { Form, useNavigate } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { useProjects } from './projects'
+import { useProjects, useRemoveProject } from './projects'
 
 const EditProject = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const { data: projects } = useProjects(instanceKey, workspaceKey)
     const project = projects?.find((project) => project.attributes.key === projectKey?.toLocaleLowerCase())
+    const navigate = useNavigate()
+
+    if (!instanceKey || !workspaceKey || !projectKey) {
+        throw new Error('Missing required params')
+    }
+
+    const { mutate: remove } = useRemoveProject(instanceKey, workspaceKey)
 
     if (!project) {
         return null
+    }
+
+    const deleteProject = () => {
+        remove(projectKey)
+        navigate(-1)
     }
 
     return (
@@ -65,6 +77,7 @@ const EditProject = () => {
                         </div>
                         <div className="mt-5">
                             <button
+                                onClick={() => deleteProject()}
                                 type="button"
                                 className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
                             >

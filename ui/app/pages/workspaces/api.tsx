@@ -1,8 +1,7 @@
 import { axios } from '../../lib/axios'
 
-interface AccessToken {
+export interface AccessToken {
     expiresAt: Date
-    token: string
     id: string
     accessToken: string
 }
@@ -15,7 +14,6 @@ export const fetchAccessToken = async (key: string, secret: string): Promise<Acc
 
     return {
         expiresAt: result.data.access.expiresAt,
-        token: result.data.token,
         id: result.data.access.id,
         accessToken: result.data.token,
     }

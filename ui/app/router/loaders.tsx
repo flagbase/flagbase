@@ -2,7 +2,9 @@ import { QueryClient } from 'react-query'
 import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
+import { FlagbaseParams } from '../lib/use-flagbase-params'
 import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
+import { fetchSdkList } from '../pages/sdks/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
 
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
@@ -32,19 +34,11 @@ export const instancesLoader = (queryClient: QueryClient) => async () => {
     return defer({ instances })
 }
 
-export const workspaceQuery = ({
-    instanceKey,
-    connectionString,
-    accessToken,
-}: {
-    instanceKey: string
-    connectionString: string
-    accessToken: string
-}) => ({
+export const workspaceQuery = ({ instanceKey }: { instanceKey: string }) => ({
     queryKey: ['workspaces', instanceKey.toLocaleLowerCase()],
     queryFn: async () => {
         await configureAxios(instanceKey)
-        return fetchWorkspaces(connectionString)
+        return fetchWorkspaces()
     },
 })
 
@@ -57,8 +51,8 @@ export const workspacesLoader = async ({
 }) => {
     const { instanceKey } = params
     const [instance] = await instancesQuery(queryClient, instanceKey)
-    const { connectionString, accessToken } = instance
-    const workspaces = queryClient.fetchQuery(workspaceQuery({ instanceKey, connectionString, accessToken }))
+    await configureAxios(instanceKey)
+    const workspaces = queryClient.fetchQuery(workspaceQuery({ instanceKey }))
     return defer({ workspaces, instance })
 }
 
@@ -70,10 +64,8 @@ export const projectsLoader = async ({
     params: { instanceKey: string; workspaceKey: string }
 }) => {
     const { instanceKey, workspaceKey } = params
-    const [instance] = await instancesQuery(queryClient, instanceKey)
     const projects = queryClient.fetchQuery(['projects', instanceKey, workspaceKey], {
         queryFn: async () => {
-            const { connectionString, accessToken } = instance
             await configureAxios(instanceKey)
             return fetchProjects(workspaceKey)
         },
@@ -96,4 +88,27 @@ export const environmentsLoader = async ({
         },
     })
     return defer({ environments })
+}
+
+export const getSdkKey = ({ instanceKey, workspaceKey, projectKey, environmentKey }: FlagbaseParams) => {
+    return ['sdks', instanceKey, workspaceKey, projectKey, environmentKey]
+}
+
+export const sdkLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = params
+    if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
+        throw new Error('Missing params')
+    }
+    const queryKey = getSdkKey(params)
+    const sdks = queryClient.fetchQuery(queryKey, {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchSdkList({
+                environmentKey,
+                projectKey,
+                workspaceKey,
+            })
+        },
+    })
+    return defer({ sdks })
 }
