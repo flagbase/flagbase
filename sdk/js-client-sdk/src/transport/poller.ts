@@ -8,7 +8,7 @@ import {
   PollerWorkerResponse,
   PollerWorkerResponseType,
 } from "./types";
-import PollerWorker from "worker-loader!./poller.worker.ts";
+import PollerWorker from "./poller.worker";
 
 const INITIAL_ETAG = "initial";
 

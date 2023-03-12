@@ -8,11 +8,11 @@ import {
 
 const ctx: Worker = self as any;
 
-let timerId: NodeJS.Timer = setTimeout(() => {}, 1);
+let timerId: number = setTimeout(() => {}, 1);
 let lastRefreshed: number = Date.now();
 let tabVisible: boolean = true;
 
-ctx.onmessage = async (e: MessageEvent<PollerWorkerRequest>) => {
+ctx.onmessage = async (e: MessageEvent) => {
   const {
     requestType,
     requestPayload: {
@@ -42,7 +42,7 @@ ctx.onmessage = async (e: MessageEvent<PollerWorkerRequest>) => {
   const fetchAndReschedule = async () => {
     const elapsedMs = Date.now() - lastRefreshed;
     if (elapsedMs >= actualPollingIntervalMs && tabVisible) {
-      const onFullResponse = (retag, evaluations) =>
+      const onFullResponse = (reta: string, evaluations: Evaluations) =>
         ctx.postMessage({
           responseType: PollerWorkerResponseType.FULL,
           responsePayload: { retag, evaluations },
