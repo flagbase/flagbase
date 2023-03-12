@@ -1,5 +1,9 @@
 name: ci-flagbase-ui
 
+defaults:
+  run:
+    working-directory: ui
+
 on:
   pull_request:
     branches:
