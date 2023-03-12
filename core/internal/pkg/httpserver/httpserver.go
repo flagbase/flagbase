@@ -35,7 +35,7 @@ func New(
 	config.AllowAllOrigins = true
 	config.AllowCredentials = true
 	config.AllowWildcard = true
-	config.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
+	config.AllowMethods = []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"}
 	config.AllowHeaders = []string{"*"}
 	config.ExposeHeaders = []string{"*"}
 
