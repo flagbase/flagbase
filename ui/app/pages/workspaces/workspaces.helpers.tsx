@@ -1,9 +1,11 @@
 import { Typography } from 'antd'
 import React from 'react'
 import { Instance } from '../../context/instance'
-import { Workspace } from '../../context/workspace'
-import { Entities, Entity } from '../../lib/entity-store/entity-store'
+import { Entity } from '../../lib/entity-store/entity-store'
 import { Link } from 'react-router-dom'
+import { Workspace } from './api'
+import Button from '../../../components/button/button'
+import Tag from '../../../components/tag'
 
 interface ConvertedWorkspace {
     id: number
@@ -14,13 +16,10 @@ interface ConvertedWorkspace {
     tags: string
 }
 
-const { Text } = Typography
-
 export const convertWorkspaces = (
-    workspaceList: Entities<Workspace>,
+    workspaceList: Workspace[],
     instance: Instance,
-    filter: string,
-    addEntity?: (entity: Entity<Workspace>) => void
+    filter: string
 ): ConvertedWorkspace[] => {
     if (!workspaceList) {
         return []
@@ -32,23 +31,29 @@ export const convertWorkspaces = (
                 workspace !== undefined && workspace.attributes.name.includes(filter)
         )
         .map((currentWorkspace, index) => {
-            const updateWorkspace = (updatedWorkspace: Partial<Entity<Workspace>>) => {
-                if (addEntity) {
-                    const mergedEntity = { ...updatedWorkspace, ...currentWorkspace }
-                    addEntity(mergedEntity)
-                }
-            }
             return {
                 id: index,
-                title: <Text>{currentWorkspace.attributes.name}</Text>,
-                href: `/projects/${instance?.id}/${currentWorkspace?.attributes.key}`,
+                title: <span>{currentWorkspace.attributes.name}</span>,
+                href: `/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`,
                 name: (
-                    <Link to={`/projects/${instance?.id}/${currentWorkspace?.attributes.key}`}>
-                        <Text strong>{currentWorkspace.attributes.name}</Text>
+                    <Link to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}>
+                        <span>{currentWorkspace.attributes.name}</span>
                     </Link>
                 ),
-                description: <Text>{currentWorkspace.attributes.description}</Text>,
-                tags: currentWorkspace.attributes.tags.join(', '),
+                action: (
+                    <Link to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}>
+                        <Button secondary className="py-2">
+                            Connect
+                        </Button>
+                    </Link>
+                ),
+                description: <span>{currentWorkspace.attributes.description}</span>,
+                tags: currentWorkspace.attributes.tags.map((tag: string) => (
+                    <Tag key={tag} className="mr-2">
+                        {tag}
+                    </Tag>
+                )),
+                key: currentWorkspace.attributes.key,
             }
         })
 }

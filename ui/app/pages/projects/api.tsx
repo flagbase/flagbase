@@ -15,34 +15,22 @@ export interface ProjectResponse {
     data: Project[]
 }
 
-export const fetchProjects = async (url: string, workspaceKey: string, accessToken: string) => {
-    const result = await axios.get<ProjectResponse>(`/projects/${workspaceKey}`, {
-        headers: {
-            Authorization: `Bearer ${accessToken}`,
-        },
-    })
-    return result.data.data
+export const fetchProjects = async (workspaceKey: string) => {
+    const result = await axios.get<ProjectResponse>(`/projects/${workspaceKey}`)
+    return result.data
 }
 
-export const deleteProject = async (url: string, ProjectKey: string, accessToken: string) => {
+export const deleteProject = async (ProjectKey: string) => {
     return axios.delete(`/projects/${ProjectKey}`, {
         headers: {
-            Authorization: `Bearer ${accessToken}`,
             'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
         },
     })
 }
 
-export const createProject = async (
-    url: string,
-    name: string,
-    description: string,
-    tags: string[],
-    accessToken: string,
-    workspaceKey: string
-) => {
+export const createProject = async (name: string, description: string, tags: string[], workspaceKey: string) => {
     return axios.post(
-        `${url}/projects/${workspaceKey}`,
+        `/projects/${workspaceKey}`,
         {
             key: name.toLowerCase().replace(' ', '-'),
             name,
@@ -51,9 +39,14 @@ export const createProject = async (
         },
         {
             headers: {
-                Authorization: `Bearer ${accessToken}`,
                 'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
             },
         }
     )
+}
+
+export const fetchEnvironments = async (workspaceKey: string, projectsKey: string) => {
+    if (!workspaceKey || !projectsKey) return Promise.reject('Missing workspaceKey or projectsKey')
+    const result = await axios.get(`/projects/${workspaceKey}/${projectsKey}/environments`)
+    return result.data
 }

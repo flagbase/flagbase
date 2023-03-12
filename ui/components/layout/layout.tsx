@@ -1,33 +1,21 @@
 import React from 'react'
 import { Layout as AntdLayout, LayoutProps as AntdLayoutProps } from 'antd'
-import { Fragment, useState } from 'react'
+import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
-import styled from '@emotion/styled'
 
 const { Content } = AntdLayout
 
-const StyledLayout = styled(AntdLayout)`
-    padding-top: 0px;
-    background-color: #f9f9f9;
-
-    main {
-        padding: 20px 50px;
-        background-color: white;
-        box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.08);
-        border-radius: 5px;
-    }
-`
 export type LayoutProps = {
     open: boolean
     onClose: () => void
     children: React.ReactChild
-} & AntdLayoutProps
-
-const Layout: React.FC<LayoutProps> = (props) => {
-    return <StyledLayout {...props} />
 }
 
-const ModalLayout: React.FC<LayoutProps> = ({ open, onClose, children, ...props }) => {
+const Layout: React.FC = ({ children }) => {
+    return <main className="py-5 px-12 rounded-md bg-white shadow-lg">{children}</main>
+}
+
+const ModalLayout: React.FC<LayoutProps> = ({ open, onClose, children }) => {
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>

@@ -1,42 +1,108 @@
-import { Button, Col, Input, Row, Typography, Form } from 'antd'
+import { Field, Form, Formik } from 'formik'
 import React from 'react'
-import { Instance } from '../../context/instance'
-import { Entity } from '../../lib/entity-store/entity-store'
+import { useNavigate, useParams } from 'react-router-dom'
+import Button from '../../../components/button/button'
+import Input from '../../../components/input/input'
+import { Notification } from '../../../components/notification/notification'
+import { EditEntityHeading } from '../../../components/text/heading'
+import { useRemoveWorkspace, useUpdateWorkspace, useWorkspaces } from './workspaces.main'
 
-const { Title, Text } = Typography
+export const EditWorkspace = () => {
+    const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
+    const { data: workspaces, isLoading } = useWorkspaces(instanceKey)
+    const navigate = useNavigate()
+    const { mutate: update, error, isSuccess } = useUpdateWorkspace(instanceKey)
+    const { mutate: remove } = useRemoveWorkspace(instanceKey)
 
-type EditInstanceProps = {
-    instance: Entity<Instance>
-    addEntity: (entity: Entity<Instance>) => void
-    removeEntity: (entityId: string) => void
-}
-const EditInstance: React.FC<EditInstanceProps> = ({ instance, addEntity, removeEntity }) => {
-    const updateInstance = (update: any) => {
-        addEntity({ ...instance, ...update })
+    const workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+
+    const removeWorkspace = () => {
+        if (!workspace) {
+            throw new Error('Workspace not found')
+        }
+        remove(workspace?.attributes.key)
+        navigate(`/${instanceKey}/workspaces`)
     }
-    const [form] = Form.useForm()
 
+    if (isLoading) {
+        return <div>Loading...</div>
+    }
     return (
-        <Row>
-            <Col span={24}>
-                <Title level={5}>Edit {instance.key}</Title>
-            </Col>
-            <Form
-                layout="vertical"
-                initialValues={instance}
-                form={form}
-                onValuesChange={updateInstance}
-            >
-                <Form.Item label="Key" name="key">
-                    <Input placeholder={instance.key}></Input>
-                </Form.Item>
-                <Form.Item label="Connection String" name="connectionString">
-                    <Input placeholder={instance.connectionString}></Input>
-                </Form.Item>
-                    <Button danger onClick={() => removeEntity(instance.id)}>Remove</Button>
-            </Form>
-        </Row>
+        <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
+            <div>
+                <EditEntityHeading heading="Workspace Settings" subheading={workspace?.attributes.key!} />
+                <Notification
+                    type="error"
+                    show={!!error}
+                    title={'Error'}
+                    content={'Something went wrong. Please try again later.'}
+                />
+                <Notification
+                    type="error"
+                    show={!!isSuccess}
+                    title={'Success'}
+                    content={'Workspace updated successfully!'}
+                />
+                <Formik
+                    initialValues={{
+                        name: workspace?.attributes.key!,
+                        description: workspace?.attributes.description!,
+                        tags: workspace?.attributes.tags!,
+                    }}
+                    onSubmit={(values: { name: string; description: string; tags: string }) => {
+                        for (const [key, value] of Object.entries(values)) {
+                            update({
+                                workspaceKey: workspace?.attributes.key!,
+                                path: key,
+                                value: value,
+                            })
+                        }
+                    }}
+                >
+                    <Form className="flex flex-col gap-5 mb-14">
+                        <Field component={Input} name="name" label="Workspace Name" />
+                        <Field component={Input} name="description" label="Description" />
+                        <Field component={Input} name="tags" label="Tags" />
+
+                        <div className="flex justify-start gap-3">
+                            <Button
+                                type="submit"
+                                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
+                            >
+                                Update
+                            </Button>
+                        </div>
+                    </Form>
+                </Formik>
+
+                <div className="relative mb-4">
+                    <div className="absolute inset-0 flex items-center" aria-hidden="true">
+                        <div className="w-full border-t border-gray-300" />
+                    </div>
+                    <div className="relative flex justify-center">
+                        <span className="bg-white px-3 text-base font-semibold leading-6 text-gray-900">
+                            Danger Zone
+                        </span>
+                    </div>
+                </div>
+                <div className="bg-white shadow sm:rounded-lg">
+                    <div className="px-4 py-5 sm:p-6">
+                        <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this workspace</h3>
+                        <div className="mt-2 max-w-xl text-sm text-gray-500">
+                            <p>Delete</p>
+                        </div>
+                        <div className="mt-5">
+                            <button
+                                onClick={removeWorkspace}
+                                type="button"
+                                className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
+                            >
+                                Delete workspace
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     )
 }
-
-export default EditInstance

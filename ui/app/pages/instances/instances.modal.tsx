@@ -1,15 +1,16 @@
-import { Modal, Typography } from 'antd'
-import React, { useContext } from 'react'
-import { Instance, InstanceContext } from '../../context/instance'
-import { fetchAccessToken } from '../workspaces/api'
+import { Typography } from 'antd'
+import React, { useEffect, useState } from 'react'
+import { Instance } from '../../context/instance'
 import { ReactState } from '../workspaces/modal'
 import { ModalLayout } from '../../../components/layout'
-import { axios } from '../../lib/axios'
 import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik'
 import { InstanceSchema } from './instances.constants'
 import Input from '../../../components/input'
 import Button from '../../../components/button/button'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useQueryClient } from 'react-query'
+import { useAddInstance } from './instances'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { Notification } from '../../../components/notification/notification'
 
 type OmittedInstance = Omit<Instance, 'expiresAt'>
 
@@ -25,11 +26,28 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
                         <Text>Connect to a Flagbase instance to begin managing your flags</Text>
                     </div>
                     <Form className="flex flex-col gap-3">
-                        <Field component={Input} id="key" name="key" placeholder="Instance Name" />
-                        <Field component={Input} id="connectionString" name="connectionString" placeholder="URL" />
-                        <Field component={Input} id="accessKey" name="accessKey" placeholder="Key" />
-                        <Field component={Input} id="accessSecret" name="accessSecret" placeholder="***" />
-                        <Button className="mt-3" onClick={() => submitForm()}>
+                        <Field component={Input} id="key" name="key" label="Name" placeholder="anything-goes" />
+                        <Field
+                            component={Input}
+                            id="connectionString"
+                            name="connectionString"
+                            label="Connection String"
+                            placeholder="URL"
+                        />
+                        <Field component={Input} id="accessKey" name="accessKey" label="Access Key" placeholder="Key" />
+                        <Field
+                            component={Input}
+                            id="accessSecret"
+                            name="accessSecret"
+                            label="Access Secret"
+                            placeholder="Secret"
+                            type="password"
+                        />
+                        <Button
+                            className="mt-3 py-2 justify-center"
+                            suffix={PlusCircleIcon}
+                            onClick={() => submitForm()}
+                        >
                             Add Instance
                         </Button>
                     </Form>
@@ -40,58 +58,55 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
 }
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
-    const addInstance = async (instance: OmittedInstance) => {
-        axios.defaults.baseURL = instance.connectionString
-        const result = await fetchAccessToken(instance.connectionString, instance.accessKey, instance.accessSecret)
-        const currInstances = JSON.parse(localStorage.getItem('instances') || '[]')
-        localStorage.setItem(
-            'instances',
-            JSON.stringify([
-                ...currInstances,
-                {
-                    ...instance,
-                    expiresAt: result.expiresAt,
-                    id: result.id,
-                },
-            ])
-        )
-        return { ...instance, expiresAt: result.expiresAt }
-    }
-
+    const [showError, setShowError] = useState(false)
+    const mutation = useAddInstance()
+    const { isSuccess, isError } = mutation
     const queryClient = useQueryClient()
 
-    const mutation = useMutation(addInstance, {
-        onSuccess: (result) => {
-            queryClient.invalidateQueries('instances')
-            queryClient.setQueryData('instances', (old: any) => [result])
+    const onSubmit = (values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
+        mutation.mutate(values)
+        setSubmitting(false)
+    }
+
+    useEffect(() => {
+        if (isSuccess) {
             setVisible(false)
-        },
-        onError: (error: any) => {
-            Modal.error({
-                title: 'Could not add this instance',
-                content: `Did you make sure you added the correct key and secret? Error: ${error}`,
-            })
-        },
-    })
+            queryClient.invalidateQueries('instances')
+            queryClient.setQueryData('instances', (old: any) => [mutation.data])
+        }
+    }, [isSuccess])
+
+    useEffect(() => {
+        setShowError(isError)
+    }, [isError])
 
     return (
-        <Formik
-            initialValues={{
-                id: '',
-                connectionString: '',
-                key: '',
-                accessToken: '',
-                accessSecret: '',
-                accessKey: '',
-            }}
-            onSubmit={(values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
-                console.log('submitting')
-                mutation.mutate(values)
-                setSubmitting(false)
-            }}
-            validationSchema={InstanceSchema}
-        >
-            {({ errors, touched }) => <InstanceForm visible={visible} setVisible={setVisible} errors={errors} />}
-        </Formik>
+        <>
+            <Notification
+                title="Could not add this instance"
+                content="Did you make sure you added the correct key and secret?"
+                show={showError}
+                setShow={setShowError}
+            />
+            <Notification
+                title="Successfully added this instance"
+                content="You can now manage your flags"
+                show={isSuccess}
+            />
+            <Formik
+                initialValues={{
+                    id: '',
+                    connectionString: '',
+                    key: '',
+                    accessToken: '',
+                    accessSecret: '',
+                    accessKey: '',
+                }}
+                onSubmit={onSubmit}
+                validationSchema={InstanceSchema}
+            >
+                {({ errors }) => <InstanceForm visible={visible} setVisible={setVisible} errors={errors} />}
+            </Formik>
+        </>
     )
 }

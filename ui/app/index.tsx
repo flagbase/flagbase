@@ -1,26 +1,22 @@
 import React from 'react'
-import { render } from 'react-dom'
 import { debugContextDevtool } from 'react-context-devtool'
 import 'antd/dist/antd.less'
+import { createRoot } from 'react-dom/client'
 
-import Router from './router'
-import Context from './context'
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClientProvider } from 'react-query'
+import { RouterProvider } from 'react-router-dom'
+import { newRouter, queryClient } from './router/router'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
 document.body.appendChild(mainElement)
 const container = document.getElementById('root')
+const root = createRoot(container) // createRoot(container!) if you use TypeScript
 
-const queryClient = new QueryClient()
-
-render(
-    <Context>
-        <QueryClientProvider client={queryClient}>
-            <Router />
-        </QueryClientProvider>
-    </Context>,
-    container
+root.render(
+    <QueryClientProvider client={queryClient}>
+        <RouterProvider router={newRouter} />
+    </QueryClientProvider>
 )
 
 debugContextDevtool(container, {

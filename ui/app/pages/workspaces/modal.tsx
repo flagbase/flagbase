@@ -1,120 +1,90 @@
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { Input, Layout, Modal, Typography } from "antd";
-import { Content } from "antd/lib/layout/layout";
-import React, { useContext, useState } from "react";
-import { ModalLayout } from "../../../components/layout";
-import { InstanceContext } from "../../context/instance";
-import { createWorkspace, deleteWorkspace } from "./api";
+import { ExclamationCircleOutlined } from '@ant-design/icons'
+import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { Modal, notification, Typography } from 'antd'
+import { Content } from 'antd/lib/layout/layout'
+import { Field, Form, Formik } from 'formik'
+import React, { useEffect } from 'react'
+import Button from '../../../components/button'
+import Input from '../../../components/input'
+import { ModalLayout } from '../../../components/layout'
+import { Instance } from '../../context/instance'
+import { deleteWorkspace } from './api'
+import { useAddWorkspace } from './workspaces.main'
 
-const { Title, Text } = Typography;
+const { Title, Text } = Typography
 
-const { confirm } = Modal;
+const { confirm } = Modal
 
 interface ReactState {
-  visible: boolean;
-  setVisible(data: boolean): void;
+    visible: boolean
+    setVisible(data: boolean): void
 }
 
 interface WorkspaceModal {
-  visible: boolean;
-  setVisible(data: boolean): void;
+    visible: boolean
+    setVisible(data: boolean): void
+    instance: Instance
 }
 
-function confirmDeleteWorkspace(
-  workspaceName: string,
-  url: string,
-  workspaceKey: string,
-  accessToken: string
-) {
-  confirm({
-    title: `Are you sure you want to delete ${workspaceName}?`,
-    icon: <ExclamationCircleOutlined />,
-    onOk() {
-      deleteWorkspace(url, workspaceKey, accessToken);
-    },
-    onCancel() {},
-  });
+function confirmDeleteWorkspace(workspaceName: string, url: string, workspaceKey: string, accessToken: string) {
+    confirm({
+        title: `Are you sure you want to delete ${workspaceName}?`,
+        icon: <ExclamationCircleOutlined />,
+        onOk() {
+            deleteWorkspace(url, workspaceKey, accessToken)
+        },
+        onCancel() {},
+    })
 }
 
-const defaultWorkspace = {
-    name: '',
-    description: '',
-    tags: '',
-  }
+const CreateWorkspace = ({ visible, setVisible, instance }: WorkspaceModal) => {
+    const { mutate: addWorkspace, error } = useAddWorkspace(instance)
 
-const CreateWorkspace = ({ visible, setVisible }: WorkspaceModal) => {
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [workspace, setWorkspace] = useState(defaultWorkspace);
+    useEffect(() => {
+        if (error) {
+            notification.error({
+                message: 'Error',
+                description: 'Could not create workspace',
+            })
+        }
+    }, [error])
 
-  const {
-    addEntity,
-    getEntity,
-    selectedEntityId,
-  } = useContext(InstanceContext);
+    return (
+        <ModalLayout open={visible} onClose={() => setVisible(false)}>
+            <Content>
+                <div className="text-center">
+                    <Title level={3}>Add a new workspace</Title>
+                    <Text>Connect to a Flagbase workspace to begin managing your flags</Text>
+                </div>
+                <div className="flex flex-col gap-3 mt-3">
+                    <Formik
+                        initialValues={{
+                            name: '',
+                            description: '',
+                            tags: '',
+                        }}
+                        onSubmit={async (values) => {
+                            addWorkspace({
+                                name: values.name,
+                                description: values.description,
+                                tags: values.tags.split(','),
+                            })
+                            setVisible(false)
+                        }}
+                    >
+                        <Form className="flex flex-col gap-3">
+                            <Field component={Input} id="name" name="name" placeholder="Workspace name" />
+                            <Field component={Input} id="description" name="description" placeholder="Description" />
+                            <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                            <Button className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} type="submit">
+                                Add Workspace
+                            </Button>
+                        </Form>
+                    </Formik>
+                </div>
+            </Content>
+        </ModalLayout>
+    )
+}
 
-  const currInstance = getEntity(selectedEntityId || "");
-  if (!currInstance) {
-    return <></> 
-  }
-
-  return (
-    <Modal
-      title="Workspace"
-      visible={visible}
-      confirmLoading={confirmLoading}
-      onCancel={() => setVisible(false)}
-      onOk={() =>
-        createWorkspace(
-          currInstance.connectionString,
-          workspace.name,
-          workspace.description,
-          workspace.tags.split(','),
-          currInstance.accessToken
-        ).then(() => {
-            setVisible(false)
-            setWorkspace(defaultWorkspace)
-        } )
-      }
-    >
-      <ModalLayout>
-        <Content>
-          <Title level={3}>
-            Add a new workspace
-          </Title>
-          <Text>
-            Connect to a Flagbase workspace to begin managing your flags
-          </Text>
-          <Input
-            onChange={(event) =>
-              setWorkspace({
-                ...workspace,
-                name: event.target.value,
-              })
-            }
-            placeholder="Workspace name"
-          />
-          <Input
-            onChange={(event) =>
-              setWorkspace({
-                ...workspace,
-                description: event.target.value,
-              })
-            }
-            placeholder="Description"
-          />
-          <Input
-            onChange={(event) =>
-              setWorkspace({
-                ...workspace,
-                tags: event.target.value,
-              })
-            }
-            placeholder="Tags (separate by comma)"
-          />
-        </Content>
-      </ModalLayout>
-    </Modal>
-  );
-};
-
-export { CreateWorkspace, confirmDeleteWorkspace, ReactState };
+export { CreateWorkspace, confirmDeleteWorkspace, ReactState }

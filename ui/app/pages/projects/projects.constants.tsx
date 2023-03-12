@@ -4,7 +4,6 @@ export const constants = {
     error: 'Could not load projects. Please try again.',
 }
 
-
 export const projectsColumn = [
     {
         title: 'Name',
@@ -22,7 +21,7 @@ export const projectsColumn = [
         key: 'tags',
     },
     {
-        title: 'Action',
+        title: 'Actions',
         dataIndex: 'action',
         key: 'action',
     },
