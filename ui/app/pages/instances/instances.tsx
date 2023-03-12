@@ -3,7 +3,6 @@ import React, { Suspense, useState } from 'react'
 import { Instance } from '../../context/instance'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
-import { SearchOutlined } from '@ant-design/icons'
 import { Await, useLoaderData } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -136,11 +135,7 @@ const Instances: React.FC = () => {
                                     Join instance
                                 </Button>
                                 <div className="flex-auto">
-                                    <Input
-                                        onChange={(event) => setFilter(event.target.value)}
-                                        placeholder="Search"
-                                        prefix={SearchOutlined}
-                                    />
+                                    <Input onChange={(event) => setFilter(event.target.value)} placeholder="Search" />
                                 </div>
                             </div>
                         )}
