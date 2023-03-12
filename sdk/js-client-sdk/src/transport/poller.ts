@@ -8,7 +8,7 @@ import {
   PollerWorkerResponse,
   PollerWorkerResponseType,
 } from "./types";
-import PollerWorker from "./poller.worker";
+// import PollerWorker from "./poller.worker";
 
 const INITIAL_ETAG = "initial";
 
@@ -96,77 +96,79 @@ export default function Poller(
   let start: () => void = () => {};
   let stop: () => void = () => {};
 
-  if (typeof Worker !== "undefined") {
-    // WebWorkers is supported then start polling via web worker
-    const pollerWorker = new PollerWorker();
+  // if (typeof Worker !== "undefined") {
+  //   // WebWorkers is supported then start polling via web worker
+  //   const pollerWorker = new PollerWorker();
 
-    // Handle responses from worker
-    pollerWorker.onmessage = (e: MessageEvent) => {
-      const { responseType, responsePayload } =
-        e.data as PollerWorkerResponse;
-      switch (responseType) {
-        case PollerWorkerResponseType.FULL:
-          const { retag, evaluations } = responsePayload;
-          onFullResponse(retag, evaluations);
-          break;
-        case PollerWorkerResponseType.CACHED:
-          onCachedResponse();
-          break;
-        case PollerWorkerResponseType.ERROR:
-          onErrorResponse();
-          break;
-        default:
-          console.error(
-            `Unknown response type emitted by poller-worker: ${responseType}`
-          );
-      }
-    };
+  //   // Handle responses from worker
+  //   pollerWorker.onmessage = (e: MessageEvent) => {
+  //     const { responseType, responsePayload } =
+  //       e.data as PollerWorkerResponse;
+  //     switch (responseType) {
+  //       case PollerWorkerResponseType.FULL:
+  //         const { retag, evaluations } = responsePayload;
+  //         onFullResponse(retag, evaluations);
+  //         break;
+  //       case PollerWorkerResponseType.CACHED:
+  //         onCachedResponse();
+  //         break;
+  //       case PollerWorkerResponseType.ERROR:
+  //         onErrorResponse();
+  //         break;
+  //       default:
+  //         console.error(
+  //           `Unknown response type emitted by poller-worker: ${responseType}`
+  //         );
+  //     }
+  //   };
 
-    // send tab active / inactive state to web worker
-    if (typeof document.hidden !== "undefined") {
-      document.addEventListener("visibilitychange", function () {
-        pollerWorker.postMessage({
-          requestType: document.hidden
-            ? PollerWorkerRequestType.TAB_HIDDEN
-            : PollerWorkerRequestType.TAB_VISIBLE,
-            requestPayload: {}
-        });
-      });
-    }
+  //   // send tab active / inactive state to web worker
+  //   if (typeof document.hidden !== "undefined") {
+  //     document.addEventListener("visibilitychange", function () {
+  //       pollerWorker.postMessage({
+  //         requestType: document.hidden
+  //           ? PollerWorkerRequestType.TAB_HIDDEN
+  //           : PollerWorkerRequestType.TAB_VISIBLE,
+  //           requestPayload: {}
+  //       });
+  //     });
+  //   }
 
-    start = async () => {
-      events.emit(
-        EventType.NETWORK_FETCH,
-        "Starting to fetch initial flags from poller.",
-        context.getInternalData()
-      );
+  //   start = async () => {
+  //     events.emit(
+  //       EventType.NETWORK_FETCH,
+  //       "Starting to fetch initial flags from poller.",
+  //       context.getInternalData()
+  //     );
 
-      pollerWorker.postMessage({
-        requestType: PollerWorkerRequestType.START,
-        requestPayload: {
-          pollingServiceUrl,
-          clientKey,
-          identity: context.getIdentity(),
-          etag,
-          pollingIntervalMs: config.pollingIntervalMs,
-        },
-      });
-    };
+  //     pollerWorker.postMessage({
+  //       requestType: PollerWorkerRequestType.START,
+  //       requestPayload: {
+  //         pollingServiceUrl,
+  //         clientKey,
+  //         identity: context.getIdentity(),
+  //         etag,
+  //         pollingIntervalMs: config.pollingIntervalMs,
+  //       },
+  //     });
+  //   };
 
-    stop = async () => {
-      pollerWorker.postMessage({
-        requestType: PollerWorkerRequestType.STOP,
-        requestPayload: {
-          pollingServiceUrl,
-          clientKey,
-          identity: context.getIdentity(),
-          etag,
-          pollingIntervalMs: config.pollingIntervalMs,
-        },
-      });
-      pollerWorker.terminate();
-    };
-  } else {
+  //   stop = async () => {
+  //     pollerWorker.postMessage({
+  //       requestType: PollerWorkerRequestType.STOP,
+  //       requestPayload: {
+  //         pollingServiceUrl,
+  //         clientKey,
+  //         identity: context.getIdentity(),
+  //         etag,
+  //         pollingIntervalMs: config.pollingIntervalMs,
+  //       },
+  //     });
+  //     pollerWorker.terminate();
+  //   };
+  // } else {
+  // commented out web worker implementation
+  if (true) {
     // Otherwise fallback to using main thread
     const pollingIntervalMs: number =
       (config.pollingIntervalMs &&

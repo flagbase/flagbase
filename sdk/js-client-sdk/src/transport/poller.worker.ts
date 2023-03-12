@@ -8,7 +8,7 @@ import {
 
 const ctx: Worker = self as any;
 
-let timerId: number = setTimeout(() => {}, 1);
+let timerId: NodeJS.Timeout = setTimeout(() => {}, 1);
 let lastRefreshed: number = Date.now();
 let tabVisible: boolean = true;
 
