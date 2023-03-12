@@ -5,6 +5,7 @@ export type FlagbaseParams = {
     workspaceKey: string | undefined
     projectKey: string | undefined
     environmentKey: string | undefined
+    sdkKey: string | undefined
 }
 
 export const useFlagbaseParams = () => {

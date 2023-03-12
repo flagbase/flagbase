@@ -3,6 +3,7 @@ import React from 'react'
 import { Form, useNavigate } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
+import { EditEntityHeading } from '../../../components/text/heading'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { useProjects, useRemoveProject } from './projects'
 
@@ -30,10 +31,7 @@ const EditProject = () => {
     return (
         <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
-                <div className="mb-4">
-                    <h1 className="text-lg font-medium leading-6 text-gray-900">Project Settings </h1>
-                    <p className="mt-1 text-sm text-gray-500">{workspaceKey}</p>
-                </div>
+                <EditEntityHeading heading="Project Settings" subheading={workspaceKey} />
 
                 <Formik
                     initialValues={{

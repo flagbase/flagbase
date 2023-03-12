@@ -1,7 +1,7 @@
 import { Typography } from 'antd'
 
 import React, { Suspense, useState } from 'react'
-import { Await, useParams } from 'react-router-dom'
+import { Await, useLoaderData, useParams } from 'react-router-dom'
 import Table from '../../../components/table/table'
 import { createProject, deleteProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
@@ -15,6 +15,7 @@ import { MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/24/outline
 import EmptyState from '../../../components/empty-state'
 import { RawInput } from '../../../components/input/input'
 import Tag from '../../../components/tag'
+import { Loader } from '../../../components/loader'
 
 const { Text } = Typography
 
@@ -107,52 +108,46 @@ export const useProjects = (instanceKey: string | undefined, workspaceKey: strin
 const Projects: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
+    const { projects: prefetchedProjects } = useLoaderData() as { projects: Project[] }
     const { instanceKey, workspaceKey } = useParams() as { instanceKey: string; workspaceKey: string }
 
     const { data: projects } = useProjects(instanceKey, workspaceKey)
-    console.log('projects', projects)
     return (
-        <Suspense fallback={<div>Loading...</div>}>
-            <Await resolve={projects} errorElement={<p>Error loading package location!</p>}>
-                {(projects) => (
-                    <div className="mt-5">
-                        <CreateProject visible={visible} setVisible={setVisible} />
+        <Suspense fallback={<Loader />}>
+            <Await resolve={prefetchedProjects} errorElement={<p>Error loading package location!</p>}>
+                <div className="mt-5">
+                    <CreateProject visible={visible} setVisible={setVisible} />
 
-                        <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                            <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
-                                {constants.create}
-                            </Button>
-                            <div className="flex-auto">
-                                <RawInput
-                                    onChange={(event) => setFilter(event.target.value)}
-                                    placeholder="Search"
-                                    prefix={MagnifyingGlassIcon as any}
-                                />
-                            </div>
+                    <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
+                        <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
+                            {constants.create}
+                        </Button>
+                        <div className="flex-auto">
+                            <RawInput
+                                onChange={(event) => setFilter(event.target.value)}
+                                placeholder="Search"
+                                prefix={MagnifyingGlassIcon as any}
+                            />
                         </div>
-
-                        <Table
-                            loading={false}
-                            dataSource={convertProjects({ projects, workspaceKey, instanceKey, filter })}
-                            columns={projectsColumn}
-                            emptyState={
-                                <EmptyState
-                                    title="No Projects"
-                                    description={'Get started by creating a new project.'}
-                                    cta={
-                                        <Button
-                                            className="py-2"
-                                            suffix={PlusCircleIcon}
-                                            onClick={() => setVisible(true)}
-                                        >
-                                            Create Project
-                                        </Button>
-                                    }
-                                />
-                            }
-                        />
                     </div>
-                )}
+
+                    <Table
+                        loading={false}
+                        dataSource={convertProjects({ projects, workspaceKey, instanceKey, filter })}
+                        columns={projectsColumn}
+                        emptyState={
+                            <EmptyState
+                                title="No Projects"
+                                description={'Get started by creating a new project.'}
+                                cta={
+                                    <Button className="py-2" suffix={PlusCircleIcon} onClick={() => setVisible(true)}>
+                                        Create Project
+                                    </Button>
+                                }
+                            />
+                        }
+                    />
+                </div>
             </Await>
         </Suspense>
     )

@@ -29,7 +29,8 @@ const Input: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) =
                     className={classNames(
                         `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
                         prefix ? 'pl-10' : '',
-                        isTouched && errors ? 'border-red-600' : 'border-gray-300'
+                        isTouched && errors ? 'border-red-600' : 'border-gray-300',
+                        'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200'
                     )}
                     placeholder={placeholder}
                     {...props}

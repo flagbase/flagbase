@@ -3,6 +3,7 @@ import { useQuery } from 'react-query'
 import { Await, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
+import { Loader } from '../../../components/loader'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
@@ -41,7 +42,6 @@ const Environments = () => {
     const { environments: prefetchedEnvironments } = useLoaderData() as Environment
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const convertEnvironmentsToList: StackedEntityListProps = (environments: Environment[]) => {
-        console.log('converting', environments)
         return environments.map((environment) => {
             return {
                 id: environment.id,
@@ -65,7 +65,7 @@ const Environments = () => {
     const { data: environments } = useEnvironments(instanceKey, workspaceKey, projectKey)
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedEnvironments}>
                 {(environments: Environment) => (
                     <div className="mt-5">

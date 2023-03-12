@@ -3,13 +3,15 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
+import { Notification } from '../../../components/notification/notification'
+import { EditEntityHeading } from '../../../components/text/heading'
 import { useRemoveWorkspace, useUpdateWorkspace, useWorkspaces } from './workspaces.main'
 
 export const EditWorkspace = () => {
     const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
     const { data: workspaces, isLoading } = useWorkspaces(instanceKey)
     const navigate = useNavigate()
-    const { mutate: update } = useUpdateWorkspace(instanceKey)
+    const { mutate: update, error, isSuccess } = useUpdateWorkspace(instanceKey)
     const { mutate: remove } = useRemoveWorkspace(instanceKey)
 
     const workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
@@ -28,11 +30,19 @@ export const EditWorkspace = () => {
     return (
         <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
-                <div className="mb-4">
-                    <h1 className="text-lg font-medium leading-6 text-gray-900">Workspace Settings</h1>
-                    <p className="mt-1 text-sm text-gray-500">{workspace?.attributes.key}</p>
-                </div>
-
+                <EditEntityHeading heading="Workspace Settings" subheading={workspace?.attributes.key!} />
+                <Notification
+                    type="error"
+                    show={!!error}
+                    title={'Error'}
+                    content={'Something went wrong. Please try again later.'}
+                />
+                <Notification
+                    type="error"
+                    show={!!isSuccess}
+                    title={'Success'}
+                    content={'Workspace updated successfully!'}
+                />
                 <Formik
                     initialValues={{
                         name: workspace?.attributes.key!,
@@ -47,7 +57,6 @@ export const EditWorkspace = () => {
                                 value: value,
                             })
                         }
-                        navigate(`/${instanceKey}/workspaces`)
                     }}
                 >
                     <Form className="flex flex-col gap-5 mb-14">

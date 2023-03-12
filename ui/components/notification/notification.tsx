@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Fragment, useState } from 'react'
 import { Transition } from '@headlessui/react'
-import { CheckCircleIcon } from '@heroicons/react/24/outline'
+import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 
 export function Notification({
@@ -10,12 +10,14 @@ export function Notification({
     title,
     content,
     timeout = 5000,
+    type = 'success',
 }: {
     show: boolean
     setShow?: (show: boolean) => void
     title: string
     content: string
     timeout?: number
+    type: 'success' | 'error'
 }) {
     //setShow to false after 5 seconds
     const [showNotification, setShowNotification] = useState(show)
@@ -35,7 +37,7 @@ export function Notification({
                 aria-live="assertive"
                 className="pointer-events-none fixed inset-0 flex items-end px-4 py-6 sm:items-start sm:p-6 z-20"
             >
-                <div className="flex w-full flex-col items-center space-y-4 sm:items-end">
+                <div className="flex w-full flex-col items-center space-y-4 sm:items-center">
                     {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
                     {showNotification && (
                         <Transition
@@ -52,7 +54,18 @@ export function Notification({
                                 <div className="p-4">
                                     <div className="flex items-start">
                                         <div className="flex-shrink-0">
-                                            <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+                                            {type === 'error' && (
+                                                <ExclamationCircleIcon
+                                                    className="h-6 w-6 text-red-400"
+                                                    aria-hidden="true"
+                                                />
+                                            )}
+                                            {type === 'success' && (
+                                                <CheckCircleIcon
+                                                    className="h-6 w-6 text-green-400"
+                                                    aria-hidden="true"
+                                                />
+                                            )}
                                         </div>
                                         <div className="ml-3 w-0 flex-1 pt-0.5">
                                             <p className="text-sm font-medium text-gray-900">{title}</p>

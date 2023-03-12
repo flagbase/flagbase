@@ -411,13 +411,23 @@ export const PageHeadings = () => {
         tabs: [],
     })
 
-    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
+    const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey } = useFlagbaseParams()
 
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
                 title: 'Instances',
                 tabs: [],
+            })
+        } else if (instanceKey && workspaceKey && projectKey && environmentKey && sdkKey) {
+            setPageHeading({
+                title: 'SDK Settings',
+                tabs: [
+                    {
+                        name: 'Settings',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdkKey}`,
+                    },
+                ],
             })
         } else if (instanceKey && workspaceKey && projectKey && environmentKey) {
             setPageHeading({

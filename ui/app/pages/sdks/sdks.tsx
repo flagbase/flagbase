@@ -4,6 +4,7 @@ import { Await, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
+import { Loader } from '../../../components/loader'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { FlagbaseParams, useFlagbaseParams } from '../../lib/use-flagbase-params'
@@ -11,7 +12,7 @@ import { getSdkKey } from '../../router/loaders'
 import { fetchSdkList, SDK } from './api'
 import { AddNewSDKModal } from './sdks.modal'
 
-export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey }: FlagbaseParams) => {
+export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey }: Partial<FlagbaseParams>) => {
     const queryKey = getSdkKey({ instanceKey, workspaceKey, projectKey, environmentKey })
     const query = useQuery<SDK[]>(queryKey, {
         queryFn: async () => {
@@ -57,7 +58,7 @@ export const Sdks = () => {
     console.log('received', sdks)
 
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedSdks}>
                 {(sdks: SDK[]) => (
                     <div className="mt-5">

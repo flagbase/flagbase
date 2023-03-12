@@ -19,8 +19,9 @@ import { EditWorkspace } from '../pages/workspaces/workspaces.edit'
 import Instances from '../pages/instances/instances'
 import { Sdks } from '../pages/sdks/sdks'
 import { EditEnvironment } from '../pages/projects/edit-environment'
+import { SdkSettings } from '../pages/sdks/sdk.settings'
 
-const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey } = RouteParams
+const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
 
 export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/workspaces`
 export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
@@ -75,6 +76,11 @@ export const newRouter = createBrowserRouter(
                                         <Route
                                             path=""
                                             element={<Sdks />}
+                                            loader={({ params }) => sdkLoader({ queryClient, params })}
+                                        />
+                                        <Route
+                                            path={`${SdkKey}`}
+                                            element={<SdkSettings />}
                                             loader={({ params }) => sdkLoader({ queryClient, params })}
                                         />
                                     </Route>

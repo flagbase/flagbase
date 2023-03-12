@@ -6,6 +6,7 @@ type ErrorType = {
     message: string
     status: number
 }
+
 export const Error = () => {
     const error = useAsyncError() as any
     const { message, status } = (useRouteError() as ErrorType) || {
