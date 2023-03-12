@@ -2,7 +2,7 @@
   "compilerOptions": {
     "strict": true,
     "target": "es2017",
-    "lib": ["webworker", "es2017", "scripthost"],
+    "lib": ["webworker", "es2017", "scripthost", "dom"],
 
     "rootDir": "./src",
     "outDir": "./dist",

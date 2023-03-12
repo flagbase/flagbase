@@ -4,12 +4,12 @@ import { Evaluations, Identity } from "../context"
 export enum PollerWorkerRequestType {
     START,
     STOP,
-    RESET 
+    TAB_VISIBLE,
+    TAB_HIDDEN,
 }
 
 export type PollerWorkerRequest =  {
     requestType: PollerWorkerRequestType, 
-    requestKey: string,
     requestPayload: {
       pollingServiceUrl: string,
       clientKey: string,

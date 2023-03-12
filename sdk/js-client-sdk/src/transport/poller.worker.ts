@@ -8,12 +8,13 @@ import {
 
 const ctx: Worker = self as any;
 
-const connections = new Map<string, NodeJS.Timeout | null>();
+let timerId: NodeJS.Timer = setTimeout(() => {}, 1);
+let lastRefreshed: number = Date.now();
+let tabVisible: boolean = true;
 
 ctx.onmessage = async (e: MessageEvent<PollerWorkerRequest>) => {
   const {
     requestType,
-    requestKey,
     requestPayload: {
       pollingServiceUrl,
       clientKey,
@@ -23,68 +24,68 @@ ctx.onmessage = async (e: MessageEvent<PollerWorkerRequest>) => {
     },
   } = e.data;
 
+  let etag = initialEtag;
+
+  const actualPollingIntervalMs: number =
+    (pollingIntervalMs && pollingIntervalMs >= 3000 && pollingIntervalMs) ||
+    3000;
+
+  const schedule = async () => {
+    timerId = setTimeout(
+      async () => {
+        await fetchAndReschedule();
+      },
+      actualPollingIntervalMs
+    );
+  };
+
+  const fetchAndReschedule = async () => {
+    const elapsedMs = Date.now() - lastRefreshed;
+    if (elapsedMs >= actualPollingIntervalMs && tabVisible) {
+      const onFullResponse = (retag, evaluations) =>
+        ctx.postMessage({
+          responseType: PollerWorkerResponseType.FULL,
+          responsePayload: { retag, evaluations },
+        });
+      const onCachedResponse = () =>
+        ctx.postMessage({
+          responseType: PollerWorkerResponseType.CACHED,
+          responsePayload: {},
+        });
+      const onErrorResponse = () =>
+        ctx.postMessage({
+          responseType: PollerWorkerResponseType.ERROR,
+          responsePayload: {},
+        });
+
+      const [retag, evaluations] = await fetchFlagsViaPoller(
+        pollingServiceUrl,
+        clientKey,
+        identity,
+        etag,
+        onFullResponse,
+        onCachedResponse,
+        onErrorResponse
+      );
+      etag = retag;
+      lastRefreshed = Date.now();
+    }
+    await schedule();
+  };
+
   switch (requestType) {
     case PollerWorkerRequestType.START:
-      if (connections.has(requestKey)) {
-        console.info(
-          `[Poller Worker] Already running for request: ${requestKey}.. skipping...`
-        );
-      } else {
-        let etag = initialEtag;
-
-        let timerId: NodeJS.Timeout | null = null;
-        const start = async () => {
-          const onFullResponse = (retag, evaluations) =>
-            ctx.postMessage({
-              responseType: PollerWorkerResponseType.FULL,
-              responsePayload: { retag, evaluations },
-            });
-
-          const onCachedResponse = () =>
-            ctx.postMessage({
-              responseType: PollerWorkerResponseType.CACHED,
-              responsePayload: {},
-            });
-
-          const onErrorResponse = () =>
-            ctx.postMessage({
-              responseType: PollerWorkerResponseType.ERROR,
-              responsePayload: {},
-            });
-
-          const [retag, evaluations] = await fetchFlagsViaPoller(
-            pollingServiceUrl,
-            clientKey,
-            identity,
-            etag,
-            onFullResponse,
-            onCachedResponse,
-            onErrorResponse
-          );
-          etag = retag;
-
-          timerId = setTimeout(start, pollingIntervalMs);
-        };
-
-        await start();
-
-        connections.set(requestKey, timerId);
-      }
+      clearTimeout(timerId);
+      await schedule();
       break;
     case PollerWorkerRequestType.STOP:
-      if (connections.has(requestKey)) {
-        const timerId = connections.get(requestKey);
-        if (timerId !== null) {
-          clearTimeout(timerId);
-        }
-      } else {
-        console.error(
-          `[Poller Worker] Unabled to stop request: ${requestKey}.. skipping...`
-        );
-      }
+      clearTimeout(timerId);
       break;
-    case PollerWorkerRequestType.RESET:
-      connections.forEach((connection) => connection !== null && clearTimeout(connection));
+    case PollerWorkerRequestType.TAB_HIDDEN:
+      tabVisible = false;
+      break;
+    case PollerWorkerRequestType.TAB_VISIBLE:
+      tabVisible = true;
       break;
   }
 };

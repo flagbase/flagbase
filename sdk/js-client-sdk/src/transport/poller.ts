@@ -3,8 +3,12 @@ import { Evaluations, Flagset, IContext } from "../context";
 import { ITransport } from "./transport";
 import { EventProducer } from "../events";
 import { EventType } from "../events/event-type";
-import { PollerWorkerRequestType, PollerWorkerResponse, PollerWorkerResponseType } from './types';
-import PollerWorker from './poller.worker.ts';
+import {
+  PollerWorkerRequestType,
+  PollerWorkerResponse,
+  PollerWorkerResponseType,
+} from "./types";
+import PollerWorker from "worker-loader!./poller.worker.ts";
 
 const INITIAL_ETAG = "initial";
 
@@ -22,9 +26,7 @@ export default function Poller(
       evaluations.forEach((evaluation) =>
         context.setFlag(evaluation.attributes.flagKey, evaluation.attributes)
       );
-      const {
-        flagsetChanges: prevFlagsetChanges,
-      } = context.getInternalData();
+      const { flagsetChanges: prevFlagsetChanges } = context.getInternalData();
       context.setInternalData({
         flagsetChanges: prevFlagsetChanges + 1,
       });
@@ -47,11 +49,9 @@ export default function Poller(
 
     events.emit(
       EventType.NETWORK_FETCH,
-      "Fetched flags from service via polling.",
-      context.getInternalData()
+      "Retrieved flagset from service.",
+      context.getAllFlags(),
     );
-
-
     events.emit(
       EventType.NETWORK_FETCH_FULL,
       "Retrieved full flagset from service.",
@@ -60,13 +60,18 @@ export default function Poller(
   };
 
   const onCachedResponse = () => {
-    const {
-      consecutiveCachedRequests: prevConsecutiveCachedRequests,
-    } = context.getInternalData();
+    const { consecutiveCachedRequests: prevConsecutiveCachedRequests } =
+      context.getInternalData();
     context.setInternalData({
       consecutiveCachedRequests: prevConsecutiveCachedRequests + 1,
       consecutiveFailedRequests: 0,
     });
+
+    events.emit(
+      EventType.NETWORK_FETCH,
+      "Retrieved flagset from service.",
+      context.getAllFlags(),
+    );
     events.emit(
       EventType.NETWORK_FETCH_CACHED,
       "Retrieved cached flagset from service.",
@@ -75,9 +80,8 @@ export default function Poller(
   };
 
   const onErrorResponse = () => {
-    const {
-      consecutiveFailedRequests: prevConsecutiveFailedRequests,
-    } = context.getInternalData();
+    const { consecutiveFailedRequests: prevConsecutiveFailedRequests } =
+      context.getInternalData();
     context.setInternalData({
       consecutiveCachedRequests: 0,
       consecutiveFailedRequests: prevConsecutiveFailedRequests + 1,
@@ -92,10 +96,43 @@ export default function Poller(
   let start: () => void = () => {};
   let stop: () => void = () => {};
 
-  if (typeof(Worker) !== "undefined") {
+  if (typeof Worker !== "undefined") {
     // WebWorkers is supported then start polling via web worker
     const pollerWorker = new PollerWorker();
-    const requestKey = `${pollingServiceUrl}-${clientKey}`;
+
+    // Handle responses from worker
+    pollerWorker.onmessage = (e: MessageEvent) => {
+      const { responseType, responsePayload } =
+        e.data as PollerWorkerResponse;
+      switch (responseType) {
+        case PollerWorkerResponseType.FULL:
+          const { retag, evaluations } = responsePayload;
+          onFullResponse(retag, evaluations);
+          break;
+        case PollerWorkerResponseType.CACHED:
+          onCachedResponse();
+          break;
+        case PollerWorkerResponseType.ERROR:
+          onErrorResponse();
+          break;
+        default:
+          console.error(
+            `Unknown response type emitted by poller-worker: ${responseType}`
+          );
+      }
+    };
+
+    // send tab active / inactive state to web worker
+    if (typeof document.hidden !== "undefined") {
+      document.addEventListener("visibilitychange", function () {
+        pollerWorker.postMessage({
+          requestType: document.hidden
+            ? PollerWorkerRequestType.TAB_HIDDEN
+            : PollerWorkerRequestType.TAB_VISIBLE,
+            requestPayload: {}
+        });
+      });
+    }
 
     start = async () => {
       events.emit(
@@ -103,74 +140,72 @@ export default function Poller(
         "Starting to fetch initial flags from poller.",
         context.getInternalData()
       );
-  
+
       pollerWorker.postMessage({
         requestType: PollerWorkerRequestType.START,
-        requestKey,
         requestPayload: {
           pollingServiceUrl,
           clientKey,
           identity: context.getIdentity(),
           etag,
-          pollingIntervalMs: config.pollingIntervalMs
-        }
+          pollingIntervalMs: config.pollingIntervalMs,
+        },
       });
-  
-      pollerWorker.onmessage = (e: MessageEvent) => {
-        const {
-          responseType,
-          responsePayload
-        } = e.data as PollerWorkerResponse;
-        switch (responseType) {
-          case PollerWorkerResponseType.FULL:
-            const { retag, evaluations } = responsePayload;
-            onFullResponse(retag, evaluations);
-            break;
-          case PollerWorkerResponseType.CACHED:
-            onCachedResponse();
-            break;
-          case PollerWorkerResponseType.ERROR:
-            onErrorResponse();
-            break;
-          default: 
-            console.error(`Unknown response type emitted by poller-worker: ${responseType}`);
-        }
-      };
     };
 
     stop = async () => {
       pollerWorker.postMessage({
-        requestType: PollerWorkerRequestType.RESET,
-        requestKey,
+        requestType: PollerWorkerRequestType.STOP,
         requestPayload: {
           pollingServiceUrl,
           clientKey,
           identity: context.getIdentity(),
           etag,
-          pollingIntervalMs: config.pollingIntervalMs
-        }
+          pollingIntervalMs: config.pollingIntervalMs,
+        },
       });
-      pollerWorker.terminate()
-    }
+      pollerWorker.terminate();
+    };
   } else {
     // Otherwise fallback to using main thread
-    let timerId: number;
+    const pollingIntervalMs: number =
+      (config.pollingIntervalMs &&
+        config.pollingIntervalMs >= 3000 &&
+        config.pollingIntervalMs) ||
+      3000;
+
+    let lastRefreshed: number = Date.now();
+    let timerId: number = setTimeout(() => {}, 1);
+
+    const schedule = async () => {
+      timerId = setTimeout(async () => {
+        await fetchAndReschedule();
+      }, pollingIntervalMs);
+    };
+
+    const fetchAndReschedule = async () => {
+      const elapsedMs = Date.now() - lastRefreshed;
+      if (elapsedMs >= pollingIntervalMs && !document.hidden) {
+        const [retag, evaluations] = await fetchFlagsViaPoller(
+          pollingServiceUrl,
+          clientKey,
+          context.getIdentity(),
+          etag,
+          onFullResponse,
+          onCachedResponse,
+          onErrorResponse
+        );
+        etag = retag;
+        lastRefreshed = Date.now();
+      }
+      await schedule();
+    };
 
     start = async () => {
-      const [retag, evaluations] = await fetchFlagsViaPoller(
-        pollingServiceUrl,
-        clientKey,
-        context.getIdentity(),
-        etag,
-        onFullResponse,
-        onCachedResponse,
-        onErrorResponse
-      );
-      etag = retag;
-
-      timerId = setTimeout(start, config.pollingIntervalMs);
+      clearTimeout(timerId);
+      await schedule();
     };
-    
+
     stop = async () => {
       clearTimeout(timerId);
     };
