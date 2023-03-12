@@ -5,11 +5,11 @@ This client-side SDK is intended to be used in browser environments. To get star
 ## Quick Start
 Build different bundles:
 ```sh
-npm run build
+pnpm run build
 ```
 Run tests:
 ```sh
-npm run test
+pnpm run test
 ```
 
 ## Contributing

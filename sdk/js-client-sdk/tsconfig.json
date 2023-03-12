@@ -1,20 +1,20 @@
 {
   "compilerOptions": {
-    "jsx": "react",
-    "strictNullChecks": true,
-    "target": "es5",
-    "lib": ["es2015", "dom"],
-    "rootDir": "src",
-    "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true,
+    "target": "es2017",
+    "lib": ["webworker", "es2017", "scripthost", "dom"],
+
+    "rootDir": "./src",
+    "outDir": "./dist",
+
     "sourceMap": true,
     "declaration": true,
-    "allowJs": true,
-    "declarationMap": true,
+    "module": "commonjs",
+    "skipLibCheck": true,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "examples"]
+  "include": ["./src/*"]
 }
