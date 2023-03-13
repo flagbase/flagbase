@@ -1,7 +1,7 @@
 package logger
 
 import (
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/rs/zerolog"
@@ -31,7 +31,7 @@ func New(cfg Config) *Logger {
 			zerolog.ConsoleWriter{Out: os.Stderr},
 		)
 	} else {
-		logger = zerolog.New(ioutil.Discard)
+		logger = zerolog.New(io.Discard)
 	}
 
 	return &Logger{
