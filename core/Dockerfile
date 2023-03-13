@@ -2,7 +2,6 @@ FROM golang:1.20.2
 LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
 # Set up working environment
-RUN apk add --no-cache git bash openssh
 WORKDIR /go/src/github.com/flagbase/flagbase/core
 COPY . .
 
