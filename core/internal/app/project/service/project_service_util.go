@@ -82,7 +82,7 @@ func (s *Service) createChildren(
 		sdkkeymodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     i.Key,
-			EnvironmentKey: envProd.Key,
+			EnvironmentKey: envStg.Key,
 		},
 	)
 	if err != nil {
