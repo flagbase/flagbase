@@ -1,4 +1,4 @@
-FROM golang:1.17.10-alpine
+FROM golang:1.20.2
 LABEL maintainer="Flagbase Team <hello@flagbase.com>"
 
 # Set up working environment
