@@ -13,7 +13,7 @@ on:
 
 jobs:
   build:
-    name: Install, build and lint
+    name: Install, build and lint & deploy dev preview
     runs-on: ubuntu-latest
 
     steps:
