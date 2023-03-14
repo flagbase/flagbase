@@ -2,7 +2,6 @@ package poller
 
 import (
 	cons "core/internal/pkg/constants"
-	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/srvenv"
 	"core/pkg/model"
@@ -14,7 +13,8 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
-	httpmetrics.ApplyMetrics(r, "poller")
+	// https://flagbase.atlassian.net/browse/OSS-125
+	// httpmetrics.ApplyMetrics(r, "poller")
 	rootPath := ""
 	routes := r.Group(rootPath)
 	routes.GET(rootPath, httputil.Handler(senv, getEvaluationAPIHandler))
