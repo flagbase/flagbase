@@ -11,7 +11,6 @@ import (
 	targetingtransport "core/internal/app/targeting/transport"
 	traittransport "core/internal/app/trait/transport"
 	workspacetransport "core/internal/app/workspace/transport"
-	"core/internal/pkg/httpmetrics"
 	"core/internal/pkg/srvenv"
 
 	"github.com/gin-gonic/gin"
@@ -19,7 +18,8 @@ import (
 
 // ApplyRoutes applies route from all packages to root handler
 func ApplyRoutes(senv *srvenv.Env, r *gin.Engine) {
-	httpmetrics.ApplyMetrics(r, "api")
+	// https://flagbase.atlassian.net/browse/OSS-125
+	// httpmetrics.ApplyMetrics(r, "api")
 	root := r.Group("/")
 	accesstransport.ApplyRoutes(senv, root)
 	flagtransport.ApplyRoutes(senv, root)
