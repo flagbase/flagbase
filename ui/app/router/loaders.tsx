@@ -3,6 +3,7 @@ import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
+import { fetchFlags } from '../pages/flags/api'
 import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
@@ -111,4 +112,22 @@ export const sdkLoader = async ({ queryClient, params }: { queryClient: QueryCli
         },
     })
     return defer({ sdks })
+}
+
+export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
+    const { instanceKey, workspaceKey, projectKey } = params
+    if (!workspaceKey || !projectKey || !instanceKey) {
+        throw new Error('Missing params')
+    }
+    const queryKey = getSdkKey(params)
+    const flags = queryClient.fetchQuery(queryKey, {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchFlags({
+                projectKey,
+                workspaceKey,
+            })
+        },
+    })
+    return defer({ flags })
 }

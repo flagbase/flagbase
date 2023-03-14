@@ -83,12 +83,14 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     return (
         <>
             <Notification
+                type="error"
                 title="Could not add this instance"
                 content="Did you make sure you added the correct key and secret?"
                 show={showError}
                 setShow={setShowError}
             />
             <Notification
+                type="success"
                 title="Successfully added this instance"
                 content="You can now manage your flags"
                 show={isSuccess}

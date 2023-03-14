@@ -24,7 +24,7 @@ axios.defaults.baseURL = 'http://localhost:3000/'
 const getCachedAccessToken = async (connectionString: string, accessKey: string, accessSecret: string) => {
     const hashKey = `${connectionString}-${accessKey}-${accessSecret}`
     const cachedAccessToken = sessionStorage.getItem(hashKey)
-    if (!!cachedAccessToken) {
+    if (cachedAccessToken) {
         return {
             accessToken: cachedAccessToken,
         }

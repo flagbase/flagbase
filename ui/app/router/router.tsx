@@ -8,7 +8,14 @@ import PageLayout from '../../components/page-layout'
 import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
 import EditProject from '../pages/projects/projects.edit'
-import { environmentsLoader, instancesLoader, projectsLoader, sdkLoader, workspacesLoader } from './loaders'
+import {
+    environmentsLoader,
+    flagsLoader,
+    instancesLoader,
+    projectsLoader,
+    sdkLoader,
+    workspacesLoader,
+} from './loaders'
 import { QueryClient } from 'react-query'
 import MainWorkspaces from '../pages/workspaces/workspaces.main'
 import Environments from '../pages/projects/environments'
@@ -63,7 +70,13 @@ export const newRouter = createBrowserRouter(
                         <Route path={`${ProjectKey}`}>
                             <Route path="settings" element={<EditProject />} />
                             <Route path="" element={<Project />} />
-
+                            <Route path="flags">
+                                <Route
+                                    path=""
+                                    element={<Flags />}
+                                    loader={({ params }) => flagsLoader({ queryClient, params })}
+                                />
+                            </Route>
                             <Route path="environments">
                                 <Route
                                     path=""

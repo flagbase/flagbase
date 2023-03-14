@@ -448,6 +448,10 @@ export const PageHeadings = () => {
                 title: projectKey,
                 tabs: [
                     {
+                        name: 'Flags',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
+                    },
+                    {
                         name: 'Environments',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
                     },

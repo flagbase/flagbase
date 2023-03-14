@@ -16,6 +16,7 @@ import EmptyState from '../../../components/empty-state'
 import { RawInput } from '../../../components/input/input'
 import Tag from '../../../components/tag'
 import { Loader } from '../../../components/loader'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 
 const { Text } = Typography
 
@@ -109,7 +110,7 @@ const Projects: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
     const { projects: prefetchedProjects } = useLoaderData() as { projects: Project[] }
-    const { instanceKey, workspaceKey } = useParams() as { instanceKey: string; workspaceKey: string }
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
 
     const { data: projects } = useProjects(instanceKey, workspaceKey)
     return (
