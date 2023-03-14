@@ -25,5 +25,5 @@ jobs:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
           projectId: flagbase
-          target: dev-flagbase-ui-app
+          target: dev-flagbase-website
           entryPoint: ./www
