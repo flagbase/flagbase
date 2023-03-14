@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    name: Build via Docker
+    name: Install, build & deploy dev preview
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -18,3 +18,12 @@ jobs:
       - name: Build
         run: docker-compose run www yarn build
         working-directory: ./www
+
+      - name: "Deploy: dev-flagbase-website-**.web.app"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
+          projectId: flagbase
+          target: dev-flagbase-website
+          entryPoint: ./www

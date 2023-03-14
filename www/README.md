@@ -15,6 +15,10 @@ You can preview the website using docker & docker-compose, using the following c
 $ docker-compose up
 ```
 
+### Building the site locally
+```sh
+$ docker-compose run www yarn build
+```
 
 
 
