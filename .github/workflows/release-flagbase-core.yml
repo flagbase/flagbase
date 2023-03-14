@@ -9,6 +9,7 @@ on:
 
 jobs:
   release:
+    name: "Deploy: core.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,3 +33,11 @@ jobs:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
           repository: ${{ secrets.FLAGBASE_COM_REPO }}
           event-type: ${{ secrets.FLAGBASE_COM_RELEASE_CORE_EVENT_TYPE }}
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
+          channelId: live
+          projectId: flagbase
+          target: flagbase-app-staging
+          entryPoint: ./ui

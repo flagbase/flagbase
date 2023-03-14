@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "flagbase"
+  },
+  "targets": {
+    "flagbase": {
+      "hosting": {
+        "dev-flagbase-website": [
+          "dev-flagbase-website"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}

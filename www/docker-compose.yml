@@ -21,3 +21,5 @@ services:
       - ./content/dev:/docusaurus/dev
       # Src
       - ./_app_/src/css:/docusaurus/src/css
+      # Build
+      - ./build:/docusaurus/build

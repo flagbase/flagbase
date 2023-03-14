@@ -54,3 +54,12 @@ jobs:
 
       - name: Lint UI components
         run: pnpm run lint
+
+      - name: "Deploy: dev-flagbase-ui-app-**.web.app"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
+          projectId: flagbase
+          target: dev-flagbase-ui-app
+          entryPoint: ./ui
