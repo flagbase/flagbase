@@ -1,22 +1,95 @@
-# js-client-sdk
+# Flagbase JavaScript Client-side SDK
 
-This client-side SDK is intended to be used in browser environments. To get started using this SDK, please refer to the [JS SDK User Guides](https://flagbase.com/docs/sdk/javascript).
+The Flagbase JavaScript Client-side SDK is a lightweight library that enables your web applications to use feature flags easily and efficiently.
 
-## Quick Start
-Build different bundles:
-```sh
-pnpm run build
+## Features
+* Efficient and fast feature flag evaluations
+* Client-side API for accessing and manipulating flags, traits, and identifiers
+* Event-driven architecture with support for custom event listeners
+* Extensible, easy-to-use API for flag management
+
+## Installation
+Using npm:
+```bash
+npm install @flagbase/js-client-sdk
 ```
-Run tests:
-```sh
-pnpm run test
+Using yarn:
+```bash
+yarn add @flagbase/js-client-sdk
 ```
 
-## Contributing
-We encourage community contributions via pull requests. Before contributing, please checkout our [guidelines](https://flagbase.com/dev/intro/workflow#contributing) for instructions on how to contribute to flagbase.
+## Usage
+First, import the SDK:
+```javascript
+import Client from "@flagbase/js-client-sdk";
+```
 
-## Resources
-Check out these pages that'll help you get started, if you want to contribute to the SDKs:
-* [JS SDK User Guides](https://flagbase.com/docs/sdk/javascript): Guides on using Flagbase SDKs in your application
-* [JS SDK Dev Guides](https://flagbase.com/dev/sdk/javascript): Building & running locally / Architecture etc
-* [SDK RFCs](https://flagbase.atlassian.net/wiki/spaces/OSS/pages/695631952/SDK+-+RFCs): Technical RFCs / Proposals etc
+Then, initialize the client:
+```javascript
+const client = Client("your-client-key", {
+  identifier: "your-identifier",
+  traits: {
+    "your-trait-key": "your-trait-value",
+  },
+});
+```
+
+Now, you can use the SDK to evaluate feature flags and manage user traits.
+Evaluating Feature Flags
+
+```javascript
+const variation = client.variation("your-flag-key", "default-variation-key");
+
+if (variation === "enabled") {
+  // Execute the feature flag enabled code
+} else {
+  // Execute the feature flag disabled code
+}
+```
+
+Managing User Traits
+
+Get user traits:
+```javascript
+const allTraits = client.getAllTraits();
+const specificTrait = client.getTrait("your-trait-key");
+```
+
+Set user traits:
+```javascript
+client.setTrait("your-trait-key", "new-trait-value");
+```
+
+Listening to Events
+```javascript
+client.on("CONTEXT_CHANGE", (eventMessage, eventContext) => {
+  console.log("Event:", eventMessage, eventContext);
+});
+
+client.off("CONTEXT_CHANGE");
+```
+
+API Reference
+**Client**
+* `Client(clientKey: string, identity: Identity, opts?: ClientOptions): IClient`
+
+**IClient**
+* `variation(flagKey: string, defaultVariationKey: string): Flag["variationKey"]`
+* `getIdentifier(): Identity["identifier"]`
+* `setIdentifier(identifier: string): void`
+* `getAllTraits(): Identity["traits"]`
+* `getTrait(traitKey: string): string | number`
+* `setTrait(traitKey: string, traitValue: string | number): void`
+* `getAllFlags(): Flagset`
+* `getInternalData(): InternalData`
+* `on(eventName: EventType, listenerFn: ListenerFn): void`
+* `off(eventName: EventType, listenerFn?: ListenerFn): void`
+* `clear(): void`
+* `destroy(): void`
+
+# Contributing
+
+Contributions are welcome! Please read our Contributing Guidelines for more information.
+
+# License
+This project is licensed under the Mozilla Public License 2.0. See the LICENSE file for more details.
