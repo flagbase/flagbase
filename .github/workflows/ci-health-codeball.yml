@@ -1,4 +1,5 @@
-name: Codeball
+name: ci-health-codeball
+
 on:
   pull_request: {}
   pull_request_review_comment:
