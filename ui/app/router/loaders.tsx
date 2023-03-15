@@ -114,12 +114,16 @@ export const sdkLoader = async ({ queryClient, params }: { queryClient: QueryCli
     return defer({ sdks })
 }
 
+export const getFlagsKey = ({ instanceKey, workspaceKey, projectKey }: Partial<FlagbaseParams>) => {
+    return ['flags', instanceKey, workspaceKey, projectKey]
+}
+
 export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
     const { instanceKey, workspaceKey, projectKey } = params
     if (!workspaceKey || !projectKey || !instanceKey) {
         throw new Error('Missing params')
     }
-    const queryKey = getSdkKey(params)
+    const queryKey = getFlagsKey(params)
     const flags = queryClient.fetchQuery(queryKey, {
         queryFn: async () => {
             await configureAxios(instanceKey)

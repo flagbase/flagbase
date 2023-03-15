@@ -1,5 +1,6 @@
 import { PlusCircleIcon } from '@heroicons/react/20/solid'
 import React, { Suspense } from 'react'
+import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
@@ -7,8 +8,10 @@ import { Loader } from '../../../components/loader'
 import Table from '../../../components/table/table'
 import Tag from '../../../components/tag'
 import Text from '../../../components/text/text'
-import { Error } from '../error'
-import { Flag } from './api'
+import { configureAxios } from '../../lib/axios'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { getFlagsKey } from '../../router/loaders'
+import { createFlag, fetchFlags, Flag } from './api'
 import { flagConstants, flagsColumn } from './constants'
 
 const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
@@ -33,9 +36,9 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
                 </div>
             ),
             action: (
-                <Link to={``}>
+                <Link to={`${flag.attributes.key}`}>
                     <Button secondary className="py-2">
-                        Connect
+                        Modify
                     </Button>
                 </Link>
             ),
@@ -43,9 +46,45 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
         }
     })
 }
+
+export const useAddFlag = () => {
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+    const queryClient = useQueryClient()
+    return useMutation(
+        (flag: Flag) => {
+            return createFlag({ instanceKey, workspaceKey, projectKey, flag })
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries(['flags', instanceKey, workspaceKey, projectKey])
+            },
+        }
+    )
+}
+
+export const useFlags = () => {
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+
+    const query = useQuery<Flag[]>(
+        getFlagsKey({
+            instanceKey,
+            workspaceKey,
+            projectKey,
+        }),
+        {
+            queryFn: async () => {
+                await configureAxios(instanceKey!)
+                return fetchFlags({ workspaceKey, projectKey })
+            },
+            enabled: !!workspaceKey && !!projectKey,
+            refetchOnWindowFocus: false,
+        }
+    )
+    return query
+}
+
 const Flags: React.FC = () => {
     const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
-    console.log('flags', prefetchedFlags)
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedFlags}>

@@ -11,6 +11,19 @@ export type Flag = {
     }
 }
 
+export const createFlag = async ({
+    workspaceKey,
+    projectKey,
+    flag,
+}: {
+    workspaceKey: string
+    projectKey: string
+    flag: Flag
+}): Promise<Flag> => {
+    const { data } = await axios.post(`/flags/${workspaceKey}/${projectKey}`, flag)
+    return data
+}
+
 export const fetchFlags = async ({
     workspaceKey,
     projectKey,

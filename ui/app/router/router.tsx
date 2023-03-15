@@ -27,6 +27,7 @@ import Instances from '../pages/instances/instances'
 import { Sdks } from '../pages/sdks/sdks'
 import { EditEnvironment } from '../pages/projects/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
+import { Targeting } from '../pages/flags/targeting'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
 
@@ -74,6 +75,11 @@ export const newRouter = createBrowserRouter(
                                 <Route
                                     path=""
                                     element={<Flags />}
+                                    loader={({ params }) => flagsLoader({ queryClient, params })}
+                                />
+                                <Route
+                                    path={FlagKey}
+                                    element={<Targeting />}
                                     loader={({ params }) => flagsLoader({ queryClient, params })}
                                 />
                             </Route>
