@@ -16,7 +16,7 @@ On the other hand, the React Client SDK is the official React client-side SDK fo
 ## How to Get Started
 To begin using the Flagbase SDKs in your projects, you can install them via npm or yarn.
 
-For the JavaScript SDK, run the following command:
+For the [JavaScript SDK](https://flagbase.com/docs/sdk/javascript), run the following command:
 ```bash
 npm install @flagbase/js-client-sdk
 ```
@@ -25,7 +25,7 @@ or with yarn:
 yarn add @flagbase/js-client-sdk
 ```
 
-For the React SDK, use the following commands:
+For the [React SDK](https://flagbase.com/docs/sdk/react), use the following commands:
 ```bash
 npm install @flagbase/react-client-sdk
 ```
