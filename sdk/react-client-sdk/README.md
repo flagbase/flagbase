@@ -1,4 +1,4 @@
-# Flagbase React Client SDK
+# React Client SDK
 
 This is the official React client-side SDK for Flagbase. With this SDK, you can use lagbase feature flags and experiments in your React applications. 
 
