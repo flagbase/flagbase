@@ -14,7 +14,7 @@ info:
     1. [Create a project](#operation/create-project). Your flags will live inside here.
     1. [Create a flag](#operation/create-flag). You can [configure targeting](#operation/update-tageting) for that flag if you wish.
     1. [Evaluate your flags](#operation/evaluate-flags) or [get the non-evaluated flagset](#operation/get-evaluation)
-  title: Core API
+  title: Flagbase Core API
   version: 0.0.1-alpha
   contact:
     name: Flagbase
@@ -416,129 +416,6 @@ paths:
         - auth
       security: []
     parameters: []
-  '/workspaces/{wsKey}/access':
-    parameters:
-      - $ref: '#/components/parameters/wsKey'
-    get:
-      summary: List workspace access
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/Access'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      operationId: list-workspace-access
-      description: List access keys that are currently in use for a particular workspace.
-      tags:
-        - workspace-access
-      security:
-        - Access Token: []
-    post:
-      summary: Create workspace access
-      operationId: create-workspace-access
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Access'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      description: Create a new workspace access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessInput'
-      tags:
-        - workspace-access
-      security:
-        - Access Token: []
-    delete:
-      summary: Delete workspace access
-      operationId: delete-workspaces-access
-      responses:
-        '204':
-          description: No Content
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      description: Delete an existing workspace access link.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessPairInput'
-      tags:
-        - workspace-access
-      security:
-        - Access Token: []
-  '/projects/{wsKey}/{projKey}/access':
-    get:
-      summary: List project access
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/AccessPairInput'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      operationId: list-project-access
-      description: List access keys that are currently in use for a particular project.
-      tags:
-        - project-access
-      security:
-        - Access Token: []
-    parameters:
-      - $ref: '#/components/parameters/wsKey'
-      - $ref: '#/components/parameters/projKey'
-    post:
-      summary: Create project access
-      operationId: create-project-access
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  data:
-                    $ref: '#/components/schemas/Access'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      description: Create a new project access link. Make sure you generate the access key-secret pair with the appropriate permissions type before using this operation.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessInput'
-      tags:
-        - project-access
-      security:
-        - Access Token: []
-    delete:
-      summary: Delete project access
-      operationId: delete-project-access
-      responses:
-        '204':
-          description: No Content
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-      description: Delete an existing project access link.
-      requestBody:
-        $ref: '#/components/requestBodies/AccessPairInput'
-      tags:
-        - project-access
-      security:
-        - Access Token: []
   '/projects/{wsKey}/{projKey}/environments':
     parameters:
       - $ref: '#/components/parameters/wsKey'
@@ -1457,6 +1334,8 @@ paths:
 servers:
   - url: 'https://api.core.flagbase.com'
     description: Flagbase Core API
+  - description: Staging Flagbase Core API
+    url: 'https://api.core.flagbase.xyz'
   - url: 'http://127.0.0.1:5051'
     description: Localhost
 components:
@@ -1941,8 +1820,8 @@ components:
           description: Rollout weight (0..100)
           minimum: 0
           maximum: 100
-          exclusiveMinimum: true
-          exclusiveMaximum: true
+          exclusiveMinimum: false
+          exclusiveMaximum: false
     FlagEvaluated:
       title: FlagEvaluated
       type: object
