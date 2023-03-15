@@ -118,6 +118,7 @@ fabric.properties
 # Other Files #
 ###############
 node_modules
+.parcel-cache
 build
 dist
 .vscode
