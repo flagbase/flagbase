@@ -9,6 +9,8 @@ We are thrilled to announce the release of Flagbase's new client SDKs for React 
 
 The Flagbase JavaScript Client-side SDK is a lightweight library offering several key features, including efficient and fast feature flag evaluations, client-side API for accessing and manipulating flags, traits, and identifiers, event-driven architecture with support for custom event listeners, and an extensible, easy-to-use API for flag management.
 
+<!--truncate-->
+
 On the other hand, the React Client SDK is the official React client-side SDK for Flagbase, specifically tailored for React applications. It provides easy integration with React components and hooks, allowing developers to manage and use feature flags seamlessly within their React applications.
 
 ## How to Get Started
