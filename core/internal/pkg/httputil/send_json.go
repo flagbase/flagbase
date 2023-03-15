@@ -23,14 +23,19 @@ func SendJSON(
 		return
 	}
 
-	if err := jsonapi.MarshalPayload(ctx.Writer, data); err != nil {
-		ctx.AbortWithStatusJSON(errorCode, res.Errors{
-			Errors: []*res.Error{
-				{
-					Code:    cons.ErrorInternal,
-					Message: err.Error(),
+	// Check if status code is 304 Not Modified
+	if ctx.Writer.Status() != 304 {
+		if err := jsonapi.MarshalPayload(ctx.Writer, data); err != nil {
+			ctx.AbortWithStatusJSON(errorCode, res.Errors{
+				Errors: []*res.Error{
+					{
+						Code:    cons.ErrorInternal,
+						Message: err.Error(),
+					},
 				},
-			},
-		})
+			})
+		}
+	} else {
+		ctx.Status(304)
 	}
 }
