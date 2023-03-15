@@ -2,7 +2,6 @@ package evaluator
 
 import (
 	"core/pkg/model"
-	"errors"
 )
 
 // Evaluate the variation for a single flag
@@ -15,15 +14,18 @@ func Evaluate(
 		FlagKey: flag.FlagKey,
 	}
 
-	if len(flag.Rules) > 0 && !flag.UseFallthrough {
-		eval, err := evaluateRules(flag.Rules, salt, ectx)
-		if err == nil {
+	matched := false
+
+	if !flag.UseFallthrough && len(flag.Rules) > 0 {
+		eval, match := evaluateRules(flag.Rules, salt, ectx)
+		if match {
 			o.Reason = eval.Reason
 			o.VariationKey = eval.VariationKey
+			matched = true
 		}
 	}
 
-	if o.VariationKey == "" {
+	if !matched {
 		o.Reason = model.ReasonFallthrough
 		if len(flag.FallthroughVariations) > 1 {
 			o.Reason = model.ReasonFallthroughWeighted
@@ -41,26 +43,26 @@ func evaluateRules(
 	rules []*model.Rule,
 	salt string,
 	ectx model.Context,
-) (*model.Evaluation, error) {
+) (eval *model.Evaluation, matched bool) {
 	for _, r := range rules {
-		eval, err := evaluateRule(*r, salt, ectx)
-		if err == nil {
-			return &eval, nil
+		eval, matched = evaluateRule(*r, salt, ectx)
+		if matched {
+			return eval, true
 		}
 	}
 
-	return nil, errors.New("no matching rule")
+	return nil, false
 }
 
 func evaluateRule(
 	rule model.Rule,
 	salt string,
 	ectx model.Context,
-) (model.Evaluation, error) {
-	var o model.Evaluation
+) (o *model.Evaluation, matched bool) {
+	o = &model.Evaluation{}
 
 	if _, ok := ectx.Traits[rule.TraitKey]; !ok {
-		return o, errors.New("rule trait not present in context")
+		return nil, false
 	}
 
 	matches := Matcher[rule.Operator](
@@ -72,7 +74,7 @@ func evaluateRule(
 	}
 
 	if !matches {
-		return o, errors.New("rule does not match")
+		return nil, false
 	}
 
 	o.Reason = model.ReasonTargeted
@@ -83,5 +85,5 @@ func evaluateRule(
 		salt,
 		rule.RuleVariations,
 	)
-	return o, nil
+	return o, true
 }
