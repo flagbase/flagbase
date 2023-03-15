@@ -6,7 +6,6 @@ import (
 	flagmodel "core/internal/app/flag/model"
 	flagrepo "core/internal/app/flag/repository"
 	segmentrepo "core/internal/app/segment/repository"
-	segmentrulemodel "core/internal/app/segmentrule/model"
 	segmentrulerepo "core/internal/app/segmentrule/repository"
 	targetingmodel "core/internal/app/targeting/model"
 	targetingrepo "core/internal/app/targeting/repository"
@@ -61,82 +60,69 @@ func (s *Service) Get(
 		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
-	for _, f := range fl {
-		t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
-			WorkspaceKey:   a.WorkspaceKey,
-			ProjectKey:     a.ProjectKey,
-			FlagKey:        f.Key,
-			EnvironmentKey: a.EnvironmentKey,
-		})
-		if err != nil {
-			e.Append(cons.ErrorInternal, err.Error())
-		}
+	type result struct {
+		flag    *model.Flag
+		err     error
+		flagIdx int
+	}
+	resultChan := make(chan result, len(fl))
 
-		tr, _err := s.TargetingRuleRepo.List(ctx, targetingrulemodel.RootArgs{
-			WorkspaceKey:   a.WorkspaceKey,
-			ProjectKey:     a.ProjectKey,
-			FlagKey:        f.Key,
-			EnvironmentKey: a.EnvironmentKey,
-		})
-		if _err != nil {
-			e.Append(cons.ErrorInternal, _err.Error())
-		}
+	for idx, f := range fl {
+		go func(flag *flagmodel.Flag, flagIdx int) {
+			res := result{flagIdx: flagIdx}
 
-		var _r []*model.Rule
-		for _, _tr := range tr {
-			switch _tr.Type {
-			case string(rsc.Trait):
-				_r = append(_r, &model.Rule{
-					ID:             _tr.ID,
-					RuleType:       _tr.Type,
-					TraitKey:       _tr.TraitKey,
-					TraitValue:     _tr.TraitValue,
-					Operator:       _tr.Operator,
-					Negate:         _tr.Negate,
-					RuleVariations: _tr.RuleVariations,
-				})
-			case string(rsc.Segment):
-				if string(_tr.SegmentKey) != "" {
-					sr, err := s.SegmentRuleRepo.List(ctx, segmentrulemodel.RootArgs{
-						WorkspaceKey:   a.WorkspaceKey,
-						ProjectKey:     a.ProjectKey,
-						EnvironmentKey: a.EnvironmentKey,
-						SegmentKey:     _tr.SegmentKey,
-					})
-					if err != nil {
-						e.Append(cons.ErrorInternal, err.Error())
-					}
-
-					for _, _sr := range sr {
-						_r = append(_r, &model.Rule{
-							ID:             _tr.ID,
-							RuleType:       _tr.Type,
-							TraitKey:       _sr.TraitKey,
-							TraitValue:     _sr.TraitValue,
-							Operator:       _sr.Operator,
-							Negate:         _sr.Negate,
-							RuleVariations: _tr.RuleVariations,
-						})
-					}
-				}
-				// TODO match identity ~ case string(rsc.Identity):
+			t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
+				WorkspaceKey:   a.WorkspaceKey,
+				ProjectKey:     a.ProjectKey,
+				FlagKey:        flag.Key,
+				EnvironmentKey: a.EnvironmentKey,
+			})
+			if err != nil {
+				res.err = err
+				resultChan <- res
+				return
 			}
-		}
 
-		o = append(o, &model.Flag{
-			ID:                    t.ID,
-			FlagKey:               string(f.Key),
-			UseFallthrough:        !t.Enabled,
-			FallthroughVariations: t.FallthroughVariations,
-			Rules:                 _r,
-		})
+			tr, _err := s.TargetingRuleRepo.List(ctx, targetingrulemodel.RootArgs{
+				WorkspaceKey:   a.WorkspaceKey,
+				ProjectKey:     a.ProjectKey,
+				FlagKey:        flag.Key,
+				EnvironmentKey: a.EnvironmentKey,
+			})
+			if _err != nil {
+				res.err = _err
+				resultChan <- res
+				return
+			}
+
+			rules := processTargetingRules(ctx, s, a, tr)
+
+			res.flag = &model.Flag{
+				ID:                    t.ID,
+				FlagKey:               string(flag.Key),
+				UseFallthrough:        !t.Enabled,
+				FallthroughVariations: t.FallthroughVariations,
+				Rules:                 rules,
+			}
+
+			resultChan <- res
+		}(f, idx)
+	}
+
+	o = make(model.Flagset, len(fl))
+
+	for range fl {
+		res := <-resultChan
+		if res.err != nil {
+			e.Append(cons.ErrorInternal, res.err.Error())
+		}
+		o[res.flagIdx] = res.flag
 	}
 
 	return &o, &e
 }
 
 // Evaluate returns an evaluated flagset given the user context
-// (*) atk: access_type <= service
 func (s *Service) Evaluate(
 	atk rsc.Token,
 	ectx model.Context,
@@ -149,17 +135,36 @@ func (s *Service) Evaluate(
 		e.Extend(err)
 	}
 
-	var o model.Evaluations
+	type evalResult struct {
+		eval    *model.Evaluation
+		err     error
+		flagIdx int
+	}
+	evalResultChan := make(chan evalResult, len(*r))
 
-	for _, flag := range *r {
-		salt := hashutil.HashKeys(
-			string(a.WorkspaceKey),
-			string(a.ProjectKey),
-			string(a.EnvironmentKey),
-			flag.FlagKey,
-			ectx.Identifier,
-		)
-		o = append(o, evaluator.Evaluate(*flag, salt, ectx))
+	for idx, flag := range *r {
+		go func(flag *model.Flag, flagIdx int) {
+			res := evalResult{flagIdx: flagIdx}
+			salt := hashutil.HashKeys(
+				string(a.WorkspaceKey),
+				string(a.ProjectKey),
+				string(a.EnvironmentKey),
+				flag.FlagKey,
+				ectx.Identifier,
+			)
+			res.eval = evaluator.Evaluate(*flag, salt, ectx)
+			evalResultChan <- res
+		}(flag, idx)
+	}
+
+	o := make(model.Evaluations, len(*r))
+
+	for range *r {
+		res := <-evalResultChan
+		if res.err != nil {
+			e.Append(cons.ErrorInternal, res.err.Error())
+		}
+		o[res.flagIdx] = res.eval
 	}
 
 	return &o, &e
