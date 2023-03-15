@@ -3,13 +3,11 @@ package service
 import (
 	"context"
 	evaluationmodel "core/internal/app/evaluation/model"
-	flagmodel "core/internal/app/flag/model"
+	evaluationrepo "core/internal/app/evaluation/repository"
 	flagrepo "core/internal/app/flag/repository"
 	segmentrepo "core/internal/app/segment/repository"
 	segmentrulerepo "core/internal/app/segmentrule/repository"
-	targetingmodel "core/internal/app/targeting/model"
 	targetingrepo "core/internal/app/targeting/repository"
-	targetingrulemodel "core/internal/app/targetingrule/model"
 	targetingrulerepo "core/internal/app/targetingrule/repository"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
@@ -22,6 +20,7 @@ import (
 
 type Service struct {
 	Senv              *srvenv.Env
+	EvaluationRepo    *evaluationrepo.Repo
 	FlagRepo          *flagrepo.Repo
 	SegmentRepo       *segmentrepo.Repo
 	SegmentRuleRepo   *segmentrulerepo.Repo
@@ -32,6 +31,7 @@ type Service struct {
 func NewService(senv *srvenv.Env) *Service {
 	return &Service{
 		Senv:              senv,
+		EvaluationRepo:    evaluationrepo.NewRepo(senv),
 		FlagRepo:          flagrepo.NewRepo(senv),
 		SegmentRepo:       segmentrepo.NewRepo(senv),
 		SegmentRuleRepo:   segmentrulerepo.NewRepo(senv),
@@ -45,81 +45,17 @@ func NewService(senv *srvenv.Env) *Service {
 func (s *Service) Get(
 	atk rsc.Token,
 	a evaluationmodel.RootArgs,
-) (*model.Flagset, *res.Errors) {
+) ([]*model.Flag, *res.Errors) {
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	var o model.Flagset
-
-	fl, _e := s.FlagRepo.List(context.Background(), flagmodel.RootArgs{
-		WorkspaceKey: a.WorkspaceKey,
-		ProjectKey:   a.ProjectKey,
-	})
-	if _e != nil {
-		e.Append(cons.ErrorInternal, _e.Error())
+	r, err := s.EvaluationRepo.List(ctx, a)
+	if err != nil {
+		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	type result struct {
-		flag    *model.Flag
-		err     error
-		flagIdx int
-	}
-	resultChan := make(chan result, len(fl))
-
-	for idx, f := range fl {
-		go func(flag *flagmodel.Flag, flagIdx int) {
-			res := result{flagIdx: flagIdx}
-
-			t, err := s.TargetingRepo.Get(ctx, targetingmodel.RootArgs{
-				WorkspaceKey:   a.WorkspaceKey,
-				ProjectKey:     a.ProjectKey,
-				FlagKey:        flag.Key,
-				EnvironmentKey: a.EnvironmentKey,
-			})
-			if err != nil {
-				res.err = err
-				resultChan <- res
-				return
-			}
-
-			tr, _err := s.TargetingRuleRepo.List(ctx, targetingrulemodel.RootArgs{
-				WorkspaceKey:   a.WorkspaceKey,
-				ProjectKey:     a.ProjectKey,
-				FlagKey:        flag.Key,
-				EnvironmentKey: a.EnvironmentKey,
-			})
-			if _err != nil {
-				res.err = _err
-				resultChan <- res
-				return
-			}
-
-			rules := processTargetingRules(ctx, s, a, tr)
-
-			res.flag = &model.Flag{
-				ID:                    t.ID,
-				FlagKey:               string(flag.Key),
-				UseFallthrough:        !t.Enabled,
-				FallthroughVariations: t.FallthroughVariations,
-				Rules:                 rules,
-			}
-
-			resultChan <- res
-		}(f, idx)
-	}
-
-	o = make(model.Flagset, len(fl))
-
-	for range fl {
-		res := <-resultChan
-		if res.err != nil {
-			e.Append(cons.ErrorInternal, res.err.Error())
-		}
-		o[res.flagIdx] = res.flag
-	}
-
-	return &o, &e
+	return r, &e
 }
 
 // Evaluate returns an evaluated flagset given the user context
@@ -140,10 +76,10 @@ func (s *Service) Evaluate(
 		err     error
 		flagIdx int
 	}
-	evalResultChan := make(chan evalResult, len(*r))
+	evalResultChan := make(chan evalResult, len(r))
 
-	for idx, flag := range *r {
-		go func(flag *model.Flag, flagIdx int) {
+	for idx, flag := range r {
+		go func(flag model.Flag, flagIdx int) {
 			res := evalResult{flagIdx: flagIdx}
 			salt := hashutil.HashKeys(
 				string(a.WorkspaceKey),
@@ -152,14 +88,14 @@ func (s *Service) Evaluate(
 				flag.FlagKey,
 				ectx.Identifier,
 			)
-			res.eval = evaluator.Evaluate(*flag, salt, ectx)
+			res.eval = evaluator.Evaluate(flag, salt, ectx)
 			evalResultChan <- res
-		}(flag, idx)
+		}(*flag, idx)
 	}
 
-	o := make(model.Evaluations, len(*r))
+	o := make(model.Evaluations, len(r))
 
-	for range *r {
+	for range r {
 		res := <-evalResultChan
 		if res.err != nil {
 			e.Append(cons.ErrorInternal, res.err.Error())

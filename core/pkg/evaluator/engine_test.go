@@ -52,7 +52,10 @@ func TestEvaluateRules(t *testing.T) {
 		},
 	}
 
-	evaluation := evaluateRules(rules, salt, ectx)
+	evaluation, err := evaluateRules(rules, salt, ectx)
+	if err != nil {
+		t.Errorf("evaluateRules failed with an error: %s", err.Error())
+	}
 
 	assert.Equal(t, "A", evaluation.VariationKey)
 	assert.Equal(t, model.ReasonTargeted, evaluation.Reason)

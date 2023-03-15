@@ -16,9 +16,11 @@ func Evaluate(
 	}
 
 	if len(flag.Rules) > 0 && !flag.UseFallthrough {
-		eval := evaluateRules(flag.Rules, salt, ectx)
-		o.Reason = eval.Reason
-		o.VariationKey = eval.VariationKey
+		eval, err := evaluateRules(flag.Rules, salt, ectx)
+		if err == nil {
+			o.Reason = eval.Reason
+			o.VariationKey = eval.VariationKey
+		}
 	}
 
 	if o.VariationKey == "" {
@@ -39,26 +41,15 @@ func evaluateRules(
 	rules []*model.Rule,
 	salt string,
 	ectx model.Context,
-) model.Evaluation {
-	var o model.Evaluation
-	variationVotes := make(map[string]int)
-
-	maxVotes := 0
+) (*model.Evaluation, error) {
 	for _, r := range rules {
 		eval, err := evaluateRule(*r, salt, ectx)
 		if err == nil {
-			if _, ok := variationVotes[eval.VariationKey]; !ok {
-				variationVotes[eval.VariationKey] = 0
-			}
-			variationVotes[eval.VariationKey]++
-			if variationVotes[eval.VariationKey] > maxVotes {
-				maxVotes = variationVotes[eval.VariationKey]
-				o = eval
-			}
+			return &eval, nil
 		}
 	}
 
-	return o
+	return nil, errors.New("no matching rule")
 }
 
 func evaluateRule(
