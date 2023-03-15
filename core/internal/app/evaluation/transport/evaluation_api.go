@@ -64,7 +64,7 @@ func (h *APIHandler) getEvaluationAPIHandler(ctx *gin.Context) {
 	httputil.SendJSON(
 		ctx,
 		http.StatusOK,
-		*r,
+		r,
 		http.StatusInternalServerError,
 		e,
 	)

@@ -19,8 +19,8 @@ func TestHashKeysTwoKeys(t *testing.T) {
 	key2 := "key2"
 	hash := HashKeys(key1, key2)
 
-	expected := "669b6cfa69c1afe27a8c21166a1b97a7cdfc5872c16c19a0290eb39f654a48aa" // Precomputed SHA256 hash for hash1 + hash2
-
+	// Precomputed SHA256 hash for hash1 + hash2
+	expected := "669b6cfa69c1afe27a8c21166a1b97a7cdfc5872c16c19a0290eb39f654a48aa"
 	if hash != expected {
 		t.Errorf("HashKeys(%s, %s) = %s; expected %s", key1, key2, hash, expected)
 	}
@@ -31,7 +31,7 @@ func TestHashKeysMultipleKeys(t *testing.T) {
 	hash := HashKeys(keys...)
 
 	// Precomputed SHA256 hashes
-	expected := "1a98c36c29718ee5441af97e2d7106272beb25c5f587356d50cacf809f512d3f" // Precomputed SHA256 hash for hash3
+	expected := "1a98c36c29718ee5441af97e2d7106272beb25c5f587356d50cacf809f512d3f"
 
 	if hash != expected {
 		t.Errorf("HashKeys(%s, %s, %s) = %s; expected %s", keys[0], keys[1], keys[2], hash, expected)

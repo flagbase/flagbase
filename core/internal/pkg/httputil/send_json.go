@@ -4,6 +4,8 @@ import (
 	cons "core/internal/pkg/constants"
 	res "core/pkg/response"
 
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/jsonapi"
 )
@@ -23,14 +25,19 @@ func SendJSON(
 		return
 	}
 
-	if err := jsonapi.MarshalPayload(ctx.Writer, data); err != nil {
-		ctx.AbortWithStatusJSON(errorCode, res.Errors{
-			Errors: []*res.Error{
-				{
-					Code:    cons.ErrorInternal,
-					Message: err.Error(),
+	// Check if status code is 304 Not Modified
+	if ctx.Writer.Status() != http.StatusNotModified {
+		if err := jsonapi.MarshalPayload(ctx.Writer, data); err != nil {
+			ctx.AbortWithStatusJSON(errorCode, res.Errors{
+				Errors: []*res.Error{
+					{
+						Code:    cons.ErrorInternal,
+						Message: err.Error(),
+					},
 				},
-			},
-		})
+			})
+		}
+	} else {
+		ctx.Status(http.StatusNotModified)
 	}
 }

@@ -52,7 +52,7 @@ func TestEvaluateRules(t *testing.T) {
 		},
 	}
 
-	evaluation := evaluateRules(rules, salt, ectx)
+	evaluation, _ := evaluateRules(rules, salt, ectx)
 
 	assert.Equal(t, "A", evaluation.VariationKey)
 	assert.Equal(t, model.ReasonTargeted, evaluation.Reason)
@@ -73,9 +73,8 @@ func TestEvaluateRule(t *testing.T) {
 		},
 	}
 
-	evaluation, err := evaluateRule(rule, salt, ectx)
+	evaluation, _ := evaluateRule(rule, salt, ectx)
 
-	assert.NoError(t, err)
 	assert.Equal(t, "A", evaluation.VariationKey)
 	assert.Equal(t, model.ReasonTargeted, evaluation.Reason)
 }

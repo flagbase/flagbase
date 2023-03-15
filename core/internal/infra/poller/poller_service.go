@@ -1,12 +1,16 @@
 package poller
 
 import (
-	"context"
+	evaluationmodel "core/internal/app/evaluation/model"
+	evaluationservice "core/internal/app/evaluation/service"
+	sdkkeyservice "core/internal/app/sdkkey/service"
+	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/hashutil"
 	"core/pkg/model"
 	res "core/pkg/response"
+	"encoding/json"
 )
 
 // Get returns a set raw (non-evaluated) flagsets
@@ -16,42 +20,38 @@ func Get(
 	atk rsc.Token,
 	etag string,
 	a RootHeaders,
-) (*model.Flagset, string, *res.Errors) {
+) ([]*model.Flag, string, *res.Errors) {
 	var e res.Errors
-	var o *model.Flagset
-	ctx := context.Background()
 
-	retag := etag
-	cacheKey := hashutil.HashKeys(
-		"polling-get-raw-ruleset",
-		a.SDKKey,
-	)
-	otag, _ := senv.Cache.Get(cacheKey).Result()
+	evalservice := evaluationservice.NewService(senv)
+	sks := sdkkeyservice.NewService(senv)
 
-	if etag == "" || etag != otag {
-		r, _e, newETag := getAndSetCache(CachedServiceArgs{
-			Senv:        senv,
-			Ctx:         ctx,
-			Atk:         atk,
-			RootHeaders: a,
-			CacheKey:    cacheKey,
-		})
-		if !_e.IsEmpty() {
-			e.Extend(&_e)
-		}
-		o = r
-		retag = newETag
-	} else {
-		go getAndSetCache(CachedServiceArgs{
-			Senv:        senv,
-			Ctx:         ctx,
-			Atk:         atk,
-			RootHeaders: a,
-			CacheKey:    cacheKey,
-		})
+	sksArgs, _err := sks.GetRootArgsFromServerKey(a.SDKKey)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
 	}
 
-	return o, retag, &e
+	r, err := evalservice.Get(
+		atk,
+		evaluationmodel.RootArgs{
+			WorkspaceKey:   sksArgs.WorkspaceKey,
+			ProjectKey:     sksArgs.ProjectKey,
+			EnvironmentKey: sksArgs.EnvironmentKey,
+		},
+	)
+	if !err.IsEmpty() {
+		e.Extend(err)
+	}
+
+	oBytes, _err := json.Marshal(r)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
+	}
+	retag := hashutil.HashKeys(
+		string(oBytes),
+	)
+
+	return r, retag, &e
 }
 
 // Evaluate returns an evaluated flagset given the user context
@@ -64,41 +64,35 @@ func Evaluate(
 	a RootHeaders,
 ) (*model.Evaluations, string, *res.Errors) {
 	var e res.Errors
-	var o *model.Evaluations
-	ctx := context.Background()
 
-	retag := etag
-	cacheKey := hashutil.HashKeys(
-		"polling-get-evaluated-ruleset",
-		a.SDKKey,
-		ectx.Identifier,
-	)
-	otag, _ := senv.Cache.Get(cacheKey).Result()
+	evalservice := evaluationservice.NewService(senv)
+	sks := sdkkeyservice.NewService(senv)
 
-	if etag == "" || etag != otag {
-		r, _e, newETag := evaluateAndSetCache(CachedServiceArgs{
-			Senv:        senv,
-			Ctx:         ctx,
-			Atk:         atk,
-			Ectx:        ectx,
-			RootHeaders: a,
-			CacheKey:    cacheKey,
-		})
-		if !_e.IsEmpty() {
-			e.Extend(&_e)
-		}
-		o = r
-		retag = newETag
-	} else {
-		go evaluateAndSetCache(CachedServiceArgs{
-			Senv:        senv,
-			Ctx:         ctx,
-			Atk:         atk,
-			Ectx:        ectx,
-			RootHeaders: a,
-			CacheKey:    cacheKey,
-		})
+	sksArgs, _err := sks.GetRootArgsFromSDKKey(a.SDKKey)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
 	}
 
-	return o, retag, &e
+	r, err := evalservice.Evaluate(
+		atk,
+		ectx,
+		evaluationmodel.RootArgs{
+			WorkspaceKey:   sksArgs.WorkspaceKey,
+			ProjectKey:     sksArgs.ProjectKey,
+			EnvironmentKey: sksArgs.EnvironmentKey,
+		},
+	)
+	if !err.IsEmpty() {
+		e.Extend(err)
+	}
+
+	rBytes, _err := json.Marshal(*r)
+	if _err != nil {
+		e.Append(cons.ErrorInternal, _err.Error())
+	}
+	retag := hashutil.HashKeys(
+		string(rBytes),
+	)
+
+	return r, retag, &e
 }
