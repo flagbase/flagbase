@@ -34,15 +34,10 @@ func TestDeriveVariationMultipleIterations(t *testing.T) {
 		salt := strconv.Itoa(i)
 		derivedVariation := deriveVariation(salt, variations)
 
-		_, exists := exposures[derivedVariation]
-		if exists {
-			exposures[derivedVariation] += 1
-		} else {
-			exposures[derivedVariation] += 1
-		}
+		exposures[derivedVariation] += 1
 	}
 
-	// deterministic hashing ensures
+	// deterministic hashing ensures consistent bucketing
 	assert.Equal(t, exposures["A"], 16002131)
 	assert.Equal(t, exposures["B"], 16005592)
 	assert.Equal(t, exposures["C"], 15998409)
