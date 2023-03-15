@@ -15,7 +15,7 @@ flagbased [global options] command [command options] [arguments...]
 ```
 
 ### Global Options
-    * `--help`, `-h`: Show help (default: false)
+* `--help, -h`: Show help (default: false)
 
 
 ## Worker Management
