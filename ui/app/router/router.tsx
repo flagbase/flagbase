@@ -14,6 +14,7 @@ import {
     instancesLoader,
     projectsLoader,
     sdkLoader,
+    targetingLoader,
     workspacesLoader,
 } from './loaders'
 import { QueryClient } from 'react-query'
@@ -80,7 +81,7 @@ export const newRouter = createBrowserRouter(
                                 <Route
                                     path={FlagKey}
                                     element={<Targeting />}
-                                    loader={({ params }) => flagsLoader({ queryClient, params })}
+                                    loader={({ params }) => targetingLoader({ queryClient, params })}
                                 />
                             </Route>
                             <Route path="environments">

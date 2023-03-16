@@ -3,7 +3,7 @@ import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
-import { fetchFlags } from '../pages/flags/api'
+import { fetchFlags, fetchTargeting } from '../pages/flags/api'
 import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
@@ -134,4 +134,33 @@ export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryC
         },
     })
     return defer({ flags })
+}
+
+export const targetingLoader = async ({
+    queryClient,
+    params,
+}: {
+    queryClient: QueryClient
+    params: FlagbaseParams
+}) => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = params
+    if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
+        throw new Error('Missing params')
+    }
+    if (!environmentKey) {
+        return defer({ targeting: [] })
+    }
+    const queryKey = getFlagsKey(params)
+    const targeting = queryClient.fetchQuery(queryKey, {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchTargeting({
+                workspaceKey,
+                projectKey,
+                environmentKey,
+                flagKey,
+            })
+        },
+    })
+    return defer({ targeting })
 }

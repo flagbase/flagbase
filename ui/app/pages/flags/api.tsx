@@ -1,4 +1,5 @@
 import { axios } from '../../lib/axios'
+import { FlagbaseParams } from '../../lib/use-flagbase-params'
 
 export type Flag = {
     id: string
@@ -32,5 +33,15 @@ export const fetchFlags = async ({
     projectKey: string
 }): Promise<Flag[]> => {
     const { data } = await axios.get(`/flags/${workspaceKey}/${projectKey}`)
+    return data
+}
+
+export const fetchTargeting = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    flagKey,
+}: Partial<FlagbaseParams>) => {
+    const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}`)
     return data
 }

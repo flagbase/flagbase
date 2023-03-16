@@ -11,13 +11,21 @@ export type InputProps = {
     label?: string
 } & Omit<FormikFormProps, 'prefix'>
 
-const people = [
-    { id: 'eq', name: 'Equals' },
-    { id: 'neq', name: 'Not Equals' },
+const rules = [
+    { name: 'Equal', operator: 'equal', negate: false },
+    { name: 'Not Equal', operator: 'equal', negate: true },
+    { name: 'Greater Than', operator: 'greater_than', negate: false },
+    { name: 'Less Than or Equal', operator: 'greater_than', negate: true },
+    { name: 'Greater Than or Equal', operator: 'greater_than_or_equal', negate: false },
+    { name: 'Less Than', operator: 'greater_than_or_equal', negate: true },
+    { name: 'Contains', operator: 'contains', negate: false },
+    { name: 'Not Contains', operator: 'contains', negate: true },
+    { name: 'Regex', operator: 'regex', negate: false },
+    { name: 'Not Regex', operator: 'regex', negate: true },
 ]
 
 export const Select: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) => {
-    const [selected, setSelected] = React.useState(people[0])
+    const [selected, setSelected] = React.useState(rules[0])
     const name = field?.name
     const errors = form?.errors[name]
     const isTouched = form?.touched[name]
@@ -43,16 +51,16 @@ export const Select: React.FC<InputProps> = ({ prefix, field, form, label, ...pr
                             leaveTo="opacity-0"
                         >
                             <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-fit overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-                                {people.map((person) => (
+                                {rules.map((rule) => (
                                     <Listbox.Option
-                                        key={person.id}
+                                        key={rule.id}
                                         className={({ active }) =>
                                             classNames(
                                                 active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                                                 'relative cursor-default select-none py-2 pl-8 pr-4'
                                             )
                                         }
-                                        value={person}
+                                        value={rule}
                                     >
                                         {({ selected, active }) => (
                                             <>
@@ -62,7 +70,7 @@ export const Select: React.FC<InputProps> = ({ prefix, field, form, label, ...pr
                                                         'block truncate'
                                                     )}
                                                 >
-                                                    {person.name}
+                                                    {rule.name}
                                                 </span>
 
                                                 {selected ? (
