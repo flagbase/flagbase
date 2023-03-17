@@ -11,6 +11,24 @@ Here we explore data models used by Flagbase on a technical level. If you wish t
 
 If you can't see the diagram above, your browser may not support iframes. You can use [this link](https://viewer.diagrams.net/?edit=_blank&layers=1&nav=1&title=flagbase-erd.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1QU-hiWtnsl6gtU1xzcr8q36T5_bvUPfh%26export%3Ddownload) to view original diagram.
 
+Here's a brief explanation of each table and their relationships:
+* **access**: This table stores access keys for different services or users. Each record contains a unique key and an encrypted secret, along with an expiration timestamp and a description.
+* **workspace**: The workspace table represents a workspace that groups related projects together. Each workspace has a unique key, name, and description.
+* **project**: Projects belong to a workspace and group related feature flags. Each project record is associated with a workspace through the workspace_id foreign key.
+* **environment**: Environments represent different deployment environments, like development, staging, or production, and belong to a project. The project_id foreign key links an environment to its project.
+* **flag**: Feature flags are stored in this table, with each flag belonging to a project. The project_id foreign key associates a flag with its project.
+* **variation**: Variations are the different versions of a feature flag. Each variation is linked to a flag through the flag_id foreign key.
+* **segment**: Segments define groups of users based on traits or other conditions. Segments are associated with a project through the project_id foreign key.
+* **sdk_key**: SDK keys are used for authenticating clients and servers when interacting with the feature flag management system. Each key belongs to an environment, and the environment_id foreign key establishes this relationship.
+* **segment_rule**: Segment rules define the conditions for including users in a segment. These rules can reference both environments and segments through the environment_id and segment_id foreign keys, respectively.
+* **targeting**: The targeting table defines which flag variation should be served to users in a specific environment. The flag_id and environment_id foreign keys link a targeting record to a flag and an environment, respectively.
+* **targeting_rule**: Targeting rules determine the conditions for serving a specific flag variation. A targeting rule can reference an identity, segment, and targeting through the identity_id, segment_id, and targeting_id foreign keys, respectively.
+* **targeting_fallthrough_variation**: This table defines the default variation served when no targeting rules match. It associates a variation with a targeting through the variation_id and targeting_id foreign keys.
+* **targeting_rule_variation**: This table maps variations to targeting rules, specifying the variation that should be served if the rule's conditions are met. The variation_id and targeting_rule_id foreign keys link a targeting rule variation to a variation and targeting rule, respectively.
+
+In summary, this schema represents a feature flag management system that includes workspaces, projects, environments, feature flags, segments, identities, and various rules for targeting and evaluating flag variations.
+
+
 ## Resources
 
 The diagram below illustrates the Flagbase's resource hierarchy. To simplify the diagram, [identity](#identity) and [targeting](#targeting) have not been included in this diagram.
