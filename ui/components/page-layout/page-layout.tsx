@@ -488,6 +488,12 @@ export const PageHeadings = () => {
         }
     }, [location.pathname, activeTab])
 
+    useEffect(() => {
+        if (!!pageHeading?.title) {
+            document.title = `${pageHeading?.title} | Flagbase`
+        }
+    }, [pageHeading])
+
     return (
         <>
             <PageHeading title={pageHeading.title} tabs={pageHeading.tabs} />
