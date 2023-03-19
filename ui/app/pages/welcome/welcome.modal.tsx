@@ -8,7 +8,7 @@ type WelcomeModalProps = {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose, isOpen }) => {
     return (
-        <ModalLayout open={isOpen} onClose={onClose} className="sm:max-w-4xl">
+        <ModalLayout open={isOpen} onClose={onClose} className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl sm:p-6">
             <>
                 <h2 className="mt-2 text-2xl font-bold">Flagbase Client</h2>
                 <p className="mt-8 bg-yellow-100 p-3 ">
