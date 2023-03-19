@@ -1,6 +1,5 @@
-import React from 'react'
+import React, { Fragment } from 'react'
 import { Layout as AntdLayout, LayoutProps as AntdLayoutProps } from 'antd'
-import { Fragment } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
 const { Content } = AntdLayout
@@ -9,13 +8,14 @@ export type LayoutProps = {
     open: boolean
     onClose: () => void
     children: React.ReactChild
+    className?: string
 }
 
 const Layout: React.FC = ({ children }) => {
     return <main className="py-5 px-12 rounded-md bg-white shadow-lg">{children}</main>
 }
 
-const ModalLayout: React.FC<LayoutProps> = ({ open, onClose, children }) => {
+const ModalLayout: React.FC<LayoutProps> = ({ open, onClose, children, className }) => {
     return (
         <Transition.Root show={open} as={Fragment}>
             <Dialog as="div" className="relative z-10" onClose={onClose}>
@@ -42,7 +42,7 @@ const ModalLayout: React.FC<LayoutProps> = ({ open, onClose, children }) => {
                             leaveFrom="opacity-100 translate-y-0 sm:scale-100"
                             leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                         >
-                            <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+                            <Dialog.Panel className={`relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6 ${!!className ? className : ''}`}>
                                 {children}
                             </Dialog.Panel>
                         </Transition.Child>

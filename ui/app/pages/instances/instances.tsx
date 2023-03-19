@@ -12,6 +12,7 @@ import Input from '../../../components/input'
 import EmptyProject from '../../../components/empty-state/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
 import { Loader } from '../../../components/loader'
+import WelcomeModal from '../welcome/welcome.modal'
 
 type Instances = Instance[]
 
@@ -99,6 +100,8 @@ export const useInstances = (options?: any) => {
 }
 
 const Instances: React.FC = () => {
+    const [showWelcomeModal, setShowWelcomeModal] = useState(JSON.parse(localStorage.getItem('show-welcome-message') || 'true'))
+
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
@@ -129,6 +132,7 @@ const Instances: React.FC = () => {
                 {(initialInstances: Instances) => (
                     <div className="mt-5">
                         <AddNewInstanceModal visible={visible} setVisible={setVisible} />
+                        {instances && instances.length === 0 && <WelcomeModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false) }} />}
                         {initialInstances.length > 0 && (
                             <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
                                 <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
