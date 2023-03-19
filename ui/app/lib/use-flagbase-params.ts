@@ -7,6 +7,7 @@ export type FlagbaseParams = {
     flagKey: string | undefined
     environmentKey: string | undefined
     sdkKey: string | undefined
+    ruleKey: string | undefined
 }
 
 export const useFlagbaseParams = () => {

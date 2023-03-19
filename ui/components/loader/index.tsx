@@ -1,8 +1,8 @@
 import React from 'react'
 
-export const Loader = () => {
+export const Loader = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
     return (
-        <main className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">
+        <main className="grid min-h-full place-items-center">
             <div role="status">
                 <svg
                     aria-hidden="true"

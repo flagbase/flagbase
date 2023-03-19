@@ -12,6 +12,13 @@ export type Flag = {
     }
 }
 
+export type FlagCreateBody = {
+    key: string
+    name: string
+    description?: string
+    tags?: string
+}
+
 export const createFlag = async ({
     workspaceKey,
     projectKey,
@@ -19,7 +26,7 @@ export const createFlag = async ({
 }: {
     workspaceKey: string
     projectKey: string
-    flag: Flag
+    flag: FlagCreateBody
 }): Promise<Flag> => {
     const { data } = await axios.post(`/flags/${workspaceKey}/${projectKey}`, flag)
     return data
@@ -43,5 +50,28 @@ export const fetchTargeting = async ({
     flagKey,
 }: Partial<FlagbaseParams>) => {
     const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}`)
+    return data
+}
+
+export const fetchTargetingRules = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    flagKey,
+}: Partial<FlagbaseParams>) => {
+    const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}/rules`)
+    return data
+}
+
+export const fetchTargetingRule = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    flagKey,
+    ruleKey,
+}: Partial<FlagbaseParams>) => {
+    const { data } = await axios.get(
+        `/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}/rules/${ruleKey}`
+    )
     return data
 }

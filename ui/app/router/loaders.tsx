@@ -3,7 +3,7 @@ import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
-import { fetchFlags, fetchTargeting } from '../pages/flags/api'
+import { fetchFlags, fetchTargeting, fetchTargetingRules } from '../pages/flags/api'
 import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
@@ -118,6 +118,10 @@ export const getFlagsKey = ({ instanceKey, workspaceKey, projectKey }: Partial<F
     return ['flags', instanceKey, workspaceKey, projectKey]
 }
 
+export const getTargetingKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: FlagbaseParams) => {
+    return ['targeting', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
+}
+
 export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
     const { instanceKey, workspaceKey, projectKey } = params
     if (!workspaceKey || !projectKey || !instanceKey) {
@@ -150,11 +154,11 @@ export const targetingLoader = async ({
     if (!environmentKey) {
         return defer({ targeting: [] })
     }
-    const queryKey = getFlagsKey(params)
-    const targeting = queryClient.fetchQuery(queryKey, {
+    const queryKey = getTargetingKey(params)
+    const targetingRules = queryClient.fetchQuery(queryKey, {
         queryFn: async () => {
             await configureAxios(instanceKey)
-            return fetchTargeting({
+            return fetchTargetingRules({
                 workspaceKey,
                 projectKey,
                 environmentKey,
@@ -162,5 +166,5 @@ export const targetingLoader = async ({
             })
         },
     })
-    return defer({ targeting })
+    return defer({ targetingRules })
 }

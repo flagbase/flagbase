@@ -1,5 +1,5 @@
 import { PlusCircleIcon } from '@heroicons/react/20/solid'
-import React, { Suspense } from 'react'
+import React, { Suspense, useState } from 'react'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
 import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
@@ -11,9 +11,54 @@ import Text from '../../../components/text/text'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getFlagsKey } from '../../router/loaders'
-import { createFlag, fetchFlags, Flag } from './api'
+import { Environment, useEnvironments } from '../projects/environments'
+import { createFlag, fetchFlags, Flag, FlagCreateBody } from './api'
 import { flagConstants, flagsColumn } from './constants'
+import { CreateFlag } from './flags.modal'
 
+export const useChangeDefaultEnvironment = () => {
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async (newEnvironment: Environment) => {
+            return newEnvironment
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['defaultEnvironment'])
+        },
+    })
+    return mutation
+}
+
+export const useDefaultEnvironment = () => {
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+    const { data: environments } = useEnvironments({
+        instanceKey: instanceKey!,
+        projectKey: projectKey!,
+        workspaceKey: workspaceKey!,
+    })
+    const query = useQuery(['defaultEnvironment'], {
+        queryFn: async () => {
+            return environments?.[0]
+        },
+        enabled: !!environments,
+    })
+    return query
+}
+
+const FlagLink = ({ flag }: { flag: Flag }) => {
+    const { data: environment, isLoading } = useDefaultEnvironment()
+
+    if (isLoading) {
+        return <Loader />
+    }
+    return (
+        <Link to={`environments/${environment?.attributes.key}/${flag.attributes.key}`}>
+            <Button secondary className="py-2">
+                Modify
+            </Button>
+        </Link>
+    )
+}
 const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
     if (!flags) {
         return []
@@ -35,13 +80,7 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
                     ))}
                 </div>
             ),
-            action: (
-                <Link to={`${flag.attributes.key}`}>
-                    <Button secondary className="py-2">
-                        Modify
-                    </Button>
-                </Link>
-            ),
+            action: <FlagLink flag={flag} />,
             key: flag.attributes.key,
         }
     })
@@ -51,12 +90,10 @@ export const useAddFlag = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const queryClient = useQueryClient()
     return useMutation(
-        (flag: Flag) => {
-            return createFlag({ instanceKey, workspaceKey, projectKey, flag })
-        },
+        (flag: FlagCreateBody) => createFlag({ workspaceKey: workspaceKey!, projectKey: projectKey!, flag }),
         {
             onSuccess: () => {
-                queryClient.invalidateQueries(['flags', instanceKey, workspaceKey, projectKey])
+                queryClient.invalidateQueries(getFlagsKey({ instanceKey, workspaceKey, projectKey }))
             },
         }
     )
@@ -84,14 +121,23 @@ export const useFlags = () => {
 }
 
 const Flags: React.FC = () => {
+    const [visible, setVisible] = useState(false)
     const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
+    const { data: flags } = useFlags()
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedFlags}>
-                {(flags) => (
+                {() => (
                     <div className="mt-5">
+                        <CreateFlag visible={visible} setVisible={setVisible} />
+
                         <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                            <Button className="py-2" type="button" suffix={PlusCircleIcon}>
+                            <Button
+                                onClick={() => setVisible(true)}
+                                className="py-2"
+                                type="button"
+                                suffix={PlusCircleIcon}
+                            >
                                 {flagConstants.FLAG_ADD_TEXT}
                             </Button>
                         </div>

@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
 import { ModalLayout } from '../../../components/layout'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { deleteProject } from './api'
 import { useAddProject } from './projects'
 
@@ -33,7 +34,7 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
     visible,
     setVisible,
 }: WorkspaceModal) => {
-    const { instanceKey, workspaceKey } = useParams<{ instanceKey: string; workspaceKey: string }>()
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
 
     const mutation = useAddProject(instanceKey, workspaceKey)
 

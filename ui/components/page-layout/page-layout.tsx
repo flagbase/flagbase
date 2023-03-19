@@ -1,39 +1,30 @@
 import React, { Fragment, useEffect } from 'react'
 
-import {
-    Link,
-    Outlet,
-    useLocation,
-    useMatch,
-    useMatches,
-    useNavigate,
-    useOutletContext,
-    useParams,
-} from 'react-router-dom'
-import { Instance } from '../../app/context/instance'
+import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
 import { useState } from 'react'
-import { Disclosure, Transition, Popover, Dialog, Menu } from '@headlessui/react'
+import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
 import {
     ArrowLeftCircleIcon,
     Bars3Icon,
-    CheckCircleIcon,
     ChevronDownIcon,
     ChevronRightIcon,
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { useInstances } from '../../app/pages/instances/instances'
-import { getProjectsPath, getWorkspacePath, getWorkspacesPath } from '../../app/router/router'
+import { getEnvironmentPath, getWorkspacePath, getWorkspacesPath } from '../../app/router/router'
 import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main'
 import { Workspace } from '../../app/pages/workspaces/api'
 import { useProjects } from '../../app/pages/projects/projects'
-import { Project } from '../../app/context/project'
 import { useFlagbaseParams } from '../../app/lib/use-flagbase-params'
+import { Environment, useEnvironments } from '../../app/pages/projects/environments'
+import { Project } from '../../app/pages/projects/api'
+import { Instance } from '../../app/pages/instances/instances.functions'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
 const projectsDescription = `A project is a collection of feature flags and settings. You can have multiple projects in a single workspace.`
-
+const environmentsDescription = `An environment is a set of feature flags and settings that can be applied to a specific set of users.`
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
@@ -85,12 +76,14 @@ const MobileDropdown = ({
 const Breadcrumb = ({
     name,
     description,
+    type,
     href,
     children,
     chevron = true,
 }: {
     name: string
     description: string
+    type: string
     href: string
     chevron?: boolean
     children: {
@@ -134,7 +127,7 @@ const Breadcrumb = ({
                                 aria-hidden="true"
                             />
                             <h3 className="text-base font-semibold leading-6 text-indigo-600 hover:text-indigo-800">
-                                {name}
+                                {type}
                             </h3>
                         </Link>
                         <p className="mt-1 text-sm text-gray-500">{description}</p>
@@ -159,6 +152,16 @@ const Breadcrumb = ({
             </Transition>
         </Popover>
     )
+}
+
+const getEnvironmentDropdown = (data: Environment[], instanceKey: string, workspaceKey: string, projectKey: string) => {
+    return data.map((object) => {
+        return {
+            name: object.attributes.name,
+            description: object.attributes.description,
+            href: getEnvironmentPath(instanceKey, workspaceKey, projectKey, object.attributes.key),
+        }
+    })
 }
 
 const getProjectDropdown = (data: Project[]) => {
@@ -262,13 +265,22 @@ const MobileNavigation = ({
 }
 
 const Header = () => {
-    const { instanceKey, workspaceKey } =
-        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const { data: instances } = useInstances()
     const { data: workspaces } = useWorkspaces(instanceKey)
     const { data: projects } = useProjects(instanceKey, workspaceKey)
+    const { data: environments } = useEnvironments({
+        instanceKey: instanceKey!,
+        workspaceKey: workspaceKey!,
+        projectKey: projectKey!,
+    })
+
+    const activeInstance: Instance = instances?.find((instance) => instance.key === instanceKey)
+    const activeWorkspace: Workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    const activeProject: Project = projects?.find((project) => project.attributes.key === projectKey)
+
     return (
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
@@ -293,27 +305,43 @@ const Header = () => {
                         {instances && (
                             <Breadcrumb
                                 chevron={false}
-                                name="Instances"
+                                name={activeInstance?.key || 'Instances'}
+                                type="Instance"
                                 description={instancesDescription}
                                 href="/instances"
-                                children={getInstanceDropdown(instances)}
-                            />
+                            >
+                                {getInstanceDropdown(instances)}
+                            </Breadcrumb>
                         )}
-                        {workspaces && (
+                        {workspaces && instanceKey && (
                             <Breadcrumb
-                                name="Workspaces"
+                                type="Workspace"
+                                name={activeWorkspace?.attributes.name || 'Workspaces'}
                                 description={workspaceDescription}
                                 href={getWorkspacesPath(instanceKey || '')}
-                                children={getWorkspaceDropdown(workspaces, instanceKey)}
-                            />
+                            >
+                                {getWorkspaceDropdown(workspaces, instanceKey)}
+                            </Breadcrumb>
                         )}
-                        {projects && (
+                        {projects && instanceKey && (
                             <Breadcrumb
-                                name="Projects"
+                                type="Project"
+                                name={activeProject?.attributes.name || 'Projects'}
                                 description={projectsDescription}
-                                href={getWorkspacesPath(instanceKey || '')}
-                                children={getProjectDropdown(projects)}
-                            />
+                                href={getWorkspacesPath(instanceKey)}
+                            >
+                                {getProjectDropdown(projects)}
+                            </Breadcrumb>
+                        )}
+                        {environments && instanceKey && workspaceKey && projectKey && (
+                            <Breadcrumb
+                                type="Environment"
+                                name="Environments"
+                                description={environmentsDescription}
+                                href={getWorkspacesPath(instanceKey)}
+                            >
+                                {getEnvironmentDropdown(environments, instanceKey, workspaceKey, projectKey)}
+                            </Breadcrumb>
                         )}
                     </ol>
                 </Popover.Group>
@@ -425,7 +453,7 @@ export const PageHeadings = () => {
                 tabs: [
                     {
                         name: 'Targeting',
-                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}`,
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/environments/${environmentKey}/${flagKey}`,
                     },
                     {
                         name: 'Variations',

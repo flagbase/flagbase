@@ -42,6 +42,13 @@ export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
 export const getProjectPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`
 
+export const getEnvironmentPath = (
+    instanceKey: string,
+    workspaceKey: string,
+    projectKey: string,
+    environmentKey: string
+) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}`
+
 export const queryClient = new QueryClient()
 
 export const newRouter = createBrowserRouter(
@@ -78,6 +85,13 @@ export const newRouter = createBrowserRouter(
                                     element={<Flags />}
                                     loader={({ params }) => flagsLoader({ queryClient, params })}
                                 />
+                                <Route path={`environments/${EnvironmentKey}`}>
+                                    <Route
+                                        path={FlagKey}
+                                        element={<Targeting />}
+                                        loader={({ params }) => targetingLoader({ queryClient, params })}
+                                    />
+                                </Route>
                                 <Route
                                     path={FlagKey}
                                     element={<Targeting />}

@@ -2,7 +2,7 @@
 import { CheckCircleIcon, MinusCircleIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Field, FieldArray, Form, Formik } from 'formik'
 import React, { Suspense, useState } from 'react'
-import { Await } from 'react-router-dom'
+import { Await, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import { Divider } from '../../../components/divider'
 import Input from '../../../components/input/input'
@@ -55,30 +55,58 @@ const TargetingRowInput = ({
     )
 }
 
+type TargetingRuleResponse = {
+    type: 'targeting_rule'
+    id: string
+    attributes: {
+        description: string
+        key: string
+        name: string
+        operator: 'equal' | 'regex'
+        ruleVariations: {
+            variationKey: string
+            weight: number
+        }[]
+        segmentKey?: string
+        tags: string[]
+        traitKey?: string
+        traitValue?: string
+        type: 'segment' | 'trait'
+    }
+}[]
+
+type TargetingRuleRequest = {
+    key: string
+    name: string
+    description: string
+    tags: string[]
+    type: 'segment' | 'trait'
+    traitKey?: string
+    traitValue?: string
+    operator: 'equal' | 'regex'
+    ruleVariations: {
+        variationKey: string
+        weight: number
+    }[]
+    segmentKey?: string
+}
+
 export const Targeting = () => {
-    const [rows, setRows] = useState<TargetingRule[]>([])
     const { data: flags } = useFlags()
     const { flagKey } = useFlagbaseParams()
     const flag = flags?.find((flag) => flag.attributes.key === flagKey)
 
-    const addRow = () => {
-        setRows([...rows, { traitKey: '', operand: 'equals', traitValue: '' }])
-    }
-
-    const removeRow = () => {
-        setRows(rows.slice(0, -1))
-    }
-
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={flag}>
-                {() => (
+                {(targetingRules: TargetingRuleResponse) => (
                     <div className="mt-5">
+                        {console.log('Target', targetingRules)}
                         <Heading className="mb-2">Targeting Rules</Heading>
                         <Divider />
                         <Formik
                             initialValues={{
-                                rules: [] as TargetingRule[],
+                                rules: targetingRules as TargetingRule[],
                             }}
                             onSubmit={(values) => {
                                 console.log('values', values)
