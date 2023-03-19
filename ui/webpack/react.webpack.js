@@ -94,6 +94,7 @@ module.exports = {
         publicPath: '/',
     },
     plugins: [new HtmlWebpackPlugin({
-        title: "Flagbase"
+        title: "Flagbase",
+        favicon: './assets/favicon.ico'
     })],
 }

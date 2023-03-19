@@ -26,21 +26,21 @@ const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: an
                         <Text>Connect to a Flagbase instance to begin managing your flags</Text>
                     </div>
                     <Form className="flex flex-col gap-3">
-                        <Field component={Input} id="key" name="key" label="Name" placeholder="anything-goes" />
+                        <Field component={Input} id="key" name="key" label="Instance Name" placeholder="i.e. Shared Flagbase Core API" />
                         <Field
                             component={Input}
                             id="connectionString"
                             name="connectionString"
                             label="Connection String"
-                            placeholder="URL"
+                            placeholder="i.e. https://api.core.flagbase.com"
                         />
-                        <Field component={Input} id="accessKey" name="accessKey" label="Access Key" placeholder="Key" />
+                        <Field component={Input} id="accessKey" name="accessKey" label="Access Key" placeholder="i.e. root" />
                         <Field
                             component={Input}
                             id="accessSecret"
                             name="accessSecret"
                             label="Access Secret"
-                            placeholder="Secret"
+                            placeholder="i.e. toor"
                             type="password"
                         />
                         <Button
