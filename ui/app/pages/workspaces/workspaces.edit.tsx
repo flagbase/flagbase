@@ -51,6 +51,9 @@ export const EditWorkspace = () => {
                     }}
                     onSubmit={(values: { name: string; description: string; tags: string }) => {
                         for (const [key, value] of Object.entries(values)) {
+                            if (value === workspace?.attributes[key]) {
+                                continue
+                            }
                             update({
                                 workspaceKey: workspace?.attributes.key!,
                                 path: key,

@@ -118,7 +118,7 @@ const Instances: React.FC = () => {
             .map((instance) => {
                 return {
                     id: instance.key,
-                    href: `/${instance.key.toLowerCase()}/workspaces`,
+                    href: `/${instance.key}/workspaces`,
                     status: 'Active',
                     title: instance.key,
                     location: instance.connectionString,

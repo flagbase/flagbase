@@ -79,7 +79,8 @@ const MainWorkspaces = () => {
     }
     const [createWorkspace, showCreateWorkspace] = useState(false)
     const [filter, setFilter] = useState('')
-    const { data: workspaces } = useWorkspaces(instanceKey)
+    const { data: workspaces, isRefetching, isFetching, isLoading } = useWorkspaces(instanceKey)
+
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedWorkspaces}>
@@ -104,7 +105,7 @@ const MainWorkspaces = () => {
                             </div>
                         </div>
                         <Table
-                            loading={false}
+                            loading={isFetching || isRefetching || isLoading}
                             dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
                             columns={workspaceColumns}
                             emptyState={
