@@ -54,9 +54,7 @@ export const convertProjects = ({
                     </div>
                 ),
                 action: (
-                    <Link
-                        to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/environments`}
-                    >
+                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`}>
                         <Button secondary className="py-2">
                             Connect
                         </Button>

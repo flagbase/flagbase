@@ -91,7 +91,17 @@ export const environmentsLoader = async ({
     return defer({ environments })
 }
 
-export const getSdkKey = ({ instanceKey, workspaceKey, projectKey, environmentKey }: FlagbaseParams) => {
+export const getSdkKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    environmentKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+    environmentKey: string
+}) => {
     return ['sdks', instanceKey, workspaceKey, projectKey, environmentKey]
 }
 
