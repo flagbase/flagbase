@@ -15,6 +15,7 @@ import {
     projectsLoader,
     sdkLoader,
     targetingLoader,
+    variationsLoader,
     workspacesLoader,
 } from './loaders'
 import { QueryClient } from 'react-query'
@@ -29,6 +30,7 @@ import { Sdks } from '../pages/sdks/sdks'
 import { EditEnvironment } from '../pages/projects/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
 import { Targeting } from '../pages/flags/targeting'
+import Variations from '../pages/flags/variations'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
 
@@ -93,7 +95,11 @@ export const newRouter = createBrowserRouter(
                                     />
                                 </Route>
                                 <Route path={FlagKey}>
-                                    <Route path="variations" element={<div>Variations</div>} />
+                                    <Route
+                                        path="variations"
+                                        loader={({ params }) => variationsLoader({ queryClient, params })}
+                                        element={<Variations />}
+                                    />
                                 </Route>
                             </Route>
                             <Route path="environments">

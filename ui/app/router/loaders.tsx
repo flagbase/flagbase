@@ -3,7 +3,7 @@ import { defer } from 'react-router-dom'
 import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
-import { fetchFlags, fetchTargeting, fetchTargetingRules } from '../pages/flags/api'
+import { fetchFlags, fetchTargeting, fetchTargetingRules, fetchVariations } from '../pages/flags/api'
 import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
@@ -167,4 +167,44 @@ export const targetingLoader = async ({
         },
     })
     return defer({ targetingRules })
+}
+
+export const getVariationsKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    flagKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+}) => {
+    return ['variations', instanceKey, workspaceKey, projectKey, flagKey]
+}
+
+export const variationsLoader = async ({
+    queryClient,
+    params,
+}: {
+    queryClient: QueryClient
+    params: FlagbaseParams
+}) => {
+    const { instanceKey, workspaceKey, projectKey, flagKey } = params
+    if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
+        throw new Error('Missing params')
+    }
+
+    const queryKey = getVariationsKey(params)
+    const variations = queryClient.fetchQuery(queryKey, {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchVariations({
+                workspaceKey,
+                projectKey,
+                flagKey,
+            })
+        },
+    })
+    return defer({ variations })
 }
