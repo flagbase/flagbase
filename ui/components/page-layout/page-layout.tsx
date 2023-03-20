@@ -285,10 +285,10 @@ const Header = () => {
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
                 <div className="flex items-center gap-x-12 mr-6">
-                    <a href="/" className="-m-1.5 p-1.5">
+                    <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
                         <img className="h-8 w-auto" src={flag} alt="" />
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex lg:hidden">
                     <button
@@ -362,8 +362,17 @@ const Header = () => {
     )
 }
 
-const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; href: string }[] }) => {
-    const navigate = useNavigate()
+const PageHeading = ({
+    title,
+    subtitle,
+    tabs,
+    backHref,
+}: {
+    title: string
+    subtitle: string
+    tabs?: { name: string; href: string }[]
+    backHref?: string
+}) => {
     const location = useLocation()
     const pathname = decodeURI(location.pathname)
 
@@ -371,12 +380,17 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
         <header className={`bg-gray-50 pt-8 border-b border-gray-200 ${!tabs || (tabs.length === 0 && 'pb-8')}`}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
                 <div className="min-w-0 flex-1 flex flex-row items-center gap-5">
-                    <button onClick={() => navigate(-1)}>
-                        <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
-                    </button>
-                    <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight capitalize">
-                        {title}
-                    </h1>
+                    {backHref && (
+                        <Link to={backHref}>
+                            <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
+                        </Link>
+                    )}
+                    <div className="flex flex-col">
+                        <h1 className="text-xl font-bold leading-7 text-gray-900 sm:text-2xl sm:tracking-tight capitalize">
+                            {title}
+                        </h1>
+                        <p className="mt-1 truncate text-sm text-gray-500">{subtitle}</p>
+                    </div>
                 </div>
             </div>
             {tabs && tabs.length > 0 && (
@@ -428,6 +442,8 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
 type PageHeadingType = {
     title: string
     tabs?: { name: string; href: string }[]
+    subtitle?: string
+    backHref?: string
 }
 
 export const PageHeadings = () => {
@@ -446,10 +462,13 @@ export const PageHeadings = () => {
             setPageHeading({
                 title: 'Instances',
                 tabs: [],
+                backHref: null,
             })
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
-                title: `Flag | ${flagKey}`,
+                title: `${flagKey}`,
+                subtitle: 'Flags',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {
                         name: 'Targeting',
@@ -468,6 +487,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && environmentKey && sdkKey) {
             setPageHeading({
                 title: 'SDK Settings',
+                subtitle: 'SDK',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
                 tabs: [
                     {
                         name: 'Settings',
@@ -478,6 +499,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && environmentKey) {
             setPageHeading({
                 title: environmentKey,
+                subtitle: 'Environment',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
                 tabs: [
                     {
                         name: 'SDKs',
@@ -492,6 +515,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey) {
             setPageHeading({
                 title: projectKey,
+                subtitle: 'Project',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
                 tabs: [
                     {
                         name: 'Flags',
@@ -510,6 +535,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey) {
             setPageHeading({
                 title: workspaceKey,
+                subtitle: 'Workspace',
+                backHref: `/${instanceKey}/workspaces`,
                 tabs: [
                     {
                         name: 'Projects',
@@ -524,6 +551,8 @@ export const PageHeadings = () => {
         } else if (instanceKey) {
             setPageHeading({
                 title: instanceKey,
+                subtitle: 'Instance',
+                backHref: '/',
                 tabs: [
                     {
                         name: 'Workspaces',
@@ -539,14 +568,19 @@ export const PageHeadings = () => {
     }, [location.pathname, activeTab])
 
     useEffect(() => {
-        if (!!pageHeading?.title) {
+        if (pageHeading?.title) {
             document.title = `${pageHeading?.title} | Flagbase`
         }
     }, [pageHeading])
 
     return (
         <>
-            <PageHeading title={pageHeading.title} tabs={pageHeading.tabs} />
+            <PageHeading
+                title={pageHeading.title}
+                subtitle={pageHeading.subtitle}
+                tabs={pageHeading.tabs}
+                backHref={pageHeading.backHref}
+            />
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8">
                 <Outlet />
             </div>
