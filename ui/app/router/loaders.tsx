@@ -150,7 +150,7 @@ export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryC
     return defer({ flags })
 }
 
-export const targetingLoader = async ({
+export const targetingRulesLoader = async ({
     queryClient,
     params,
 }: {
@@ -175,7 +175,7 @@ export const targetingLoader = async ({
                 flagKey,
             })
         },
-    })
+    });
     return defer({ targetingRules })
 }
 

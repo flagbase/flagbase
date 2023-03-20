@@ -14,7 +14,7 @@ import {
     instancesLoader,
     projectsLoader,
     sdkLoader,
-    targetingLoader,
+    targetingRulesLoader,
     variationsLoader,
     workspacesLoader,
 } from './loaders'
@@ -91,7 +91,7 @@ export const newRouter = createBrowserRouter(
                                     <Route
                                         path={FlagKey}
                                         element={<Targeting />}
-                                        loader={({ params }) => targetingLoader({ queryClient, params })}
+                                        loader={({ params }) => targetingRulesLoader({ queryClient, params })}
                                     />
                                 </Route>
                                 <Route path={FlagKey}>
