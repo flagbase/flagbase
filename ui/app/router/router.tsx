@@ -92,11 +92,9 @@ export const newRouter = createBrowserRouter(
                                         loader={({ params }) => targetingLoader({ queryClient, params })}
                                     />
                                 </Route>
-                                <Route
-                                    path={FlagKey}
-                                    element={<Targeting />}
-                                    loader={({ params }) => targetingLoader({ queryClient, params })}
-                                />
+                                <Route path={FlagKey}>
+                                    <Route path="variations" element={<div>Variations</div>} />
+                                </Route>
                             </Route>
                             <Route path="environments">
                                 <Route
