@@ -88,6 +88,9 @@ export const Sdks = () => {
                             onClick={() => {
                                 navigator.clipboard.writeText(sdk.attributes.clientKey)
                                 setCopied(true)
+                                setTimeout(() => {
+                                    setCopied(false)
+                                }, 3000)
                             }}
                         />
                     </div>
@@ -100,6 +103,9 @@ export const Sdks = () => {
                             onClick={() => {
                                 navigator.clipboard.writeText(sdk.attributes.serverKey)
                                 setCopied(true)
+                                setTimeout(() => {
+                                    setCopied(false)
+                                }, 3000)
                             }}
                         />
                     </div>
