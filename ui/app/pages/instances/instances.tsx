@@ -1,6 +1,5 @@
 import React, { Suspense, useState } from 'react'
 
-import { Instance } from '../../context/instance'
 import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
 import { Await, useLoaderData } from 'react-router-dom'
@@ -13,8 +12,7 @@ import EmptyProject from '../../../components/empty-state/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
 import { Loader } from '../../../components/loader'
 import WelcomeModal from '../welcome/welcome.modal'
-
-type Instances = Instance[]
+import { Instance } from './instances.functions'
 
 export const useUpdateInstance = () => {
     const queryClient = useQueryClient()
@@ -38,6 +36,7 @@ export const useUpdateInstance = () => {
 }
 
 export const useAddInstance = () => {
+    const queryClient = useQueryClient()
     const mutation = useMutation({
         mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
             axios.defaults.baseURL = instance.connectionString
@@ -56,6 +55,9 @@ export const useAddInstance = () => {
                 ])
             )
             return { ...instance, expiresAt: result.expiresAt }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(['instances'])
         },
     })
     return mutation
@@ -92,7 +94,7 @@ export const getInstances = () => JSON.parse(localStorage.getItem('instances') |
 
 export const useInstances = (options?: any) => {
     // Define a query to fetch the instances object from the server
-    const query = useQuery<Instances>(['instances'], getInstances, {
+    const query = useQuery<Instance[]>(['instances'], getInstances, {
         ...options,
     })
 
@@ -100,15 +102,17 @@ export const useInstances = (options?: any) => {
 }
 
 const Instances: React.FC = () => {
-    const [showWelcomeModal, setShowWelcomeModal] = useState(JSON.parse(localStorage.getItem('show-welcome-message') || 'true'))
+    const [showWelcomeModal, setShowWelcomeModal] = useState(
+        JSON.parse(localStorage.getItem('show-welcome-message') || 'true')
+    )
 
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
 
-    const { instances: initialInstances } = useLoaderData() as { instances: Instances }
+    const { instances: initialInstances } = useLoaderData() as { instances: Instance[] }
 
     const { data: instances } = useInstances()
-    const transformInstancesToList = (instanceList: Instances): StackedEntityListProps['entities'] => {
+    const transformInstancesToList = (instanceList: Instance[]): StackedEntityListProps['entities'] => {
         const instances = instanceList
         if (!instances) {
             return []
@@ -120,7 +124,7 @@ const Instances: React.FC = () => {
                     id: instance.key,
                     href: `/${instance.key}/workspaces`,
                     status: 'Active',
-                    title: instance.key,
+                    title: instance.name,
                     location: instance.connectionString,
                 }
             })
@@ -129,10 +133,17 @@ const Instances: React.FC = () => {
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={initialInstances} errorElement={<div>Error</div>}>
-                {(initialInstances: Instances) => (
+                {(initialInstances: Instance[]) => (
                     <div className="mt-5">
                         <AddNewInstanceModal visible={visible} setVisible={setVisible} />
-                        {instances && instances.length === 0 && <WelcomeModal isOpen={showWelcomeModal} onClose={() => { setShowWelcomeModal(false) }} />}
+                        {instances && instances.length === 0 && (
+                            <WelcomeModal
+                                isOpen={showWelcomeModal}
+                                onClose={() => {
+                                    setShowWelcomeModal(false)
+                                }}
+                            />
+                        )}
                         {initialInstances.length > 0 && (
                             <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
                                 <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>

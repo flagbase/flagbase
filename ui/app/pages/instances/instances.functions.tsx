@@ -6,5 +6,5 @@ export type Instance = {
     expiresAt: string
     id: string
     key: string
-    newKey: string
+    name: string
 }

@@ -1,5 +1,5 @@
 import React from 'react'
-import { CalendarIcon, MapPinIcon, UsersIcon } from '@heroicons/react/20/solid'
+import { MapPinIcon } from '@heroicons/react/20/solid'
 import { Link } from 'react-router-dom'
 
 export type StackedEntityListProps = {
@@ -9,8 +9,8 @@ export type StackedEntityListProps = {
         location: string
         status: string
         href: string
-        tags: string
-        description: string
+        tags?: string
+        description?: string
     }[]
 }
 

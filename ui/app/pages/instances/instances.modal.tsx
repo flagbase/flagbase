@@ -1,67 +1,22 @@
-import { Typography } from 'antd'
 import React, { useEffect, useState } from 'react'
-import { Instance } from '../../context/instance'
 import { ReactState } from '../workspaces/modal'
 import { ModalLayout } from '../../../components/layout'
-import { Field, Form, Formik, FormikHelpers, useFormikContext } from 'formik'
+import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { InstanceSchema } from './instances.constants'
 import Input from '../../../components/input'
 import Button from '../../../components/button/button'
-import { useQueryClient } from 'react-query'
 import { useAddInstance } from './instances'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Notification } from '../../../components/notification/notification'
+import { KeyInput } from '../../../components/input/input'
+import { Instance } from './instances.functions'
 
 type OmittedInstance = Omit<Instance, 'expiresAt'>
-
-const InstanceForm = ({ visible, setVisible, errors }: ReactState & { errors: any }) => {
-    const { Title, Text } = Typography
-    const { submitForm } = useFormikContext<OmittedInstance>()
-    return (
-        <>
-            <ModalLayout open={visible} onClose={() => setVisible(false)}>
-                <div className="flex flex-col gap-3">
-                    <div className="text-center">
-                        <Title level={3}>Add a new instance</Title>
-                        <Text>Connect to a Flagbase instance to begin managing your flags</Text>
-                    </div>
-                    <Form className="flex flex-col gap-3">
-                        <Field component={Input} id="key" name="key" label="Instance Name" placeholder="i.e. Shared Flagbase Core API" />
-                        <Field
-                            component={Input}
-                            id="connectionString"
-                            name="connectionString"
-                            label="Connection String"
-                            placeholder="i.e. https://api.core.flagbase.com"
-                        />
-                        <Field component={Input} id="accessKey" name="accessKey" label="Access Key" placeholder="i.e. root" />
-                        <Field
-                            component={Input}
-                            id="accessSecret"
-                            name="accessSecret"
-                            label="Access Secret"
-                            placeholder="i.e. toor"
-                            type="password"
-                        />
-                        <Button
-                            className="mt-3 py-2 justify-center"
-                            suffix={PlusCircleIcon}
-                            onClick={() => submitForm()}
-                        >
-                            Add Instance
-                        </Button>
-                    </Form>
-                </div>
-            </ModalLayout>
-        </>
-    )
-}
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     const [showError, setShowError] = useState(false)
     const mutation = useAddInstance()
     const { isSuccess, isError } = mutation
-    const queryClient = useQueryClient()
 
     const onSubmit = (values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
         mutation.mutate(values)
@@ -71,10 +26,8 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     useEffect(() => {
         if (isSuccess) {
             setVisible(false)
-            queryClient.invalidateQueries('instances')
-            queryClient.setQueryData('instances', (old: any) => [mutation.data])
         }
-    }, [isSuccess])
+    }, [isSuccess, setVisible])
 
     useEffect(() => {
         setShowError(isError)
@@ -95,20 +48,69 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                 content="You can now manage your flags"
                 show={isSuccess}
             />
-            <Formik
-                initialValues={{
-                    id: '',
-                    connectionString: '',
-                    key: '',
-                    accessToken: '',
-                    accessSecret: '',
-                    accessKey: '',
-                }}
-                onSubmit={onSubmit}
-                validationSchema={InstanceSchema}
-            >
-                {({ errors }) => <InstanceForm visible={visible} setVisible={setVisible} errors={errors} />}
-            </Formik>
+            <ModalLayout open={visible} onClose={() => setVisible(false)}>
+                <div className="flex flex-col gap-3">
+                    <div className="text-center">
+                        <h1 className="text-xl font-bold">Add a new instance</h1>
+                        <span>Connect to a Flagbase instance to begin managing your flags</span>
+                    </div>
+                    <Formik
+                        initialValues={{
+                            name: '',
+                            key: '',
+                            connectionString: '',
+                            accessSecret: '',
+                            accessKey: '',
+                        }}
+                        onSubmit={onSubmit}
+                        validationSchema={InstanceSchema}
+                    >
+                        {({ errors }) => (
+                            <Form className="flex flex-col gap-3">
+                                <Field
+                                    component={Input}
+                                    id="name"
+                                    name="name"
+                                    label="Name"
+                                    placeholder="Flagbase Instance"
+                                />
+                                <Field
+                                    component={KeyInput}
+                                    id="key"
+                                    name="key"
+                                    placeholder="flagbase-instance"
+                                    label="Key"
+                                />
+                                <Field
+                                    component={Input}
+                                    id="connectionString"
+                                    name="connectionString"
+                                    label="Connection String"
+                                    placeholder="URL"
+                                />
+                                <Field
+                                    component={Input}
+                                    id="accessKey"
+                                    name="accessKey"
+                                    label="Access Key"
+                                    placeholder="Key"
+                                />
+                                <Field
+                                    component={Input}
+                                    id="accessSecret"
+                                    name="accessSecret"
+                                    label="Access Secret"
+                                    placeholder="Secret"
+                                    type="password"
+                                />
+                                <Button type="submit" className="mt-3 py-2 justify-center" suffix={PlusCircleIcon}>
+                                    Add Instance
+                                </Button>
+                            </Form>
+                        )}
+                    </Formik>
+                </div>
+            </ModalLayout>
         </>
     )
 }

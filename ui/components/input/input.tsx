@@ -43,14 +43,23 @@ const Input: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) =
     )
 }
 
-export const KeyInput = ({ field, prefix, placeholder }: { field: FieldInputProps<any>; prefix?: React.ReactNode }) => {
+export const KeyInput = ({
+    field,
+    prefix,
+    placeholder,
+    label,
+}: {
+    field: FieldInputProps<any>
+    prefix?: React.ReactNode
+    placeholder?: string
+    label?: string
+}) => {
     const {
         values: { name },
         touched,
         setFieldValue,
     } = useFormikContext()
 
-    console.log('field', field, name)
     useEffect(() => {
         if (name.trim() !== '') {
             setFieldValue(field.name, name.split(' ').join('-').toLowerCase())
@@ -58,7 +67,9 @@ export const KeyInput = ({ field, prefix, placeholder }: { field: FieldInputProp
     }, [name, setFieldValue, field.name])
 
     return (
-        <>
+        <div>
+            {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+
             <input
                 className={classNames(
                     `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
@@ -69,7 +80,7 @@ export const KeyInput = ({ field, prefix, placeholder }: { field: FieldInputProp
                 placeholder={placeholder}
                 {...field}
             />
-        </>
+        </div>
     )
 }
 
