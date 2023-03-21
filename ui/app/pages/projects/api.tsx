@@ -1,4 +1,5 @@
 import { axios } from '../../lib/axios'
+import { UpdateBody } from '../workspaces/api'
 
 export interface Project {
     type: string
@@ -29,24 +30,28 @@ export const deleteProject = async (ProjectKey: string) => {
 }
 
 export const createProject = async (name: string, description: string, tags: string[], workspaceKey: string) => {
-    return axios.post(
-        `/projects/${workspaceKey}`,
-        {
-            key: name.toLowerCase().replace(' ', '-'),
-            name,
-            description,
-            tags,
-        },
-        {
-            headers: {
-                'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE',
-            },
-        }
-    )
+    return axios.post(`/projects/${workspaceKey}`, {
+        key: name.toLowerCase().replace(' ', '-'),
+        name,
+        description,
+        tags,
+    })
 }
 
 export const fetchEnvironments = async (workspaceKey: string, projectsKey: string) => {
     if (!workspaceKey || !projectsKey) return Promise.reject('Missing workspaceKey or projectsKey')
     const result = await axios.get(`/projects/${workspaceKey}/${projectsKey}/environments`)
     return result.data
+}
+
+export const updateProject = async ({
+    workspaceKey,
+    projectKey,
+    body,
+}: {
+    workspaceKey: string
+    projectKey: string
+    body: UpdateBody[]
+}) => {
+    return axios.patch(`/projects/${workspaceKey}/${projectKey}`, body)
 }
