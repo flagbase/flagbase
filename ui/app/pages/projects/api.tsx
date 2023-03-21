@@ -44,6 +44,32 @@ export const fetchEnvironments = async (workspaceKey: string, projectsKey: strin
     return result.data
 }
 
+export const deleteEnvironment = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+}: {
+    workspaceKey: string
+    projectKey: string
+    environmentKey: string
+}) => {
+    return axios.delete(`/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`)
+}
+
+export const updateEnvironment = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    body,
+}: {
+    workspaceKey: string
+    projectKey: string
+    environmentKey: string
+    body: UpdateBody[]
+}) => {
+    return axios.patch(`/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`, body)
+}
+
 export const updateProject = async ({
     workspaceKey,
     projectKey,

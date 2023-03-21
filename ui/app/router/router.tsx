@@ -31,6 +31,7 @@ import { EditEnvironment } from '../pages/projects/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
 import { Targeting } from '../pages/flags/targeting'
 import Variations from '../pages/flags/variations'
+import { FlagSettings } from '../pages/flags/flags.edit'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
 
@@ -87,6 +88,13 @@ export const newRouter = createBrowserRouter(
                                     element={<Flags />}
                                     loader={({ params }) => flagsLoader({ queryClient, params })}
                                 />
+                                <Route path={`${FlagKey}`}>
+                                    <Route
+                                        path="settings"
+                                        element={<FlagSettings />}
+                                        loader={({ params }) => flagsLoader({ queryClient, params })}
+                                    />
+                                </Route>
                                 <Route path={`environments/${EnvironmentKey}`}>
                                     <Route
                                         path={FlagKey}

@@ -12,7 +12,7 @@ import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getFlagsKey } from '../../router/loaders'
 import { Environment, useEnvironments } from '../projects/environments'
-import { createFlag, fetchFlags, Flag, FlagCreateBody } from './api'
+import { createFlag, deleteFlag, fetchFlags, Flag, FlagCreateBody, updateFlag } from './api'
 import { flagConstants, flagsColumn } from './constants'
 import { CreateFlag } from './flags.modal'
 
@@ -84,6 +84,80 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
             key: flag.attributes.key,
         }
     })
+}
+
+export const useUpdateFlag = () => {
+    const queryClient = useQueryClient()
+    const { workspaceKey, projectKey, environmentKey, instanceKey, flagKey } = useFlagbaseParams()
+    const mutation = useMutation({
+        mutationFn: async (values: { description: string; tags: string[]; name: string; key: string }) => {
+            await configureAxios(instanceKey!)
+            await updateFlag({
+                workspaceKey: workspaceKey!,
+                projectKey: projectKey!,
+                environmentKey: environmentKey!,
+                flagKey: flagKey!,
+                body: [
+                    {
+                        op: 'replace',
+                        path: '/name',
+                        value: values.name,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/key',
+                        value: values.key,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/description',
+                        value: values.description,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/tags',
+                        value: values.tags,
+                    },
+                ],
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getFlagsKey({
+                    instanceKey: instanceKey!,
+                    workspaceKey: workspaceKey!,
+                    projectKey: projectKey!,
+                }),
+            })
+        },
+    })
+    return mutation
+}
+
+export const useRemoveFlag = () => {
+    const { instanceKey, workspaceKey, projectKey, flagKey } = useFlagbaseParams()
+
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async () => {
+            await configureAxios(instanceKey!)
+            return deleteFlag({
+                workspaceKey: workspaceKey!,
+                projectKey: projectKey!,
+                flagKey: flagKey!,
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getFlagsKey({
+                    instanceKey: instanceKey!,
+                    workspaceKey: workspaceKey!,
+                    projectKey: projectKey!,
+                }),
+            })
+        },
+    })
+    return mutation
 }
 
 export const useAddFlag = () => {

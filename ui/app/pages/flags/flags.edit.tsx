@@ -1,5 +1,5 @@
 import { Field, Form, Formik } from 'formik'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense } from 'react'
 import { Await, useLoaderData, useNavigate } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import { SettingsContainer } from '../../../components/container/SettingsContainer'
@@ -10,82 +10,65 @@ import { Loader } from '../../../components/loader'
 import { Notification } from '../../../components/notification/notification'
 import { EditEntityHeading } from '../../../components/text/heading'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { SDK } from './api'
-import { useSDKs } from './sdks'
-import { useRemoveSdk, useUpdateSdk } from './sdks.modal'
+import { Flag } from './api'
+import { useFlags, useRemoveFlag, useUpdateFlag } from './flags'
 
-export const SdkSettings = () => {
+export const FlagSettings = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
     const navigate = useNavigate()
-    const { sdks: prefetchedSdks } = useLoaderData() as { sdks: SDK[] }
-    const { instanceKey, workspaceKey, projectKey, sdkKey, environmentKey } = useFlagbaseParams()
+    const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
 
-    const { data: sdks, isLoading } = useSDKs()
-    const { mutate: remove } = useRemoveSdk()
-    const { mutate: update, isSuccess, isError } = useUpdateSdk()
-    const sdk = sdks?.find((sdk) => sdk.id === sdkKey)
+    const { flagKey } = useFlagbaseParams()
 
-    const removeSdk = () => {
-        if (!sdk) {
-            return
-        }
-        remove(sdk.id)
-        navigate(
-            `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`
-        )
+    const { data: flags, isLoading } = useFlags()
+    const { mutate: remove } = useRemoveFlag()
+    const { mutate: update, isSuccess, isError } = useUpdateFlag()
+    const flag = flags?.find((flag) => flag.attributes.key === flagKey)
+
+    const removeFlag = () => {
+        remove()
+        navigate(`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`)
     }
 
     if (isLoading) {
         return <Loader />
     }
 
-    if (!sdk) {
+    if (!flag) {
         return null
     }
 
-    console.log('sdk', sdk)
-
     return (
         <Suspense fallback={<Loader />}>
-            <Await resolve={prefetchedSdks}>
+            <Await resolve={prefetchedFlags}>
                 {() => (
                     <SettingsContainer>
                         <Notification
                             type="success"
                             title="Success!"
-                            content="SDK settings updated successfully"
+                            content="Flag settings updated successfully"
                             show={isSuccess}
                         />
                         <Notification type="error" title="Error :(" content="Could not update SDK" show={isError} />
-                        <EditEntityHeading heading="SDK Settings" subheading={sdk?.attributes.name} />
+                        <EditEntityHeading heading="Flag Settings" subheading={flag.attributes.name} />
                         <Formik
                             initialValues={{
-                                id: sdk.id,
-                                description: sdk.attributes.description,
-                                enabled: sdk.attributes.enabled,
-                                clientKey: sdk.attributes.clientKey,
-                                serverKey: sdk.attributes.serverKey,
-                                tags: sdk.attributes.tags,
+                                name: flag.attributes.name,
+                                key: flag.attributes.key,
+                                description: flag.attributes.description,
+                                tags: flag.attributes.tags,
                             }}
-                            onSubmit={(values: {
-                                id: string
-                                enabled: boolean
-                                clientKey: string
-                                serverKey: string
-                                description: string
-                                tags: string[]
-                            }) => {
+                            onSubmit={(values: { name: string; key: string; description: string; tags: string[] }) => {
                                 console.log('VALUES', values)
                                 update(values)
                             }}
                         >
                             <Form className="flex flex-col gap-3">
+                                <Field component={Input} name="name" label="Name" />
+                                <Field component={Input} name="key" label="Key" />
                                 <Field component={Input} name="description" label="Description" />
-
-                                <Field component={Input} name="clientKey" label="Client Key" disabled />
-                                <Field component={Input} name="serverKey" label="Server Key" disabled />
                                 <Field component={TagInput} name="tags" label="Tags" disabled />
-                                <Field component={Toggle} type="checkbox" name="enabled" label="Enabled" />
-                                <div className="flex justify-start gap-3">
+                                <div className="flex justify-start gap-3 my-4">
                                     <Button
                                         type="submit"
                                         className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
@@ -107,17 +90,17 @@ export const SdkSettings = () => {
                         </div>
                         <div className="bg-white shadow sm:rounded-lg">
                             <div className="px-4 py-5 sm:p-6">
-                                <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this SDK</h3>
+                                <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this flag</h3>
                                 <div className="mt-2 max-w-xl text-sm text-gray-500">
                                     <p>This action is permanent</p>
                                 </div>
                                 <div className="mt-5">
                                     <button
-                                        onClick={removeSdk}
+                                        onClick={removeFlag}
                                         type="button"
                                         className="inline-flex items-center justify-center rounded-md border border-transparent bg-red-100 px-4 py-2 font-medium text-red-700 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:text-sm"
                                     >
-                                        Delete SDK
+                                        Delete Flag
                                     </button>
                                 </div>
                             </div>

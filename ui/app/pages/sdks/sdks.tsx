@@ -1,10 +1,10 @@
-import { DocumentDuplicateIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
+import { DocumentDuplicateIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
 import React, { Suspense, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
-import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
+import { RawInput } from '../../../components/input/input'
 import { Loader } from '../../../components/loader'
 import { Notification } from '../../../components/notification/notification'
 import Table from '../../../components/table/table'
@@ -49,7 +49,8 @@ export const sdkColumns = [
     },
 ]
 
-export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey }: Partial<FlagbaseParams>) => {
+export const useSDKs = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
     const queryKey = getSdkKey({
         instanceKey: instanceKey!,
         workspaceKey: workspaceKey!,
@@ -72,9 +73,11 @@ export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey 
 }
 
 export const Sdks = () => {
+    const [filter, setFilter] = useState('')
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const { sdks: prefetchedSdks } = useLoaderData() as { sdks: SDK[] }
+    const { data: sdks, isLoading } = useSDKs()
     const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
 
     const convertSdksToList = (sdks: SDK[]) => {
@@ -112,7 +115,15 @@ export const Sdks = () => {
                 ),
                 name: sdk.attributes.name,
                 description: sdk.attributes.description,
-                tags: sdk.attributes.tags.map((tag) => <Tag key={tag}>{tag}</Tag>),
+                tags: (
+                    <div className="flex gap-3">
+                        {sdk.attributes.tags.map((tag) => (
+                            <Tag key={tag}>{tag}</Tag>
+                        ))}
+                        {sdk.attributes.enabled && <Tag color="green">Enabled</Tag>}
+                        {!sdk.attributes.enabled && <Tag color="gray">Disabled</Tag>}
+                    </div>
+                ),
                 action: (
                     <Link
                         to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`}
@@ -127,7 +138,7 @@ export const Sdks = () => {
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedSdks}>
-                {(sdks: SDK[]) => (
+                {() => (
                     <div className="mt-5">
                         <AddNewSDKModal visible={showModal} setVisible={setShowModal} />
                         <Notification
@@ -137,6 +148,18 @@ export const Sdks = () => {
                             show={copied}
                             setShow={setCopied}
                         />
+                        <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
+                            <Button onClick={() => setShowModal(true)} type="button" suffix={PlusCircleIcon}>
+                                Create SDK
+                            </Button>
+                            <div className="flex-auto">
+                                <RawInput
+                                    onChange={(event) => setFilter(event.target.value)}
+                                    placeholder="Search"
+                                    prefix={MagnifyingGlassIcon as any}
+                                />
+                            </div>
+                        </div>
 
                         <Table
                             loading={false}
