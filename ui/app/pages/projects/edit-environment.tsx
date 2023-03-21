@@ -12,7 +12,7 @@ export const EditEnvironment = () => {
 
     const { data: environments } = useEnvironments(instanceKey, workspaceKey, projectKey)
     const environment = environments?.find((environment) => environment.attributes.key === environmentKey)
-
+    //update key, name, description, tags in that order
     return (
         <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>

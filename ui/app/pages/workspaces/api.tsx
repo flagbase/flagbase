@@ -44,19 +44,11 @@ export const updateWorkspace = async ({
     path: string
     value: string
 }) => {
-    return axios.patch(
-        `/workspaces/${workspaceKey}`,
-        {
-            op: 'replace',
-            path,
-            value,
-        },
-        {
-            headers: {
-                'Access-Control-Allow-Methods': 'GET, PUT, POST, PATCH, DELETE',
-            },
-        }
-    )
+    return axios.patch(`/workspaces/${workspaceKey}`, {
+        op: 'replace',
+        path,
+        value,
+    })
 }
 
 export const deleteWorkspace = async (workspaceKey: string) => {

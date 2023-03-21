@@ -8,7 +8,16 @@ import PageLayout from '../../components/page-layout'
 import '../tailwind/tailwind.css'
 import { PageHeadings } from '../../components/page-layout/page-layout'
 import EditProject from '../pages/projects/projects.edit'
-import { environmentsLoader, instancesLoader, projectsLoader, sdkLoader, workspacesLoader } from './loaders'
+import {
+    environmentsLoader,
+    flagsLoader,
+    instancesLoader,
+    projectsLoader,
+    sdkLoader,
+    targetingLoader,
+    variationsLoader,
+    workspacesLoader,
+} from './loaders'
 import { QueryClient } from 'react-query'
 import MainWorkspaces from '../pages/workspaces/workspaces.main'
 import Environments from '../pages/projects/environments'
@@ -20,6 +29,8 @@ import Instances from '../pages/instances/instances'
 import { Sdks } from '../pages/sdks/sdks'
 import { EditEnvironment } from '../pages/projects/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
+import { Targeting } from '../pages/flags/targeting'
+import Variations from '../pages/flags/variations'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
 
@@ -32,6 +43,13 @@ export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
 
 export const getProjectPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`
+
+export const getEnvironmentPath = (
+    instanceKey: string,
+    workspaceKey: string,
+    projectKey: string,
+    environmentKey: string
+) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}`
 
 export const queryClient = new QueryClient()
 
@@ -63,7 +81,27 @@ export const newRouter = createBrowserRouter(
                         <Route path={`${ProjectKey}`}>
                             <Route path="settings" element={<EditProject />} />
                             <Route path="" element={<Project />} />
-
+                            <Route path="flags">
+                                <Route
+                                    path=""
+                                    element={<Flags />}
+                                    loader={({ params }) => flagsLoader({ queryClient, params })}
+                                />
+                                <Route path={`environments/${EnvironmentKey}`}>
+                                    <Route
+                                        path={FlagKey}
+                                        element={<Targeting />}
+                                        loader={({ params }) => targetingLoader({ queryClient, params })}
+                                    />
+                                </Route>
+                                <Route path={FlagKey}>
+                                    <Route
+                                        path="variations"
+                                        loader={({ params }) => variationsLoader({ queryClient, params })}
+                                        element={<Variations />}
+                                    />
+                                </Route>
+                            </Route>
                             <Route path="environments">
                                 <Route
                                     path=""

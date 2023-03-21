@@ -1,5 +1,5 @@
-import React, { createElement } from 'react'
-import { FieldInputProps, FormikFormProps, FormikProps } from 'formik'
+import React, { createElement, useEffect } from 'react'
+import { FieldInputProps, FormikFormProps, FormikProps, useField, useFormikContext } from 'formik'
 import { classNames } from '../../helpers'
 
 export type InputProps = {
@@ -39,6 +39,47 @@ const Input: React.FC<InputProps> = ({ prefix, field, form, label, ...props }) =
             </div>
 
             {errors && isTouched && <span className="text-red-600 mt-1">{errors}</span>}
+        </div>
+    )
+}
+
+export const KeyInput = ({
+    field,
+    prefix,
+    placeholder,
+    label,
+}: {
+    field: FieldInputProps<any>
+    prefix?: React.ReactNode
+    placeholder?: string
+    label?: string
+}) => {
+    const {
+        values: { name },
+        touched,
+        setFieldValue,
+    } = useFormikContext()
+
+    useEffect(() => {
+        if (name.trim() !== '') {
+            setFieldValue(field.name, name.split(' ').join('-').toLowerCase())
+        }
+    }, [name, setFieldValue, field.name])
+
+    return (
+        <div>
+            {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
+
+            <input
+                className={classNames(
+                    `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
+                    prefix ? 'pl-10' : '',
+                    'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200'
+                )}
+                type="text"
+                placeholder={placeholder}
+                {...field}
+            />
         </div>
     )
 }

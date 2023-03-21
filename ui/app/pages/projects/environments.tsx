@@ -9,7 +9,7 @@ import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { fetchEnvironments } from './api'
 
-type Environment = {
+export type Environment = {
     type: string
     id: string
     attributes: {
@@ -20,12 +20,17 @@ type Environment = {
     }
 }
 
-export const useEnvironments = (
-    instanceKey: string | undefined,
-    workspaceKey: string | undefined,
-    projectKey: string | undefined,
+export const useEnvironments = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    options,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
     options?: any
-) => {
+}) => {
     const query = useQuery<Environment[]>(['environments', instanceKey, workspaceKey, projectKey], {
         ...options,
         queryFn: async () => {

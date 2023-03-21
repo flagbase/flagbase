@@ -1,39 +1,30 @@
 import React, { Fragment, useEffect } from 'react'
 
-import {
-    Link,
-    Outlet,
-    useLocation,
-    useMatch,
-    useMatches,
-    useNavigate,
-    useOutletContext,
-    useParams,
-} from 'react-router-dom'
-import { Instance } from '../../app/context/instance'
+import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
 import { useState } from 'react'
-import { Disclosure, Transition, Popover, Dialog, Menu } from '@headlessui/react'
+import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
 import {
     ArrowLeftCircleIcon,
     Bars3Icon,
-    CheckCircleIcon,
     ChevronDownIcon,
     ChevronRightIcon,
     XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { useInstances } from '../../app/pages/instances/instances'
-import { getProjectsPath, getWorkspacePath, getWorkspacesPath } from '../../app/router/router'
+import { getEnvironmentPath, getWorkspacePath, getWorkspacesPath } from '../../app/router/router'
 import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main'
 import { Workspace } from '../../app/pages/workspaces/api'
 import { useProjects } from '../../app/pages/projects/projects'
-import { Project } from '../../app/context/project'
 import { useFlagbaseParams } from '../../app/lib/use-flagbase-params'
+import { Environment, useEnvironments } from '../../app/pages/projects/environments'
+import { Project } from '../../app/pages/projects/api'
+import { Instance } from '../../app/pages/instances/instances.functions'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
 const projectsDescription = `A project is a collection of feature flags and settings. You can have multiple projects in a single workspace.`
-
+const environmentsDescription = `An environment is a set of feature flags and settings that can be applied to a specific set of users.`
 function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
 }
@@ -85,12 +76,14 @@ const MobileDropdown = ({
 const Breadcrumb = ({
     name,
     description,
+    type,
     href,
     children,
     chevron = true,
 }: {
     name: string
     description: string
+    type: string
     href: string
     chevron?: boolean
     children: {
@@ -134,7 +127,7 @@ const Breadcrumb = ({
                                 aria-hidden="true"
                             />
                             <h3 className="text-base font-semibold leading-6 text-indigo-600 hover:text-indigo-800">
-                                {name}
+                                {type}
                             </h3>
                         </Link>
                         <p className="mt-1 text-sm text-gray-500">{description}</p>
@@ -159,6 +152,16 @@ const Breadcrumb = ({
             </Transition>
         </Popover>
     )
+}
+
+const getEnvironmentDropdown = (data: Environment[], instanceKey: string, workspaceKey: string, projectKey: string) => {
+    return data.map((object) => {
+        return {
+            name: object.attributes.name,
+            description: object.attributes.description,
+            href: getEnvironmentPath(instanceKey, workspaceKey, projectKey, object.attributes.key),
+        }
+    })
 }
 
 const getProjectDropdown = (data: Project[]) => {
@@ -262,21 +265,30 @@ const MobileNavigation = ({
 }
 
 const Header = () => {
-    const { instanceKey, workspaceKey } =
-        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
 
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
     const { data: instances } = useInstances()
     const { data: workspaces } = useWorkspaces(instanceKey)
     const { data: projects } = useProjects(instanceKey, workspaceKey)
+    const { data: environments } = useEnvironments({
+        instanceKey: instanceKey!,
+        workspaceKey: workspaceKey!,
+        projectKey: projectKey!,
+    })
+
+    const activeInstance: Instance = instances?.find((instance) => instance.key === instanceKey)
+    const activeWorkspace: Workspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    const activeProject: Project = projects?.find((project) => project.attributes.key === projectKey)
+
     return (
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
                 <div className="flex items-center gap-x-12 mr-6">
-                    <a href="/" className="-m-1.5 p-1.5">
+                    <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
                         <img className="h-8 w-auto" src={flag} alt="" />
-                    </a>
+                    </Link>
                 </div>
                 <div className="flex lg:hidden">
                     <button
@@ -293,27 +305,43 @@ const Header = () => {
                         {instances && (
                             <Breadcrumb
                                 chevron={false}
-                                name="Instances"
+                                name={activeInstance?.key || 'Instances'}
+                                type="Instance"
                                 description={instancesDescription}
                                 href="/instances"
-                                children={getInstanceDropdown(instances)}
-                            />
+                            >
+                                {getInstanceDropdown(instances)}
+                            </Breadcrumb>
                         )}
-                        {workspaces && (
+                        {workspaces && instanceKey && (
                             <Breadcrumb
-                                name="Workspaces"
+                                type="Workspace"
+                                name={activeWorkspace?.attributes.name || 'Workspaces'}
                                 description={workspaceDescription}
                                 href={getWorkspacesPath(instanceKey || '')}
-                                children={getWorkspaceDropdown(workspaces, instanceKey)}
-                            />
+                            >
+                                {getWorkspaceDropdown(workspaces, instanceKey)}
+                            </Breadcrumb>
                         )}
-                        {projects && (
+                        {projects && instanceKey && (
                             <Breadcrumb
-                                name="Projects"
+                                type="Project"
+                                name={activeProject?.attributes.name || 'Projects'}
                                 description={projectsDescription}
-                                href={getWorkspacesPath(instanceKey || '')}
-                                children={getProjectDropdown(projects)}
-                            />
+                                href={getWorkspacesPath(instanceKey)}
+                            >
+                                {getProjectDropdown(projects)}
+                            </Breadcrumb>
+                        )}
+                        {environments && instanceKey && workspaceKey && projectKey && (
+                            <Breadcrumb
+                                type="Environment"
+                                name="Environments"
+                                description={environmentsDescription}
+                                href={getWorkspacesPath(instanceKey)}
+                            >
+                                {getEnvironmentDropdown(environments, instanceKey, workspaceKey, projectKey)}
+                            </Breadcrumb>
                         )}
                     </ol>
                 </Popover.Group>
@@ -334,8 +362,17 @@ const Header = () => {
     )
 }
 
-const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; href: string }[] }) => {
-    const navigate = useNavigate()
+const PageHeading = ({
+    title,
+    subtitle,
+    tabs,
+    backHref,
+}: {
+    title: string
+    subtitle: string
+    tabs?: { name: string; href: string }[]
+    backHref?: string
+}) => {
     const location = useLocation()
     const pathname = decodeURI(location.pathname)
 
@@ -343,12 +380,17 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
         <header className={`bg-gray-50 pt-8 border-b border-gray-200 ${!tabs || (tabs.length === 0 && 'pb-8')}`}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
                 <div className="min-w-0 flex-1 flex flex-row items-center gap-5">
-                    <button onClick={() => navigate(-1)}>
-                        <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
-                    </button>
-                    <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight capitalize">
-                        {title}
-                    </h1>
+                    {backHref && (
+                        <Link to={backHref}>
+                            <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
+                        </Link>
+                    )}
+                    <div className="flex flex-col">
+                        <h1 className="text-xl font-bold leading-7 text-gray-900 sm:text-2xl sm:tracking-tight capitalize">
+                            {title}
+                        </h1>
+                        <p className="mt-1 truncate text-sm text-gray-500">{subtitle}</p>
+                    </div>
                 </div>
             </div>
             {tabs && tabs.length > 0 && (
@@ -400,6 +442,8 @@ const PageHeading = ({ title, tabs }: { title: string; tabs?: { name: string; hr
 type PageHeadingType = {
     title: string
     tabs?: { name: string; href: string }[]
+    subtitle?: string
+    backHref?: string
 }
 
 export const PageHeadings = () => {
@@ -411,17 +455,40 @@ export const PageHeadings = () => {
         tabs: [],
     })
 
-    const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey } = useFlagbaseParams()
+    const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey, flagKey } = useFlagbaseParams()
 
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
                 title: 'Instances',
                 tabs: [],
+                backHref: null,
+            })
+        } else if (instanceKey && workspaceKey && projectKey && flagKey) {
+            setPageHeading({
+                title: `${flagKey}`,
+                subtitle: 'Flags',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
+                tabs: [
+                    {
+                        name: 'Targeting',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/environments/${environmentKey}/${flagKey}`,
+                    },
+                    {
+                        name: 'Variations',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations`,
+                    },
+                    {
+                        name: 'Settings',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/settings`,
+                    },
+                ],
             })
         } else if (instanceKey && workspaceKey && projectKey && environmentKey && sdkKey) {
             setPageHeading({
                 title: 'SDK Settings',
+                subtitle: 'SDK',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
                 tabs: [
                     {
                         name: 'Settings',
@@ -432,6 +499,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && environmentKey) {
             setPageHeading({
                 title: environmentKey,
+                subtitle: 'Environment',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
                 tabs: [
                     {
                         name: 'SDKs',
@@ -446,7 +515,13 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey) {
             setPageHeading({
                 title: projectKey,
+                subtitle: 'Project',
+                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
                 tabs: [
+                    {
+                        name: 'Flags',
+                        href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
+                    },
                     {
                         name: 'Environments',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
@@ -460,6 +535,8 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey) {
             setPageHeading({
                 title: workspaceKey,
+                subtitle: 'Workspace',
+                backHref: `/${instanceKey}/workspaces`,
                 tabs: [
                     {
                         name: 'Projects',
@@ -474,6 +551,8 @@ export const PageHeadings = () => {
         } else if (instanceKey) {
             setPageHeading({
                 title: instanceKey,
+                subtitle: 'Instance',
+                backHref: '/',
                 tabs: [
                     {
                         name: 'Workspaces',
@@ -489,14 +568,19 @@ export const PageHeadings = () => {
     }, [location.pathname, activeTab])
 
     useEffect(() => {
-        if (!!pageHeading?.title) {
+        if (pageHeading?.title) {
             document.title = `${pageHeading?.title} | Flagbase`
         }
     }, [pageHeading])
 
     return (
         <>
-            <PageHeading title={pageHeading.title} tabs={pageHeading.tabs} />
+            <PageHeading
+                title={pageHeading.title}
+                subtitle={pageHeading.subtitle}
+                tabs={pageHeading.tabs}
+                backHref={pageHeading.backHref}
+            />
             <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8">
                 <Outlet />
             </div>

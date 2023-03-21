@@ -1,7 +1,6 @@
 import { Typography } from 'antd'
-
 import React, { Suspense, useState } from 'react'
-import { Await, useLoaderData, useParams } from 'react-router-dom'
+import { Await, useLoaderData } from 'react-router-dom'
 import Table from '../../../components/table/table'
 import { createProject, deleteProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
@@ -16,6 +15,8 @@ import EmptyState from '../../../components/empty-state'
 import { RawInput } from '../../../components/input/input'
 import Tag from '../../../components/tag'
 import { Loader } from '../../../components/loader'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { useEnvironments } from './environments'
 
 const { Text } = Typography
 
@@ -53,9 +54,7 @@ export const convertProjects = ({
                     </div>
                 ),
                 action: (
-                    <Link
-                        to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project?.attributes.key}/environments`}
-                    >
+                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`}>
                         <Button secondary className="py-2">
                             Connect
                         </Button>
@@ -105,13 +104,14 @@ export const useProjects = (instanceKey: string | undefined, workspaceKey: strin
     return query
 }
 
-const Projects: React.FC = () => {
+const Projects = () => {
     const [visible, setVisible] = useState(false)
     const [filter, setFilter] = useState('')
     const { projects: prefetchedProjects } = useLoaderData() as { projects: Project[] }
-    const { instanceKey, workspaceKey } = useParams() as { instanceKey: string; workspaceKey: string }
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
 
     const { data: projects } = useProjects(instanceKey, workspaceKey)
+
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedProjects} errorElement={<p>Error loading package location!</p>}>
@@ -141,7 +141,7 @@ const Projects: React.FC = () => {
                                 description={'Get started by creating a new project.'}
                                 cta={
                                     <Button className="py-2" suffix={PlusCircleIcon} onClick={() => setVisible(true)}>
-                                        Create Project
+                                        {constants.create}
                                     </Button>
                                 }
                             />

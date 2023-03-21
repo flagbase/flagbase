@@ -1,10 +1,13 @@
+import { DocumentDuplicateIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
 import React, { Suspense, useState } from 'react'
 import { useQuery } from 'react-query'
-import { Await, useLoaderData } from 'react-router-dom'
+import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
 import { Loader } from '../../../components/loader'
+import { Notification } from '../../../components/notification/notification'
+import Table from '../../../components/table/table'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { FlagbaseParams, useFlagbaseParams } from '../../lib/use-flagbase-params'
@@ -12,8 +15,47 @@ import { getSdkKey } from '../../router/loaders'
 import { fetchSdkList, SDK } from './api'
 import { AddNewSDKModal } from './sdks.modal'
 
+export const sdkColumns = [
+    {
+        title: 'Name',
+        dataIndex: 'name',
+        key: 'name',
+    },
+    {
+        title: 'Client Key',
+        dataIndex: 'clientKey',
+        key: 'clientKey',
+    },
+    {
+        title: 'Server Key',
+        dataIndex: 'serverKey',
+        key: 'serverKey',
+    },
+
+    {
+        title: 'Description',
+        dataIndex: 'description',
+        key: 'description',
+    },
+    {
+        title: 'Tags',
+        dataIndex: 'tags',
+        key: 'tags',
+    },
+    {
+        title: 'Actions',
+        dataIndex: 'action',
+        key: 'action',
+    },
+]
+
 export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey }: Partial<FlagbaseParams>) => {
-    const queryKey = getSdkKey({ instanceKey, workspaceKey, projectKey, environmentKey })
+    const queryKey = getSdkKey({
+        instanceKey: instanceKey!,
+        workspaceKey: workspaceKey!,
+        projectKey: projectKey!,
+        environmentKey: environmentKey!,
+    })
     const query = useQuery<SDK[]>(queryKey, {
         queryFn: async () => {
             await configureAxios(instanceKey!)
@@ -30,32 +72,57 @@ export const useSDKs = ({ instanceKey, workspaceKey, projectKey, environmentKey 
 }
 
 export const Sdks = () => {
+    const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const { sdks: prefetchedSdks } = useLoaderData() as { sdks: SDK[] }
     const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
-    const convertSdksToList: StackedEntityListProps = (sdks: SDK[]) => {
+
+    const convertSdksToList = (sdks: SDK[]) => {
         return sdks.map((sdk) => {
             return {
-                id: sdk.id,
-                title: sdk.attributes.name,
-                href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`,
+                clientKey: (
+                    <div className="flex">
+                        <div>{sdk.attributes.clientKey}</div>
+                        <DocumentDuplicateIcon
+                            className="w-5 h-5 text-indigo-600 cursor-pointer"
+                            onClick={() => {
+                                navigator.clipboard.writeText(sdk.attributes.clientKey)
+                                setCopied(true)
+                                setTimeout(() => {
+                                    setCopied(false)
+                                }, 3000)
+                            }}
+                        />
+                    </div>
+                ),
+                serverKey: (
+                    <div className="flex">
+                        <div>{sdk.attributes.serverKey}</div>
+                        <DocumentDuplicateIcon
+                            className="w-5 h-5 text-indigo-600 cursor-pointer"
+                            onClick={() => {
+                                navigator.clipboard.writeText(sdk.attributes.serverKey)
+                                setCopied(true)
+                                setTimeout(() => {
+                                    setCopied(false)
+                                }, 3000)
+                            }}
+                        />
+                    </div>
+                ),
                 name: sdk.attributes.name,
                 description: sdk.attributes.description,
                 tags: sdk.attributes.tags.map((tag) => <Tag key={tag}>{tag}</Tag>),
                 action: (
-                    <div>
-                        <Button secondary className="py-2">
-                            Connect
-                        </Button>
-                    </div>
+                    <Link
+                        to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`}
+                    >
+                        <Button className="py-2">Edit</Button>
+                    </Link>
                 ),
-                key: sdk.attributes.clientKey,
             }
         })
     }
-
-    const { data: sdks } = useSDKs({ instanceKey, workspaceKey, projectKey, environmentKey })
-    console.log('received', sdks)
 
     return (
         <Suspense fallback={<Loader />}>
@@ -63,8 +130,30 @@ export const Sdks = () => {
                 {(sdks: SDK[]) => (
                     <div className="mt-5">
                         <AddNewSDKModal visible={showModal} setVisible={setShowModal} />
+                        <Notification
+                            type="success"
+                            title="Copied!"
+                            content="Copied to clipboard"
+                            show={copied}
+                            setShow={setCopied}
+                        />
 
-                        <StackedEntityList entities={convertSdksToList(sdks)} />
+                        <Table
+                            loading={false}
+                            dataSource={convertSdksToList(sdks)}
+                            columns={sdkColumns}
+                            emptyState={
+                                <EmptyState
+                                    title="No SDKs found"
+                                    description="This environment does not have any SDKs yet."
+                                    cta={
+                                        <Button className="py-2" suffix={PlusCircleIcon}>
+                                            Create Sdk
+                                        </Button>
+                                    }
+                                />
+                            }
+                        />
                         {sdks.length === 0 && (
                             <EmptyState
                                 title="There are no SDKs yet"

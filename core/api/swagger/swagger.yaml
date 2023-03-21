@@ -824,7 +824,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
       operationId: get-targeting-rule
       parameters: []
-      description: Get a targeting rule for a specfic flag and its environment.
+      description: Get a targeting rule for a specific flag and its environment.
       security:
         - Access Token: []
     patch:
