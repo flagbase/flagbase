@@ -16,7 +16,7 @@ export default function Tag({
     children,
     className = '',
     color = 'blue',
-    onDelete = () => {},
+    onDelete,
 }: {
     children: React.ReactNode
     className?: string
@@ -32,15 +32,17 @@ export default function Tag({
             )}
         >
             {children}
-            <button
-                type="button"
-                className="ml-1.5 flex-shrink-0 flex text-gray-400 hover:text-gray-500"
-                onClick={() => onDelete(children.toString())}
-            >
-                <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l6 6M1 7l6-6" />
-                </svg>
-            </button>
+            {!!onDelete && (
+                <button
+                    type="button"
+                    className="ml-1.5 flex-shrink-0 flex text-gray-400 hover:text-gray-500"
+                    onClick={() => onDelete(children.toString())}
+                >
+                    <svg className="h-2 w-2" stroke="currentColor" fill="none" viewBox="0 0 8 8" aria-hidden="true">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M1 1l6 6M1 7l6-6" />
+                    </svg>
+                </button>
+            )}
         </span>
     )
 }
