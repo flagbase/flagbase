@@ -35,20 +35,20 @@ export const fetchWorkspaces = async () => {
     return result.data
 }
 
-export const updateWorkspace = async ({
-    workspaceKey,
-    path,
-    value,
-}: {
-    workspaceKey: string
+type UpdateWorkspaceBody = {
+    op: 'replace'
     path: string
     value: string
+}
+
+export const updateWorkspace = async ({
+    workspaceKey,
+    body,
+}: {
+    workspaceKey: string
+    body: UpdateWorkspaceBody[]
 }) => {
-    return axios.patch(`/workspaces/${workspaceKey}`, {
-        op: 'replace',
-        path,
-        value,
-    })
+    return axios.patch(`/workspaces/${workspaceKey}`, body)
 }
 
 export const deleteWorkspace = async (workspaceKey: string) => {

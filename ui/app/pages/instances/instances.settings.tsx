@@ -32,6 +32,7 @@ export const EditInstance = () => {
 
                 <Formik
                     initialValues={{
+                        name: instance.name,
                         key: instance.key,
                         connectionString: instance.connectionString,
                         accessKey: instance.accessKey,
@@ -49,7 +50,8 @@ export const EditInstance = () => {
                     validationSchema={InstanceSchema}
                 >
                     <Form className="flex flex-col gap-5 mb-14">
-                        <Field component={Input} name="key" label="Instance Name" />
+                        <Field component={Input} name="name" label="Instance Name" />
+                        <Field component={Input} name="key" label="Instance Key" />
                         <Field component={Input} name="connectionString" label="Connection String" />
                         <Field component={Input} name="accessKey" label="Access Key" />
                         <Field component={Input} name="accessSecret" label="Access Secret" type="password" />

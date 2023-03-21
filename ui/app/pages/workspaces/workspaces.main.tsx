@@ -14,6 +14,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
 import { configureAxios } from '../../lib/axios'
 import { Loader } from '../../../components/loader'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 
 export const useAddWorkspace = (instance: Instance) => {
     const queryClient = useQueryClient()
@@ -29,13 +30,34 @@ export const useAddWorkspace = (instance: Instance) => {
 }
 export const useUpdateWorkspace = (instanceKey: string | undefined) => {
     const queryClient = useQueryClient()
+    const { workspaceKey } = useFlagbaseParams()
     const mutation = useMutation({
-        mutationFn: async ({ workspaceKey, path, value }: { workspaceKey: string; path: string; value: string }) => {
+        mutationFn: async (values: { name: string; key: string; description: string; tags: string[] }) => {
             await configureAxios(instanceKey!)
-            return updateWorkspace({
-                workspaceKey,
-                path,
-                value,
+            await updateWorkspace({
+                workspaceKey: workspaceKey!,
+                body: [
+                    {
+                        op: 'replace',
+                        path: '/name',
+                        value: values.name,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/key',
+                        value: values.key,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/description',
+                        value: values.description,
+                    },
+                    {
+                        op: 'replace',
+                        path: '/tags',
+                        value: values.tags,
+                    },
+                ],
             })
         },
         onSuccess: () => {
