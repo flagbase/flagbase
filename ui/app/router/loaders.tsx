@@ -124,7 +124,15 @@ export const sdkLoader = async ({ queryClient, params }: { queryClient: QueryCli
     return defer({ sdks })
 }
 
-export const getFlagsKey = ({ instanceKey, workspaceKey, projectKey }: Partial<FlagbaseParams>) => {
+export const getFlagsKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+}) => {
     return ['flags', instanceKey, workspaceKey, projectKey]
 }
 

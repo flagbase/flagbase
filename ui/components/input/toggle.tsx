@@ -4,8 +4,6 @@ import React from 'react'
 import { FieldProps } from 'formik'
 
 export function Toggle({ label, field, form }: { label?: string } & FieldProps) {
-    console.log('form', form, field)
-
     return (
         <>
             {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}

@@ -457,6 +457,9 @@ export const PageHeadings = () => {
 
     const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey, flagKey } = useFlagbaseParams()
 
+    const { data: workspaces } = useWorkspaces(instanceKey)
+    const workspaceTitle = workspaces?.find((w) => w.attributes.key === workspaceKey)?.attributes.key || workspaceKey
+
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
@@ -534,7 +537,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey) {
             setPageHeading({
-                title: workspaceKey,
+                title: workspaceTitle,
                 subtitle: 'Workspace',
                 backHref: `/${instanceKey}/workspaces`,
                 tabs: [
@@ -565,7 +568,17 @@ export const PageHeadings = () => {
                 ],
             })
         }
-    }, [location.pathname, activeTab])
+    }, [
+        location.pathname,
+        activeTab,
+        instanceKey,
+        workspaceKey,
+        projectKey,
+        flagKey,
+        environmentKey,
+        sdkKey,
+        workspaceTitle,
+    ])
 
     useEffect(() => {
         if (pageHeading?.title) {

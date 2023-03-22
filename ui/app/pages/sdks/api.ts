@@ -1,4 +1,5 @@
 import { axios } from '../../lib/axios'
+import { UpdateBody } from '../workspaces/api'
 
 export type SDK = {
     id: string
@@ -41,17 +42,51 @@ export const createSdkKey = async ({
     workspaceKey,
     projectKey,
     environmentKey,
-    sdkKeyRequest,
+    body,
 }: {
     workspaceKey: string
     projectKey: string
     environmentKey: string
-    sdkKeyRequest: CreateSdkKeyRequest
+    body: CreateSdkKeyRequest
 }) => {
     const result = await axios.post(
         `/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}/sdk-keys`,
-        sdkKeyRequest
+        body
     )
 
     return result.data
+}
+
+export const deleteSdk = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    sdkId,
+}: {
+    workspaceKey: string
+    projectKey: string
+    environmentKey: string
+    sdkId: string
+}) => {
+    const result = await axios.delete(
+        `/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}/sdk-keys/${sdkId}`
+    )
+
+    return result.data
+}
+
+export const updateSdk = async ({
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    sdkId,
+    body,
+}: {
+    workspaceKey: string
+    projectKey: string
+    environmentKey: string
+    sdkId: string
+    body: UpdateBody[]
+}) => {
+    return axios.patch(`/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}/sdk-keys/${sdkId}`, body)
 }

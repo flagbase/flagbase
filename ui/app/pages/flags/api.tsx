@@ -1,5 +1,6 @@
 import { axios } from '../../lib/axios'
 import { FlagbaseParams } from '../../lib/use-flagbase-params'
+import { UpdateBody } from '../workspaces/api'
 
 export type Flag = {
     id: string
@@ -16,7 +17,7 @@ export type FlagCreateBody = {
     key: string
     name: string
     description?: string
-    tags?: string
+    tags?: string[]
 }
 
 export const createFlag = async ({
@@ -40,6 +41,34 @@ export const fetchFlags = async ({
     projectKey: string
 }): Promise<Flag[]> => {
     const { data } = await axios.get(`/flags/${workspaceKey}/${projectKey}`)
+    return data
+}
+
+export const updateFlag = async ({
+    workspaceKey,
+    projectKey,
+    flagKey,
+    body,
+}: {
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+    body: UpdateBody[]
+}) => {
+    const { data } = await axios.patch(`/flags/${workspaceKey}/${projectKey}/${flagKey}`, body)
+    return data
+}
+
+export const deleteFlag = async ({
+    workspaceKey,
+    projectKey,
+    flagKey,
+}: {
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+}) => {
+    const { data } = await axios.delete(`/flags/${workspaceKey}/${projectKey}/${flagKey}`)
     return data
 }
 

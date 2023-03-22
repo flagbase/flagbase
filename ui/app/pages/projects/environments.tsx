@@ -20,6 +20,17 @@ export type Environment = {
     }
 }
 
+export const getEnvironmentKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+}) => {
+    return ['environments', instanceKey, workspaceKey, projectKey]
+}
 export const useEnvironments = ({
     instanceKey,
     workspaceKey,
@@ -31,15 +42,22 @@ export const useEnvironments = ({
     projectKey: string
     options?: any
 }) => {
-    const query = useQuery<Environment[]>(['environments', instanceKey, workspaceKey, projectKey], {
-        ...options,
-        queryFn: async () => {
-            await configureAxios(instanceKey!)
-            return fetchEnvironments(workspaceKey!, projectKey!)
-        },
-        enabled: !!instanceKey && !!workspaceKey,
-        staleTime: Infinity,
-    })
+    const query = useQuery<Environment[]>(
+        getEnvironmentKey({
+            instanceKey,
+            workspaceKey,
+            projectKey,
+        }),
+        {
+            ...options,
+            queryFn: async () => {
+                await configureAxios(instanceKey!)
+                return fetchEnvironments(workspaceKey!, projectKey!)
+            },
+            enabled: !!instanceKey && !!workspaceKey,
+            staleTime: Infinity,
+        }
+    )
     return query
 }
 

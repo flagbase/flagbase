@@ -3,6 +3,7 @@ import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
+import { TagInput } from '../../../components/input/tag-input'
 import { Notification } from '../../../components/notification/notification'
 import { EditEntityHeading } from '../../../components/text/heading'
 import { useRemoveWorkspace, useUpdateWorkspace, useWorkspaces } from './workspaces.main'
@@ -45,27 +46,20 @@ export const EditWorkspace = () => {
                 />
                 <Formik
                     initialValues={{
-                        name: workspace?.attributes.key!,
+                        name: workspace?.attributes.name!,
+                        key: workspace?.attributes.key!,
                         description: workspace?.attributes.description!,
                         tags: workspace?.attributes.tags!,
                     }}
-                    onSubmit={(values: { name: string; description: string; tags: string }) => {
-                        for (const [key, value] of Object.entries(values)) {
-                            if (value === workspace?.attributes[key]) {
-                                continue
-                            }
-                            update({
-                                workspaceKey: workspace?.attributes.key!,
-                                path: key,
-                                value: value,
-                            })
-                        }
+                    onSubmit={(values: { name: string; key: string; description: string; tags: string[] }) => {
+                        update(values)
                     }}
                 >
                     <Form className="flex flex-col gap-5 mb-14">
                         <Field component={Input} name="name" label="Workspace Name" />
+                        <Field component={Input} name="key" label="Workspace Key" />
                         <Field component={Input} name="description" label="Description" />
-                        <Field component={Input} name="tags" label="Tags" />
+                        <Field component={TagInput} name="tags" label="Tags" />
 
                         <div className="flex justify-start gap-3">
                             <Button

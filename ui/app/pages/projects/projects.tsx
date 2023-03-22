@@ -16,7 +16,6 @@ import { RawInput } from '../../../components/input/input'
 import Tag from '../../../components/tag'
 import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { useEnvironments } from './environments'
 
 const { Text } = Typography
 

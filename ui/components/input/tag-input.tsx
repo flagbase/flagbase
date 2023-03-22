@@ -1,6 +1,7 @@
 import { FieldInputProps, FormikProps, FormikFormProps } from 'formik'
-import React, { createElement, useEffect } from 'react'
+import React, { createElement, useEffect, useState } from 'react'
 import { classNames } from '../../helpers'
+import Tag from '../tag'
 
 export type TagInputProps = {
     prefix?: React.ReactNode
@@ -10,14 +11,25 @@ export type TagInputProps = {
 } & Omit<FormikFormProps, 'prefix'>
 
 export const TagInput: React.FC<TagInputProps> = ({ prefix, field, form, label, ...props }) => {
+    const [inputValue, setInputValue] = useState('')
     const { placeholder } = props
     const name = field?.name
-    const errors = form?.errors[name]
-    const isTouched = form?.touched[name]
+    const tags = field.value
 
-    useEffect(() => {
-        console.log('value', field.value)
-    }, [field.value])
+    const onDelete = (tag: string) => {
+        const newTags = tags.filter((t) => t !== tag)
+        form.setFieldValue(name, newTags)
+    }
+
+    const handleKeyDown = (event) => {
+        //if keyCode is enter, tab or comma
+        if (event.keyCode === 13 || event.keyCode === 9 || event.keyCode === 188) {
+            event.preventDefault()
+            const newTags = [...tags, inputValue]
+            form.setFieldValue(name, newTags)
+            setInputValue('')
+        }
+    }
 
     return (
         <div>
@@ -28,18 +40,25 @@ export const TagInput: React.FC<TagInputProps> = ({ prefix, field, form, label, 
                         {createElement(prefix)}
                     </div>
                 )}
-                <input
-                    type="text"
-                    id={name}
-                    className={classNames(
-                        `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
-                        prefix ? 'pl-10' : '',
-                        isTouched && errors ? 'border-red-600' : 'border-gray-300'
-                    )}
-                    placeholder={placeholder}
-                    {...props}
-                    {...field}
-                />
+                <div className="w-full rounded-md border border-gray-300  sm:text-sm flex gap-3 p-2 flex-wrap">
+                    {tags.map((tag, index) => (
+                        <Tag key={`${tag}_${index}`} onDelete={onDelete}>
+                            {tag}
+                        </Tag>
+                    ))}
+                    <input
+                        type="text"
+                        id={name}
+                        className={classNames(
+                            `block w-full rounded-md border-0 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm flex-grow basis-0`,
+                            prefix ? 'pl-10' : ''
+                        )}
+                        placeholder={placeholder}
+                        onKeyDown={handleKeyDown}
+                        onChange={(event) => setInputValue(event.target.value)}
+                        value={inputValue}
+                    />
+                </div>
             </div>
         </div>
     )

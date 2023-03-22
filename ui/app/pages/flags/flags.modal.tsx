@@ -4,6 +4,7 @@ import React, { Dispatch, SetStateAction } from 'react'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
 import { KeyInput } from '../../../components/input/input'
+import { TagInput } from '../../../components/input/tag-input'
 import { ModalLayout } from '../../../components/layout'
 import { Heading } from '../../../components/text/heading'
 import Text from '../../../components/text/text'
@@ -12,7 +13,7 @@ import { useAddFlag } from './flags'
 
 interface WorkspaceModal {
     visible: boolean
-    setVisible(data: boolean): void
+    setVisible: Dispatch<SetStateAction<boolean>>
 }
 
 const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateAction<boolean>> }> = ({
@@ -34,7 +35,7 @@ const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateActi
                             key: '',
                             name: '',
                             description: '',
-                            tags: '',
+                            tags: [],
                         } as FlagCreateBody
                     }
                     onSubmit={async (values) => {
@@ -42,7 +43,7 @@ const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateActi
                             key: values.key,
                             name: values.name,
                             description: values.description,
-                            tags: values.tags?.split(','),
+                            tags: values.tags,
                         })
                         setVisible(false)
                     }}
@@ -51,7 +52,7 @@ const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateActi
                         <Field component={Input} id="name" name="name" placeholder="Flag name" />
                         <Field component={KeyInput} id="key" name="key" placeholder="Key" />
                         <Field component={Input} id="description" name="description" placeholder="Description" />
-                        <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                        <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
                         <Button className="mt-3 py-2 justify-center" type="submit" suffix={PlusCircleIcon}>
                             Add Flag
                         </Button>
