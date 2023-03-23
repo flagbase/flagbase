@@ -1,119 +1,24 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Field, Form, Formik } from 'formik'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense } from 'react'
 import { Await, useLoaderData, useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
-import { Select } from '../../../components/input/select'
 import { Loader } from '../../../components/loader'
 import { Switch } from '@headlessui/react'
 import { classNames } from '../../../helpers'
-import { TargetingRuleRequest, TargetingRuleResponse, Operator, createTargetingRule, deleteTargetingRule } from './api';
+import {
+    TargetingResponse,
+    TargetingRuleResponse,
+    Operator,
+    createTargetingRule,
+    patchTargeting,
+    TargetingRequest,
+} from './api'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-
-
-const validateVariationsSum = (
-    variations: {
-        variationKey: string
-        weight: number
-    }[]
-) => variations?.reduce((acc, variation) => variation.weight + acc, 0) === 100
-
-const TargetingRowInput = ({ rule }: { rule: TargetingRuleRequest }) => {
-    const revalidator = useRevalidator();
-    const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
-
-    const updateRule = (newRule: TargetingRuleRequest) => {
-        const shouldUpdate = JSON.stringify(newRule) !== JSON.stringify(rule)
-        if (shouldUpdate) {
-            console.log('Updating rule...', newRule)
-        } else {
-            console.log('Skipping update...', rule)
-        }
-    }
-
-    const deleteRule = async (ruleKey: string) => {
-        deleteTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey });
-        revalidator.revalidate()    
-    }
-    return (
-        <Formik initialValues={{ ...rule }} onSubmit={updateRule}>
-            {({ values }) => (
-                <Form>
-                    <div className="flex">
-                        <div className="flex-auto w-80">
-                            <div className="flex gap-3 items-center mb-4">
-                                <code className="text-xl font-bold">IF</code>
-                                <Field component={Input} name="traitKey" label="Trait Key" />
-                                <Field component={Select} name="operator" label="Operator" />
-                                <Field component={Input} name="traitValue" label="Trait Value" />
-                            </div>
-                            <div className="flex gap-5 items-center mb-4">
-                                <code className="text-xl font-bold">THEN</code>
-                                {rule?.ruleVariations?.map((variation, i) => {
-                                    return (
-                                        <div key={variation.variationKey}>
-                                            <Field
-                                                min="0"
-                                                max="100"
-                                                placeholder={variation.weight}
-                                                type="number"
-                                                component={Input}
-                                                name={`ruleVariations.${i}.weight`}
-                                                label={`${variation.variationKey} %`}
-                                                style={{ width: '80px' }}
-                                            />
-                                        </div>
-                                    )
-                                })}
-
-                                <div
-                                    className={`ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full ${
-                                        validateVariationsSum(values.ruleVariations)
-                                            ? 'bg-green-200 text-green-700'
-                                            : 'bg-red-200 text-red-700'
-                                    }`}
-                                >
-                                    {validateVariationsSum(values.ruleVariations) ? 'Σ =' : 'Σ ≠'} 100%
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-auto w-20">
-                            <Field component={Input} name="key" label="Key" />
-                            <Field component={Input} name="name" label="Name" />
-                            <Field component={Input} name="description" label="Description" />
-                            <Field component={Input} name="tags" label="Tags" />
-                        </div>
-                    </div>
-                    <div className="flex">
-                        <Button
-                            disabled={
-                                JSON.stringify(values) !== JSON.stringify(rule) &&
-                                !validateVariationsSum(values.ruleVariations)
-                            }
-                            className={`mt-3 py-2 justify-center mr-5 ${
-                                JSON.stringify(values) !== JSON.stringify(rule) &&
-                                !validateVariationsSum(values.ruleVariations)
-                                    ? 'bg-slate-50 hover:bg-slate-50 text-slate-500'
-                                    : ''
-                            }`}
-                            type="submit"
-                        >
-                            Update
-                        </Button>
-                        <Button
-                            className="mt-3 py-2 justify-center mr-5 bg-red-500 hover:bg-red-100 hover:text-slate-500"
-                            onClick={() => deleteRule(rule.key)}
-                        >
-                            Delete
-                        </Button>
-                    </div>
-                </Form>
-            )}
-        </Formik>
-    )
-}
+import { isValidVariationSum, objectsEqual } from './targeting.utils'
+import TargetingRule from './targeting-rule'
 
 type VariationResponse = {
     type: 'variation'
@@ -126,32 +31,11 @@ type VariationResponse = {
     }
 }
 
-type TargetingResponse = {
-    key: string | null | undefined
-    type: 'targeting'
-    id: string
-    attributes: {
-        enabled: boolean
-        fallthroughVariations: {
-            variationKey: string
-            weight: number
-        }[]
-    }
-}
-
-type TargetingRequest = {
-    enabled: boolean
-    fallthroughVariations: {
-        variationKey: string
-        weight: number
-    }[]
-}
-
 const newRuleFactory = (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => ({
     key: `some-rule-key-${window.crypto.randomUUID().split('-').pop()}`,
     name: `Some rule name ${targetingRules.length + 1}`,
     description: 'Some rule description',
-    tags: [],
+    tags: ['default'],
     type: 'trait',
     traitKey: 'Key',
     traitValue: 'Value',
@@ -159,10 +43,12 @@ const newRuleFactory = (variations: VariationResponse[], targetingRules: Targeti
     ruleVariations: [
         {
             variationKey: variations[0].attributes.key,
-            weight: 100        
+            weight: 100,
         },
-        ...(variations.length > 1 ? variations.slice(1).map(variation => ({ variationKey: variation.attributes.key, weight: 0 }))  : [])
-    ]
+        ...(variations.length > 1
+            ? variations.slice(1).map((variation) => ({ variationKey: variation.attributes.key, weight: 0 }))
+            : []),
+    ],
 })
 
 export const Targeting = () => {
@@ -170,30 +56,33 @@ export const Targeting = () => {
 
     const { targetingRules, targeting, variations } = useLoaderData() as {
         targetingRules: TargetingRuleResponse[]
-        targeting: TargetingResponse,
+        targeting: TargetingResponse
         variations: VariationResponse[]
     }
-    const revalidator = useRevalidator();
+    const revalidator = useRevalidator()
 
     const createRule = async (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => {
-        const newRule = newRuleFactory(variations, targetingRules);
-        await createTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey }, newRule);
+        const newRule = newRuleFactory(variations, targetingRules)
+        await createTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey }, newRule)
         revalidator.revalidate()
     }
 
     const updateTargeting = async (currentValues: TargetingRequest, newValues: TargetingRequest) => {
-        const shouldUpdate = JSON.stringify(newValues) !== JSON.stringify(currentValues)
+        const shouldUpdate = !objectsEqual(newValues, currentValues)
         if (shouldUpdate) {
-            console.log('Updating targing...', newValues)
-        } else {
-            console.log('Skipping targing...', currentValues)
+            patchTargeting({ workspaceKey, projectKey, environmentKey, flagKey }, currentValues, newValues)
+            revalidator.revalidate()
         }
     }
 
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={Promise.all([targetingRules, targeting, variations])}>
-                {([targetingRules, targeting, variations]: [TargetingRuleResponse[], TargetingResponse, VariationResponse[]]) => (
+                {([targetingRules, targeting, variations]: [
+                    TargetingRuleResponse[],
+                    TargetingResponse,
+                    VariationResponse[]
+                ]) => (
                     <>
                         <Formik
                             initialValues={{ ...targeting.attributes }}
@@ -207,7 +96,6 @@ export const Targeting = () => {
                                                 name="enabled"
                                                 checked={values.enabled}
                                                 onChange={async (checked: boolean) => {
-                                                    console.log(checked)
                                                     await updateTargeting(targeting.attributes, {
                                                         ...values,
                                                         enabled: checked,
@@ -269,16 +157,12 @@ export const Targeting = () => {
                                                         })}
                                                         <div
                                                             className={`ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full ${
-                                                                validateVariationsSum(
-                                                                    targeting?.attributes.fallthroughVariations
-                                                                )
+                                                                isValidVariationSum(values?.fallthroughVariations)
                                                                     ? 'bg-green-200 text-green-700'
                                                                     : 'bg-red-200 text-red-700'
                                                             }`}
                                                         >
-                                                            {validateVariationsSum(
-                                                                targeting?.attributes.fallthroughVariations
-                                                            )
+                                                            {isValidVariationSum(values?.fallthroughVariations)
                                                                 ? 'Σ ='
                                                                 : 'Σ ≠'}{' '}
                                                             100%
@@ -286,13 +170,13 @@ export const Targeting = () => {
                                                     </div>
                                                     <Button
                                                         disabled={
-                                                            JSON.stringify(values) !==
-                                                            JSON.stringify(targeting?.attributes)
+                                                            objectsEqual(values, targeting?.attributes) ||
+                                                            !isValidVariationSum(values?.fallthroughVariations)
                                                         }
                                                         className={`mt-3 py-2 justify-center mr-5 ${
-                                                            JSON.stringify(values) !==
-                                                            JSON.stringify(targeting?.attributes)
-                                                                ? 'bg-slate-50 hover:bg-slate-50 text-slate-500'
+                                                            objectsEqual(values, targeting?.attributes) ||
+                                                            !isValidVariationSum(values?.fallthroughVariations)
+                                                                ? 'bg-slate-50 hover:bg-slate-50 text-red-500'
                                                                 : ''
                                                         }`}
                                                         type="submit"
@@ -331,7 +215,7 @@ export const Targeting = () => {
                                         <li key={rule.key}>
                                             <div className="block hover:bg-gray-50">
                                                 <div className="px-4 py-4 sm:px-6">
-                                                    <TargetingRowInput rule={rule.attributes} />
+                                                    <TargetingRule rule={rule.attributes} />
                                                 </div>
                                             </div>
                                         </li>
