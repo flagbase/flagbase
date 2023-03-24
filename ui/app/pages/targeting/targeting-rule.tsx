@@ -61,10 +61,10 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                     <div className="flex">
                         <Button
                             disabled={objectsEqual(values, rule) || !isValidVariationSum(values.ruleVariations)}
-                            className={`mt-3 py-1 justify-center mr-5 ${
+                            className={`mt-3 mr-3 py-1 justify-center ${
                                 objectsEqual(values, rule) || !isValidVariationSum(values?.ruleVariations)
-                                    ? 'bg-slate-50 hover:bg-slate-50 text-red-500'
-                                    : 'bg-slate-50'
+                                    ? 'bg-indigo-50 hover:bg-indigo-50'
+                                    : 'bg-indigo-600'
                             }`}
                             type="submit"
                         >
