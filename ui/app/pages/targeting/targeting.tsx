@@ -19,6 +19,7 @@ import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
 import TargetingRule from './targeting-rule'
 import RolloutSlider from '../../../components/rollout-slider'
+import EmptyState from '../../../components/empty-state'
 
 type VariationResponse = {
     type: 'variation'
@@ -80,7 +81,7 @@ export const Targeting = () => {
                     VariationResponse[]
                 ]) => {
                     if (!!targetingRules && !!targeting && !!variations) {
-                        setInitialLoad(true);
+                        setInitialLoad(true)
                     }
                     return (
                         <>
@@ -122,10 +123,10 @@ export const Targeting = () => {
                                         </div>
                                         <p className="mt-2 max-w-4xl text-sm text-gray-500">
                                             {values?.enabled
-                                                ? 'Users will evaluate the targeting rules below'
-                                                : 'Users will evaluate the fallthrough variations'}
+                                                ? 'Users will evaluate the targeting rules below. If none of them match, users will be served the fallthrough variations.'
+                                                : 'Users will evaluate the fallthrough variations.'}
                                         </p>
-                                        <div className={values.enabled ? 'blur-sm mb-5' : ''}>
+                                        <div>
                                             <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
                                                 <div className="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
                                                     <div className="ml-4 mt-2">
@@ -190,17 +191,36 @@ export const Targeting = () => {
                                     </div>
                                 </div>
                                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
-                                    <ul role="list" className="divide-y divide-gray-200">
-                                        {targetingRules?.reverse().map((rule) => (
-                                            <li key={rule.key}>
-                                                <div className="block hover:bg-gray-50">
-                                                    <div className="px-4 py-4 sm:px-6">
-                                                        <TargetingRule rule={rule.attributes} />
+                                    {targetingRules.length ? (
+                                        <ul role="list" className="divide-y divide-gray-200">
+                                            {targetingRules?.reverse().map((rule) => (
+                                                <li key={rule.key}>
+                                                    <div className="block hover:bg-gray-50">
+                                                        <div className="px-4 py-4 sm:px-6">
+                                                            <TargetingRule rule={rule.attributes} />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </li>
-                                        ))}
-                                    </ul>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <div className='m-10'>
+                                        <EmptyState
+                                            title="No rules"
+                                            description="This flag has no targeting rules yet."
+                                            cta={
+                                                <Button
+                                                    className="py-2"
+                                                    type="submit"
+                                                    onClick={async () => await createRule(variations, targetingRules)}
+                                                    suffix={PlusCircleIcon}
+                                                >
+                                                    Create a rule
+                                                </Button>
+                                            }
+                                        />
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </>

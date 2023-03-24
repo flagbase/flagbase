@@ -1,5 +1,5 @@
 export const constants = {
-    create: 'Create a workspace',
+    create: 'Create Workspace',
     join: 'Workspaces',
     error: 'Could not load workspaces. Please try again.',
 }
