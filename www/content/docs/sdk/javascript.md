@@ -30,7 +30,7 @@ import Client from "@flagbase/js-client-sdk";
 
 Then, initialize the client:
 ```javascript
-const client = Client("your-client-key", {
+const client = Client("your-client-sdk-key", {
   identifier: "your-identifier",
   traits: {
     "your-trait-key": "your-trait-value",
@@ -42,9 +42,9 @@ Now, you can use the SDK to evaluate feature flags and manage user traits.
 Evaluating Feature Flags
 
 ```javascript
-const variation = client.variation("your-flag-key", "default-variation-key");
+const variation = client.variation("your-flag-key", "control");
 
-if (variation === "enabled") {
+if (variation === "treatment") {
   // Execute the feature flag enabled code
 } else {
   // Execute the feature flag disabled code

@@ -380,17 +380,12 @@ const PageHeading = ({
         <header className={`bg-gray-50 pt-8 border-b border-gray-200 ${!tabs || (tabs.length === 0 && 'pb-8')}`}>
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
                 <div className="min-w-0 flex-1 flex flex-row items-center gap-5">
-                    {backHref && (
-                        <Link to={backHref}>
-                            <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
-                        </Link>
-                    )}
-                    <div className="flex flex-col">
-                        <h1 className="text-xl font-bold leading-7 text-gray-900 sm:text-2xl sm:tracking-tight capitalize">
-                            {title}
-                        </h1>
-                        <p className="mt-1 truncate text-sm text-gray-500">{subtitle}</p>
-                    </div>
+                    <button onClick={() => navigate(-1)}>
+                        <ArrowLeftCircleIcon className="h-10 w-10 text-gray-400" aria-hidden="true" />
+                    </button>
+                    <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
+                        {title}
+                    </h1>
                 </div>
             </div>
             {tabs && tabs.length > 0 && (
@@ -469,9 +464,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
-                title: `${flagKey}`,
-                subtitle: 'Flags',
-                backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
+                title: flagKey,
                 tabs: [
                     {
                         name: 'Targeting',

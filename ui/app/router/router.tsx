@@ -29,7 +29,7 @@ import Instances from '../pages/instances/instances'
 import { Sdks } from '../pages/sdks/sdks'
 import { EditEnvironment } from '../pages/projects/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
-import { Targeting } from '../pages/flags/targeting'
+import { Targeting } from '../pages/targeting/targeting';
 import Variations from '../pages/flags/variations'
 import { FlagSettings } from '../pages/flags/flags.edit'
 

@@ -136,8 +136,12 @@ export const getFlagsKey = ({
     return ['flags', instanceKey, workspaceKey, projectKey]
 }
 
-export const getTargetingKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: FlagbaseParams) => {
+export const getTargetingKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: Partial<FlagbaseParams>) => {
     return ['targeting', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
+}
+
+export const getTargetingRulesKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: Partial<FlagbaseParams>) => {
+    return ['targeting','rules', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
 }
 
 export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
@@ -172,6 +176,61 @@ export const targetingLoader = async ({
     if (!environmentKey) {
         return defer({ targeting: [] })
     }
+    const variations = queryClient.fetchQuery(getVariationsKey({
+        instanceKey,
+        workspaceKey,
+        projectKey,
+        flagKey,    
+    }), {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchVariations({
+                workspaceKey,
+                projectKey,
+                flagKey,
+            })
+        },
+    })
+    const targeting = queryClient.fetchQuery(getTargetingKey(params), {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchTargeting({
+                workspaceKey,
+                projectKey,
+                environmentKey,
+                flagKey,
+            })
+        },
+    });
+    const targetingRules = queryClient.fetchQuery(getTargetingRulesKey(params), {
+        queryFn: async () => {
+            await configureAxios(instanceKey)
+            return fetchTargetingRules({
+                workspaceKey,
+                projectKey,
+                environmentKey,
+                flagKey,
+            })
+        },
+    });
+    return defer({ targeting, targetingRules, variations })
+}
+
+
+export const targetingRulesLoader = async ({
+    queryClient,
+    params,
+}: {
+    queryClient: QueryClient
+    params: FlagbaseParams
+}) => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = params
+    if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
+        throw new Error('Missing params')
+    }
+    if (!environmentKey) {
+        return defer({ targeting: [] })
+    }
     const queryKey = getTargetingKey(params)
     const targetingRules = queryClient.fetchQuery(queryKey, {
         queryFn: async () => {
@@ -183,7 +242,7 @@ export const targetingLoader = async ({
                 flagKey,
             })
         },
-    })
+    });
     return defer({ targetingRules })
 }
 

@@ -48,7 +48,7 @@ func (s *Service) createChildren(
 		e.Append(cons.ErrorInternal, _e.Error())
 	}
 
-	_, _e = s.VariationRepo.Create(
+	tVar, _e := s.VariationRepo.Create(
 		ctx,
 		variationmodel.Variation{
 			Key:         "treatment",
@@ -75,6 +75,10 @@ func (s *Service) createChildren(
 					{
 						VariationKey: string(cVar.Key),
 						Weight:       model.DefaultFallthroughVariationWeight,
+					},
+					{
+						VariationKey: string(tVar.Key),
+						Weight:       0,
 					},
 				},
 			},
