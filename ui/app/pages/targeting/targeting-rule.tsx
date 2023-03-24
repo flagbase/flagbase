@@ -64,7 +64,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             className={`mt-3 py-1 justify-center mr-5 ${
                                 objectsEqual(values, rule) || !isValidVariationSum(values?.ruleVariations)
                                     ? 'bg-slate-50 hover:bg-slate-50 text-red-500'
-                                    : ''
+                                    : 'bg-slate-50'
                             }`}
                             type="submit"
                         >
