@@ -13,7 +13,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose, isOpen }) => {
                 <h2 className="mt-2 text-2xl font-bold">Flagbase Client</h2>
                 <p className="mt-8 bg-yellow-100 p-3 ">
                     <strong className="font-semibold text-gray-800">⚠️ Warning:</strong>{" "}
-                    All data about connecting to your instance is saved locally. If you clear you browser data, any client configuration will be erased.
+                    All connection configuration used to connect to your instance is saved locally. If you clear you browser data, this information will be erased.
                 </p>
                 <p className="mt-8">
                     As a first-time user, we want to give you a quick overview of what Flagbase Client has to offer:
