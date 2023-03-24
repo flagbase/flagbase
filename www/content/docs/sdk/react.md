@@ -30,7 +30,7 @@ Wrap your app with the FlagbaseProvider component to enable the SDK to communica
 function App() {
   return (
     <FlagbaseProvider
-      clientKey="YOUR_CLIENT_KEY"
+      clientKey="YOUR_CLIENT_SDK_KEY"
       identity={{ identifier: "USER_ID", traits: { age: 25 } }}
       opts={{ debug: true }}
     >
@@ -46,7 +46,7 @@ Use the useFeatureFlag hook to get the value of a feature flag. Pass in the flag
 
 ```js
 function MyComponent() {
-  const isFeatureEnabled = useFeatureFlag("MY_FEATURE", false);
+  const isFeatureEnabled = useFeatureFlag("MY_FEATURE", "control") !== "control";
 
   return <div>{isFeatureEnabled ? "Feature enabled!" : "Feature disabled."}</div>;
 }

@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Field, Form, Formik } from 'formik'
+import { Form, Formik } from 'formik'
 import React, { Suspense } from 'react'
 import { Await, useLoaderData, useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
-import Input from '../../../components/input/input'
 import { Loader } from '../../../components/loader'
 import { Switch } from '@headlessui/react'
 import { classNames } from '../../../helpers'
@@ -19,6 +18,7 @@ import {
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
 import TargetingRule from './targeting-rule'
+import RolloutSlider from '../../../components/rollout-slider'
 
 type VariationResponse = {
     type: 'variation'
@@ -40,15 +40,10 @@ const newRuleFactory = (variations: VariationResponse[], targetingRules: Targeti
     traitKey: 'Key',
     traitValue: 'Value',
     operator: 'equal' as Operator,
-    ruleVariations: [
-        {
-            variationKey: variations[0].attributes.key,
-            weight: 100,
-        },
-        ...(variations.length > 1
-            ? variations.slice(1).map((variation) => ({ variationKey: variation.attributes.key, weight: 0 }))
-            : []),
-    ],
+    ruleVariations: variations.map((variation) => ({
+        variationKey: variation.attributes.key,
+        weight: Math.round(100 / variations.length),
+    })),
 })
 
 export const Targeting = () => {
@@ -136,54 +131,34 @@ export const Targeting = () => {
                                             </div>
                                         </div>
                                         <div className="overflow-hidden bg-white shadow sm:rounded-md">
-                                            <div className="block hover:bg-gray-50">
-                                                <div className="px-4 py-4 sm:px-6">
-                                                    <div className="flex gap-5 items-center mb-4">
-                                                        {values?.fallthroughVariations?.map((variation, i) => {
-                                                            return (
-                                                                <div key={variation?.variationKey}>
-                                                                    <Field
-                                                                        min="0"
-                                                                        max="100"
-                                                                        placeholder={variation.weight}
-                                                                        type="number"
-                                                                        component={Input}
-                                                                        name={`fallthroughVariations.${i}.weight`}
-                                                                        label={`${variation.variationKey} %`}
-                                                                        style={{ width: '80px' }}
-                                                                    />
-                                                                </div>
+                                            <div className="block hover:bg-gray-50 px-4 py-4 sm:px-6">
+                                                <RolloutSlider
+                                                    data={values.fallthroughVariations}
+                                                    maxValue={100}
+                                                    onChange={(data) => {
+                                                        data.forEach((varation, i) =>
+                                                            setFieldValue(
+                                                                `fallthroughVariations.${i}.weight`,
+                                                                varation.weight
                                                             )
-                                                        })}
-                                                        <div
-                                                            className={`ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full ${
-                                                                isValidVariationSum(values?.fallthroughVariations)
-                                                                    ? 'bg-green-200 text-green-700'
-                                                                    : 'bg-red-200 text-red-700'
-                                                            }`}
-                                                        >
-                                                            {isValidVariationSum(values?.fallthroughVariations)
-                                                                ? 'Σ ='
-                                                                : 'Σ ≠'}{' '}
-                                                            100%
-                                                        </div>
-                                                    </div>
-                                                    <Button
-                                                        disabled={
-                                                            objectsEqual(values, targeting?.attributes) ||
-                                                            !isValidVariationSum(values?.fallthroughVariations)
-                                                        }
-                                                        className={`mt-3 py-2 justify-center mr-5 ${
-                                                            objectsEqual(values, targeting?.attributes) ||
-                                                            !isValidVariationSum(values?.fallthroughVariations)
-                                                                ? 'bg-slate-50 hover:bg-slate-50 text-red-500'
-                                                                : ''
-                                                        }`}
-                                                        type="submit"
-                                                    >
-                                                        Update
-                                                    </Button>
-                                                </div>
+                                                        )
+                                                    }}
+                                                />
+                                                <Button
+                                                    disabled={
+                                                        objectsEqual(values, targeting?.attributes) ||
+                                                        !isValidVariationSum(values?.fallthroughVariations)
+                                                    }
+                                                    className={`mt-3 py-2 justify-center mr-5 ${
+                                                        objectsEqual(values, targeting?.attributes) ||
+                                                        !isValidVariationSum(values?.fallthroughVariations)
+                                                            ? 'bg-slate-50 hover:bg-slate-50 text-red-500'
+                                                            : 'text-gray-600'
+                                                    }`}
+                                                    type="submit"
+                                                >
+                                                    Update
+                                                </Button>
                                             </div>
                                         </div>
                                     </div>

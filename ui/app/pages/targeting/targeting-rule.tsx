@@ -5,14 +5,10 @@ import { useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import Input from '../../../components/input/input'
 import { Select } from '../../../components/input/select'
-import {
-    TargetingRuleRequest,
-    deleteTargetingRule,
-    updateTargetingRule,
-} from './api'
+import { TargetingRuleRequest, deleteTargetingRule, updateTargetingRule } from './api'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
-
+import RolloutSlider from '../../../components/rollout-slider'
 
 const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     const revalidator = useRevalidator()
@@ -22,6 +18,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
         const shouldUpdate = !objectsEqual(newRule, rule)
         if (shouldUpdate) {
             updateTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key }, rule, newRule)
+            revalidator.revalidate()
         }
     }
 
@@ -31,45 +28,28 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     }
     return (
         <Formik initialValues={{ ...rule }} onSubmit={updateRule}>
-            {({ values }) => (
+            {({ values, setFieldValue }) => (
                 <Form>
                     <div className="flex">
                         <div className="flex-auto w-80">
                             <div className="flex gap-3 items-center mb-4">
-                                <code className="text-xl font-bold">IF</code>
+                                <code className="text-xl font-bold uppercase">if</code>
                                 <Field component={Input} name="traitKey" label="Trait Key" />
                                 <Field component={Select} name="operator" label="Operator" />
                                 <Field component={Input} name="traitValue" label="Trait Value" />
                             </div>
                             <div className="flex gap-5 items-center mb-4">
-                                <code className="text-xl font-bold">THEN</code>
-                                {rule?.ruleVariations?.map((variation, i) => {
-                                    return (
-                                        <div key={variation.variationKey}>
-                                            <Field
-                                                min="0"
-                                                max="100"
-                                                placeholder={variation.weight}
-                                                type="number"
-                                                component={Input}
-                                                name={`ruleVariations.${i}.weight`}
-                                                label={`${variation.variationKey} %`}
-                                                style={{ width: '80px' }}
-                                            />
-                                        </div>
-                                    )
-                                })}
-
-                                <div
-                                    className={`ml-4 text-xs inline-flex items-center font-bold leading-sm uppercase px-3 py-1 rounded-full ${
-                                        isValidVariationSum(values.ruleVariations)
-                                            ? 'bg-green-200 text-green-700'
-                                            : 'bg-red-200 text-red-700'
-                                    }`}
-                                >
-                                    {isValidVariationSum(values.ruleVariations) ? 'Σ =' : 'Σ ≠'} 100%
-                                </div>
+                                <code className="text-xl font-bold uppercase">Then Serve</code>
                             </div>
+                            <RolloutSlider
+                                data={rule?.ruleVariations}
+                                maxValue={100}
+                                onChange={(data) => {
+                                    data.forEach((varation, i) =>
+                                        setFieldValue(`ruleVariations.${i}.weight`, varation.weight)
+                                    )
+                                }}
+                            />
                         </div>
                         <div className="flex-auto w-20">
                             <Field component={Input} name="key" label="Key" />
@@ -103,4 +83,4 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     )
 }
 
-export default TargetingRule;
+export default TargetingRule
