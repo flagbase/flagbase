@@ -1,4 +1,8 @@
-# Flagbase Python Server SDK
+---
+sidebar_position: 4
+---
+
+# Python Server SDK
 
 Flagbase is a feature flag management system that helps you manage your application features easily and safely. The Python Server SDK enables developers to integrate Flagbase with their Python applications and control feature flag variations for different users.
 

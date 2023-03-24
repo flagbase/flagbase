@@ -27,7 +27,6 @@ class Poller:
 
                 if response.status_code == 200:
                     data = response.json()["data"]
-                    etag = response.headers["Etag"]
 
                     for raw_flag in data:
                         self.context.get_raw_flags().add_flag(raw_flag["attributes"])
@@ -35,7 +34,15 @@ class Poller:
                     self.events.emit(
                         event_name=EventType.NETWORK_FETCH_FULL,
                         event_message="Retrieved full flagset from service.", 
-                        event_context=self.context.get_raw_flags().get_flags())
+                        event_context=self.context.get_raw_flags().get_flags())                    
+
+                    if etag == "initial":
+                        self.events.emit(
+                            event_name=EventType.CLIENT_READY,
+                            event_message="Client is ready! Initial flagset has been retrieved.", 
+                            event_context=self.context.get_raw_flags().get_flags())
+
+                    etag = response.headers["Etag"]
 
                 elif response.status_code == 304:
                     self.events.emit(
@@ -44,10 +51,14 @@ class Poller:
 
                 elif response.status_code != 200 or response.status_code != 304:
                     msg = f"Unexpected response from poller [{polling_service_url}], with status code {response.status_code}: {response.json()}"
+                    self.events.emit(
+                        event_name=EventType.NETWORK_FETCH_ERROR,
+                        event_message=msg)
+
                     raise Exception(msg)
 
                 self._stop_event.wait(polling_interval_ms / 1000)
-        except e:
+        except Exception as e:
             print(f"[Flagbase]: Something went wrong when trying to retrieve rules from server... Error: {e}")
             pass
 

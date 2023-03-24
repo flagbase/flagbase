@@ -9,6 +9,7 @@ import { TargetingRuleRequest, deleteTargetingRule, updateTargetingRule } from '
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
 import RolloutSlider from '../../../components/rollout-slider'
+import { TagInput } from '../../../components/input/tag-input'
 
 const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     const revalidator = useRevalidator()
@@ -55,7 +56,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             <Field component={Input} name="key" label="Key" />
                             <Field component={Input} name="name" label="Name" />
                             <Field component={Input} name="description" label="Description" />
-                            <Field component={Input} name="tags" label="Tags" />
+                            <Field component={TagInput} name="tags" label="Tags" />
                         </div>
                     </div>
                     <div className="flex">

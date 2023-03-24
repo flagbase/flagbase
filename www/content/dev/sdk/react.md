@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # React Client SDK
 
-Welcome to the contribution guide for the Flagbase React Client SDK! This SDK enables developers to integrate Flagbase with their React applications easily. This markdown document provides an overview of the SDK, its structure, and guidelines for contributing.
+Welcome to the contribution guide for the Flagbase React Client SDK! This SDK enables developers to integrate Flagbase with their React applications easily. This page provides an overview of the SDK, its structure, and guidelines for contributing.
 
 ## Table of Contents
 

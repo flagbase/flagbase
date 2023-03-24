@@ -3,8 +3,6 @@ from typing import Any, Callable, Dict
 
 class EventType(Enum):
     CLIENT_READY = 'client_ready'
-    FLAG_CHANGE = 'flag_change'
-    CONTEXT_CHANGE = 'context_change'
     NETWORK_FETCH = 'network_fetch'
     NETWORK_FETCH_FULL = 'network_fetch_full'
     NETWORK_FETCH_CACHED = 'network_fetch_cached'
