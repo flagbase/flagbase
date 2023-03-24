@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect } from 'react'
 
-import { Link, Outlet, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, Outlet, useLocation, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
 import { useState } from 'react'
 import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
@@ -31,8 +31,6 @@ function classNames(...classes: string[]) {
 
 const MobileDropdown = ({
     name,
-    description,
-    href,
     children,
 }: {
     name: string
@@ -208,8 +206,7 @@ const MobileNavigation = ({
     workspaces?: Workspace[]
     projects?: Project[]
 }) => {
-    const { instanceKey, workspaceKey } =
-        useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
+    const { instanceKey } = useParams<{ instanceKey: string; workspaceKey: string; projectsKey: string }>()
 
     return (
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -218,7 +215,7 @@ const MobileNavigation = ({
                 <div className="flex items-center justify-between">
                     <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
-                        <img className="h-8 w-auto" src={flag} alt="" />
+                        <img className="h-5 w-auto" src={flag} alt="" />
                     </Link>
                     <button
                         type="button"
@@ -287,7 +284,7 @@ const Header = () => {
                 <div className="flex items-center gap-x-12 mr-6">
                     <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
-                        <img className="h-8 w-auto" src={flag} alt="" />
+                        <img className="h-5 w-auto" src={flag} alt="" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">

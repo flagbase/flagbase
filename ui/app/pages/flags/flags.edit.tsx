@@ -5,7 +5,6 @@ import Button from '../../../components/button/button'
 import { SettingsContainer } from '../../../components/container/SettingsContainer'
 import Input from '../../../components/input/input'
 import { TagInput } from '../../../components/input/tag-input'
-import { Toggle } from '../../../components/input/toggle'
 import { Loader } from '../../../components/loader'
 import { Notification } from '../../../components/notification/notification'
 import { EditEntityHeading } from '../../../components/text/heading'
@@ -14,7 +13,7 @@ import { Flag } from './api'
 import { useFlags, useRemoveFlag, useUpdateFlag } from './flags'
 
 export const FlagSettings = () => {
-    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const navigate = useNavigate()
     const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
 
@@ -59,7 +58,6 @@ export const FlagSettings = () => {
                                 tags: flag.attributes.tags,
                             }}
                             onSubmit={(values: { name: string; key: string; description: string; tags: string[] }) => {
-                                console.log('VALUES', values)
                                 update(values)
                             }}
                         >

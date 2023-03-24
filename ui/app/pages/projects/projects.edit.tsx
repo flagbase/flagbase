@@ -85,7 +85,7 @@ const EditProject = () => {
                     content={'Something went wrong. Please try again later.'}
                 />
                 <Notification
-                    type="error"
+                    type="success"
                     show={!!isSuccess}
                     title={'Success'}
                     content={'Project updated successfully!'}

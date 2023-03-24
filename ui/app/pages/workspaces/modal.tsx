@@ -6,6 +6,7 @@ import { Field, Form, Formik } from 'formik'
 import React, { useEffect } from 'react'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
+import { TagInput } from '../../../components/input/tag-input'
 import { ModalLayout } from '../../../components/layout'
 import { Instance } from '../../context/instance'
 import { deleteWorkspace } from './api'
@@ -61,13 +62,13 @@ const CreateWorkspace = ({ visible, setVisible, instance }: WorkspaceModal) => {
                         initialValues={{
                             name: '',
                             description: '',
-                            tags: '',
+                            tags: [],
                         }}
                         onSubmit={async (values) => {
                             addWorkspace({
                                 name: values.name,
                                 description: values.description,
-                                tags: values.tags.split(','),
+                                tags: values.tags,
                             })
                             setVisible(false)
                         }}
@@ -75,7 +76,7 @@ const CreateWorkspace = ({ visible, setVisible, instance }: WorkspaceModal) => {
                         <Form className="flex flex-col gap-3">
                             <Field component={Input} id="name" name="name" placeholder="Workspace name" />
                             <Field component={Input} id="description" name="description" placeholder="Description" />
-                            <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                            <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
                             <Button className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} type="submit">
                                 Add Workspace
                             </Button>
