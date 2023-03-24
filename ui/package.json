@@ -111,7 +111,7 @@
         "react-router-dom": "^6.8.2",
         "rfc6902": "^5.0.1",
         "tsconfig-paths": "^4.1.0",
-        "yup": "^0.32.11"
+        "yup": "^1.0.2"
     },
     "overrides": {
         "react-element-to-jsx-string": "^15.0.0"
