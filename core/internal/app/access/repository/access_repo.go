@@ -79,46 +79,73 @@ func (r *Repo) Create(
 	var workspaceID, projectID sql.NullString
 
 	sqlStatement := `
-INSERT INTO
-  access(
-    key,
-    encrypted_secret,
-    type,
-    expires_at,
-    name,
-    description,
-    tags,
+WITH workspace_verification AS (
+	SELECT id
+	FROM workspace
+	WHERE key = $9
+	AND $9 <> ''
+),
+project_verification AS (
+	SELECT p.id
+	FROM workspace w
+	JOIN project p ON p.workspace_id = w.id
+	WHERE w.key = $9
+	AND p.key = $10
+	AND $9 <> ''
+	AND $10 <> ''
+)
+INSERT INTO access (
+	key,
+	encrypted_secret,
+	type,
+	expires_at,
+	name,
+	description,
+	tags,
 	scope,
 	workspace_id,
 	project_id
-  )
-VALUES
-  (
-    $1,
-    $2,
-    $3,
-    $4,
-    $5,
-    $6,
-    $7,
-    $8,
-	(
-        SELECT id
-        FROM workspace
-        WHERE key = $9
-        AND $9 <> ''
-    ),
-    (
-        SELECT p.id
-        FROM workspace w
-        LEFT JOIN project p 
-            ON p.workspace_id = w.id 
-        WHERE w.key = $9 
-        AND p.key = $10
-        AND $9 <> ''
-        AND $10 <> ''
-    )
-  )
+)
+SELECT
+	$1,
+	$2,
+	$3::access_type,
+	$4::bigint,
+	$5,
+	$6,
+	$7::resource_tags,
+	$8::access_scope,
+	wv.id,
+	NULL
+FROM workspace_verification wv
+WHERE $8::access_scope = 'workspace'
+UNION ALL
+SELECT
+	$1,
+	$2,
+	$3::access_type,
+	$4::bigint,
+	$5,
+	$6,
+	$7::resource_tags,
+	$8::access_scope,
+	wv.id,
+	pv.id
+FROM workspace_verification wv
+JOIN project_verification pv ON $8::access_scope = 'project'
+UNION ALL
+SELECT
+	$1,
+	$2,
+	$3::access_type,
+	$4::bigint,
+	$5,
+	$6,
+	$7::resource_tags,
+	$8::access_scope,
+	NULL,
+	NULL
+WHERE $8::access_scope = 'instance'
 RETURNING
 	key,
 	type,
@@ -127,22 +154,23 @@ RETURNING
 	description,
 	tags,
 	scope,
-    (
-        SELECT key::text
-        FROM workspace
-        WHERE id::text = workspace_id::text
-        AND workspace_id IS NOT NULL
-    ),
-    (
-        SELECT p.key::text
-        FROM workspace w
-        LEFT JOIN project p 
-            ON p.workspace_id = w.id 
-        WHERE w.id = workspace_id 
-        AND p.id = project_id
-        AND workspace_id IS NOT NULL
-        AND project_id IS NOT NULL
-    );`
+	(
+		SELECT key::text
+		FROM workspace
+		WHERE id::text = workspace_id::text
+		AND workspace_id IS NOT NULL
+	),
+	(
+		SELECT p.key::text
+		FROM workspace w
+		LEFT JOIN project p
+			ON p.workspace_id = w.id
+		WHERE w.id = workspace_id
+		AND p.id = project_id
+		AND workspace_id IS NOT NULL
+		AND project_id IS NOT NULL
+	);	
+	`
 
 	err := dbutil.ParseError(
 		rsc.Access.String(),
@@ -203,8 +231,14 @@ SELECT
 	a.type,
 	a.expires_at,
 	a.encrypted_secret,
-	a.scope
+	a.scope,
+	COALESCE(w.key, '') AS workspace_key,
+	COALESCE(p.key, '') AS project_key
 FROM access a
+LEFT JOIN workspace w
+	ON w.id = a.workspace_id
+LEFT JOIN project p
+	ON p.id = a.project_id
 WHERE a.key = $1`
 	err := dbutil.ParseError(
 		rsc.Access.String(),
@@ -223,6 +257,8 @@ WHERE a.key = $1`
 			&o.ExpiresAt,
 			&o.Secret,
 			&o.Scope,
+			&o.WorkspaceKey,
+			&o.ProjectKey,
 		),
 	)
 	return &o, err

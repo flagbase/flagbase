@@ -110,9 +110,8 @@ func (s *Service) List(
 		}
 	}
 	// otherwise
-	// show all if root with instance scope
-	// show all if admin with instance scope
-	s.Senv.Log.Info().Msgf("ME: %v", acc)
+	// * show all if root with instance scope
+	// * show all if admin with instance scope
 
 	// Filter eligible items
 	filtered := make([]*accessmodel.Access, 0)
@@ -120,10 +119,10 @@ func (s *Service) List(
 		// hide secrets
 		_r.Secret = "**************"
 		if _r.ID != "redacted" {
-			s.Senv.Log.Info().Msgf("Keeping: %s", _r.Key)
+			s.Senv.Log.Debug().Msgf("Keeping: %s", _r.Key)
 			filtered = append(filtered, _r)
 		} else {
-			s.Senv.Log.Info().Msgf("Removing: %s", _r.Key)
+			s.Senv.Log.Debug().Msgf("Redacting: %s", _r.Key)
 		}
 	}
 
