@@ -21,7 +21,14 @@ ADD FOREIGN KEY (project_id) REFERENCES project (id) ON DELETE CASCADE ON UPDATE
 -- Step 4: Update the access_key constraint
 ALTER TABLE access
 DROP CONSTRAINT access_key;
-ALTER TABLE access
-ADD CONSTRAINT access_key UNIQUE(key, workspace_id, project_id);
+
+-- Add unique index when both workspace_id and project_id are null
+CREATE UNIQUE INDEX access_key_no_workspace_project_idx ON access ("key") WHERE workspace_id IS NULL AND project_id IS NULL;
+
+-- Add unique index when workspace_id is not null and project_id is null
+CREATE UNIQUE INDEX access_key_workspace_id_no_project_idx ON access ("key", workspace_id) WHERE workspace_id IS NOT NULL AND project_id IS NULL;
+
+-- Add unique index when workspace_id and project_id are not null
+CREATE UNIQUE INDEX access_key_workspace_id_project_id_idx ON access ("key", workspace_id, project_id) WHERE workspace_id IS NOT NULL AND project_id IS NOT NULL;
 
 END;

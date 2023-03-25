@@ -29,6 +29,7 @@ func (r *Repo) List(
 	var o []*accessmodel.Access
 	sqlStatement := `
 SELECT
+	a.id,
 	a.key,
 	a.encrypted_secret,
 	a.type,
@@ -51,6 +52,7 @@ LEFT JOIN project p
 	for rows.Next() {
 		var _o accessmodel.Access
 		if err = rows.Scan(
+			&_o.ID,
 			&_o.Key,
 			&_o.Secret,
 			&_o.Type,

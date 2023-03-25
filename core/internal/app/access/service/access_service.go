@@ -5,6 +5,7 @@ import (
 	accessmodel "core/internal/app/access/model"
 	accessrepo "core/internal/app/access/repository"
 	"core/internal/pkg/auth"
+	"core/internal/pkg/authv2"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/jwt"
 	rsc "core/internal/pkg/resource"
@@ -75,9 +76,10 @@ func (s *Service) List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessRoot); err != nil {
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
+		return nil, &e
 	}
 
 	r, err := s.AccessRepo.List(ctx, a)
@@ -85,11 +87,47 @@ func (s *Service) List(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
+	// Enforce access requirements
+	if acc.Type == "admin" && acc.Scope == "workspace" {
+		// if admin and scoped to workspace
+		for _, _r := range r {
+			if _r.WorkspaceKey != acc.WorkspaceKey {
+				_r.ID = "redacted"
+			}
+		}
+	} else if acc.Type == "admin" && acc.Scope == "project" {
+		// if admin and scoped to project
+		for _, _r := range r {
+			if _r.WorkspaceKey != acc.WorkspaceKey && _r.ProjectKey != acc.ProjectKey {
+				_r.ID = "redacted"
+			}
+		}
+	} else if acc.Type == "user" || acc.Type == "service" {
+		for _, _r := range r {
+			if _r.ID != acc.ID {
+				_r.ID = "redacted"
+			}
+		}
+	}
+	// otherwise
+	// show all if root with instance scope
+	// show all if admin with instance scope
+	s.Senv.Log.Info().Msgf("ME: %v", acc)
+
+	// Filter eligible items
+	filtered := make([]*accessmodel.Access, 0)
 	for _, _r := range r {
+		// hide secrets
 		_r.Secret = "**************"
+		if _r.ID != "redacted" {
+			s.Senv.Log.Info().Msgf("Keeping: %s", _r.Key)
+			filtered = append(filtered, _r)
+		} else {
+			s.Senv.Log.Info().Msgf("Removing: %s", _r.Key)
+		}
 	}
 
-	return r, &e
+	return filtered, &e
 }
 
 // Create creates new access resource.
@@ -113,6 +151,17 @@ func (s *Service) Create(
 
 	originalSecret := i.Secret
 	i.Secret = encryptedSecret
+
+	// Valid scope requirements
+	if i.Scope == "project" && (i.WorkspaceKey == "" || i.ProjectKey == "") {
+		// ACCESS TODO: verify workspace/project exists
+		e.Append(cons.ErrorCrypto, "Access scoped in project should contain a both a workspace key and a project key")
+		cancel()
+	} else if i.Scope == "workspace" && i.WorkspaceKey == "" {
+		// ACCESS TODO: verify workspace exists
+		e.Append(cons.ErrorCrypto, "Access scoped in workspace should contain a workspace key")
+		cancel()
+	}
 
 	r, err := s.AccessRepo.Create(ctx, i)
 	if err != nil {
