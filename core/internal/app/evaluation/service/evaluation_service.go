@@ -82,9 +82,6 @@ func (s *Service) Evaluate(
 		go func(flag model.Flag, flagIdx int) {
 			res := evalResult{flagIdx: flagIdx}
 			salt := hashutil.HashKeys(
-				string(a.WorkspaceKey),
-				string(a.ProjectKey),
-				string(a.EnvironmentKey),
 				flag.FlagKey,
 				ectx.Identifier,
 			)

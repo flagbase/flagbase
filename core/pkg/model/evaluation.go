@@ -1,5 +1,6 @@
 package model
 
+// TODO: Rename to Identity
 // Context evaluation context is essentially the data required to evaluate a flag
 type Context struct {
 	Identifier string                 `json:"identifier"`

@@ -42,6 +42,13 @@ func getEvaluationAPIHandler(senv *srvenv.Env, ctx *gin.Context) {
 	statusCode := http.StatusOK
 	if e.IsEmpty() && retag == etag {
 		statusCode = http.StatusNotModified
+		httputil.Send(
+			ctx,
+			statusCode,
+			nil,
+			http.StatusInternalServerError,
+			e,
+		)
 	}
 
 	httputil.SendJSON(

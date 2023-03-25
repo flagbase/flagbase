@@ -1,4 +1,4 @@
-# JavaScript Client SDK
+# Flagbase JavaScript Client SDK
 
 The Flagbase JavaScript Client-side SDK is a lightweight library that enables your web applications to use feature flags easily and efficiently.
 
