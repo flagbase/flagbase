@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { Await, useLoaderData } from 'react-router-dom'
+import { Await, Link, useLoaderData } from 'react-router-dom'
 import Table from '../../../components/table/table'
 import Button from '../../../components/button'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
@@ -8,20 +8,21 @@ import { Loader } from '../../../components/loader'
 import Tag from '../../../components/tag'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getVariationsKey } from '../../router/loaders'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { configureAxios } from '../../lib/axios'
-import { fetchVariations } from './api'
+import { createVariation, fetchVariations, VariationCreateBody } from './api'
+import { getVariationPath } from '../../router/router'
 
 export const variationColumns = [
-    {
-        title: 'Key',
-        dataIndex: 'key',
-        key: 'key',
-    },
     {
         title: 'Name',
         dataIndex: 'name',
         key: 'name',
+    },
+    {
+        title: 'Key',
+        dataIndex: 'key',
+        key: 'key',
     },
     {
         title: 'Description',
@@ -33,14 +34,9 @@ export const variationColumns = [
         dataIndex: 'tags',
         key: 'tags',
     },
-    {
-        title: 'Actions',
-        dataIndex: 'action',
-        key: 'action',
-    },
 ]
 
-type Variation = {
+export type Variation = {
     type: 'variation'
     id: string
     attributes: {
@@ -51,16 +47,63 @@ type Variation = {
     }
 }
 
-const convertVariationsToTable = (variations: Variation[]) => {
+const convertVariationsToTable = ({
+    variations,
+    params,
+}: {
+    variations: Variation[]
+    params: {
+        instanceKey: string
+        workspaceKey: string
+        projectKey: string
+        flagKey: string
+    }
+}) => {
+    const { instanceKey, workspaceKey, projectKey, flagKey } = params || {}
+    if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
+        return []
+    }
     return variations.map((variation) => {
         return {
             key: variation.attributes.key,
             name: variation.attributes.name,
             description: variation.attributes.description,
             tags: variation.attributes.tags.map((tag) => <Tag key={tag}>{tag}</Tag>),
-            action: <Button className="py-2">Edit</Button>,
+            href: getVariationPath({
+                instanceKey,
+                workspaceKey,
+                projectKey,
+                flagKey,
+                variationKey: variation.attributes.key,
+            }),
         }
     })
+}
+
+export const useAddVariation = () => {
+    const queryClient = useQueryClient()
+    const { instanceKey, workspaceKey, projectKey, flagKey } = useFlagbaseParams()
+    const mutation = useMutation({
+        mutationFn: async (values: VariationCreateBody) => {
+            await createVariation({
+                workspaceKey: workspaceKey!,
+                projectKey: projectKey!,
+                flagKey: flagKey!,
+                variation: values,
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getVariationsKey({
+                    instanceKey: instanceKey!,
+                    workspaceKey: workspaceKey!,
+                    projectKey: projectKey!,
+                    flagKey: flagKey!,
+                }),
+            })
+        },
+    })
+    return mutation
 }
 
 export const useVariations = () => {
@@ -88,6 +131,7 @@ export const useVariations = () => {
 const Variations = () => {
     const { variations: prefetchedVariations } = useLoaderData() as { variations: Variation[] }
     const { data: variations } = useVariations() as { data: Variation[] }
+    const params = useFlagbaseParams()
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedVariations}>
@@ -95,7 +139,7 @@ const Variations = () => {
                     <React.Fragment>
                         <Table
                             loading={false}
-                            dataSource={convertVariationsToTable(variations)}
+                            dataSource={convertVariationsToTable({ variations, params })}
                             columns={variationColumns}
                             emptyState={
                                 <EmptyState

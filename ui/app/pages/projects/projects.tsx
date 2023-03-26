@@ -4,7 +4,7 @@ import { Await, useLoaderData } from 'react-router-dom'
 import Table from '../../../components/table/table'
 import { createProject, deleteProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
-import { CreateProject } from './projects.modal'
+import { CreateProjectModal } from './projects.modal'
 import { Link } from 'react-router-dom'
 import { constants, projectsColumn } from './projects.constants'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
@@ -35,12 +35,19 @@ export const convertProjects = ({
     }
 
     return Object.values(projects)
-        .filter((project): project is Project => project !== undefined && project.attributes.key.includes(filter))
+        .filter((project) => {
+            const { name, key, description } = project.attributes
+            return (
+                name?.toLowerCase().includes(filter) ||
+                key?.toLowerCase().includes(filter) ||
+                description?.toLowerCase().includes(filter)
+            )
+        })
         .map((project: Project, index: number) => {
             return {
                 id: index,
                 title: project.attributes.name,
-                href: `/flags/${instanceKey}/${project?.id}`,
+                href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`,
                 name: <Text>{project.attributes.name}</Text>,
                 description: <Text>{project.attributes.description}</Text>,
                 tags: (
@@ -51,13 +58,6 @@ export const convertProjects = ({
                             </Tag>
                         ))}
                     </div>
-                ),
-                action: (
-                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`}>
-                        <Button secondary className="py-2">
-                            Connect
-                        </Button>
-                    </Link>
                 ),
                 key: project.attributes.key,
             }
@@ -90,7 +90,8 @@ export const useAddProject = (instanceKey: string, workspaceKey: string) => {
     return mutation
 }
 
-export const useProjects = (instanceKey: string | undefined, workspaceKey: string | undefined, options?: any) => {
+export const useProjects = (options?: any) => {
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
     const query = useQuery<Project[]>(['projects', instanceKey, workspaceKey], {
         ...options,
         queryFn: async () => {
@@ -108,19 +109,15 @@ const Projects = () => {
     const [filter, setFilter] = useState('')
     const { projects: prefetchedProjects } = useLoaderData() as { projects: Project[] }
     const { instanceKey, workspaceKey } = useFlagbaseParams()
-
-    const { data: projects } = useProjects(instanceKey, workspaceKey)
+    const { data: projects } = useProjects()
 
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedProjects} errorElement={<p>Error loading package location!</p>}>
                 <div className="mt-5">
-                    <CreateProject visible={visible} setVisible={setVisible} />
+                    <CreateProjectModal visible={visible} setVisible={setVisible} />
 
                     <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                        <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
-                            {constants.create}
-                        </Button>
                         <div className="flex-auto">
                             <RawInput
                                 onChange={(event) => setFilter(event.target.value)}

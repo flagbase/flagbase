@@ -8,17 +8,13 @@ type ErrorType = {
 }
 
 export const Error = () => {
-    const error = useAsyncError() as any
     const { message, status } = (useRouteError() as ErrorType) || {
         message: 'Page not found',
         status: 404,
     }
 
-    const errors = useRouteError()
-
-    console.log('test', errors, error)
     return (
-        <main className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">
+        <div className="grid min-h-full place-items-center bg-white py-24 px-6 sm:py-32 lg:px-8">
             <div className="text-center">
                 <p className="text-base font-semibold text-indigo-600">{status}</p>
                 <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">{message}</h1>
@@ -31,6 +27,6 @@ export const Error = () => {
                     </Button>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ReactState } from '../workspaces/modal'
+import { ReactState } from '../workspaces/workspace.modal'
 import { ModalLayout } from '../../../components/layout'
 import { Field, Form, Formik } from 'formik'
 import Input from '../../../components/input'
@@ -117,7 +117,7 @@ export const useAddSdk = () => {
     )
 }
 
-export const AddNewSDKModal = ({ visible, setVisible }: ReactState) => {
+export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
     const { workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
     const { mutate, isError, isSuccess } = useAddSdk()
     if (!workspaceKey || !projectKey || !environmentKey) {

@@ -1,11 +1,13 @@
 import { QueryClient } from 'react-query'
 import { defer } from 'react-router-dom'
-import { Instance } from '../context/instance'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
-import { fetchFlags, fetchTargeting, fetchTargetingRules, fetchVariations } from '../pages/flags/api'
-import { fetchEnvironments, fetchProjects } from '../pages/projects/api'
+import { fetchEnvironments } from '../pages/environments/api'
+import { fetchFlags, fetchTargeting, fetchTargetingRules } from '../pages/flags/api'
+import { Instance } from '../pages/instances/instances.functions'
+import { fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
+import { fetchVariations } from '../pages/variations/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
 
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
@@ -136,12 +138,24 @@ export const getFlagsKey = ({
     return ['flags', instanceKey, workspaceKey, projectKey]
 }
 
-export const getTargetingKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: Partial<FlagbaseParams>) => {
+export const getTargetingKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    flagKey,
+}: Partial<FlagbaseParams>) => {
     return ['targeting', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
 }
 
-export const getTargetingRulesKey = ({ instanceKey, workspaceKey, projectKey, environmentKey, flagKey }: Partial<FlagbaseParams>) => {
-    return ['targeting','rules', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
+export const getTargetingRulesKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    environmentKey,
+    flagKey,
+}: Partial<FlagbaseParams>) => {
+    return ['targeting', 'rules', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
 }
 
 export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
@@ -176,21 +190,24 @@ export const targetingLoader = async ({
     if (!environmentKey) {
         return defer({ targeting: [] })
     }
-    const variations = queryClient.fetchQuery(getVariationsKey({
-        instanceKey,
-        workspaceKey,
-        projectKey,
-        flagKey,    
-    }), {
-        queryFn: async () => {
-            await configureAxios(instanceKey)
-            return fetchVariations({
-                workspaceKey,
-                projectKey,
-                flagKey,
-            })
-        },
-    })
+    const variations = queryClient.fetchQuery(
+        getVariationsKey({
+            instanceKey,
+            workspaceKey,
+            projectKey,
+            flagKey,
+        }),
+        {
+            queryFn: async () => {
+                await configureAxios(instanceKey)
+                return fetchVariations({
+                    workspaceKey,
+                    projectKey,
+                    flagKey,
+                })
+            },
+        }
+    )
     const targeting = queryClient.fetchQuery(getTargetingKey(params), {
         queryFn: async () => {
             await configureAxios(instanceKey)
@@ -201,7 +218,7 @@ export const targetingLoader = async ({
                 flagKey,
             })
         },
-    });
+    })
     const targetingRules = queryClient.fetchQuery(getTargetingRulesKey(params), {
         queryFn: async () => {
             await configureAxios(instanceKey)
@@ -212,10 +229,9 @@ export const targetingLoader = async ({
                 flagKey,
             })
         },
-    });
+    })
     return defer({ targeting, targetingRules, variations })
 }
-
 
 export const targetingRulesLoader = async ({
     queryClient,
@@ -242,7 +258,7 @@ export const targetingRulesLoader = async ({
                 flagKey,
             })
         },
-    });
+    })
     return defer({ targetingRules })
 }
 
@@ -258,6 +274,22 @@ export const getVariationsKey = ({
     flagKey: string
 }) => {
     return ['variations', instanceKey, workspaceKey, projectKey, flagKey]
+}
+
+export const getVariationKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    flagKey,
+    variationKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+    variationKey: string
+}) => {
+    return ['variations', instanceKey, workspaceKey, projectKey, flagKey, variationKey]
 }
 
 export const variationsLoader = async ({

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { ReactState } from '../workspaces/modal'
+import { ReactState } from '../workspaces/workspace.modal'
 import { ModalLayout } from '../../../components/layout'
 import { Field, Form, Formik, FormikHelpers } from 'formik'
 import { InstanceSchema } from './instances.constants'

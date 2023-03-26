@@ -11,7 +11,8 @@ import Text from '../../../components/text/text'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getFlagsKey } from '../../router/loaders'
-import { Environment, useEnvironments } from '../projects/environments'
+import { useActiveEnvironment, useUpdateActiveEnvironment } from '../environments/environment-dropdown'
+import { Environment, useEnvironments } from '../environments/environments'
 import { createFlag, deleteFlag, fetchFlags, Flag, FlagCreateBody, updateFlag } from './api'
 import { flagConstants, flagsColumn } from './constants'
 import { CreateFlag } from './flags.modal'
@@ -29,37 +30,23 @@ export const useChangeDefaultEnvironment = () => {
     return mutation
 }
 
-export const useDefaultEnvironment = () => {
-    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
-    const { data: environments } = useEnvironments({
-        instanceKey: instanceKey!,
-        projectKey: projectKey!,
-        workspaceKey: workspaceKey!,
-    })
-    const query = useQuery(['defaultEnvironment'], {
-        queryFn: async () => {
-            return environments?.[0]
-        },
-        enabled: !!environments,
-    })
-    return query
-}
-
 const FlagLink = ({ flag }: { flag: Flag }) => {
-    const { data: environment, isLoading } = useDefaultEnvironment()
+    const { data: environmentKey, isLoading } = useActiveEnvironment()
+    const { data: environments } = useEnvironments()
+    const environment = environments?.find((env) => env.attributes.key === environmentKey)
 
     if (isLoading) {
         return <Loader />
     }
     return (
-        <Link to={`environments/${environment?.attributes.key}/${flag.attributes.key}`}>
+        <Link to={`${flag.attributes.key}/environments/${environment?.attributes.key}`}>
             <Button secondary className="py-2">
                 Modify
             </Button>
         </Link>
     )
 }
-const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
+const convertFlags = ({ flags, environment }: { flags: Flag[]; environment: Environment }) => {
     if (!flags) {
         return []
     }
@@ -68,7 +55,7 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
         return {
             id: index,
             title: flag.attributes.name,
-            href: `/`,
+            href: `${flag.attributes.key}/environments/${environment?.attributes.key}`,
             name: <Text>{flag.attributes.name}</Text>,
             description: <Text>{flag.attributes.description}</Text>,
             tags: (
@@ -175,7 +162,6 @@ export const useAddFlag = () => {
 
 export const useFlags = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
-
     const query = useQuery<Flag[]>(
         getFlagsKey({
             instanceKey,
@@ -197,6 +183,16 @@ export const useFlags = () => {
 const Flags: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
+    const { data: environmentKey } = useActiveEnvironment()
+    const { mutate } = useUpdateActiveEnvironment()
+    const { data: environments } = useEnvironments()
+
+    if (!environmentKey && environments?.length) {
+        mutate(environments[0].attributes.key)
+    }
+
+    const activeEnvironment = environments?.find((env) => env.attributes.key === environmentKey)
+    console.log('env', environmentKey, activeEnvironment)
     const { data: flags } = useFlags()
     return (
         <Suspense fallback={<Loader />}>
@@ -204,21 +200,9 @@ const Flags: React.FC = () => {
                 {() => (
                     <div className="mt-5">
                         <CreateFlag visible={visible} setVisible={setVisible} />
-
-                        <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                            <Button
-                                onClick={() => setVisible(true)}
-                                className="py-2"
-                                type="button"
-                                suffix={PlusCircleIcon}
-                            >
-                                {flagConstants.FLAG_ADD_TEXT}
-                            </Button>
-                        </div>
-
                         <Table
                             loading={false}
-                            dataSource={convertFlags({ flags, filter: '' })}
+                            dataSource={convertFlags({ flags, environment: activeEnvironment })}
                             columns={flagsColumn}
                             emptyState={
                                 <EmptyState

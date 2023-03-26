@@ -12,8 +12,10 @@ interface ConvertedWorkspace {
     title: JSX.Element
     href: string
     name: JSX.Element
+    action: JSX.Element
     description: JSX.Element
-    tags: string
+    tags: JSX.Element[]
+    key: string
 }
 
 export const convertWorkspaces = (
@@ -25,11 +27,15 @@ export const convertWorkspaces = (
         return []
     }
 
-    return Object.values(workspaceList)
-        .filter(
-            (workspace): workspace is Entity<Workspace> =>
-                workspace !== undefined && workspace.attributes.name.includes(filter)
-        )
+    return workspaceList
+        .filter((workspace) => {
+            const { name, key, description } = workspace.attributes
+            return (
+                name?.toLowerCase().includes(filter) ||
+                key?.toLowerCase().includes(filter) ||
+                description?.toLowerCase().includes(filter)
+            )
+        })
         .map((currentWorkspace, index) => {
             return {
                 id: index,

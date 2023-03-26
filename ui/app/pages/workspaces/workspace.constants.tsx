@@ -20,9 +20,4 @@ export const workspaceColumns = [
         dataIndex: 'tags',
         key: 'tags',
     },
-    {
-        title: 'Actions',
-        dataIndex: 'action',
-        key: 'action',
-    },
 ]

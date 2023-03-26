@@ -23,7 +23,7 @@ export const EditInstance = () => {
     }
 
     return (
-        <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
                 <div className="mb-4">
                     <h1 className="text-lg font-medium leading-6 text-gray-900">Instance Settings </h1>
@@ -95,6 +95,6 @@ export const EditInstance = () => {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

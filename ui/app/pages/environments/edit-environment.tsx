@@ -1,6 +1,6 @@
 import { Form, Formik, Field } from 'formik'
 import React from 'react'
-import { useQueryClient, useMutation } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
@@ -9,18 +9,19 @@ import { Notification } from '../../../components/notification/notification'
 import { EditEntityHeading } from '../../../components/text/heading'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { updateProject } from './api'
-import { useProjects, useRemoveProject } from './projects'
+import { updateEnvironment, deleteEnvironment } from './api'
+import { getEnvironmentKey, useEnvironments } from './environments'
 
-export const useUpdateProject = (instanceKey: string | undefined) => {
+export const useUpdateEnvironment = () => {
     const queryClient = useQueryClient()
-    const { workspaceKey, projectKey } = useFlagbaseParams()
+    const { workspaceKey, projectKey, environmentKey, instanceKey } = useFlagbaseParams()
     const mutation = useMutation({
         mutationFn: async (values: { name: string; key: string; description: string; tags: string[] }) => {
             await configureAxios(instanceKey!)
-            await updateProject({
+            await updateEnvironment({
                 workspaceKey: workspaceKey!,
                 projectKey: projectKey!,
+                environmentKey: environmentKey!,
                 body: [
                     {
                         op: 'replace',
@@ -52,32 +53,61 @@ export const useUpdateProject = (instanceKey: string | undefined) => {
     return mutation
 }
 
-const EditProject = () => {
-    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
-    const { data: projects } = useProjects()
-    const project = projects?.find((project) => project.attributes.key === projectKey?.toLocaleLowerCase())
+export const useRemoveEnvironment = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
+    const queryClient = useQueryClient()
+    const mutation = useMutation({
+        mutationFn: async () => {
+            await deleteEnvironment({
+                workspaceKey: workspaceKey!,
+                projectKey: projectKey!,
+                environmentKey: environmentKey!,
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getEnvironmentKey({
+                    instanceKey: instanceKey!,
+                    workspaceKey: workspaceKey!,
+                    projectKey: projectKey!,
+                }),
+            })
+        },
+    })
+    return mutation
+}
+
+export const EditEnvironment = () => {
     const navigate = useNavigate()
+    const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
+    const { data: environments, isLoading } = useEnvironments()
+    const environment = environments?.find(
+        (environment) => environment.attributes.key === environmentKey?.toLocaleLowerCase()
+    )
+    if (!environment && !isLoading) {
+        throw new Error('Environment not found')
+    }
 
     if (!instanceKey || !workspaceKey || !projectKey) {
         throw new Error('Missing required params')
     }
 
-    const { mutate: remove } = useRemoveProject(instanceKey, workspaceKey)
-    const { mutate: update, isSuccess, error } = useUpdateProject(instanceKey)
+    const { mutate: remove } = useRemoveEnvironment()
+    const { mutate: update, isSuccess, error } = useUpdateEnvironment()
 
-    if (!project) {
+    if (!environment) {
         return null
     }
 
     const deleteProject = () => {
-        remove(projectKey)
-        navigate(`/${instanceKey}/workspaces/${workspaceKey}/projects`)
+        remove()
+        navigate(-1)
     }
 
     return (
         <div className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
-                <EditEntityHeading heading="Project Settings" subheading={projectKey} />
+                <EditEntityHeading heading="Environment Settings" subheading={environment.attributes.name} />
                 <Notification
                     type="error"
                     show={!!error}
@@ -85,17 +115,17 @@ const EditProject = () => {
                     content={'Something went wrong. Please try again later.'}
                 />
                 <Notification
-                    type="success"
+                    type="error"
                     show={!!isSuccess}
                     title={'Success'}
                     content={'Project updated successfully!'}
                 />
                 <Formik
                     initialValues={{
-                        name: project?.attributes.name,
-                        key: project?.attributes.key,
-                        description: project?.attributes.description,
-                        tags: project?.attributes.tags,
+                        name: environment.attributes.name,
+                        key: environment.attributes.key,
+                        description: environment?.attributes.description,
+                        tags: environment?.attributes.tags,
                     }}
                     onSubmit={(values: { key: string; name: string; description: string; tags: string[] }) => {
                         update(values)
@@ -149,5 +179,3 @@ const EditProject = () => {
         </div>
     )
 }
-
-export default EditProject

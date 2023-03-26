@@ -11,7 +11,7 @@ import Text from '../../../components/text/text'
 import { FlagCreateBody } from './api'
 import { useAddFlag } from './flags'
 
-interface WorkspaceModal {
+export interface ModalProps {
     visible: boolean
     setVisible: Dispatch<SetStateAction<boolean>>
 }
@@ -19,7 +19,7 @@ interface WorkspaceModal {
 const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateAction<boolean>> }> = ({
     visible,
     setVisible,
-}: WorkspaceModal) => {
+}: ModalProps) => {
     const mutation = useAddFlag()
 
     return (

@@ -13,7 +13,7 @@ import { configureAxios } from '../../lib/axios'
 import { FlagbaseParams, useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getSdkKey } from '../../router/loaders'
 import { fetchSdkList, SDK } from './api'
-import { AddNewSDKModal } from './sdks.modal'
+import { CreateSDKModal } from './sdks.modal'
 
 export const sdkColumns = [
     {
@@ -73,11 +73,10 @@ export const useSDKs = () => {
 }
 
 export const Sdks = () => {
-    const [filter, setFilter] = useState('')
     const [copied, setCopied] = useState(false)
     const [showModal, setShowModal] = useState(false)
     const { sdks: prefetchedSdks } = useLoaderData() as { sdks: SDK[] }
-    const { data: sdks, isLoading } = useSDKs()
+    const { data: sdks } = useSDKs()
     const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
 
     const convertSdksToList = (sdks: SDK[]) => {
@@ -128,7 +127,9 @@ export const Sdks = () => {
                     <Link
                         to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`}
                     >
-                        <Button className="py-2">Edit</Button>
+                        <Button secondary className="py-2">
+                            Edit
+                        </Button>
                     </Link>
                 ),
             }
@@ -140,7 +141,7 @@ export const Sdks = () => {
             <Await resolve={prefetchedSdks}>
                 {() => (
                     <div className="mt-5">
-                        <AddNewSDKModal visible={showModal} setVisible={setShowModal} />
+                        <CreateSDKModal visible={showModal} setVisible={setShowModal} />
                         <Notification
                             type="success"
                             title="Copied!"
@@ -148,18 +149,6 @@ export const Sdks = () => {
                             show={copied}
                             setShow={setCopied}
                         />
-                        <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                            <Button onClick={() => setShowModal(true)} type="button" suffix={PlusCircleIcon}>
-                                Create SDK
-                            </Button>
-                            <div className="flex-auto">
-                                <RawInput
-                                    onChange={(event) => setFilter(event.target.value)}
-                                    placeholder="Search"
-                                    prefix={MagnifyingGlassIcon as any}
-                                />
-                            </div>
-                        </div>
 
                         <Table
                             loading={false}
@@ -170,24 +159,17 @@ export const Sdks = () => {
                                     title="No SDKs found"
                                     description="This environment does not have any SDKs yet."
                                     cta={
-                                        <Button className="py-2" suffix={PlusCircleIcon}>
+                                        <Button
+                                            onClick={() => setShowModal(true)}
+                                            className="py-2"
+                                            suffix={PlusCircleIcon}
+                                        >
                                             Create Sdk
                                         </Button>
                                     }
                                 />
                             }
                         />
-                        {sdks.length === 0 && (
-                            <EmptyState
-                                title="There are no SDKs yet"
-                                description="Oh no"
-                                cta={
-                                    <Button onClick={() => setShowModal(true)} className="py-2">
-                                        Create SDK
-                                    </Button>
-                                }
-                            />
-                        )}
                     </div>
                 )}
             </Await>

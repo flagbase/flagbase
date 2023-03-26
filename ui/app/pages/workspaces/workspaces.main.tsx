@@ -1,29 +1,30 @@
 import React, { Suspense, useState } from 'react'
-import { Await, useAsyncError, useLoaderData, useParams } from 'react-router-dom'
+import { Await, useLoaderData, useParams } from 'react-router-dom'
 import Table from '../../../components/table/table'
-import { Instance } from '../../context/instance'
 import { createWorkspace, deleteWorkspace, fetchWorkspaces, updateWorkspace, Workspace } from './api'
 import Button from '../../../components/button'
 import { constants, workspaceColumns } from './workspace.constants'
 import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
-import { CreateWorkspace } from './modal'
+import { CreateWorkspaceModal } from './workspace.modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
 import { configureAxios } from '../../lib/axios'
 import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { Instance } from '../instances/instances.functions'
 
-export const useAddWorkspace = (instance: Instance) => {
+export const useAddWorkspace = () => {
     const queryClient = useQueryClient()
+    const { instanceKey } = useFlagbaseParams()
     const mutation = useMutation({
         mutationFn: async (values: Omit<Workspace['attributes'], 'key'>) => {
             await createWorkspace({ name: values.name, description: values.description, tags: values.tags })
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['workspaces', instance.key.toLocaleLowerCase()] })
+            queryClient.invalidateQueries({ queryKey: ['workspaces', instanceKey] })
         },
     })
     return mutation
@@ -108,16 +109,13 @@ const MainWorkspaces = () => {
             <Await resolve={prefetchedWorkspaces}>
                 {() => (
                     <React.Fragment>
-                        <CreateWorkspace
+                        <CreateWorkspaceModal
                             visible={createWorkspace}
                             setVisible={showCreateWorkspace}
                             instance={instance}
                         />
 
                         <div className="flex flex-col-reverse md:flex-row gap-3 pb-5 items-stretch">
-                            <Button onClick={() => showCreateWorkspace(true)} type="button" suffix={PlusCircleIcon}>
-                                {constants.create}
-                            </Button>
                             <div className="flex-auto">
                                 <Input
                                     onChange={(event) => setFilter(event.target.value)}
@@ -128,7 +126,7 @@ const MainWorkspaces = () => {
                         </div>
                         <Table
                             loading={isFetching || isRefetching || isLoading}
-                            dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter) : []}
+                            dataSource={workspaces ? convertWorkspaces(workspaces, instance, filter.toLowerCase()) : []}
                             columns={workspaceColumns}
                             emptyState={
                                 <EmptyState
