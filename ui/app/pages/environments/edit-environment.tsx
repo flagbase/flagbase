@@ -80,12 +80,7 @@ export const useRemoveEnvironment = () => {
 export const EditEnvironment = () => {
     const navigate = useNavigate()
     const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
-    const { data: environments, isLoading } = useEnvironments({
-        instanceKey: instanceKey!,
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-    })
-    console.log('envs', environments, environmentKey)
+    const { data: environments, isLoading } = useEnvironments()
     const environment = environments?.find(
         (environment) => environment.attributes.key === environmentKey?.toLocaleLowerCase()
     )

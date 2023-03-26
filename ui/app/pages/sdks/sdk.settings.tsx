@@ -60,6 +60,7 @@ export const SdkSettings = () => {
                         <Formik
                             initialValues={{
                                 id: sdk.id,
+                                name: sdk.attributes.name,
                                 description: sdk.attributes.description,
                                 enabled: sdk.attributes.enabled,
                                 clientKey: sdk.attributes.clientKey,
@@ -79,6 +80,7 @@ export const SdkSettings = () => {
                             }}
                         >
                             <Form className="flex flex-col gap-3">
+                                <Field component={Input} name="name" label="Name" />
                                 <Field component={Input} name="description" label="Description" />
 
                                 <Field component={Input} name="clientKey" label="Client Key" disabled />

@@ -45,7 +45,6 @@ export const useEnvironments = () => {
                 return fetchEnvironments(workspaceKey!, projectKey!)
             },
             enabled: !!instanceKey && !!workspaceKey,
-            staleTime: Infinity,
         }
     )
     return query

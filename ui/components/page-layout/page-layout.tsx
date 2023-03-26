@@ -31,6 +31,8 @@ import { Instance } from '../../app/pages/instances/instances.functions'
 import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown'
 import { useFlags } from '../../app/pages/flags/flags'
 import { Flag } from '../../app/pages/flags/api'
+import { useVariations } from '../../app/pages/variations/variations'
+import { useSDKs } from '../../app/pages/sdks/sdks'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -488,7 +490,24 @@ export const PageHeadings = () => {
     })
 
     const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey, flagKey, variationKey } = useFlagbaseParams()
-    const { data: activeEnvironment } = useActiveEnvironment()
+
+    const { data: instances } = useInstances()
+    const { data: workspaces } = useWorkspaces(instanceKey)
+    const { data: projects } = useProjects()
+    const { data: environments } = useEnvironments()
+    const { data: flags } = useFlags()
+    const { data: activeEnvironmentKey } = useActiveEnvironment()
+    const { data: variations } = useVariations()
+    const { data: sdks } = useSDKs()
+
+    const activeInstance = instances?.find((instance) => instance.key === instanceKey)
+    const activeWorkspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    const activeProject = projects?.find((project) => project.attributes.key === projectKey)
+    const activeEnvironment = environments?.find((environment) => environment.attributes.key === activeEnvironmentKey)
+    const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey)
+    const activeVariation = variations?.find((variation) => variation.attributes.key === variationKey)
+    const activeSDK = sdks?.find((sdk) => sdk.id === sdkKey)
+
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
@@ -499,7 +518,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey && projectKey && flagKey && variationKey) {
             setPageHeading({
-                title: `${variationKey}`,
+                title: activeVariation?.attributes.name || variationKey,
                 subtitle: 'Variations',
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations`,
                 tabs: [
@@ -511,14 +530,14 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
-                title: `${flagKey}`,
+                title: activeFlag?.attributes.name || flagKey,
                 subtitle: 'Flags',
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {
                         name: 'Targeting',
                         href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/environments/${
-                            activeEnvironment || environmentKey
+                            activeEnvironment?.attributes.key || environmentKey
                         }`,
                     },
                     {
@@ -533,7 +552,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey && projectKey && environmentKey && sdkKey) {
             setPageHeading({
-                title: 'SDK Settings',
+                title: activeSDK?.attributes.name || 'SDK Settings',
                 subtitle: 'SDK',
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
                 tabs: [
@@ -561,7 +580,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey && projectKey) {
             setPageHeading({
-                title: projectKey,
+                title: activeProject?.attributes.name || projectKey,
                 subtitle: 'Project',
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
                 tabs: [
@@ -581,7 +600,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey && workspaceKey) {
             setPageHeading({
-                title: workspaceKey,
+                title: activeWorkspace?.attributes.name || workspaceKey,
                 subtitle: 'Workspace',
                 backHref: `/${instanceKey}/workspaces`,
                 tabs: [
@@ -597,7 +616,7 @@ export const PageHeadings = () => {
             })
         } else if (instanceKey) {
             setPageHeading({
-                title: instanceKey,
+                title: activeInstance?.name || instanceKey,
                 subtitle: 'Instance',
                 backHref: '/',
                 tabs: [
