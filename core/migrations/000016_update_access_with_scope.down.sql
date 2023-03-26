@@ -1,8 +1,9 @@
 BEGIN;
 
--- Step 1: Drop the access_key constraint
-ALTER TABLE access
-DROP CONSTRAINT access_key;
+-- Step 1: Drop the unique indices
+DROP INDEX IF EXISTS access_key_no_workspace_project_idx;
+DROP INDEX IF EXISTS access_key_workspace_id_no_project_idx;
+DROP INDEX IF EXISTS access_key_workspace_id_project_id_idx;
 
 -- Step 2: Restore the original access_key constraint
 ALTER TABLE access
