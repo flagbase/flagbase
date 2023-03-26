@@ -56,6 +56,7 @@ export const Targeting = () => {
         targeting: TargetingResponse
         variations: VariationResponse[]
     }
+
     const revalidator = useRevalidator()
 
     const createRule = async (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => {
@@ -85,6 +86,7 @@ export const Targeting = () => {
                     }
                     return (
                         <>
+                            {console.log('targeting', targetingRules, targeting, variations)}
                             <Formik
                                 initialValues={{ ...targeting.attributes }}
                                 onSubmit={async (values) => await updateTargeting(targeting.attributes, values)}
@@ -138,18 +140,20 @@ export const Targeting = () => {
                                             </div>
                                             <div className="overflow-hidden bg-white shadow sm:rounded-md">
                                                 <div className="block hover:bg-gray-50 px-4 py-4 sm:px-6">
-                                                    <RolloutSlider
-                                                        data={values.fallthroughVariations}
-                                                        maxValue={100}
-                                                        onChange={(data) => {
-                                                            data.forEach((varation, i) =>
-                                                                setFieldValue(
-                                                                    `fallthroughVariations.${i}.weight`,
-                                                                    varation.weight
+                                                    {values.fallthroughVariations && (
+                                                        <RolloutSlider
+                                                            data={values.fallthroughVariations}
+                                                            maxValue={100}
+                                                            onChange={(data) => {
+                                                                data.forEach((varation, i) =>
+                                                                    setFieldValue(
+                                                                        `fallthroughVariations.${i}.weight`,
+                                                                        varation.weight
+                                                                    )
                                                                 )
-                                                            )
-                                                        }}
-                                                    />
+                                                            }}
+                                                        />
+                                                    )}
                                                     <Button
                                                         disabled={
                                                             objectsEqual(values, targeting?.attributes) ||
@@ -204,21 +208,23 @@ export const Targeting = () => {
                                             ))}
                                         </ul>
                                     ) : (
-                                        <div className='m-10'>
-                                        <EmptyState
-                                            title="No rules"
-                                            description="This flag has no targeting rules yet."
-                                            cta={
-                                                <Button
-                                                    className="py-2"
-                                                    type="submit"
-                                                    onClick={async () => await createRule(variations, targetingRules)}
-                                                    suffix={PlusCircleIcon}
-                                                >
-                                                    Create a rule
-                                                </Button>
-                                            }
-                                        />
+                                        <div className="m-10">
+                                            <EmptyState
+                                                title="No rules"
+                                                description="This flag has no targeting rules yet."
+                                                cta={
+                                                    <Button
+                                                        className="py-2"
+                                                        type="submit"
+                                                        onClick={async () =>
+                                                            await createRule(variations, targetingRules)
+                                                        }
+                                                        suffix={PlusCircleIcon}
+                                                    >
+                                                        Create a rule
+                                                    </Button>
+                                                }
+                                            />
                                         </div>
                                     )}
                                 </div>

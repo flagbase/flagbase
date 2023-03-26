@@ -71,11 +71,11 @@ const EditProject = () => {
 
     const deleteProject = () => {
         remove(projectKey)
-        navigate(-1)
+        navigate(`/${instanceKey}/workspaces/${workspaceKey}/projects`)
     }
 
     return (
-        <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
                 <EditEntityHeading heading="Project Settings" subheading={projectKey} />
                 <Notification
@@ -146,7 +146,7 @@ const EditProject = () => {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }
 

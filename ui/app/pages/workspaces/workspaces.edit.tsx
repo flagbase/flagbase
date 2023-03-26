@@ -29,7 +29,7 @@ export const EditWorkspace = () => {
         return <div>Loading...</div>
     }
     return (
-        <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
                 <EditEntityHeading heading="Workspace Settings" subheading={workspace?.attributes.key!} />
                 <Notification
@@ -100,6 +100,6 @@ export const EditWorkspace = () => {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

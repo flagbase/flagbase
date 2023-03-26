@@ -1,36 +1,22 @@
-import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Modal, Typography } from 'antd'
+import { Typography } from 'antd'
 import { Field, Form, Formik } from 'formik'
 import React, { Dispatch, SetStateAction } from 'react'
-import { useParams } from 'react-router-dom'
 import Button from '../../../components/button'
 import Input from '../../../components/input'
+import { TagInput } from '../../../components/input/tag-input'
 import { ModalLayout } from '../../../components/layout'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { deleteProject } from './api'
 import { useAddProject } from './projects'
 
 const { Title, Text } = Typography
-const { confirm } = Modal
 
 interface WorkspaceModal {
     visible: boolean
     setVisible(data: boolean): void
 }
 
-function confirmDeleteProject(workspaceName: string, url: string, workspaceKey: string, accessToken: string) {
-    confirm({
-        title: `Are you sure you want to delete ${workspaceName}?`,
-        icon: <ExclamationCircleOutlined />,
-        onOk() {
-            deleteProject(url, workspaceKey, accessToken)
-        },
-        onCancel() {},
-    })
-}
-
-const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateAction<boolean>> }> = ({
+const CreateProjectModal: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateAction<boolean>> }> = ({
     visible,
     setVisible,
 }: WorkspaceModal) => {
@@ -49,13 +35,13 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
                     initialValues={{
                         name: '',
                         description: '',
-                        tags: '',
+                        tags: [],
                     }}
                     onSubmit={async (values) => {
                         mutation.mutate({
                             name: values.name,
                             description: values.description,
-                            tags: values.tags.split(','),
+                            tags: values.tags,
                         })
                         setVisible(false)
                     }}
@@ -63,7 +49,7 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
                     <Form className="flex flex-col gap-3">
                         <Field component={Input} id="name" name="name" placeholder="Project name" />
                         <Field component={Input} id="description" name="description" placeholder="Description" />
-                        <Field component={Input} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                        <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
                         <Button className="mt-3 py-2 justify-center" type="submit" suffix={PlusCircleIcon}>
                             Add Project
                         </Button>
@@ -74,4 +60,4 @@ const CreateProject: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateA
     )
 }
 
-export { CreateProject, confirmDeleteProject }
+export { CreateProjectModal }

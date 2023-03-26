@@ -22,6 +22,7 @@ const generateColor = (key: string): string => {
 
 const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange }) => {
     const [weights, setWeights] = useState(data)
+    console.log('weights', weights)
     const [borderColor, setBorderColor] = useState('red')
 
     useEffect(() => {

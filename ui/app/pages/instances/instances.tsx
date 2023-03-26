@@ -144,16 +144,6 @@ const Instances: React.FC = () => {
                                 }}
                             />
                         )}
-                        {initialInstances.length > 0 && (
-                            <div className="flex flex-col-reverse md:flex-row gap-3 items-stretch pb-5">
-                                <Button onClick={() => setVisible(true)} type="button" suffix={PlusCircleIcon}>
-                                    Join instance
-                                </Button>
-                                <div className="flex-auto">
-                                    <Input onChange={(event) => setFilter(event.target.value)} placeholder="Search" />
-                                </div>
-                            </div>
-                        )}
                         {initialInstances && (
                             <StackedEntityList entities={transformInstancesToList(instances || initialInstances)} />
                         )}

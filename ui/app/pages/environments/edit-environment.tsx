@@ -105,7 +105,7 @@ export const EditEnvironment = () => {
     }
 
     return (
-        <main className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
+        <div className="mx-auto max-w-lg px-4 pt-10 pb-12 lg:pb-16">
             <div>
                 <EditEntityHeading heading="Environment Settings" subheading={environment.attributes.name} />
                 <Notification
@@ -176,6 +176,6 @@ export const EditEnvironment = () => {
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
     )
 }

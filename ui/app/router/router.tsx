@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Route, Navigate, createBrowserRouter, createRoutesFromElements } from 'react-router-dom'
 
 import { RouteParams } from './router.types'
@@ -36,6 +36,13 @@ import { EnvironmentDropdown } from '../pages/environments/environment-dropdown'
 import Button from '../../components/button'
 import { CreateVariation } from '../pages/variations/variations.modal'
 import VariationSettings from '../pages/variations/variation.settings'
+import { CreateFlag, ModalProps } from '../pages/flags/flags.modal'
+import { ButtonProps } from 'antd'
+import { PlusCircleIcon } from '@heroicons/react/20/solid'
+import { AddNewInstanceModal } from '../pages/instances/instances.modal'
+import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal'
+import { CreateProjectModal } from '../pages/projects/projects.modal'
+import { CreateSDKModal } from '../pages/sdks/sdks.modal'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SdkKey, VariationKey } = RouteParams
 
@@ -84,12 +91,38 @@ export const getVariationPath = ({
 
 export const queryClient = new QueryClient()
 
+const ModalWithButton = ({ buttonText, modal }: { buttonText: string; modal: React.FC<ModalProps> }) => {
+    const [visible, setVisible] = useState(false)
+
+    return (
+        <>
+            <Button onClick={() => setVisible(true)} className="py-2" type="button" suffix={PlusCircleIcon}>
+                {buttonText}
+            </Button>
+
+            {React.createElement(modal, {
+                visible: visible,
+                setVisible: setVisible,
+            })}
+        </>
+    )
+}
+
 export const newRouter = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<PageLayout />} errorElement={<Error />}>
             <Route path="/" element={<Navigate to="/instances" />} />
             <Route path="/instances" element={<PageHeadings />}>
-                <Route loader={instancesLoader(queryClient)} path="" element={<Instances />} />
+                <Route
+                    loader={instancesLoader(queryClient)}
+                    path=""
+                    element={<Instances />}
+                    handle={{
+                        rightContainer: () => (
+                            <ModalWithButton buttonText={'Join Instance'} modal={AddNewInstanceModal} />
+                        ),
+                    }}
+                />
             </Route>
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
                 <Route
@@ -97,6 +130,11 @@ export const newRouter = createBrowserRouter(
                     errorElement={<Error />}
                     path=""
                     element={<MainWorkspaces />}
+                    handle={{
+                        rightContainer: () => (
+                            <ModalWithButton buttonText={'Create Workspace'} modal={CreateWorkspaceModal} />
+                        ),
+                    }}
                 />
                 <Route path="settings" element={<EditInstance />} />
                 <Route path={`${WorkspaceKey}`}>
@@ -107,6 +145,11 @@ export const newRouter = createBrowserRouter(
                             loader={({ params }) => projectsLoader({ queryClient, params })}
                             path=""
                             element={<Projects />}
+                            handle={{
+                                rightContainer: () => (
+                                    <ModalWithButton buttonText={'Create Project'} modal={CreateProjectModal} />
+                                ),
+                            }}
                         />
 
                         <Route path={`${ProjectKey}`}>
@@ -117,6 +160,11 @@ export const newRouter = createBrowserRouter(
                                     path=""
                                     element={<Flags />}
                                     loader={({ params }) => flagsLoader({ queryClient, params })}
+                                    handle={{
+                                        rightContainer: () => (
+                                            <ModalWithButton buttonText={'Create Flag'} modal={CreateFlag} />
+                                        ),
+                                    }}
                                 />
                                 <Route path={`${FlagKey}`}>
                                     <Route
@@ -165,6 +213,11 @@ export const newRouter = createBrowserRouter(
                                             path=""
                                             element={<Sdks />}
                                             loader={({ params }) => sdkLoader({ queryClient, params })}
+                                            handle={{
+                                                rightContainer: () => (
+                                                    <ModalWithButton buttonText={'Create SDK'} modal={CreateSDKModal} />
+                                                ),
+                                            }}
                                         />
                                         <Route
                                             path={`${SdkKey}`}

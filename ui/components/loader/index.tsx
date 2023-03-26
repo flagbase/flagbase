@@ -10,7 +10,7 @@ export const Loader = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
     const sizeClass = buttonSizeClasses[size]
 
     return (
-        <main className="grid min-h-full place-items-center">
+        <div className="grid min-h-full place-items-center">
             <div role="status">
                 <svg
                     aria-hidden="true"
@@ -33,6 +33,6 @@ export const Loader = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
                 </svg>
                 <span className="sr-only">Loading...</span>
             </div>
-        </main>
+        </div>
     )
 }

@@ -8,6 +8,6 @@ A project is a structured way to organize and manage feature flags and user segm
 
 In summary, a project:
 
-    Represents a collection of feature flags and user segments.
-    Serves as an organizational unit for managing flags and segments within an application.
-    Can contain multiple environments for testing and deploying features across different stages of the development lifecycle.
+- Represents a collection of feature flags and user segments.
+- Serves as an organizational unit for managing flags and segments within an application.
+- Can contain multiple environments for testing and deploying features across different stages of the development lifecycle.

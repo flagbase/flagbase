@@ -33,6 +33,7 @@ import { useFlags } from '../../app/pages/flags/flags'
 import { Flag } from '../../app/pages/flags/api'
 import { useVariations } from '../../app/pages/variations/variations'
 import { useSDKs } from '../../app/pages/sdks/sdks'
+import { Footer } from './footer'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -304,10 +305,10 @@ const Header = () => {
     return (
         <header className="bg-gray-50 border-b border-gray-200">
             <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
-                <div className="flex items-center gap-x-12 mr-6">
+                <div className="flex items-center gap-x-12 mr-10">
                     <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
-                        <img className="h-8 w-auto" src={flag} alt="" />
+                        <img className="h-5 w-auto" src={flag} alt="" />
                     </Link>
                 </div>
                 <div className="flex lg:hidden">
@@ -656,10 +657,13 @@ export const PageHeadings = () => {
 
 const PageLayout: React.FC = () => {
     return (
-        <>
+        <div className="flex flex-col min-h-screen">
             <Header />
-            <Outlet />
-        </>
+            <main className="flex-grow">
+                <Outlet />
+            </main>
+            <Footer />
+        </div>
     )
 }
 
