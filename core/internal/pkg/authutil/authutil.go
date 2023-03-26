@@ -1,10 +1,13 @@
-package authv2
+package authutil
 
 import (
 	"core/internal/app/access/model"
+	accessmodel "core/internal/app/access/model"
 	"core/internal/pkg/httputil"
+	"core/internal/pkg/jwt"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
+	"encoding/json"
 	"reflect"
 )
 
@@ -36,4 +39,20 @@ func Authorize(
 	}
 
 	return a, nil
+}
+
+// getAccessFromToken retrieves access from access token (atk)
+func getAccessFromToken(atk rsc.Token) (*accessmodel.Access, error) {
+	var a accessmodel.Access
+
+	ma, err := jwt.Verify(atk)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(ma, &a); err != nil {
+		return nil, err
+	}
+
+	return &a, nil
 }

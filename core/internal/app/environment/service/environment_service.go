@@ -8,7 +8,7 @@ import (
 	sdkkeyrepo "core/internal/app/sdkkey/repository"
 	targetingrepo "core/internal/app/targeting/repository"
 	variationrepo "core/internal/app/variation/repository"
-	"core/internal/pkg/authv2"
+	"core/internal/pkg/authutil"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -47,7 +47,7 @@ func (s *Service) List(
 	defer cancel()
 
 	// Verify access is authorized
-	_, err := authv2.Authorize(s.Senv, atk)
+	_, err := authutil.Authorize(s.Senv, atk)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		return nil, &e
@@ -73,7 +73,7 @@ func (s *Service) Create(
 	defer cancel()
 
 	// Verify access is authorized
-	_, err := authv2.Authorize(s.Senv, atk)
+	_, err := authutil.Authorize(s.Senv, atk)
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		return nil, &e
