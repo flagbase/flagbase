@@ -1,9 +1,9 @@
 import React from 'react'
 import { Table as AntdTable, TableColumnProps, TableProps as AntdTableProps, TableColumnType } from 'antd'
 import styled from '@emotion/styled'
-import { PlusIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../empty-state'
 import Button from '../button/button'
+import { useNavigate } from 'react-router-dom'
 
 export type TableProps = {
     loading: boolean
@@ -12,8 +12,9 @@ export type TableProps = {
 } & AntdTableProps<Object>
 
 const StyledTable = styled(AntdTable)`
-    .ant-table-thead > tr > th {
-        background: repeat;
+    cursor: pointer;
+    && tbody > tr:hover > td {
+        background: #f1f5f9;
     }
 `
 
@@ -30,8 +31,23 @@ const Table: React.FC<TableProps> = ({
         />
     ),
 }) => {
+    const navigate = useNavigate()
     return (loading || dataSource?.length || 0) > 0 ? (
-        <StyledTable loading={loading} dataSource={dataSource} columns={columns}></StyledTable>
+        <StyledTable
+            loading={loading}
+            dataSource={dataSource}
+            columns={columns}
+            onRow={(record, rowIndex) => {
+                return {
+                    onClick: (event) => {
+                        const { href } = record
+                        if (href) {
+                            navigate(href)
+                        }
+                    },
+                }
+            }}
+        />
     ) : (
         emptyState
     )

@@ -147,6 +147,7 @@ export const newRouter = createBrowserRouter(
                                             handle={{
                                                 rightContainer: () => <EnvironmentDropdown />,
                                             }}
+                                            errorElement={<Error />}
                                         />
                                     </Route>
                                 </Route>

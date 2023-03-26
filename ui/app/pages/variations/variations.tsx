@@ -34,11 +34,6 @@ export const variationColumns = [
         dataIndex: 'tags',
         key: 'tags',
     },
-    {
-        title: 'Actions',
-        dataIndex: 'action',
-        key: 'action',
-    },
 ]
 
 export type Variation = {
@@ -74,21 +69,13 @@ const convertVariationsToTable = ({
             name: variation.attributes.name,
             description: variation.attributes.description,
             tags: variation.attributes.tags.map((tag) => <Tag key={tag}>{tag}</Tag>),
-            action: (
-                <Link
-                    to={getVariationPath({
-                        instanceKey,
-                        workspaceKey,
-                        projectKey,
-                        flagKey,
-                        variationKey: variation.attributes.key,
-                    })}
-                >
-                    <Button secondary className="py-2">
-                        Modify
-                    </Button>
-                </Link>
-            ),
+            href: getVariationPath({
+                instanceKey,
+                workspaceKey,
+                projectKey,
+                flagKey,
+                variationKey: variation.attributes.key,
+            }),
         }
     })
 }

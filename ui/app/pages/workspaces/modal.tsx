@@ -1,7 +1,6 @@
 import { ExclamationCircleOutlined } from '@ant-design/icons'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Modal, notification, Typography } from 'antd'
-import { Content } from 'antd/lib/layout/layout'
 import { Field, Form, Formik } from 'formik'
 import React, { useEffect } from 'react'
 import Button from '../../../components/button'
@@ -52,38 +51,36 @@ const CreateWorkspace = ({ visible, setVisible, instance }: WorkspaceModal) => {
 
     return (
         <ModalLayout open={visible} onClose={() => setVisible(false)}>
-            <Content>
-                <div className="text-center">
-                    <Title level={3}>Add a new workspace</Title>
-                    <Text>Connect to a Flagbase workspace to begin managing your flags</Text>
-                </div>
-                <div className="flex flex-col gap-3 mt-3">
-                    <Formik
-                        initialValues={{
-                            name: '',
-                            description: '',
-                            tags: [],
-                        }}
-                        onSubmit={async (values) => {
-                            addWorkspace({
-                                name: values.name,
-                                description: values.description,
-                                tags: values.tags,
-                            })
-                            setVisible(false)
-                        }}
-                    >
-                        <Form className="flex flex-col gap-3">
-                            <Field component={Input} id="name" name="name" placeholder="Workspace name" />
-                            <Field component={Input} id="description" name="description" placeholder="Description" />
-                            <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
-                            <Button className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} type="submit">
-                                Add Workspace
-                            </Button>
-                        </Form>
-                    </Formik>
-                </div>
-            </Content>
+            <div className="text-center">
+                <Title level={3}>Add a new workspace</Title>
+                <Text>Connect to a Flagbase workspace to begin managing your flags</Text>
+            </div>
+            <div className="flex flex-col gap-3 mt-3">
+                <Formik
+                    initialValues={{
+                        name: '',
+                        description: '',
+                        tags: [],
+                    }}
+                    onSubmit={async (values) => {
+                        addWorkspace({
+                            name: values.name,
+                            description: values.description,
+                            tags: values.tags,
+                        })
+                        setVisible(false)
+                    }}
+                >
+                    <Form className="flex flex-col gap-3">
+                        <Field component={Input} id="name" name="name" placeholder="Workspace name" />
+                        <Field component={Input} id="description" name="description" placeholder="Description" />
+                        <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
+                        <Button className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} type="submit">
+                            Add Workspace
+                        </Button>
+                    </Form>
+                </Formik>
+            </div>
         </ModalLayout>
     )
 }

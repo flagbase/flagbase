@@ -40,7 +40,7 @@ export const convertProjects = ({
             return {
                 id: index,
                 title: project.attributes.name,
-                href: `/flags/${instanceKey}/${project?.id}`,
+                href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`,
                 name: <Text>{project.attributes.name}</Text>,
                 description: <Text>{project.attributes.description}</Text>,
                 tags: (
@@ -51,13 +51,6 @@ export const convertProjects = ({
                             </Tag>
                         ))}
                     </div>
-                ),
-                action: (
-                    <Link to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${project.attributes.key}/flags`}>
-                        <Button secondary className="py-2">
-                            Connect
-                        </Button>
-                    </Link>
                 ),
                 key: project.attributes.key,
             }

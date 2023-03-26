@@ -23,9 +23,4 @@ export const flagsColumn = [
         dataIndex: 'tags',
         key: 'tags',
     },
-    {
-        title: 'Actions',
-        dataIndex: 'action',
-        key: 'action',
-    },
 ]

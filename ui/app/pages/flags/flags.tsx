@@ -46,7 +46,7 @@ const FlagLink = ({ flag }: { flag: Flag }) => {
         </Link>
     )
 }
-const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
+const convertFlags = ({ flags, environment }: { flags: Flag[]; environment: Environment }) => {
     if (!flags) {
         return []
     }
@@ -55,7 +55,7 @@ const convertFlags = ({ flags, filter }: { flags: Flag[]; filter: string }) => {
         return {
             id: index,
             title: flag.attributes.name,
-            href: `/`,
+            href: `${flag.attributes.key}/environments/${environment?.attributes.key}`,
             name: <Text>{flag.attributes.name}</Text>,
             description: <Text>{flag.attributes.description}</Text>,
             tags: (
@@ -162,7 +162,6 @@ export const useAddFlag = () => {
 
 export const useFlags = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
-
     const query = useQuery<Flag[]>(
         getFlagsKey({
             instanceKey,
@@ -184,6 +183,10 @@ export const useFlags = () => {
 const Flags: React.FC = () => {
     const [visible, setVisible] = useState(false)
     const { flags: prefetchedFlags } = useLoaderData() as { flags: Flag[] }
+    const { data: environmentKey } = useActiveEnvironment()
+    const { data: environments } = useEnvironments()
+    const environment = environments?.find((env) => env.attributes.key === environmentKey)
+
     const { data: flags } = useFlags()
     return (
         <Suspense fallback={<Loader />}>
@@ -205,7 +208,7 @@ const Flags: React.FC = () => {
 
                         <Table
                             loading={false}
-                            dataSource={convertFlags({ flags, filter: '' })}
+                            dataSource={convertFlags({ flags, environment })}
                             columns={flagsColumn}
                             emptyState={
                                 <EmptyState
