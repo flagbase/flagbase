@@ -7,6 +7,7 @@ import (
 	srv "core/internal/infra/server"
 	"core/internal/pkg/cmdutil"
 	cons "core/internal/pkg/constants"
+	"core/internal/pkg/httputil"
 	rsc "core/internal/pkg/resource"
 	"log"
 
@@ -20,6 +21,8 @@ const (
 	SecretFlag string = "secret"
 	// TypeFlag Access type flag
 	TypeFlag string = "type"
+	// ScopeFlag Access scope flag
+	ScopeFlag string = "scope"
 )
 
 // AccessConfig server config
@@ -62,6 +65,11 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 			Usage: "Access type [root > admin > user > service]",
 			Value: rsc.AccessRoot.String(),
 		},
+		&cli.StringFlag{
+			Name:  ScopeFlag,
+			Usage: "Access scope [instance, workspace, project]",
+			Value: rsc.AccessScopeInstance.String(),
+		},
 	}, cmdutil.GlobalFlags...),
 	Action: func(ctx *cli.Context) error {
 		senv, err := srv.Setup(srv.Config{
@@ -79,13 +87,16 @@ var ManageAccessCreateCommand cli.Command = cli.Command{
 
 		aservice := accessservice.NewService(senv)
 
-		if _, err := aservice.Create(senv, accessmodel.Access{
+		atk := httputil.SecureOverideATK(aservice.Senv)
+
+		if _, err := aservice.Create(atk, accessmodel.Access{
 			Key:       rsc.Key(ctx.String(KeyFlag)),
 			Secret:    ctx.String(SecretFlag),
 			Type:      ctx.String(TypeFlag),
 			Tags:      []string{},
 			ExpiresAt: int64(cons.MaxUnixTime),
-		}); err.IsEmpty() {
+			Scope:     ctx.String(ScopeFlag),
+		}, accessmodel.RootArgs{}); err.IsEmpty() {
 			// TODO: add error reasons
 			senv.Log.Error().Msg("Unable to create access")
 		}

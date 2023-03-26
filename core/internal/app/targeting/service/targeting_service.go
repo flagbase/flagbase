@@ -4,7 +4,7 @@ import (
 	"context"
 	targetingmodel "core/internal/app/targeting/model"
 	targetingrepo "core/internal/app/targeting/repository"
-	"core/internal/pkg/auth"
+	"core/internal/pkg/authutil"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -35,26 +35,16 @@ func (s *Service) Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
+	// Verify access is authorized
+	_, err := authutil.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
+		return nil, &e
 	}
 
 	r, err := s.TargetingRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
-	}
-
-	if e.IsEmpty() {
-		if err := auth.AddPolicy(
-			s.Senv,
-			atk,
-			r.ID,
-			rsc.Targeting,
-			rsc.AccessAdmin,
-		); err != nil {
-			e.Append(cons.ErrorAuth, err.Error())
-		}
 	}
 
 	return r, &e
@@ -75,16 +65,6 @@ func (s *Service) Get(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Targeting,
-		rsc.AccessService,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
-	}
-
 	return r, &e
 }
 
@@ -103,17 +83,6 @@ func (s *Service) Update(
 	r, err := s.TargetingRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Targeting,
-		rsc.AccessUser,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -139,23 +108,6 @@ func (s *Service) Delete(
 	var e res.Errors
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-
-	r, err := s.TargetingRepo.Get(ctx, a)
-	if err != nil {
-		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Targeting,
-		rsc.AccessAdmin,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
-	}
 
 	if err := s.TargetingRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())

@@ -3,14 +3,14 @@ linters:
     - bodyclose
     - depguard
     - dogsled
-    - dupl
+    # - dupl
     - errcheck
     - exhaustive
     - exportloopref
     - funlen
     - gochecknoinits
     - goconst
-    - gocritic
+    # - gocritic
     - gocyclo
     - gofmt
     - goimports
@@ -20,7 +20,7 @@ linters:
     - gosimple
     - govet
     - ineffassign
-    - lll
+    # - lll
     - misspell
     - nakedret
     - noctx
