@@ -4,12 +4,13 @@ import (
 	"context"
 	workspacemodel "core/internal/app/workspace/model"
 	workspacerepo "core/internal/app/workspace/repository"
-	"core/internal/pkg/auth"
+	"core/internal/pkg/authv2"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
 	"core/pkg/patch"
 	res "core/pkg/response"
+	"fmt"
 )
 
 type Service struct {
@@ -34,9 +35,11 @@ func (s *Service) List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessRoot); err != nil {
+	// Verify access is authorized
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
+		return nil, &e
 	}
 
 	r, err := s.WorkspaceRepo.List(ctx, a)
@@ -44,7 +47,27 @@ func (s *Service) List(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	return r, &e
+	// Enforce access requirements
+	if acc.Type != rsc.AccessRoot.String() {
+		// only list scoped workspaces
+		for _, _r := range r {
+			if _r.Key.String() != acc.WorkspaceKey {
+				_r.ID = "redacted"
+			}
+		}
+	}
+	// otherwise
+	// * root should see all workspaces
+
+	// Filter eligible items
+	filtered := make([]*workspacemodel.Workspace, 0)
+	for _, _r := range r {
+		if _r.ID != "redacted" {
+			filtered = append(filtered, _r)
+		}
+	}
+
+	return filtered, &e
 }
 
 // Create creates a new resource instance given the resource instance
@@ -58,27 +81,22 @@ func (s *Service) Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessRoot); err != nil {
+	// Verify access is authorized
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
+		return nil, &e
+	}
+
+	if acc.Type != rsc.AccessRoot.String() {
+		// root is only allowed to a create workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to create a workspace", acc.Type))
 		cancel()
 	}
 
 	r, err := s.WorkspaceRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
-	}
-
-	// add policy for requesting user, after resource creation
-	if e.IsEmpty() {
-		if err := auth.AddPolicy(
-			s.Senv,
-			atk,
-			r.ID,
-			rsc.Workspace,
-			rsc.AccessAdmin,
-		); err != nil {
-			e.Append(cons.ErrorAuth, err.Error())
-		}
 	}
 
 	return r, &e
@@ -94,20 +112,26 @@ func (s *Service) Get(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Verify access is authorized
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
+		return nil, &e
+	}
+
 	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Workspace,
-		rsc.AccessService,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
+	// Enforce access requirements
+	if acc.Type != rsc.AccessRoot.String() && r.ID != acc.WorkspaceKey {
+		// all access types are scoped to a workspace, unless it's root
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to retrieve workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		cancel()
 	}
+	// otherwise
+	// * show if root with instance scope
 
 	return r, &e
 }
@@ -124,22 +148,31 @@ func (s *Service) Update(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Verify access is authorized
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
+		return nil, &e
+	}
+
 	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Workspace,
-		rsc.AccessUser,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
+	// Enforce access requirements
+	if acc.Type != rsc.AccessRoot.String() && r.ID != acc.WorkspaceKey {
+		// all access types are scoped to a workspace, unless it's root
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to update workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		cancel()
+	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
+		// user and service access are not allowed to update the workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to update workspaces", acc.Type))
 		cancel()
 	}
+	// otherwise
+	// * update if root with instance scope
 
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
@@ -164,22 +197,33 @@ func (s *Service) Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	// Verify access is authorized
+	acc, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
+		e.Append(cons.ErrorAuth, err.Error())
+		return &e
+	}
+
 	r, err := s.WorkspaceRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
 		cancel()
 	}
 
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Workspace,
-		rsc.AccessAdmin,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
+	// Enforce access requirements
+	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.Key.String() {
+		// admin access scoped to a workspace, is not allowed to delete workspace outside its scope
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to delete workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
+		// admin access scoped to project, is not allowed to delete any workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to project %s is unauthorized to delete workspace", acc.Type, acc.ProjectKey))
+	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
+		// user and service access are not allowed to update the workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to delete workspaces", acc.Type))
 		cancel()
 	}
+	// otherwise
+	// * update if root with instance scope
 
 	if err := s.WorkspaceRepo.Delete(ctx, a); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
