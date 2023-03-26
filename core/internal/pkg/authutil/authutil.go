@@ -18,7 +18,6 @@ func Authorize(
 	senv *srvenv.Env,
 	atk rsc.Token,
 ) (*accessmodel.Access, error) {
-
 	// bypass auth for internal operations using secure runtime hash
 	if reflect.DeepEqual(
 		atk,
