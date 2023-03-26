@@ -4,7 +4,7 @@ import (
 	"context"
 	traitmodel "core/internal/app/trait/model"
 	traitrepo "core/internal/app/trait/repository"
-	"core/internal/pkg/auth"
+	"core/internal/pkg/authv2"
 	cons "core/internal/pkg/constants"
 	rsc "core/internal/pkg/resource"
 	"core/internal/pkg/srvenv"
@@ -34,9 +34,11 @@ func (s *Service) List(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessService); err != nil {
+	// Verify access is authorized
+	_, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
+		return nil, &e
 	}
 
 	r, err := s.TraitRepo.List(ctx, a)
@@ -58,26 +60,16 @@ func (s *Service) Create(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if err := auth.Authorize(s.Senv, atk, rsc.AccessUser); err != nil {
+	// Verify access is authorized
+	_, err := authv2.Authorize(s.Senv, atk)
+	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
-		cancel()
+		return nil, &e
 	}
 
 	r, err := s.TraitRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
-	}
-
-	if e.IsEmpty() {
-		if err := auth.AddPolicy(
-			s.Senv,
-			atk,
-			r.ID,
-			rsc.Trait,
-			rsc.AccessAdmin,
-		); err != nil {
-			e.Append(cons.ErrorAuth, err.Error())
-		}
 	}
 
 	return r, &e
@@ -98,16 +90,6 @@ func (s *Service) Get(
 		e.Append(cons.ErrorNotFound, err.Error())
 	}
 
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Trait,
-		rsc.AccessService,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
-	}
-
 	return r, &e
 }
 
@@ -126,17 +108,6 @@ func (s *Service) Update(
 	r, err := s.TraitRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Trait,
-		rsc.AccessUser,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
@@ -163,21 +134,9 @@ func (s *Service) Delete(
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := s.TraitRepo.Get(ctx, a)
+	_, err := s.TraitRepo.Get(ctx, a)
 	if err != nil {
 		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
-	// authorize operation
-	if err := auth.Enforce(
-		s.Senv,
-		atk,
-		r.ID,
-		rsc.Trait,
-		rsc.AccessAdmin,
-	); err != nil {
-		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
 	}
 
