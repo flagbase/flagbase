@@ -119,19 +119,19 @@ func (s *Service) Get(
 		return nil, &e
 	}
 
-	r, err := s.WorkspaceRepo.Get(ctx, a)
-	if err != nil {
-		e.Append(cons.ErrorNotFound, err.Error())
-	}
-
 	// Enforce access requirements
-	if acc.Type != rsc.AccessRoot.String() && r.ID != acc.WorkspaceKey {
+	if acc.Type != rsc.AccessRoot.String() && a.WorkspaceKey.String() != acc.WorkspaceKey {
 		// all access types are scoped to a workspace, unless it's root
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to retrieve workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 		cancel()
 	}
 	// otherwise
 	// * show if root with instance scope
+
+	r, err := s.WorkspaceRepo.Get(ctx, a)
+	if err != nil {
+		e.Append(cons.ErrorNotFound, err.Error())
+	}
 
 	return r, &e
 }
@@ -155,14 +155,8 @@ func (s *Service) Update(
 		return nil, &e
 	}
 
-	r, err := s.WorkspaceRepo.Get(ctx, a)
-	if err != nil {
-		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
 	// Enforce access requirements
-	if acc.Type != rsc.AccessRoot.String() && r.ID != acc.WorkspaceKey {
+	if acc.Type != rsc.AccessRoot.String() && a.WorkspaceKey.String() != acc.WorkspaceKey {
 		// all access types are scoped to a workspace, unless it's root
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to update workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 		cancel()
@@ -173,6 +167,12 @@ func (s *Service) Update(
 	}
 	// otherwise
 	// * update if root with instance scope
+
+	r, err := s.WorkspaceRepo.Get(ctx, a)
+	if err != nil {
+		e.Append(cons.ErrorNotFound, err.Error())
+		cancel()
+	}
 
 	if err := patch.Transform(r, patchDoc, &o); err != nil {
 		e.Append(cons.ErrorInternal, err.Error())
@@ -204,14 +204,8 @@ func (s *Service) Delete(
 		return &e
 	}
 
-	r, err := s.WorkspaceRepo.Get(ctx, a)
-	if err != nil {
-		e.Append(cons.ErrorNotFound, err.Error())
-		cancel()
-	}
-
 	// Enforce access requirements
-	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.Key.String() {
+	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != a.WorkspaceKey.String() {
 		// admin access scoped to a workspace, is not allowed to delete workspace outside its scope
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to delete workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
