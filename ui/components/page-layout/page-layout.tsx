@@ -74,8 +74,8 @@ const MobileDropdown = ({
                         {children.map((item) => (
                             <Disclosure.Button
                                 key={item.name}
-                                as="a"
-                                href={item.href}
+                                as={Link}
+                                to={item.href}
                                 className="block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                             >
                                 {item.name}
@@ -229,17 +229,24 @@ const getFlagDropdown = (
 const MobileNavigation = ({
     mobileMenuOpen,
     setMobileMenuOpen,
-    instances,
-    workspaces,
-    projects,
 }: {
     mobileMenuOpen: boolean
     setMobileMenuOpen: any
-    instances?: Instance[]
-    workspaces?: Workspace[]
-    projects?: Project[]
 }) => {
     const { instanceKey, workspaceKey, projectKey, flagKey } = useFlagbaseParams()
+
+    const { data: instances } = useInstances()
+    const { data: workspaces } = useWorkspaces(instanceKey)
+    const { data: projects } = useProjects()
+    const { data: environments } = useEnvironments()
+    const { data: flags } = useFlags()
+    const { data: activeEnvironmentKey } = useActiveEnvironment()
+
+    const activeInstance = instances?.find((instance) => instance.key === instanceKey)
+    const activeWorkspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
+    const activeProject = projects?.find((project) => project.attributes.key === projectKey)
+    const activeEnvironment = environments?.find((environment) => environment.attributes.key === activeEnvironmentKey)
+    const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey)
 
     return (
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -273,8 +280,24 @@ const MobileNavigation = ({
                                 </MobileDropdown>
                             )}
                             {projects && (
-                                <MobileDropdown name="Workspaces" description={workspaceDescription} href="/">
+                                <MobileDropdown name="Projects" description={projectsDescription} href="/">
                                     {getProjectDropdown(projects, workspaceKey, instanceKey)}
+                                </MobileDropdown>
+                            )}
+                            {environments && (
+                                <MobileDropdown name="Environments" description={environmentsDescription} href="/">
+                                    {getEnvironmentDropdown(environments, instanceKey, workspaceKey, projectKey)}
+                                </MobileDropdown>
+                            )}
+                            {flags && (
+                                <MobileDropdown name="Flags" description={flagsDescription} href="/">
+                                    {getFlagDropdown(
+                                        flags,
+                                        instanceKey,
+                                        workspaceKey,
+                                        activeEnvironmentKey,
+                                        projectKey
+                                    )}
                                 </MobileDropdown>
                             )}
                         </div>
@@ -304,7 +327,7 @@ const Header = () => {
 
     return (
         <header className="bg-gray-50 border-b border-gray-200">
-            <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 lg:px-8" aria-label="Global">
+            <nav className="mx-auto flex max-w-7xl items-center justify-between py-4 px-4 lg:px-8" aria-label="Global">
                 <div className="flex items-center gap-x-12 mr-10">
                     <Link to="/" className="-m-1.5 p-1.5">
                         <span className="sr-only">Flagbase</span>
