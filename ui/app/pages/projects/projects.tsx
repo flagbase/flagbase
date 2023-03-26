@@ -90,7 +90,8 @@ export const useAddProject = (instanceKey: string, workspaceKey: string) => {
     return mutation
 }
 
-export const useProjects = (instanceKey: string | undefined, workspaceKey: string | undefined, options?: any) => {
+export const useProjects = (options?: any) => {
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
     const query = useQuery<Project[]>(['projects', instanceKey, workspaceKey], {
         ...options,
         queryFn: async () => {
@@ -109,7 +110,7 @@ const Projects = () => {
     const { projects: prefetchedProjects } = useLoaderData() as { projects: Project[] }
     const { instanceKey, workspaceKey } = useFlagbaseParams()
 
-    const { data: projects } = useProjects(instanceKey, workspaceKey)
+    const { data: projects } = useProjects()
 
     return (
         <Suspense fallback={<Loader />}>

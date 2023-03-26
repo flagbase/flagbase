@@ -1,16 +1,17 @@
 import { useParams } from 'react-router-dom'
 
 export type FlagbaseParams = {
-    instanceKey: string | undefined
-    workspaceKey: string | undefined
-    projectKey: string | undefined
-    flagKey: string | undefined
-    environmentKey: string | undefined
-    sdkKey: string | undefined
-    ruleKey: string | undefined
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+    environmentKey: string
+    sdkKey: string
+    ruleKey: string
+    variationKey: string
 }
 
 export const useFlagbaseParams = () => {
-    const params = useParams() as FlagbaseParams
+    const params = useParams<FlagbaseParams>()
     return params
 }

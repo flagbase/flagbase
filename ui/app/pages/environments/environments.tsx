@@ -31,25 +31,15 @@ export const getEnvironmentKey = ({
 }) => {
     return ['environments', instanceKey, workspaceKey, projectKey]
 }
-export const useEnvironments = ({
-    instanceKey,
-    workspaceKey,
-    projectKey,
-    options,
-}: {
-    instanceKey: string
-    workspaceKey: string
-    projectKey: string
-    options?: any
-}) => {
+export const useEnvironments = () => {
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const query = useQuery<Environment[]>(
         getEnvironmentKey({
-            instanceKey,
-            workspaceKey,
-            projectKey,
+            instanceKey: instanceKey!,
+            workspaceKey: workspaceKey!,
+            projectKey: projectKey!,
         }),
         {
-            ...options,
             queryFn: async () => {
                 await configureAxios(instanceKey!)
                 return fetchEnvironments(workspaceKey!, projectKey!)
@@ -62,7 +52,7 @@ export const useEnvironments = ({
 }
 
 const Environments = () => {
-    const { environments: prefetchedEnvironments } = useLoaderData() as Environment
+    const { environments: prefetchedEnvironments } = useLoaderData() as { environments: Environment[] }
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const convertEnvironmentsToList: StackedEntityListProps = (environments: Environment[]) => {
         return environments.map((environment) => {

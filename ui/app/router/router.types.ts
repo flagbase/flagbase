@@ -8,4 +8,5 @@ export enum RouteParams {
     SegmentKey = ':segmentKey',
     IdentityKey = ':identityKey',
     TraitKey = ':traitKey',
+    VariationKey = ':variationKey',
 }

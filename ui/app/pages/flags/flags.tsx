@@ -11,7 +11,8 @@ import Text from '../../../components/text/text'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getFlagsKey } from '../../router/loaders'
-import { Environment, useEnvironments } from '../projects/environments'
+import { useActiveEnvironment } from '../environments/environment-dropdown'
+import { Environment, useEnvironments } from '../environments/environments'
 import { createFlag, deleteFlag, fetchFlags, Flag, FlagCreateBody, updateFlag } from './api'
 import { flagConstants, flagsColumn } from './constants'
 import { CreateFlag } from './flags.modal'
@@ -29,30 +30,16 @@ export const useChangeDefaultEnvironment = () => {
     return mutation
 }
 
-export const useDefaultEnvironment = () => {
-    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
-    const { data: environments } = useEnvironments({
-        instanceKey: instanceKey!,
-        projectKey: projectKey!,
-        workspaceKey: workspaceKey!,
-    })
-    const query = useQuery(['defaultEnvironment'], {
-        queryFn: async () => {
-            return environments?.[0]
-        },
-        enabled: !!environments,
-    })
-    return query
-}
-
 const FlagLink = ({ flag }: { flag: Flag }) => {
-    const { data: environment, isLoading } = useDefaultEnvironment()
+    const { data: environmentKey, isLoading } = useActiveEnvironment()
+    const { data: environments } = useEnvironments()
+    const environment = environments?.find((env) => env.attributes.key === environmentKey)
 
     if (isLoading) {
         return <Loader />
     }
     return (
-        <Link to={`environments/${environment?.attributes.key}/${flag.attributes.key}`}>
+        <Link to={`${flag.attributes.key}/environments/${environment?.attributes.key}`}>
             <Button secondary className="py-2">
                 Modify
             </Button>

@@ -10,6 +10,18 @@ import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
 import RolloutSlider from '../../../components/rollout-slider'
 
+const options = [
+    { name: 'Equal', value: 'equal', negate: false },
+    { name: 'Not Equal', value: 'equal', negate: true },
+    { name: 'Greater Than', value: 'greater_than', negate: false },
+    { name: 'Less Than or Equal', value: 'greater_than', negate: true },
+    { name: 'Greater Than or Equal', value: 'greater_than_or_equal', negate: false },
+    { name: 'Less Than', value: 'greater_than_or_equal', negate: true },
+    { name: 'Contains', value: 'contains', negate: false },
+    { name: 'Not Contains', value: 'contains', negate: true },
+    { name: 'Regex', value: 'regex', negate: false },
+    { name: 'Not Regex', value: 'regex', negate: true },
+]
 const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     const revalidator = useRevalidator()
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
@@ -35,7 +47,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             <div className="flex gap-3 items-center mb-4">
                                 <code className="text-xl font-bold uppercase">if</code>
                                 <Field component={Input} name="traitKey" label="Trait Key" />
-                                <Field component={Select} name="operator" label="Operator" />
+                                <Field component={Select} options={options} name="operator" label="Operator" />
                                 <Field component={Input} name="traitValue" label="Trait Value" />
                             </div>
                             <div className="flex gap-5 items-center mb-4">

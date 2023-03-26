@@ -1,12 +1,23 @@
 import React from 'react'
+import { classNames } from '../../helpers'
+
+const buttonSizeClasses = {
+    small: 'w-10 h-10',
+    large: 'w-20 h-20',
+}
 
 export const Loader = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
+    const sizeClass = buttonSizeClasses[size]
+
     return (
         <main className="grid min-h-full place-items-center">
             <div role="status">
                 <svg
                     aria-hidden="true"
-                    className="w-20 h-20 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+                    className={classNames(
+                        'mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600',
+                        sizeClass || ''
+                    )}
                     viewBox="0 0 100 101"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"

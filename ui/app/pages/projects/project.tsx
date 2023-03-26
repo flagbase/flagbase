@@ -4,7 +4,7 @@ import { useProjects } from './projects'
 
 export function Project() {
     const { instanceKey, projectKey, workspaceKey } = useParams()
-    const { data: projects } = useProjects(instanceKey, workspaceKey)
+    const { data: projects } = useProjects()
     const project = projects?.find((project) => project.attributes.key === projectKey?.toLocaleLowerCase())
 
     return (

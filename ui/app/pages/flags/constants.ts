@@ -9,6 +9,11 @@ export const flagsColumn = [
         key: 'name',
     },
     {
+        title: 'Key',
+        dataIndex: 'key',
+        key: 'key',
+    },
+    {
         title: 'Description',
         dataIndex: 'description',
         key: 'description',

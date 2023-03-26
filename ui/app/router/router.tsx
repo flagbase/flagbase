@@ -20,20 +20,24 @@ import {
 } from './loaders'
 import { QueryClient } from 'react-query'
 import MainWorkspaces from '../pages/workspaces/workspaces.main'
-import Environments from '../pages/projects/environments'
+import Environments from '../pages/environments/environments'
 import { Error } from '../pages/error'
 import { Project } from '../pages/projects/project'
 import { EditInstance } from '../pages/instances/instances.settings'
 import { EditWorkspace } from '../pages/workspaces/workspaces.edit'
 import Instances from '../pages/instances/instances'
 import { Sdks } from '../pages/sdks/sdks'
-import { EditEnvironment } from '../pages/projects/edit-environment'
+import { EditEnvironment } from '../pages/environments/edit-environment'
 import { SdkSettings } from '../pages/sdks/sdk.settings'
-import { Targeting } from '../pages/targeting/targeting';
-import Variations from '../pages/flags/variations'
+import { Targeting } from '../pages/targeting/targeting'
+import Variations from '../pages/variations/variations'
 import { FlagSettings } from '../pages/flags/flags.edit'
+import { EnvironmentDropdown } from '../pages/environments/environment-dropdown'
+import Button from '../../components/button'
+import { CreateVariation } from '../pages/variations/variations.modal'
+import VariationSettings from '../pages/variations/variation.settings'
 
-const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SegmentKey, SdkKey } = RouteParams
+const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SdkKey, VariationKey } = RouteParams
 
 export const getWorkspacesPath = (instanceKey: string) => `/${instanceKey}/workspaces`
 export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
@@ -43,14 +47,40 @@ export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects`
 
 export const getProjectPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
-    `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}`
+    `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`
 
 export const getEnvironmentPath = (
     instanceKey: string,
     workspaceKey: string,
     projectKey: string,
     environmentKey: string
-) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}`
+) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`
+
+export const getFlagPath = (
+    instanceKey: string,
+    workspaceKey: string,
+    projectKey: string,
+    environmentKey: string,
+    flagKey: string
+) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/environments/${environmentKey}`
+
+export const getFlagsPath = (instanceKey: string, workspaceKey: string, projectKey: string) =>
+    `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`
+
+export const getVariationPath = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    flagKey,
+    variationKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+    flagKey: string
+    variationKey: string
+}) =>
+    `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`
 
 export const queryClient = new QueryClient()
 
@@ -95,19 +125,30 @@ export const newRouter = createBrowserRouter(
                                         loader={({ params }) => flagsLoader({ queryClient, params })}
                                     />
                                 </Route>
-                                <Route path={`environments/${EnvironmentKey}`}>
-                                    <Route
-                                        path={FlagKey}
-                                        element={<Targeting />}
-                                        loader={({ params }) => targetingLoader({ queryClient, params })}
-                                    />
-                                </Route>
                                 <Route path={FlagKey}>
-                                    <Route
-                                        path="variations"
-                                        loader={({ params }) => variationsLoader({ queryClient, params })}
-                                        element={<Variations />}
-                                    />
+                                    <Route path="variations">
+                                        <Route
+                                            path=""
+                                            loader={({ params }) => variationsLoader({ queryClient, params })}
+                                            element={<Variations />}
+                                            handle={{
+                                                rightContainer: () => <CreateVariation />,
+                                            }}
+                                        />
+                                        <Route path={VariationKey}>
+                                            <Route path="settings" element={<VariationSettings />} />
+                                        </Route>
+                                    </Route>
+                                    <Route path={`environments/${EnvironmentKey}`}>
+                                        <Route
+                                            path={''}
+                                            element={<Targeting />}
+                                            loader={({ params }) => targetingLoader({ queryClient, params })}
+                                            handle={{
+                                                rightContainer: () => <EnvironmentDropdown />,
+                                            }}
+                                        />
+                                    </Route>
                                 </Route>
                             </Route>
                             <Route path="environments">

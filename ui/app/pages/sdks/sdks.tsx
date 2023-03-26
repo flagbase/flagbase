@@ -170,24 +170,17 @@ export const Sdks = () => {
                                     title="No SDKs found"
                                     description="This environment does not have any SDKs yet."
                                     cta={
-                                        <Button className="py-2" suffix={PlusCircleIcon}>
+                                        <Button
+                                            onClick={() => setShowModal(true)}
+                                            className="py-2"
+                                            suffix={PlusCircleIcon}
+                                        >
                                             Create Sdk
                                         </Button>
                                     }
                                 />
                             }
                         />
-                        {sdks.length === 0 && (
-                            <EmptyState
-                                title="There are no SDKs yet"
-                                description="Oh no"
-                                cta={
-                                    <Button onClick={() => setShowModal(true)} className="py-2">
-                                        Create SDK
-                                    </Button>
-                                }
-                            />
-                        )}
                     </div>
                 )}
             </Await>
