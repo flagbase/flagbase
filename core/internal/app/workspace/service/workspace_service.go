@@ -88,9 +88,10 @@ func (s *Service) Create(
 		return nil, &e
 	}
 
+	// Enforce access requirements
 	if acc.Type != rsc.AccessRoot.String() {
 		// root is only allowed to a create workspace
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to create a workspace", acc.Type))
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is unauthorized to create a workspace", acc.Type))
 		cancel()
 	}
 
@@ -122,7 +123,7 @@ func (s *Service) Get(
 	// Enforce access requirements
 	if acc.Type != rsc.AccessRoot.String() && a.WorkspaceKey.String() != acc.WorkspaceKey {
 		// all access types are scoped to a workspace, unless it's root
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to retrieve workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is unauthorized to retrieve workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 		cancel()
 	}
 	// otherwise
@@ -158,11 +159,11 @@ func (s *Service) Update(
 	// Enforce access requirements
 	if acc.Type != rsc.AccessRoot.String() && a.WorkspaceKey.String() != acc.WorkspaceKey {
 		// all access types are scoped to a workspace, unless it's root
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to update workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is unauthorized to update workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 		cancel()
 	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
-		// user and service access are not allowed to update the workspace
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to update workspaces", acc.Type))
+		// user and service access are unauthorized to update the workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is unauthorized to update workspaces", acc.Type))
 		cancel()
 	}
 	// otherwise
@@ -206,14 +207,14 @@ func (s *Service) Delete(
 
 	// Enforce access requirements
 	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != a.WorkspaceKey.String() {
-		// admin access scoped to a workspace, is not allowed to delete workspace outside its scope
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not allowed to delete workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		// admin access scoped to a workspace, is unauthorized to delete workspace outside its scope
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is unauthorized to delete workspaces outside its scope", acc.Type, acc.WorkspaceKey))
 	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
-		// admin access scoped to project, is not allowed to delete any workspace
+		// admin access scoped to project, is unauthorized to delete any workspace
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to project %s is unauthorized to delete workspace", acc.Type, acc.ProjectKey))
 	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
-		// user and service access are not allowed to update the workspace
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to delete workspaces", acc.Type))
+		// user and service access are unauthorized to update the workspace
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is unauthorized to delete workspaces", acc.Type))
 		cancel()
 	}
 	// otherwise
