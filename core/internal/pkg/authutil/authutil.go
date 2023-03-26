@@ -1,7 +1,9 @@
 package authutil
 
 import (
+	"context"
 	accessmodel "core/internal/app/access/model"
+	accessrepo "core/internal/app/access/repository"
 	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/jwt"
@@ -16,6 +18,7 @@ func Authorize(
 	senv *srvenv.Env,
 	atk rsc.Token,
 ) (*accessmodel.Access, error) {
+
 	// bypass auth for internal operations using secure runtime hash
 	if reflect.DeepEqual(
 		atk,
@@ -35,6 +38,13 @@ func Authorize(
 
 	a, err := getAccessFromToken(atk)
 	if err != nil {
+		return nil, err
+	}
+
+	if _, err := accessrepo.NewRepo(senv).Get(context.Background(), accessmodel.KeySecretPair{
+		Key:    a.Key.String(),
+		Secret: a.Secret,
+	}); err != nil {
 		return nil, err
 	}
 

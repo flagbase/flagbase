@@ -209,9 +209,11 @@ func (s *Service) Delete(
 	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != a.WorkspaceKey.String() {
 		// admin access scoped to a workspace, is unauthorized to delete workspace outside its scope
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is unauthorized to delete workspaces outside its scope", acc.Type, acc.WorkspaceKey))
+		cancel()
 	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
 		// admin access scoped to project, is unauthorized to delete any workspace
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to project %s is unauthorized to delete workspace", acc.Type, acc.ProjectKey))
+		cancel()
 	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
 		// user and service access are unauthorized to update the workspace
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is unauthorized to delete workspaces", acc.Type))

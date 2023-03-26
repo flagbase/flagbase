@@ -92,14 +92,14 @@ func (s *Service) List(
 	if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() {
 		// if admin and scoped to workspace
 		for _, _r := range r {
-			if _r.WorkspaceKey != acc.WorkspaceKey {
+			if _r.Scope == rsc.AccessScopeInstance.String() || _r.WorkspaceKey != acc.WorkspaceKey {
 				_r.ID = cons.ServiceRedact
 			}
 		}
 	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
 		// if admin and scoped to project
 		for _, _r := range r {
-			if _r.WorkspaceKey != acc.WorkspaceKey && _r.ProjectKey != acc.ProjectKey {
+			if _r.Scope == rsc.AccessScopeInstance.String() || _r.Scope == rsc.AccessScopeWorkspace.String() || _r.WorkspaceKey != acc.WorkspaceKey || _r.ProjectKey != acc.ProjectKey {
 				_r.ID = cons.ServiceRedact
 			}
 		}
@@ -112,7 +112,6 @@ func (s *Service) List(
 	}
 	// otherwise
 	// * show all if root with instance scope
-	// * show all if admin with instance scope
 
 	// Filter eligible items
 	filtered := make([]*accessmodel.Access, 0)
@@ -151,15 +150,19 @@ func (s *Service) Create(
 		// users/service is not allowed to create access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to create access", acc.Type))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && i.Scope == rsc.AccessScopeInstance.String() {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeInstance.String() {
 		// admin is only allowed to create scoped access (workspace or project)
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not allowed to create instance access (must be root access type)", acc.Type))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && i.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != i.WorkspaceKey {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != i.WorkspaceKey {
 		// if admin trying to create scoped workspace access out of their scope
-		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not authorised to create workspace outside own scope", acc.Type))
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is not authorised to create access outside own scope", acc.Type, acc.WorkspaceKey))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && i.Type == rsc.AccessRoot.String() {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() && (acc.WorkspaceKey != i.WorkspaceKey || acc.ProjectKey != i.ProjectKey) {
+		// if admin trying to create scoped project access out of their scope
+		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to project %s is not authorised to create access outside own scope", acc.Type, acc.ProjectKey))
+		cancel()
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Type == rsc.AccessRoot.String() {
 		// admin is not allowed to create root access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is not authorised to create root access", acc.Type))
 		cancel()
@@ -167,12 +170,18 @@ func (s *Service) Create(
 	// otherwise
 	// * create if root with instance scope
 
-	// Valid scope requirements
-	if i.Scope == "project" && (i.WorkspaceKey == "" || i.ProjectKey == "") {
+	// Validate scope requirements
+	if i.Scope == rsc.AccessScopeProject.String() && (i.WorkspaceKey == "" || i.ProjectKey == "") {
 		e.Append(cons.ErrorInput, "Access scoped in project should contain a both a workspace key and a project key")
 		cancel()
-	} else if i.Scope == "workspace" && i.WorkspaceKey == "" {
+	} else if i.Scope == rsc.AccessScopeWorkspace.String() && i.WorkspaceKey == "" {
 		e.Append(cons.ErrorInput, "Access scoped in workspace should contain a workspace key")
+		cancel()
+	}
+
+	// Validate type requirements
+	if i.Type != rsc.AccessRoot.String() && i.Scope == rsc.AccessScopeInstance.String() {
+		e.Append(cons.ErrorInput, "Only root access can be scoped to an instance")
 		cancel()
 	}
 
@@ -277,11 +286,11 @@ func (s *Service) Update(
 		// user is only allowed to update self
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is only authorized to update self", acc.Type))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && r.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.WorkspaceKey {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.WorkspaceKey {
 		// admin scoped to workspace is only allowed update scoped workspace access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is only authorized to update access scoped in the same workspace", acc.Type, acc.WorkspaceKey))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && r.Scope == rsc.AccessScopeProject.String() && (acc.WorkspaceKey != r.WorkspaceKey || acc.ProjectKey != r.ProjectKey) {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() && (acc.WorkspaceKey != r.WorkspaceKey || acc.ProjectKey != r.ProjectKey) {
 		// admin scoped to workspace is only allowed update scoped workspace access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s and project %s is only authorized to update access scoped in the same workspace and project", acc.Type, acc.WorkspaceKey, acc.ProjectKey))
 		cancel()
@@ -346,11 +355,11 @@ func (s *Service) Delete(
 		// user is only allowed to delete self
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s is only authorized to delete self", acc.Type))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && r.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.WorkspaceKey {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeWorkspace.String() && acc.WorkspaceKey != r.WorkspaceKey {
 		// admin scoped to workspace is only allowed delete scoped workspace access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s is only authorized to delete access scoped in the same workspace", acc.Type, acc.WorkspaceKey))
 		cancel()
-	} else if acc.Type == rsc.AccessAdmin.String() && r.Scope == rsc.AccessScopeProject.String() && (acc.WorkspaceKey != r.WorkspaceKey || acc.ProjectKey != r.ProjectKey) {
+	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() && (acc.WorkspaceKey != r.WorkspaceKey || acc.ProjectKey != r.ProjectKey) {
 		// admin scoped to workspace is only allowed delete scoped workspace access
 		e.Append(cons.ErrorAuth, fmt.Sprintf("Access type %s scoped to workspace %s and project %s is only authorized to delete access scoped in the same workspace and project", acc.Type, acc.WorkspaceKey, acc.ProjectKey))
 		cancel()
