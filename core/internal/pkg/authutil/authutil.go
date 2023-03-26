@@ -1,7 +1,6 @@
 package authutil
 
 import (
-	"core/internal/app/access/model"
 	accessmodel "core/internal/app/access/model"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/jwt"
@@ -15,13 +14,13 @@ import (
 func Authorize(
 	senv *srvenv.Env,
 	atk rsc.Token,
-) (*model.Access, error) {
+) (*accessmodel.Access, error) {
 	// bypass auth for internal operations using secure runtime hash
 	if reflect.DeepEqual(
 		atk,
 		httputil.SecureOverideATK(senv),
 	) {
-		return &model.Access{
+		return &accessmodel.Access{
 			ID:        "some-id",
 			Key:       "system",
 			Secret:    "****",
