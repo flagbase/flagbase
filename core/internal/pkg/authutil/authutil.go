@@ -2,6 +2,7 @@ package authutil
 
 import (
 	accessmodel "core/internal/app/access/model"
+	cons "core/internal/pkg/constants"
 	"core/internal/pkg/httputil"
 	"core/internal/pkg/jwt"
 	rsc "core/internal/pkg/resource"
@@ -23,7 +24,7 @@ func Authorize(
 		return &accessmodel.Access{
 			ID:        "some-id",
 			Key:       "system",
-			Secret:    "****",
+			Secret:    cons.ServiceHiddenText,
 			Scope:     "instance",
 			Type:      "root",
 			Name:      "System",

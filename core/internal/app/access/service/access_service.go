@@ -37,7 +37,7 @@ func (s *Service) GenerateToken(i accessmodel.KeySecretPair) (
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	r, err := s.AccessRepo.Get(ctx, accessmodel.KeySecretPair{Key: i.Key, Secret: "******"})
+	r, err := s.AccessRepo.Get(ctx, accessmodel.KeySecretPair{Key: i.Key, Secret: cons.ServiceHiddenText})
 	if err != nil {
 		e.Append(cons.ErrorAuth, err.Error())
 		cancel()
@@ -58,7 +58,7 @@ func (s *Service) GenerateToken(i accessmodel.KeySecretPair) (
 	}
 
 	// hide secret
-	r.Secret = "**************"
+	r.Secret = cons.ServiceHiddenText
 
 	return &accessmodel.Token{
 		Token:  atk,
@@ -93,20 +93,20 @@ func (s *Service) List(
 		// if admin and scoped to workspace
 		for _, _r := range r {
 			if _r.WorkspaceKey != acc.WorkspaceKey {
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			}
 		}
 	} else if acc.Type == rsc.AccessAdmin.String() && acc.Scope == rsc.AccessScopeProject.String() {
 		// if admin and scoped to project
 		for _, _r := range r {
 			if _r.WorkspaceKey != acc.WorkspaceKey && _r.ProjectKey != acc.ProjectKey {
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			}
 		}
 	} else if acc.Type == rsc.AccessUser.String() || acc.Type == rsc.AccessService.String() {
 		for _, _r := range r {
 			if _r.ID != acc.ID {
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			}
 		}
 	}
@@ -117,8 +117,8 @@ func (s *Service) List(
 	// Filter eligible items
 	filtered := make([]*accessmodel.Access, 0)
 	for _, _r := range r {
-		_r.Secret = "**************" // hide secrets
-		if _r.ID != "redacted" {
+		_r.Secret = cons.ServiceHiddenText // hide secrets
+		if _r.ID != cons.ServiceRedact {
 			filtered = append(filtered, _r)
 		}
 	}
@@ -238,7 +238,7 @@ func (s *Service) Get(
 	// * show if root with instance scope
 
 	// hide secret
-	r.Secret = "**************"
+	r.Secret = cons.ServiceHiddenText
 
 	return r, &e
 }
@@ -309,7 +309,7 @@ func (s *Service) Update(
 	}
 
 	// hide secret
-	r.Secret = "**************"
+	r.Secret = cons.ServiceHiddenText
 
 	return r, &e
 }

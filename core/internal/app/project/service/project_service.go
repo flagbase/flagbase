@@ -59,10 +59,10 @@ func (s *Service) List(
 		for _, _r := range r {
 			if acc.Scope == rsc.AccessScopeWorkspace.String() && a.WorkspaceKey.String() != acc.WorkspaceKey {
 				// if access scoped to workspace, then list out all projects in that workspace
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			} else if acc.Scope == rsc.AccessScopeProject.String() && (a.WorkspaceKey.String() != acc.WorkspaceKey || _r.Key.String() != acc.ProjectKey) {
 				// if access scoped to project, then only list out scoped project
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			}
 		}
 	}
@@ -72,7 +72,7 @@ func (s *Service) List(
 	// Filter eligible items
 	filtered := make([]*projectmodel.Project, 0)
 	for _, _r := range r {
-		if _r.ID != "redacted" {
+		if _r.ID != cons.ServiceRedact {
 			filtered = append(filtered, _r)
 		}
 	}

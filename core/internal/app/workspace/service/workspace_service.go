@@ -52,7 +52,7 @@ func (s *Service) List(
 		// only list scoped workspaces
 		for _, _r := range r {
 			if _r.Key.String() != acc.WorkspaceKey {
-				_r.ID = "redacted"
+				_r.ID = cons.ServiceRedact
 			}
 		}
 	}
@@ -62,7 +62,7 @@ func (s *Service) List(
 	// Filter eligible items
 	filtered := make([]*workspacemodel.Workspace, 0)
 	for _, _r := range r {
-		if _r.ID != "redacted" {
+		if _r.ID != cons.ServiceRedact {
 			filtered = append(filtered, _r)
 		}
 	}
