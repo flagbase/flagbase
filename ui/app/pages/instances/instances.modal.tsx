@@ -15,12 +15,15 @@ type OmittedInstance = Omit<Instance, 'expiresAt'>
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     const [showError, setShowError] = useState(false)
+    const [isLoading, setIsLoading] = useState(false)
     const mutation = useAddInstance()
     const { isSuccess, isError } = mutation
 
     const onSubmit = (values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
+        setIsLoading(true);
         mutation.mutate(values)
         setSubmitting(false)
+        setTimeout(() => setIsLoading(false), 2000);
     }
 
     useEffect(() => {
@@ -103,7 +106,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                                     placeholder="Secret"
                                     type="password"
                                 />
-                                <Button type="submit" className="mt-3 py-2 justify-center" suffix={PlusCircleIcon}>
+                                <Button type="submit" className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} isLoading={isLoading}>
                                     Add Instance
                                 </Button>
                             </Form>

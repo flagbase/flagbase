@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Form, Formik } from 'formik'
-import React, { Suspense, useState } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { Await, useLoaderData, useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import { Loader } from '../../../components/loader'
@@ -50,6 +50,7 @@ const newRuleFactory = (variations: VariationResponse[], targetingRules: Targeti
 export const Targeting = () => {
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
     const [initalLoad, setInitialLoad] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const { targetingRules, targeting, variations } = useLoaderData() as {
         targetingRules: TargetingRuleResponse[]
@@ -60,8 +61,10 @@ export const Targeting = () => {
     const revalidator = useRevalidator()
 
     const createRule = async (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => {
+        setIsLoading(true);
         const newRule = newRuleFactory(variations, targetingRules)
         await createTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey }, newRule)
+        setIsLoading(false);
         revalidator.revalidate()
     }
 
@@ -86,10 +89,13 @@ export const Targeting = () => {
                     }
                     return (
                         <>
-                            {console.log('targeting', targetingRules, targeting, variations)}
                             <Formik
                                 initialValues={{ ...targeting.attributes }}
-                                onSubmit={async (values) => await updateTargeting(targeting.attributes, values)}
+                                onSubmit={async (values) => {
+                                    setIsLoading(true);
+                                    await updateTargeting(targeting.attributes, values)
+                                    setTimeout(() => setIsLoading(false), 2000);
+                                }}
                             >
                                 {({ values, setFieldValue }) => (
                                     <Form>
@@ -155,6 +161,7 @@ export const Targeting = () => {
                                                         />
                                                     )}
                                                     <Button
+                                                        isLoading={isLoading}
                                                         disabled={
                                                             objectsEqual(values, targeting?.attributes) ||
                                                             !isValidVariationSum(values?.fallthroughVariations)
@@ -188,6 +195,7 @@ export const Targeting = () => {
                                                 suffix={PlusCircleIcon}
                                                 onClick={async () => await createRule(variations, targetingRules)}
                                                 secondary
+                                                isLoading={isLoading}
                                             >
                                                 New Rule
                                             </Button>

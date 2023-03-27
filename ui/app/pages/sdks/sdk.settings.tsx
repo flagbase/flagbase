@@ -42,8 +42,6 @@ export const SdkSettings = () => {
         return null
     }
 
-    console.log('sdk', sdk)
-
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedSdks}>
@@ -75,7 +73,6 @@ export const SdkSettings = () => {
                                 description: string
                                 tags: string[]
                             }) => {
-                                console.log('VALUES', values)
                                 update(values)
                             }}
                         >

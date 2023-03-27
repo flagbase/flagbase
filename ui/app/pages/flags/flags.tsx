@@ -192,7 +192,7 @@ const Flags: React.FC = () => {
     }
 
     const activeEnvironment = environments?.find((env) => env.attributes.key === environmentKey)
-    console.log('env', environmentKey, activeEnvironment)
+
     const { data: flags } = useFlags()
     return (
         <Suspense fallback={<Loader />}>
