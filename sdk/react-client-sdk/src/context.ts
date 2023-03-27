@@ -2,14 +2,14 @@ import React from 'react';
 import { createContext } from "react";
 import { IClient } from "@flagbase/js-client-sdk";
 
-const initialState = {
-  flagbaseClient: undefined as any,
+const initialState: FlagbaseContextProps = {
+  flagbaseClient: null,
   isReady: false,
   isDestroyed: false,
 };
 
 export type FlagbaseContextProps = {
-  flagbaseClient: IClient,
+  flagbaseClient: IClient | null,
   isReady: boolean,
   isDestroyed: boolean,
 }
