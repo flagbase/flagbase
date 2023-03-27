@@ -17,11 +17,10 @@ export default function Client(
   const config: Config = {
     mode: Mode.POLLING,
     ...opts,
-    clientKey,
   };
   const events = Events();
   const context = Context(config, identity);
-  const transport = Transport(context, events);
+  const transport = Transport(clientKey, context, events);
   const api = Api(context, events);
 
   transport.start();

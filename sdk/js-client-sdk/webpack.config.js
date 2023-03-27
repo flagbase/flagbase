@@ -33,7 +33,7 @@ module.exports = {
     path: path.resolve(__dirname, "dist"),
     // output bundle name
     filename: "index.js",
-    // globalObject: "this",
+    globalObject: "this",
     library: {
       // your lib name if imported with the <script> tag
       name: "FlagbaseClient", 

@@ -11,7 +11,7 @@ export type FlagbaseProviderProps = {
   children: React.ReactNode;
   clientKey: string;
   identity: Identity;
-  opts: ClientOptions;
+  opts?: ClientOptions;
 };
 
 const FlagbaseProvider: React.FC<FlagbaseProviderProps> = ({
@@ -31,7 +31,7 @@ const FlagbaseProvider: React.FC<FlagbaseProviderProps> = ({
     setFlagbaseClient(_flagbaseClient);
     setIsDestroyed(false);
 
-    _flagbaseClient.on(EventType.CLIENT_READY, () => {
+    _flagbaseClient.on('client_ready' as EventType, () => {
       setIsReady(true);
     });
 

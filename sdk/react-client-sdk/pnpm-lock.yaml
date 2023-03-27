@@ -1,7 +1,9 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@flagbase/js-client-sdk': ^0.0.1
+  '@flagbase/js-client-sdk': ^0.0.5
+  '@parcel/packager-ts': ^2.8.3
+  '@parcel/transformer-typescript-types': ^2.8.3
   '@types/react': ^18.0.28
   '@types/react-dom': ^18.0.11
   parcel: ^2.8.3
@@ -10,9 +12,11 @@ specifiers:
   typescript: ^4.9.5
 
 dependencies:
-  '@flagbase/js-client-sdk': 0.0.1
+  '@flagbase/js-client-sdk': 0.0.5
 
 devDependencies:
+  '@parcel/packager-ts': 2.8.3_@parcel+core@2.8.3
+  '@parcel/transformer-typescript-types': 2.8.3_xscxxxiz63f5lkhm7jmoqp4aui
   '@types/react': 18.0.28
   '@types/react-dom': 18.0.11
   parcel: 2.8.3
@@ -43,8 +47,8 @@ packages:
       js-tokens: 4.0.0
     dev: true
 
-  /@flagbase/js-client-sdk/0.0.1:
-    resolution: {integrity: sha512-K1Wqkovt6PnCwF+s0GKNDcRclfZvjZ+m15BHR9ILEtMf/qnx70ynuU9+pCEqiqUXY16RE3qz0whGT526emHbOg==}
+  /@flagbase/js-client-sdk/0.0.5:
+    resolution: {integrity: sha512-a5BXcMzoUj3l2CapYJXQEdn1CPLp76D3FzVpHhQwDUEysWGqrFrXsImVmaj6RbawJia612C0+br07au14QSSFA==}
     dev: false
 
   /@jridgewell/gen-mapping/0.3.2:
@@ -554,6 +558,15 @@ packages:
       - '@parcel/core'
     dev: true
 
+  /@parcel/packager-ts/2.8.3_@parcel+core@2.8.3:
+    resolution: {integrity: sha512-8JooYHjKntHnQywLT7LAnfoGiAQ1fUu0N2DtuM0PxpgQqYJ4KE9TZS+SZq7hpe24cZkD0A4A+1kBlYAyvuanrg==}
+    engines: {node: '>= 12.0.0', parcel: ^2.8.3}
+    dependencies:
+      '@parcel/plugin': 2.8.3_@parcel+core@2.8.3
+    transitivePeerDependencies:
+      - '@parcel/core'
+    dev: true
+
   /@parcel/plugin/2.8.3_@parcel+core@2.8.3:
     resolution: {integrity: sha512-jZ6mnsS4D9X9GaNnvrixDQwlUQJCohDX2hGyM0U0bY2NWU8Km97SjtoCpWjq+XBCx/gpC4g58+fk9VQeZq2vlw==}
     engines: {node: '>= 12.0.0'}
@@ -803,6 +816,33 @@ packages:
       semver: 5.7.1
     transitivePeerDependencies:
       - '@parcel/core'
+    dev: true
+
+  /@parcel/transformer-typescript-types/2.8.3_xscxxxiz63f5lkhm7jmoqp4aui:
+    resolution: {integrity: sha512-zjsJsgecjw4X1nt5R7A61uWwzwCce0usKKPqnE5tQpYtF4FfK5X69r0l5JLovlyaT2uwoe+hvhu2AELA0kKRQA==}
+    engines: {node: '>= 12.0.0', parcel: ^2.8.3}
+    peerDependencies:
+      typescript: '>=3.0.0'
+    dependencies:
+      '@parcel/diagnostic': 2.8.3
+      '@parcel/plugin': 2.8.3_@parcel+core@2.8.3
+      '@parcel/source-map': 2.1.1
+      '@parcel/ts-utils': 2.8.3_typescript@4.9.5
+      '@parcel/utils': 2.8.3
+      nullthrows: 1.1.1
+      typescript: 4.9.5
+    transitivePeerDependencies:
+      - '@parcel/core'
+    dev: true
+
+  /@parcel/ts-utils/2.8.3_typescript@4.9.5:
+    resolution: {integrity: sha512-4HMt9B9LF2pDFvSKGImho48tlCvCUl7ly1ZMXvQdmEq2i0yoS81tDsmxX3yly/RVUVeUCGAj1JRuuy1lw5zw1A==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      typescript: '>=3.0.0'
+    dependencies:
+      nullthrows: 1.1.1
+      typescript: 4.9.5
     dev: true
 
   /@parcel/types/2.8.3:

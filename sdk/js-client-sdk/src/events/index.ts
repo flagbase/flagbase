@@ -1,3 +1,12 @@
-export { default } from './events';
-export * from './events'
-export * from './event-type'
+import Events, {
+    EventConsumer,
+    EventProducer
+} from './events'
+import { EventType } from './event-type'
+
+export {
+    EventConsumer,
+    EventProducer,
+    EventType
+};
+export default Events;

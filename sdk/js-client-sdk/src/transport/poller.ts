@@ -13,12 +13,12 @@ import { EventType } from "../events/event-type";
 const INITIAL_ETAG = "initial";
 
 export default function Poller(
+  clientKey: string,
   context: IContext,
   events: EventProducer
 ): ITransport {
   const config = context.getConfig();
   const pollingServiceUrl = config.pollingServiceUrl;
-  const clientKey = config.clientKey;
   let etag = INITIAL_ETAG;
 
   const onFullResponse = (retag: string, evaluations: Evaluations) => {

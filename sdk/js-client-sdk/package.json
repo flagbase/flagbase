@@ -1,15 +1,16 @@
 {
   "name": "@flagbase/js-client-sdk",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "Javascript client-side SDK for Flagbase",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
   "prepublish": "npm run build",
   "scripts": {
-    "build": "webpack",
+    "prepare": "rm -rf dist && webpack",
     "test": "jest",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
