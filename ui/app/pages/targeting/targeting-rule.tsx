@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React from 'react'
+import React, { useState } from 'react'
 import { Field, Form, Formik } from 'formik'
 import { useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
@@ -26,13 +26,16 @@ const options = [
 const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     const revalidator = useRevalidator()
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const updateRule = (newRule: TargetingRuleRequest) => {
+        setIsLoading(true);
         const shouldUpdate = !objectsEqual(newRule, rule)
         if (shouldUpdate) {
             updateTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key }, rule, newRule)
             revalidator.revalidate()
         }
+        setTimeout(() => setIsLoading(false), 2000);
     }
 
     const deleteRule = async (ruleKey: string) => {
@@ -80,12 +83,14 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                                     : 'bg-indigo-600'
                             }`}
                             type="submit"
+                            isLoading={isLoading}
                         >
                             Update
                         </Button>
                         <Button
                             className="mt-3 py-1 justify-center mr-5 bg-red-500 hover:bg-red-600"
                             onClick={() => deleteRule(rule.key)}
+                            isLoading={isLoading}
                         >
                             Delete
                         </Button>

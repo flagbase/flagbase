@@ -86,7 +86,7 @@ export const EditWorkspace = () => {
                     <div className="px-4 py-5 sm:p-6">
                         <h3 className="text-base font-semibold leading-6 text-gray-900">Delete this workspace</h3>
                         <div className="mt-2 max-w-xl text-sm text-gray-500">
-                            <p>Delete</p>
+                            <p>This operation is irreversible... Make sure you know what you're doing</p>
                         </div>
                         <div className="mt-5">
                             <button

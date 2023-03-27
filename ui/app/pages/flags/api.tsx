@@ -89,7 +89,6 @@ export const fetchTargetingRules = async ({
     flagKey,
 }: Partial<FlagbaseParams>) => {
     const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}/rules`)
-    console.log('targeting rules', data)
     return data
 }
 
