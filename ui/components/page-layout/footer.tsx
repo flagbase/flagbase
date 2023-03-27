@@ -7,7 +7,7 @@ const navigation = {
     // SDK Docs
     // API Docs
     documentation: [
-        { name: 'Guides', href: 'https://flagbase.com/docs/guides/overview' },
+        { name: 'Quick Start', href: 'https://flagbase.com/docs/guides/quick-start' },
         { name: 'SDK Docs', href: 'https://flagbase.com/docs/sdk/overview' },
         { name: 'API Docs', href: 'https://flagbase.com/docs/core/api' },
     ],
@@ -44,11 +44,11 @@ const navigation = {
 }
 export const Footer = () => {
     return (
-        <footer className="bg-gray-50" aria-labelledby="footer-heading">
+        <footer className="bg-gray-50 mt-20" aria-labelledby="footer-heading">
             <h2 id="footer-heading" className="sr-only">
                 Footer
             </h2>
-            <div className="mx-auto max-w-7xl px-6 pb-8 pt-16 sm:pt-24 lg:px-8 lg:pt-32">
+            <div className="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:pt-8 lg:px-8 lg:pt-32">
                 <div className="xl:grid xl:grid-cols-3 xl:gap-8">
                     <div className="space-y-8">
                         <div>
@@ -57,6 +57,7 @@ export const Footer = () => {
                                 <img className="h-8 w-auto" src={flag} alt="" />
                             </Link>
                             <p className="text-sm leading-6 text-gray-600">Feature Management Simplified.</p>
+                            <p className="text-sm leading-6 text-gray-600">Community-Driven.</p>
                         </div>
                         <div className="flex space-x-6">
                             {navigation.social.map((item) => (

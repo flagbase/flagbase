@@ -449,7 +449,7 @@ const PageHeading = ({
                         <p className="mt-1 truncate text-sm text-gray-500">{subtitle}</p>
                     </div>
                 </div>
-                {rightContainer && <div className="mt-3 sm:mt-0 sm:ml-4">{createElement(rightContainer)}</div>}
+                {rightContainer && <div className="mt-3 sm:mt-5">{createElement(rightContainer)}</div>}
             </div>
             {tabs && tabs.length > 0 && (
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
