@@ -8,8 +8,8 @@ export interface ITransport {
   stop: () => void;
 }
 
-export default function Transport(context: IContext, events: EventProducer): ITransport {
+export default function Transport(clientKey: string, context: IContext, events: EventProducer): ITransport {
   return context.getConfig().mode === Mode.STREAMING
-    ? Streamer(context, events)
-    : Poller(context, events);
+    ? Streamer(clientKey, context, events)
+    : Poller(clientKey, context, events);
 }

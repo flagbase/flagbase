@@ -1,1 +1,3 @@
-export { fetchFlagsViaPoller } from './fetch-flag-via-poller';
+import { fetchFlagsViaPoller } from './fetch-flag-via-poller';
+
+export { fetchFlagsViaPoller };

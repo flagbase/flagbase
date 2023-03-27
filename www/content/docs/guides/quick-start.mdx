@@ -98,7 +98,7 @@ import Client from "@flagbase/js-client-sdk";
   <TabItem value="react" label="React">
 
 ```js
-import { FlagbaseProvider, useFeatureFlag } from "@flagbase/react-client-sdk";
+import FlagbaseProvider, { useFeatureFlag } from "@flagbase/react-client-sdk";
 ```
 
   </TabItem> 
@@ -135,7 +135,6 @@ function App() {
     <FlagbaseProvider
       clientKey="YOUR_CLIENT_SDK_KEY"
       identity={{ identifier: "USER_ID", traits: { age: 25 } }}
-      opts={{ debug: true }}
     >
       <MyApp />
     </FlagbaseProvider>

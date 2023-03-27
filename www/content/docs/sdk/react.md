@@ -20,7 +20,7 @@ yarn add @flagbase/react-client-sdk
 
 To use the SDK, import it at the top of your file:
 ```js
-import { FlagbaseProvider, useFeatureFlag } from "@flagbase/react-client-sdk";
+import FlagbaseProvider, { useFeatureFlag } from "@flagbase/react-client-sdk";
 ```
 
 2. Wrap your app in the FlagbaseProvider
@@ -32,7 +32,6 @@ function App() {
     <FlagbaseProvider
       clientKey="YOUR_CLIENT_SDK_KEY"
       identity={{ identifier: "USER_ID", traits: { age: 25 } }}
-      opts={{ debug: true }}
     >
       <MyApp />
     </FlagbaseProvider>

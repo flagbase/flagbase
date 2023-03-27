@@ -1,4 +1,4 @@
-import Context, {
+import {
   Flagset,
   Identity,
   Flag,

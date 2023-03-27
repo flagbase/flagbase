@@ -1,7 +1,8 @@
-import React, { createElement, Fragment, useEffect } from 'react'
+import React, { createElement, Fragment, ReactNode, useEffect } from 'react'
 
 import { Link, Outlet, useLocation, useMatches, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
+import flagOld from '../../assets/flag.svg'
 import { useState } from 'react'
 import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
 import {
@@ -242,12 +243,6 @@ const MobileNavigation = ({
     const { data: flags } = useFlags()
     const { data: activeEnvironmentKey } = useActiveEnvironment()
 
-    const activeInstance = instances?.find((instance) => instance.key === instanceKey)
-    const activeWorkspace = workspaces?.find((workspace) => workspace.attributes.key === workspaceKey)
-    const activeProject = projects?.find((project) => project.attributes.key === projectKey)
-    const activeEnvironment = environments?.find((environment) => environment.attributes.key === activeEnvironmentKey)
-    const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey)
-
     return (
         <Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
             <div className="fixed inset-0 z-10" />
@@ -424,7 +419,7 @@ const PageHeading = ({
     backHref,
 }: {
     title: string
-    subtitle: string
+    subtitle: string | ReactNode
     tabs?: { name: string; href: string }[]
     backHref?: string
 }) => {
@@ -500,7 +495,7 @@ const PageHeading = ({
 type PageHeadingType = {
     title: string
     tabs?: { name: string; href: string }[]
-    subtitle?: string
+    subtitle?: string | ReactNode
     backHref?: string | null
 }
 
@@ -555,7 +550,17 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
                 title: activeFlag?.attributes.name || flagKey,
-                subtitle: 'Flags',
+                subtitle: (
+                    <div className="flex flex-row items-center">
+                        <img className="h-3 mr-2 filter invert" src={flagOld} />
+                        <input
+                            className="h-6 text-xs rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 w-36 truncate"
+                            type="text"
+                            value={flagKey}
+                        />
+                        <p className="ml-1 truncate text-xs text-gray-500">← flag key referenced in code</p>
+                    </div>
+                ),
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {

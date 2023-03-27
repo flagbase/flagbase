@@ -1,2 +1,4 @@
-export { default } from './api'
-export * from './api';
+import Api, { IApi } from './api';
+
+export { IApi };
+export default Api;

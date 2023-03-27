@@ -43,7 +43,7 @@ const pollingRequest = (
 
 export const fetchFlagsViaPoller = async (
   pollingServiceUrl: Config["pollingServiceUrl"],
-  clientKey: Config["clientKey"],
+  clientKey: string,
   identity: Identity,
   etag: string,
   onFullResponse?: (retag: string, evals: Evaluations) => void,
