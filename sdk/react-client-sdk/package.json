@@ -1,10 +1,13 @@
 {
   "name": "@flagbase/react-client-sdk",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "ReactJS client-side SDK for Flagbase",
   "source": "src/index.ts",
   "main": "dist/main.js",
   "module": "dist/module.js",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
     "dev": "parcel watch",
     "build": "parcel build"
