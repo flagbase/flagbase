@@ -20,8 +20,8 @@ export const fetchProjects = async (workspaceKey: string) => {
     return result.data
 }
 
-export const deleteProject = async (ProjectKey: string) => {
-    return axios.delete(`/projects/${ProjectKey}`)
+export const deleteProject = async ({ workspaceKey, projectKey }: { workspaceKey: string; projectKey: string }) => {
+    return axios.delete(`/projects/${workspaceKey}/${projectKey}`)
 }
 
 export const createProject = async (name: string, description: string, tags: string[], workspaceKey: string) => {

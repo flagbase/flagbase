@@ -55,6 +55,7 @@ const convertFlags = ({ flags, environment }: { flags: Flag[]; environment: Envi
     return Object.values(flags).map((flag: Flag, index: number) => {
         return {
             id: index,
+            key: flag.attributes.key,
             title: flag.attributes.name,
             href: `${flag.attributes.key}/environments/${environment?.attributes.key}`,
             name: <Text>{flag.attributes.name}</Text>,
@@ -69,7 +70,7 @@ const convertFlags = ({ flags, environment }: { flags: Flag[]; environment: Envi
                 </div>
             ),
             action: <FlagLink flag={flag} />,
-            key: flag.attributes.key,
+            flagKey: flag.attributes.key,
         }
     })
 }

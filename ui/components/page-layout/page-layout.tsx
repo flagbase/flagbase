@@ -34,6 +34,7 @@ import { Flag } from '../../app/pages/flags/api'
 import { useVariations } from '../../app/pages/variations/variations'
 import { useSDKs } from '../../app/pages/sdks/sdks'
 import { Footer } from './footer'
+import { CopyRow } from '../table'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -551,7 +552,7 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
                 title: activeFlag?.attributes.name || flagKey,
-                subtitle: 'Feature Flag',
+                subtitle: <CopyRow text={flagKey} />,
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {
