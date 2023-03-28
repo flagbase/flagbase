@@ -11,7 +11,7 @@ class Config:
         server_key: str, 
         mode: Mode = Mode.POLLING, 
         polling_service_url: str ="https://poller.core.flagbase.com", 
-        polling_interval_ms: int =300000):
+        polling_interval_ms: int =10000):
 
         if server_key is None:
             raise ValueError("Missing Server SDK Key when constructing the client.")

@@ -1,4 +1,5 @@
 import React, { createElement, Fragment, ReactNode, useEffect } from 'react'
+import { useFeatureFlag } from '@flagbase/react-client-sdk'
 
 import { Link, Outlet, useLocation, useMatches, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
@@ -11,6 +12,7 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
     XMarkIcon,
+    CodeBracketIcon
 } from '@heroicons/react/24/outline'
 import { useInstances } from '../../app/pages/instances/instances'
 import {
@@ -35,6 +37,9 @@ import { Flag } from '../../app/pages/flags/api'
 import { useVariations } from '../../app/pages/variations/variations'
 import { useSDKs } from '../../app/pages/sdks/sdks'
 import { Footer } from './footer'
+import Button from '../button'
+import { CreateWorkspaceModal } from '../../app/pages/workspaces/workspace.modal'
+import CodeUsageModal from '../code-usage-modal'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -203,8 +208,8 @@ const getInstanceDropdown = (data: Instance[]) => {
     return (
         data.map((object) => {
             return {
-                name: object.key,
-                description: object.key,
+                name: object.name,
+                description: object.name,
                 href: getWorkspacesPath(object.key),
             }
         }) || []
@@ -344,7 +349,7 @@ const Header = () => {
                         {instances && (
                             <Breadcrumb
                                 chevron={false}
-                                name={activeInstance?.key || 'Instances'}
+                                name={activeInstance?.name || 'Instances'}
                                 type="Instance"
                                 description={instancesDescription}
                                 href="/instances"
@@ -527,6 +532,8 @@ export const PageHeadings = () => {
     const activeVariation = variations?.find((variation) => variation.attributes.key === variationKey)
     const activeSDK = sdks?.find((sdk) => sdk.id === sdkKey)
 
+    const showUseInCodeButton = useFeatureFlag("use-in-code-modal", "control");
+
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
@@ -550,17 +557,7 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
                 title: activeFlag?.attributes.name || flagKey,
-                subtitle: (
-                    <div className="flex flex-row items-center">
-                        <img className="h-3 mr-2 filter invert" src={flagOld} />
-                        <input
-                            className="h-6 text-xs rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 w-36 truncate"
-                            type="text"
-                            value={flagKey}
-                        />
-                        <p className="ml-1 truncate text-xs text-gray-500">← flag key referenced in code</p>
-                    </div>
-                ),
+                subtitle: showUseInCodeButton === "treatment" ? <CodeUsageModal /> : null,
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {

@@ -94,6 +94,7 @@
         "@ant-design/icons": "^5.0.1",
         "@emotion/react": "^11.7.1",
         "@emotion/styled": "^11.6.0",
+        "@flagbase/react-client-sdk": "^0.0.10",
         "@headlessui/react": "^1.7.12",
         "@heroicons/react": "^2.0.16",
         "@rehooks/local-storage": "^2.4.4",

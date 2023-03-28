@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Form, Formik } from 'formik'
-import React, { Suspense, useEffect, useState } from 'react'
+import React, { Suspense, useState } from 'react'
 import { Await, useLoaderData, useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import { Loader } from '../../../components/loader'

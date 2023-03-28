@@ -5,14 +5,12 @@ import time
 if __name__ == '__main__':
     flagbase = FlagbaseClient(
         config=Config(
-            server_key="sdk-server_491e7607-dac2-41dc-abed-1ba904cdb032",
-            polling_service_url="http://localhost:9051",
-            polling_interval_ms=1000
+            server_key="sdk-server_d4bbe70b-1c79-4f30-bfd7-ee9d4bafab85"
         )
     )
 
     while True:
         user = Identity("some-identifier", { "some-trait-key": "blue" })
-        feature_variation = flagbase.variation("example-flag", user, "control")
+        feature_variation = flagbase.variation("new-app-navigation", user, "control")
         print(f"Serving {feature_variation} for user...")
         time.sleep(3)
