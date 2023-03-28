@@ -27,7 +27,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             <>
                 <div>
                     <Title className="text-center" level={3}>
-                        Use your Feature Flag
+                        How to use your feature flag in code
                     </Title>
                     <Text>
                         When using feature flags in code, it is essential to reference the flag key and feature
