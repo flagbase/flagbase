@@ -23,11 +23,11 @@ import EmptyState from '../../../components/empty-state'
 import CodeUsageModal from '../../../components/code-usage-modal'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { getTargetingKey, getTargetingRulesKey } from '../../router/loaders'
-import { configureAxios } from '../../lib/axios'
 import { fetchTargeting, fetchTargetingRules } from '../flags/api'
 import { useVariations } from '../variations/variations'
 import { TargetingRules } from './targeting-rules'
 import { useNotification } from '../../hooks/use-notification'
+import { configureAxios } from '../../lib/axios'
 
 type VariationResponse = {
     type: 'variation'
