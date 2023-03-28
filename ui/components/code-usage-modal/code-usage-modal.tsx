@@ -107,7 +107,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                                         name="server"
                                         id="server"
                                         className="truncate text-xl block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
-                                        value={sdk.attributes.clientKey}
+                                        value={sdk.attributes.serverKey}
                                     />
                                 </div>
                             </div>
