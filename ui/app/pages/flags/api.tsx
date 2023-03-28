@@ -1,5 +1,6 @@
 import { axios } from '../../lib/axios'
 import { FlagbaseParams } from '../../lib/use-flagbase-params'
+import { TargetingResponse, TargetingRuleResponse } from '../targeting/api'
 import { UpdateBody } from '../workspaces/api'
 
 export type Flag = {
@@ -77,7 +78,7 @@ export const fetchTargeting = async ({
     projectKey,
     environmentKey,
     flagKey,
-}: Partial<FlagbaseParams>) => {
+}: Partial<FlagbaseParams>): Promise<TargetingResponse> => {
     const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}`)
     return data
 }
@@ -87,7 +88,7 @@ export const fetchTargetingRules = async ({
     projectKey,
     environmentKey,
     flagKey,
-}: Partial<FlagbaseParams>) => {
+}: Partial<FlagbaseParams>): Promise<TargetingRuleResponse> => {
     const { data } = await axios.get(`/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}/rules`)
     return data
 }
@@ -98,7 +99,7 @@ export const fetchTargetingRule = async ({
     environmentKey,
     flagKey,
     ruleKey,
-}: Partial<FlagbaseParams>) => {
+}: Partial<FlagbaseParams>): Promise<TargetingRuleResponse> => {
     const { data } = await axios.get(
         `/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}/rules/${ruleKey}`
     )
