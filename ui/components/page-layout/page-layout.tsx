@@ -208,8 +208,8 @@ const getInstanceDropdown = (data: Instance[]) => {
     return (
         data.map((object) => {
             return {
-                name: object.key,
-                description: object.key,
+                name: object.name,
+                description: object.name,
                 href: getWorkspacesPath(object.key),
             }
         }) || []
@@ -349,7 +349,7 @@ const Header = () => {
                         {instances && (
                             <Breadcrumb
                                 chevron={false}
-                                name={activeInstance?.key || 'Instances'}
+                                name={activeInstance?.name || 'Instances'}
                                 type="Instance"
                                 description={instancesDescription}
                                 href="/instances"
