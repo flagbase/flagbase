@@ -1,7 +1,7 @@
 lockfileVersion: 5.4
 
 specifiers:
-  '@flagbase/js-client-sdk': ^0.0.5
+  '@flagbase/js-client-sdk': ^0.0.6
   '@storybook/addon-essentials': ^7.0.0-rc.8
   '@storybook/addon-interactions': ^7.0.0-rc.8
   '@storybook/addon-links': ^7.0.0-rc.8
@@ -21,7 +21,7 @@ specifiers:
   vite: ^4.2.0
 
 dependencies:
-  '@flagbase/js-client-sdk': 0.0.5
+  '@flagbase/js-client-sdk': 0.0.6
 
 devDependencies:
   '@storybook/addon-essentials': 7.0.0-rc.8_biqbaboplfbrettd7655fr4n2y
@@ -1760,8 +1760,8 @@ packages:
     resolution: {integrity: sha512-cEee/Z+I12mZcFJshKcCqC8tuX5hG3s+d+9nZ3LabqKF1vKdF41B92pJVCBggjAGORAeOzyyDDKrZwIkLffeOQ==}
     dev: true
 
-  /@flagbase/js-client-sdk/0.0.5:
-    resolution: {integrity: sha512-a5BXcMzoUj3l2CapYJXQEdn1CPLp76D3FzVpHhQwDUEysWGqrFrXsImVmaj6RbawJia612C0+br07au14QSSFA==}
+  /@flagbase/js-client-sdk/0.0.6:
+    resolution: {integrity: sha512-k+MFmHRDuAPpvjrA/x7zSaz6ExLch13f1hQVZePxRckOHCEQEkEMmIJfVJfVkRkTSrOGlrQ12om0gcORAGKn2w==}
     dev: false
 
   /@humanwhocodes/config-array/0.9.5:

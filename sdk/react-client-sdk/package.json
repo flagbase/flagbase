@@ -1,6 +1,6 @@
 {
   "name": "@flagbase/react-client-sdk",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "ReactJS client-side SDK for Flagbase",
   "source": "src/index.ts",
   "main": "dist/index.js",
@@ -40,6 +40,6 @@
     "react": "^16.6.3 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@flagbase/js-client-sdk": "^0.0.5"
+    "@flagbase/js-client-sdk": "^0.0.6"
   }
 }
