@@ -12,7 +12,7 @@ export interface EventProducer {
   emit: (
     eventName: EventType,
     eventMessage: string,
-    eventContext?: any
+    eventContext?: object
   ) => void;
 }
 

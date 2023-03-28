@@ -34,15 +34,14 @@ export default function Poller(
     }
 
     if (etag === INITIAL_ETAG && retag !== etag) {
+      events.emit(
+        EventType.CLIENT_READY,
+        "Client is ready!"
+      );
       context.setInternalData({
         consecutiveCachedRequests: 0,
         consecutiveFailedRequests: 0,
       });
-      events.emit(
-        EventType.CLIENT_READY,
-        "Client is ready! Initial flagset has been retrieved.",
-        context.getAllFlags()
-      );
     }
 
     etag = retag;
@@ -176,7 +175,7 @@ export default function Poller(
         config.pollingIntervalMs) ||
       3000;
 
-    let lastRefreshed: number = Date.now();
+    let lastRefreshed: number = -1;
     let timerId: number = setTimeout(() => {}, 1);
 
     const schedule = async () => {
@@ -187,8 +186,9 @@ export default function Poller(
 
     const fetchAndReschedule = async () => {
       const elapsedMs = Date.now() - lastRefreshed;
-      if (elapsedMs >= pollingIntervalMs && !document.hidden) {
-        const [retag, evaluations] = await fetchFlagsViaPoller(
+      // run if initial request, or elapsed time exceeds threshold
+      if (lastRefreshed === -1 || (elapsedMs >= pollingIntervalMs && !document.hidden)) {
+        const [retag] = await fetchFlagsViaPoller(
           pollingServiceUrl,
           clientKey,
           context.getIdentity(),
@@ -205,7 +205,7 @@ export default function Poller(
 
     start = async () => {
       clearTimeout(timerId);
-      await schedule();
+      await fetchAndReschedule();
     };
 
     stop = async () => {

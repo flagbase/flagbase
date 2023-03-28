@@ -46,6 +46,7 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
       props.opts
     );
     setFlagbaseClient(_flagbaseClient);
+    setFlagset(_flagbaseClient.getAllFlags());
 
     _flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
       addDebugLog(EventType.CLIENT_READY, eventMessage);
@@ -77,11 +78,6 @@ const PollingApp: React.FC<PollingAppProps> = (props) => {
     _flagbaseClient.on(EventType.NETWORK_FETCH_ERROR, (eventMessage) => {
       addDebugLog(EventType.NETWORK_FETCH_ERROR, eventMessage);
     });
-
-    _flagbaseClient.on(EventType.CLIENT_READY, (eventMessage) => {
-      addDebugLog(EventType.CLIENT_READY, eventMessage);
-    });
-
     return () => _flagbaseClient.destroy();
   }, [props]);
 

@@ -1,6 +1,6 @@
 import Api, { IApi } from "../api";
 import Context, { Config, Identity, Mode } from "../context";
-import Events, { EventConsumer } from "../events";
+import Events, { EventConsumer, EventType } from "../events";
 import Transport from "../transport";
 
 export type ClientOptions = Config;
@@ -19,7 +19,7 @@ export default function Client(
     ...opts,
   };
   const events = Events();
-  const context = Context(config, identity);
+  const context = Context(clientKey, config, identity);
   const transport = Transport(clientKey, context, events);
   const api = Api(context, events);
 

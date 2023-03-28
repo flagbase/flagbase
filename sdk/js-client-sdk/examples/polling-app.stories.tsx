@@ -21,6 +21,6 @@ DefaultPollingApp.args = {
   },
   opts: {
     pollingServiceUrl: "https://poller.core.flagbase.xyz",
-    pollingIntervalMs: 5000,
+    pollingIntervalMs: 8000,
   }
 };
