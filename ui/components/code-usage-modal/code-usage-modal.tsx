@@ -31,7 +31,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                     </Title>
                     <Text>
                         When using feature flags in code, it is essential to reference the flag key and feature
-                        variations correctly.
+                        variations correctly. Check out our <a href="https://flagbase.com/docs/sdk/overview" className="font-medium text-blue-600 dark:text-blue-500 hover:underline" target="_blank">SDK docs</a> for your specific programming language.
                     </Text>
                 </div>
                 <div className="flex flex-col gap-3 mt-3">
