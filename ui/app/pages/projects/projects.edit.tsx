@@ -62,7 +62,7 @@ const EditProject = () => {
         throw new Error('Missing required params')
     }
 
-    const { mutate: remove } = useRemoveProject(instanceKey, workspaceKey)
+    const { mutate: remove } = useRemoveProject()
     const { mutate: update, isSuccess, error } = useUpdateProject(instanceKey)
 
     if (!project) {
