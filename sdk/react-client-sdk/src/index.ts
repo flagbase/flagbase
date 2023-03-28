@@ -1,4 +1,12 @@
-export { default } from './provider';
-export { default as FlagbaseContext } from './context';
-export { default as useFeatureFlag } from './useFeatureFlag';
-export { default as useFlagbaseClient } from './useFlagbaseClient';
+import FlagbaseProvider, { FlagbaseProviderProps } from './provider'; 
+import useFeatureFlag from './useFeatureFlag'; 
+import useFlagbaseClient from './useFlagbaseClient'; 
+
+export {
+    useFeatureFlag,
+    useFlagbaseClient
+};
+export type {
+    FlagbaseProviderProps
+};
+export default FlagbaseProvider;
