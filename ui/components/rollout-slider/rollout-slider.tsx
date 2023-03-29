@@ -13,13 +13,17 @@ type RolloutSliderProps = {
 }
   
 const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange }) => {
-    // const [weights, setWeights] = useState(data);
+    const [weights, setWeights] = useState(data);
     const [borderColor, setBorderColor] = useState('red');
 
     useEffect(() => {
-        const totalWeight = data.reduce((acc, item) => acc + item.weight, 0);
+        const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
         setBorderColor(totalWeight === maxValue ? 'green' : 'red');
     }, [data, maxValue]);
+
+    useEffect(() => {
+        setWeights(data);
+    }, [data])
 
     const handleWeightChange = useCallback(
         (index: number, newWeight: number) => {
@@ -27,7 +31,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
             return;
           }
       
-          const updatedWeights = data.map((item, idx) => {
+          const updatedWeights = weights.map((item, idx) => {
             if (idx === index) {
               return { ...item, weight: newWeight };
             }
@@ -36,20 +40,21 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
       
           const totalWeight = updatedWeights.reduce((acc, item) => acc + item.weight, 0);
           if (totalWeight <= maxValue) {
+            setWeights(updatedWeights)
             if (onChange) {
-              onChange(updatedWeights);
+                onChange(updatedWeights);
             }
           }
         },
         [data, maxValue, onChange]
       );
       
-    const totalWeight = data.reduce((acc, item) => acc + item.weight, 0);
+    const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
 
     return (
         <div>
             <table width={512}>
-                {data.map((item, index) => (
+                {weights.map((item, index) => (
                     <tr key={item.variationKey}>
                         <td className="flex flex-row">
                             <svg
@@ -144,7 +149,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
                     </th>
                     <th>
                         <div style={{ display: 'flex', height: '25px', borderWidth: 2, borderColor }}>
-                            {data.map((item) => (
+                            {weights.map((item) => (
                                 <div
                                     key={item.variationKey}
                                     style={{

@@ -10,32 +10,32 @@ import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
 import RolloutSlider from '../../../components/rollout-slider'
 import { TagInput } from '../../../components/input/tag-input'
+import { Toggle } from '../../../components/input/toggle'
 
 const options = [
-    { name: 'Equal', value: 'equal', negate: false },
-    { name: 'Not Equal', value: 'equal', negate: true },
-    { name: 'Greater Than', value: 'greater_than', negate: false },
-    { name: 'Less Than or Equal', value: 'greater_than', negate: true },
-    { name: 'Greater Than or Equal', value: 'greater_than_or_equal', negate: false },
-    { name: 'Less Than', value: 'greater_than_or_equal', negate: true },
-    { name: 'Contains', value: 'contains', negate: false },
-    { name: 'Not Contains', value: 'contains', negate: true },
-    { name: 'Regex', value: 'regex', negate: false },
-    { name: 'Not Regex', value: 'regex', negate: true },
+    { name: 'Equal', value: 'equal' },
+    { name: 'Greater Than', value: 'greater_than' },
+    { name: 'Greater Than or Equal', value: 'greater_than_or_equal' },
+    { name: 'Contains', value: 'contains' },
+    { name: 'Regex', value: 'regex' },
 ]
+
+function getNameFromValue(value: string): string | undefined {
+    const option = options.find((option) => option.value === value);
+    return option ? option.name : undefined;
+}
+
 const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     const revalidator = useRevalidator()
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const updateRule = (newRule: TargetingRuleRequest) => {
-        setIsLoading(true);
-        const shouldUpdate = !objectsEqual(newRule, rule)
-        if (shouldUpdate) {
-            updateTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key }, rule, newRule)
-            revalidator.revalidate()
-        }
-        setTimeout(() => setIsLoading(false), 2000);
+        setIsLoading(true)
+        updateTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key }, rule, newRule)
+        console.log(newRule)
+        revalidator.revalidate()
+        setTimeout(() => setIsLoading(false), 2000)
     }
 
     const deleteRule = async (ruleKey: string) => {
@@ -51,8 +51,20 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             <div className="flex gap-3 items-center mb-4">
                                 <code className="text-xl font-bold uppercase">if</code>
                                 <Field component={Input} name="traitKey" label="Trait Key" />
-                                <Field component={Select} options={options} name="operator" label="Operator" />
+                                <Field
+                                    component={Select}
+                                    options={options}
+                                    onChange={(operator: string) => {
+                                        setFieldValue('operator', operator)
+                                    }}
+                                    name="operator"
+                                    label="Operator"
+                                    value={{ value: values.operator, name: getNameFromValue(values.operator) }}
+                                />
                                 <Field component={Input} name="traitValue" label="Trait Value" />
+                            </div>
+                            <div className="flex gap-5 items-center mb-4">
+                                <Field component={Toggle} type="checkbox" name="negate" label="Negate" />
                             </div>
                             <div className="flex gap-5 items-center mb-4">
                                 <code className="text-xl font-bold uppercase">Then Serve</code>
@@ -61,9 +73,9 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                                 data={rule?.ruleVariations}
                                 maxValue={100}
                                 onChange={(data) => {
-                                    data.forEach((varation, i) =>
+                                    data.forEach((varation, i) => {
                                         setFieldValue(`ruleVariations.${i}.weight`, varation.weight)
-                                    )
+                                    })
                                 }}
                             />
                         </div>

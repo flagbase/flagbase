@@ -1,7 +1,7 @@
 import { Listbox, Transition } from '@headlessui/react'
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline'
 import { FieldInputProps, FormikProps, FormikFormProps } from 'formik'
-import React, { Fragment } from 'react'
+import React, { Fragment, useEffect } from 'react'
 import { classNames } from '../../helpers'
 
 export type InputProps = {
@@ -17,23 +17,29 @@ export const Select: React.FC<InputProps> = ({
     form,
     label,
     options,
+    value,
     ...props
 }: {
     prefix?: React.ReactNode
     field: FieldInputProps<any>
     form: FormikProps<any>
     label?: string
+    value: { name: string; value: string }
     options: { name: string; value: string }[]
 }) => {
-    const [selected, setSelected] = React.useState(options[0])
+    const [selected, setSelected] = React.useState<{ name: string; value: string } | null>(value)
     const name = field?.name
     const errors = form?.errors[name]
     const isTouched = form?.touched[name]
+
+    useEffect(() => {
+        setSelected(value)
+    }, [value])
     return (
         <div>
             {label && <label className="block text-sm font-medium text-gray-700">{label}</label>}
 
-            <Listbox value={selected} onChange={setSelected}>
+            <Listbox value={selected} onChange={setSelected} {...props}>
                 {({ open }) => (
                     <>
                         <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
@@ -60,7 +66,7 @@ export const Select: React.FC<InputProps> = ({
                                                 'relative cursor-default select-none py-2 pl-8 pr-4'
                                             )
                                         }
-                                        value={option}
+                                        value={option.value}
                                     >
                                         {({ selected, active }) => (
                                             <>
