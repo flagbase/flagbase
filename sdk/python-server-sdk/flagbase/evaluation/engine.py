@@ -10,14 +10,14 @@ def evaluate(flag: dict, salt: str, identity: Identity) -> dict:
 
     matched = False
 
-    if not flag['useFallthrough'] and len(flag['rules']) > 0:
+    if not flag['useFallthrough'] and flag['rules'] != None and len(flag['rules']) > 0:
         eval_result, match = evaluate_rules(flag['rules'], salt, identity)
         if match:
             evaluation['Reason'] = eval_result['Reason']
             evaluation['VariationKey'] = eval_result['VariationKey']
             matched = True
 
-    if not matched:
+    if not matched or flag['rules'] == None:
         evaluation['Reason'] = 'fallthrough'
         if len(flag['fallthroughVariations']) > 1:
             evaluation['Reason'] = 'fallthrough_weighted'
