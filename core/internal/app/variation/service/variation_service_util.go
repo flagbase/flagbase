@@ -18,7 +18,6 @@ func (s *Service) createChildren(
 ) *res.Errors {
 	var e res.Errors
 
-	s.Senv.Log.Debug().Msgf("Creating child resources for variation: %+v", i)
 	envs, _err := s.EnvironmentRepo.List(ctx, environment.RootArgs{
 		WorkspaceKey: a.WorkspaceKey,
 		ProjectKey:   a.ProjectKey,
@@ -39,7 +38,6 @@ func (s *Service) createChildren(
 		if _err != nil {
 			e.Append(cons.ErrorInternal, _err.Error())
 		}
-		s.Senv.Log.Debug().Msgf("Retrieved targeting resource for flag: %+v", t)
 
 		nV := &model.Variation{
 			ID:           i.ID,
@@ -54,10 +52,9 @@ func (s *Service) createChildren(
 			FallthroughVariations: t.FallthroughVariations,
 		}
 		nt.FallthroughVariations = append(nt.FallthroughVariations, nV)
-		s.TargetingRepo.CreateFallthroughVariations(ctx, nt, tArgs)
-		// DEBUG
-		for _, rvs := range nt.FallthroughVariations {
-			s.Senv.Log.Debug().Msgf("New fallthrough variation for flag: %+v", rvs)
+		_, _err = s.TargetingRepo.CreateFallthroughVariations(ctx, nt, tArgs)
+		if _err != nil {
+			e.Append(cons.ErrorInternal, _err.Error())
 		}
 
 		// 2. update targeting rules with new environment
@@ -73,13 +70,9 @@ func (s *Service) createChildren(
 		}
 		for _, tr := range trs {
 			tr.RuleVariations = append(tr.RuleVariations, nV)
-			ntr, _err := s.TargetingRuleRepo.CreateRuleVariations(ctx, *tr, trArgs)
+			_, _err := s.TargetingRuleRepo.CreateRuleVariations(ctx, *tr, trArgs)
 			if _err != nil {
 				e.Append(cons.ErrorInternal, _err.Error())
-			}
-			// DEBUG
-			for _, rvs := range ntr.RuleVariations {
-				s.Senv.Log.Debug().Msgf("New targeting rule variation for flag: %+v", rvs)
 			}
 		}
 	}
