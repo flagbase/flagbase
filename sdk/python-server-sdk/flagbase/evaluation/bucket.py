@@ -1,4 +1,4 @@
-import xxhash
+import hashlib
 from typing import List, Dict
 
 BUCKET_SIZE = 100
@@ -16,9 +16,9 @@ def derive_variation_with_accumulated_weights(
     variations: List[Dict[str, int]],
     accumulated_weights: List[int],
 ) -> str:
-    hash = xxhash.xxh64()
+    hash = hashlib.sha256()
     hash.update(salt.encode())
-    hash_val = hash.intdigest()
+    hash_val = int(hash.hexdigest(), 16)
     user_bucket = hash_val % BUCKET_SIZE
 
     for i, current_bucket in enumerate(accumulated_weights):

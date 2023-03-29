@@ -1,5 +1,7 @@
 import threading
-import requests
+import http.client
+import json
+from urllib.parse import urlparse
 
 from flagbase.context import Context
 from flagbase.events import Events, EventType
@@ -20,37 +22,42 @@ class Poller:
 
             etag = 'initial'
             while not self._stop_event.is_set():
-                response = requests.get(polling_service_url, headers={
-                    'x-sdk-key': self.context.get_config().get_server_key(),
-                    'ETag': etag
-                })
+                parsed_url = urlparse(polling_service_url)
+                connection = http.client.HTTPSConnection(parsed_url.netloc)
+                connection.request(
+                    "GET", parsed_url.path, headers={
+                        'x-sdk-key': self.context.get_config().get_server_key(),
+                        'ETag': etag
+                    }
+                )
+                response = connection.getresponse()
 
-                if response.status_code == 200:
-                    data = response.json()["data"]
+                if response.status == 200:
+                    data = json.loads(response.read())["data"]
 
                     for raw_flag in data:
                         self.context.get_raw_flags().add_flag(raw_flag["attributes"])
-                    
+
                     self.events.emit(
                         event_name=EventType.NETWORK_FETCH_FULL,
-                        event_message="Retrieved full flagset from service.", 
-                        event_context=self.context.get_raw_flags().get_flags())                    
+                        event_message="Retrieved full flagset from service.",
+                        event_context=self.context.get_raw_flags().get_flags())
 
                     if etag == "initial":
                         self.events.emit(
                             event_name=EventType.CLIENT_READY,
-                            event_message="Client is ready! Initial flagset has been retrieved.", 
+                            event_message="Client is ready! Initial flagset has been retrieved.",
                             event_context=self.context.get_raw_flags().get_flags())
 
-                    etag = response.headers["Etag"]
+                    etag = response.getheader("Etag")
 
-                elif response.status_code == 304:
+                elif response.status == 304:
                     self.events.emit(
                         event_name=EventType.NETWORK_FETCH_CACHED,
                         event_message="Retrieved cached flagset from service.")
 
-                elif response.status_code != 200 or response.status_code != 304:
-                    msg = f"Unexpected response from poller [{polling_service_url}], with status code {response.status_code}: {response.json()}"
+                elif response.status != 200 or response.status != 304:
+                    msg = f"Unexpected response from poller [{polling_service_url}], with status code {response.status}: {response.read()}"
                     self.events.emit(
                         event_name=EventType.NETWORK_FETCH_ERROR,
                         event_message=msg)
