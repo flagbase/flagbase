@@ -5,8 +5,8 @@ from pathlib import Path
 long_description = (Path(__file__).parent / "README.md").read_text()
 
 INSTALL_REQUIRES = [
-    'requests>=2.26.0',
-    'xxhash>=3.2.0',
+    # using in-built http.client instead
+    # 'requests>=2.26.0'
 ]
 
 with open(path.join(path.abspath(path.dirname(__file__)), 'flagbase', 'version.py'), encoding='utf-8') as f:
