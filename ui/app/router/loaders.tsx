@@ -192,7 +192,7 @@ export const targetingLoader = async ({
         throw new Error('Missing params')
     }
     if (!environmentKey) {
-        return defer({ targeting: [] })
+        return defer({ targetingRules: [] })
     }
     const variations = queryClient.fetchQuery(
         getVariationsKey({

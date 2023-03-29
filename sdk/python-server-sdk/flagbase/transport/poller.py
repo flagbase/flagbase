@@ -12,6 +12,7 @@ class Poller:
         self.events = events
         self._stop_event = threading.Event()
         self._polling_thread = None
+        self._initialised_event = threading.Event()
 
     def _poll(self):
         try:
@@ -49,7 +50,8 @@ class Poller:
                             event_message="Client is ready! Initial flagset has been retrieved.",
                             event_context=self.context.get_raw_flags().get_flags())
 
-                    etag = response.getheader("Etag")
+                    etag = response.getheader("Etag")                    
+                    self._initialised_event.set()
 
                 elif response.status == 304:
                     self.events.emit(
@@ -74,6 +76,7 @@ class Poller:
             self._stop_event.clear()
             self._polling_thread = threading.Thread(target=self._poll, daemon=True)
             self._polling_thread.start()
+            self._initialised_event.wait()
 
     def stop(self):
         if self._polling_thread and self._polling_thread.is_alive():

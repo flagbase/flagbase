@@ -88,12 +88,12 @@ const Environments = () => {
         })
     }
 
-    const { data: environments } = useEnvironments(instanceKey, workspaceKey, projectKey)
+    const { data: environments } = useEnvironments()
 
     return (
         <Suspense fallback={<Loader />}>
             <Await resolve={prefetchedEnvironments}>
-                {(environments: Environment) => (
+                {() => (
                     <div className="mt-5">
                         <StackedEntityList entities={convertEnvironmentsToList(environments)} />
                     </div>

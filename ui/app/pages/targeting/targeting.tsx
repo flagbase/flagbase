@@ -21,6 +21,11 @@ import TargetingRule from './targeting-rule'
 import RolloutSlider from '../../../components/rollout-slider'
 import EmptyState from '../../../components/empty-state'
 import CodeUsageModal from '../../../components/code-usage-modal'
+import { useQuery } from 'react-query'
+import { getTargetingKey, getTargetingRulesKey } from '../../router/loaders'
+import { configureAxios } from '../../lib/axios'
+import { fetchTargeting, fetchTargetingRules } from '../flags/api'
+import { useVariations } from '../variations/variations'
 
 type VariationResponse = {
     type: 'variation'
@@ -33,9 +38,9 @@ type VariationResponse = {
     }
 }
 
-const newRuleFactory = (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => ({
+const newRuleFactory = (variations: VariationResponse[]) => ({
     key: `some-rule-key-${window.crypto.randomUUID().split('-').pop()}`,
-    name: `Some rule name ${targetingRules.length + 1}`,
+    name: `My targeting rule`,
     description: 'Some rule description',
     tags: ['default'],
     type: 'trait',
@@ -48,22 +53,55 @@ const newRuleFactory = (variations: VariationResponse[], targetingRules: Targeti
     })),
 })
 
+export const useTargeting = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
+    const query = useQuery<TargetingResponse>(
+        getTargetingKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+        {
+            queryFn: async () => {
+                await configureAxios(instanceKey!)
+                return fetchTargeting({ workspaceKey, projectKey, environmentKey, flagKey })
+            },
+            enabled: !!instanceKey && !!workspaceKey,
+        }
+    )
+    return query
+}
+
+export const useTargetingRules = () => {
+    const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
+    const query = useQuery<TargetingRuleResponse[]>(
+        getTargetingRulesKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+        {
+            queryFn: async () => {
+                await configureAxios(instanceKey!)
+                return fetchTargetingRules({ workspaceKey, projectKey, environmentKey, flagKey })
+            },
+            enabled: !!instanceKey && !!workspaceKey,
+        }
+    )
+    return query
+}
+
+
 export const Targeting = () => {
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
-    const [initalLoad, setInitialLoad] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
-    const { targetingRules, targeting, variations } = useLoaderData() as {
-        targetingRules: TargetingRuleResponse[]
-        targeting: TargetingResponse
-        variations: VariationResponse[]
-    }
+    const { data: targeting, isLoading: isTargetingLoading, refetch: refetchTargeting } = useTargeting();
+    const { data: targetingRules, isLoading: isTargetingRulesLoading, refetch: refetchTargetingRules } = useTargetingRules();
+    const { data: variations, isLoading: isVariationsLoading } = useVariations();
+
+    useEffect(() => {
+        refetchTargeting();
+        refetchTargetingRules();
+    }, [environmentKey, refetchTargeting, refetchTargetingRules])
 
     const revalidator = useRevalidator();
 
-    const createRule = async (variations: VariationResponse[], targetingRules: TargetingRuleResponse[]) => {
+    const createRule = async (variations: VariationResponse[]) => {
         setIsLoading(true)
-        const newRule = newRuleFactory(variations, targetingRules)
+        const newRule = newRuleFactory(variations)
         await createTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey }, newRule)
         setIsLoading(false)
         revalidator.revalidate()
@@ -77,22 +115,12 @@ export const Targeting = () => {
         }
     }
 
-    return (
-        <Suspense fallback={!initalLoad && <Loader />}>
-            <Await resolve={Promise.all([targetingRules, targeting, variations])}>
-                {([targetingRules, targeting, variations]: [
-                    TargetingRuleResponse[],
-                    TargetingResponse,
-                    VariationResponse[]
-                ]) => {
-                    if (!!targetingRules && !!targeting && !!variations) {
-                        setInitialLoad(true)
-                    }
-                    return (
+    return !isTargetingLoading && targeting && variations && (
                         <>
                             <div>
                                 <Formik
                                     initialValues={{ ...targeting.attributes }}
+                                    enableReinitialize={true}
                                     onSubmit={async (values) => {
                                         setIsLoading(true)
                                         await updateTargeting(targeting.attributes, values)
@@ -108,7 +136,7 @@ export const Targeting = () => {
                                                         <Switch.Group as="div" className="flex items-center mr-3">
                                                             <Switch
                                                                 name="enabled"
-                                                                checked={values.enabled}
+                                                                checked={values?.enabled}
                                                                 onChange={async (checked: boolean) => {
                                                                     await updateTargeting(targeting.attributes, {
                                                                         ...values,
@@ -117,14 +145,14 @@ export const Targeting = () => {
                                                                     return setFieldValue('enabled', checked)
                                                                 }}
                                                                 className={classNames(
-                                                                    values.enabled ? 'bg-indigo-600' : 'bg-gray-200',
+                                                                    values?.enabled ? 'bg-indigo-600' : 'bg-gray-200',
                                                                     'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
                                                                 )}
                                                             >
                                                                 <span
                                                                     aria-hidden="true"
                                                                     className={classNames(
-                                                                        values.enabled
+                                                                        values?.enabled
                                                                             ? 'translate-x-5'
                                                                             : 'translate-x-0',
                                                                         'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
@@ -133,11 +161,11 @@ export const Targeting = () => {
                                                             </Switch>
                                                         </Switch.Group>
                                                         <h1 className="text-base font-semibold leading-6 text-gray-900 text-xl">
-                                                            {values?.enabled ? 'Enabled' : 'Disabled'}
+                                                            {targeting?.attributes?.enabled ? 'Enabled' : 'Disabled'}
                                                         </h1>
                                                         </div>
                                                         <p className="mt-2 max-w-4xl text-sm text-gray-500">
-                                                            {values?.enabled
+                                                            {targeting?.attributes?.enabled
                                                                 ? 'Users will evaluate the targeting rules below. If none of them match, users will be served the fallthrough variations.'
                                                                 : 'Users will evaluate the fallthrough variations.'}
                                                         </p>
@@ -159,7 +187,7 @@ export const Targeting = () => {
                                                 </div>
                                                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
                                                     <div className="block hover:bg-gray-50 px-4 py-4 sm:px-6">
-                                                        {values.fallthroughVariations && (
+                                                        {targeting.attributes.fallthroughVariations && (
                                                             <RolloutSlider
                                                                 data={values.fallthroughVariations}
                                                                 maxValue={100}
@@ -176,11 +204,9 @@ export const Targeting = () => {
                                                         <Button
                                                             isLoading={isLoading}
                                                             disabled={
-                                                                objectsEqual(values, targeting?.attributes) ||
                                                                 !isValidVariationSum(values?.fallthroughVariations)
                                                             }
                                                             className={`mt-3 mr-3 py-1 justify-center ${
-                                                                objectsEqual(values, targeting?.attributes) ||
                                                                 !isValidVariationSum(values?.fallthroughVariations)
                                                                     ? 'bg-indigo-50 hover:bg-indigo-50'
                                                                     : 'bg-indigo-600'
@@ -207,7 +233,7 @@ export const Targeting = () => {
                                                 className="mt-3 py-2 justify-center text-indigo-600"
                                                 type="submit"
                                                 suffix={PlusCircleIcon}
-                                                onClick={async () => await createRule(variations, targetingRules)}
+                                                onClick={async () => await createRule(variations)}
                                                 secondary
                                                 isLoading={isLoading}
                                             >
@@ -217,7 +243,7 @@ export const Targeting = () => {
                                     </div>
                                 </div>
                                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
-                                    {targetingRules.length ? (
+                                    {targetingRules?.length ? (
                                         <ul role="list" className="divide-y divide-gray-200">
                                             {targetingRules?.reverse().map((rule) => (
                                                 <li key={rule.key}>
@@ -239,7 +265,7 @@ export const Targeting = () => {
                                                         className="py-2"
                                                         type="submit"
                                                         onClick={async () =>
-                                                            await createRule(variations, targetingRules)
+                                                            await createRule(variations)
                                                         }
                                                         suffix={PlusCircleIcon}
                                                     >
@@ -253,8 +279,4 @@ export const Targeting = () => {
                             </div>
                         </>
                     )
-                }}
-            </Await>
-        </Suspense>
-    )
 }
