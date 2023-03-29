@@ -30,6 +30,10 @@ class FlagbaseClient:
         self.events.clear()
 
     def variation(self, flag_key: str, identity: Identity, default_variation_key: str) -> str:
-        if not self.context.get_raw_flags().exists(flag_key):
+        try:
+            if not self.context.get_raw_flags().exists(flag_key):
+                return default_variation_key
+            return self.evaluation.evaluate_flag_for_an_identity(flag_key, identity)
+        except Exception as e:
+            print(f"[Flagbase]: Something went wrong when trying to evaluate flag={flag_key}... Error: {e}")
             return default_variation_key
-        return self.evaluation.evaluate_flag_for_an_identity(flag_key, identity)
