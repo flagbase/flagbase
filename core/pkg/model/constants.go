@@ -1,5 +1,6 @@
 package model
 
 const (
-	DefaultFallthroughVariationWeight int8 = 100
+	DefaultVariationOnWeight  int8 = 100
+	DefaultVariationOffWeight int8 = 0
 )

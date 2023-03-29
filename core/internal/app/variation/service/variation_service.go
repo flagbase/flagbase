@@ -2,6 +2,9 @@ package service
 
 import (
 	"context"
+	environmentrepo "core/internal/app/environment/repository"
+	targetingrepo "core/internal/app/targeting/repository"
+	targetingrulerepo "core/internal/app/targetingrule/repository"
 	variationmodel "core/internal/app/variation/model"
 	variationrepo "core/internal/app/variation/repository"
 	"core/internal/pkg/authutil"
@@ -13,14 +16,20 @@ import (
 )
 
 type Service struct {
-	Senv          *srvenv.Env
-	VariationRepo *variationrepo.Repo
+	Senv              *srvenv.Env
+	VariationRepo     *variationrepo.Repo
+	EnvironmentRepo   *environmentrepo.Repo
+	TargetingRepo     *targetingrepo.Repo
+	TargetingRuleRepo *targetingrulerepo.Repo
 }
 
 func NewService(senv *srvenv.Env) *Service {
 	return &Service{
-		Senv:          senv,
-		VariationRepo: variationrepo.NewRepo(senv),
+		Senv:              senv,
+		VariationRepo:     variationrepo.NewRepo(senv),
+		EnvironmentRepo:   environmentrepo.NewRepo(senv),
+		TargetingRepo:     targetingrepo.NewRepo(senv),
+		TargetingRuleRepo: targetingrulerepo.NewRepo(senv),
 	}
 }
 
@@ -70,6 +79,11 @@ func (s *Service) Create(
 	r, err := s.VariationRepo.Create(ctx, i, a)
 	if err != nil {
 		e.Append(cons.ErrorInput, err.Error())
+	}
+	if e.IsEmpty() {
+		if err := s.createChildren(ctx, i, a); !err.IsEmpty() {
+			e.Extend(err)
+		}
 	}
 
 	return r, &e
