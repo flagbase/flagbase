@@ -63,14 +63,20 @@ func (s *Service) createChildren(
 			e.Append(cons.ErrorInternal, fmt.Sprintf("No variation found on flag with key=%s", f.Key))
 		}
 
+		fallthroughVariations := make([]*model.Variation, 0)
+		for idx, _v := range vl {
+			nV := &model.Variation{
+				Weight:       model.DefaultVariationOffWeight,
+				VariationKey: _v.Key.String(),
+			}
+			if idx == 0 {
+				nV.Weight = model.DefaultVariationOnWeight
+			}
+			fallthroughVariations = append(fallthroughVariations, nV)
+		}
 		_, _err = s.TargetingRepo.Create(ctx, targetingmodel.Targeting{
-			Enabled: false,
-			FallthroughVariations: []*model.Variation{
-				{
-					VariationKey: string(vl[0].Key),
-					Weight:       model.DefaultFallthroughVariationWeight,
-				},
-			},
+			Enabled:               false,
+			FallthroughVariations: fallthroughVariations,
 		}, targetingmodel.RootArgs{
 			WorkspaceKey:   a.WorkspaceKey,
 			ProjectKey:     a.ProjectKey,

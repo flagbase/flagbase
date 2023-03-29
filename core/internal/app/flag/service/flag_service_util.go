@@ -74,7 +74,7 @@ func (s *Service) createChildren(
 				FallthroughVariations: []*model.Variation{
 					{
 						VariationKey: string(cVar.Key),
-						Weight:       model.DefaultFallthroughVariationWeight,
+						Weight:       model.DefaultVariationOnWeight,
 					},
 					{
 						VariationKey: string(tVar.Key),
