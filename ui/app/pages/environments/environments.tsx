@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react'
-import { useQuery } from 'react-query'
+import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Await, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
@@ -7,7 +7,8 @@ import { Loader } from '../../../components/loader'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
-import { fetchEnvironments } from './api'
+import { getEnvironmentsKey } from '../../router/loaders'
+import { fetchEnvironments, createEnvironment, EnvironmentCreateBody } from './api'
 
 export type Environment = {
     type: string
@@ -20,21 +21,10 @@ export type Environment = {
     }
 }
 
-export const getEnvironmentKey = ({
-    instanceKey,
-    workspaceKey,
-    projectKey,
-}: {
-    instanceKey: string
-    workspaceKey: string
-    projectKey: string
-}) => {
-    return ['environments', instanceKey, workspaceKey, projectKey]
-}
 export const useEnvironments = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
     const query = useQuery<Environment[]>(
-        getEnvironmentKey({
+        getEnvironmentsKey({
             instanceKey: instanceKey!,
             workspaceKey: workspaceKey!,
             projectKey: projectKey!,
@@ -48,6 +38,30 @@ export const useEnvironments = () => {
         }
     )
     return query
+}
+
+export const useAddEnvironment = () => {
+    const queryClient = useQueryClient()
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+    const mutation = useMutation({
+        mutationFn: async (values: EnvironmentCreateBody) => {
+            await createEnvironment({
+                workspaceKey: workspaceKey!,
+                projectKey: projectKey!,
+                environment: values,
+            })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getEnvironmentsKey({
+                    instanceKey: instanceKey!,
+                    workspaceKey: workspaceKey!,
+                    projectKey: projectKey!
+                }),
+            })
+        },
+    })
+    return mutation
 }
 
 const Environments = () => {

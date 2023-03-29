@@ -27,7 +27,7 @@ const CreateFlag: React.FC<{ visible: boolean; setVisible: Dispatch<SetStateActi
             <div className="flex flex-col gap-3">
                 <div className="text-center">
                     <Heading>Add a new flag</Heading>
-                    <Text>Connect to a Flagbase project to begin managing your flags</Text>
+                    <Text>Create a new feature flag, before referencing it in your code!</Text>
                 </div>
                 <Formik
                     initialValues={

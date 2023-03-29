@@ -1,5 +1,4 @@
 import React, { createElement, Fragment, ReactNode, useEffect } from 'react'
-import { useFeatureFlag } from '@flagbase/react-client-sdk'
 
 import { Link, Outlet, useLocation, useMatches, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
@@ -37,8 +36,6 @@ import { Flag } from '../../app/pages/flags/api'
 import { useVariations } from '../../app/pages/variations/variations'
 import { useSDKs } from '../../app/pages/sdks/sdks'
 import { Footer } from './footer'
-import Button from '../button'
-import { CreateWorkspaceModal } from '../../app/pages/workspaces/workspace.modal'
 import CodeUsageModal from '../code-usage-modal'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
@@ -532,8 +529,6 @@ export const PageHeadings = () => {
     const activeVariation = variations?.find((variation) => variation.attributes.key === variationKey)
     const activeSDK = sdks?.find((sdk) => sdk.id === sdkKey)
 
-    const showUseInCodeButton = useFeatureFlag("use-in-code-modal", "control");
-
     useEffect(() => {
         if (location.pathname.includes('instances')) {
             setPageHeading({
@@ -557,7 +552,7 @@ export const PageHeadings = () => {
         } else if (instanceKey && workspaceKey && projectKey && flagKey) {
             setPageHeading({
                 title: activeFlag?.attributes.name || flagKey,
-                subtitle: showUseInCodeButton === "treatment" ? <CodeUsageModal /> : null,
+                subtitle: 'Feature Flag',
                 backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
                 tabs: [
                     {

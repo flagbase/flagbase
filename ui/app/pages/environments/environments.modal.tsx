@@ -1,3 +1,4 @@
+import { useFeatureFlag } from '@flagbase/react-client-sdk'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Field, Form, Formik } from 'formik'
 import React, { useState } from 'react'
@@ -8,20 +9,22 @@ import { TagInput } from '../../../components/input/tag-input'
 import { ModalLayout } from '../../../components/layout'
 import { Heading } from '../../../components/text/heading'
 import Text from '../../../components/text/text'
-import { VariationCreateBody } from './api'
-import { useAddVariation } from './variations'
+import { EnvironmentCreateBody } from './api'
+import { useAddEnvironment } from './environments'
 
-const CreateVariation = () => {
-    const mutation = useAddVariation()
+const CreateEnvironment = () => {
+    const showFeature = useFeatureFlag("create-environment-button", "control");
+
+    const mutation = useAddEnvironment()
     const [visible, setVisible] = useState(false)
 
-    return (
+    return showFeature === "treatment" ? (
         <>
             <ModalLayout open={visible} onClose={() => setVisible(false)}>
                 <div className="flex flex-col gap-3">
                     <div className="text-center">
-                        <Heading>Add a new variation</Heading>
-                        <Text>Create a new variation. You can add as many feature variations as you want!</Text>
+                        <Heading>Add a new environment</Heading>
+                        <Text>Create a new environment. An environment isolates changes you make when updating your flags or segments.</Text>
                     </div>
                     <Formik
                         initialValues={
@@ -30,7 +33,7 @@ const CreateVariation = () => {
                                 name: '',
                                 description: '',
                                 tags: [],
-                            } as VariationCreateBody
+                            } as EnvironmentCreateBody
                         }
                         onSubmit={async (values) => {
                             mutation.mutate({
@@ -43,22 +46,22 @@ const CreateVariation = () => {
                         }}
                     >
                         <Form className="flex flex-col gap-3">
-                            <Field component={Input} id="name" name="name" placeholder="Variation name" />
+                            <Field component={Input} id="name" name="name" placeholder="Environment name" />
                             <Field component={KeyInput} id="key" name="key" placeholder="Key" />
                             <Field component={Input} id="description" name="description" placeholder="Description" />
                             <Field component={TagInput} id="tags" name="tags" placeholder="Tags (separate by comma)" />
                             <Button className="mt-3 py-2 justify-center" type="submit" suffix={PlusCircleIcon}>
-                                Add variation
+                                Add environment
                             </Button>
                         </Form>
                     </Formik>
                 </div>
             </ModalLayout>
             <Button className="py-2" onClick={() => setVisible(true)} suffix={PlusCircleIcon}>
-                Add Variation
+                Add Environment
             </Button>
         </>
-    )
+    ) : null
 }
 
-export { CreateVariation }
+export { CreateEnvironment }

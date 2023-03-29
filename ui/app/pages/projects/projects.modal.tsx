@@ -29,7 +29,7 @@ const CreateProjectModal: React.FC<{ visible: boolean; setVisible: Dispatch<SetS
             <div className="flex flex-col gap-3">
                 <div className="text-center">
                     <Title level={3}>Add a new project</Title>
-                    <Text>Connect to a Flagbase project to begin managing your flags</Text>
+                    <Text>Create a new project! A project allows you to organise your flags, segments etc.</Text>
                 </div>
                 <Formik
                     initialValues={{

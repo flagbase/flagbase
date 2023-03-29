@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import deterministicColor from '../../app/lib/deterministic-color';
 
 type Variation = {
     variationKey: string
@@ -10,48 +11,41 @@ type RolloutSliderProps = {
     maxValue: number
     onChange?: (data: Variation[]) => void
 }
-
-const generateColor = (key: string): string => {
-    const colors = ['#9FE2BF', '#40E0D0', '#6495ED', '#FFBF00', '#96DED1', '#87CEEB', '#F4BB44']
-    let sum = 0
-    for (let i = 0; i < key.length; i++) {
-        sum += key.charCodeAt(i)
-    }
-    return colors[sum % colors.length]
-}
-
+  
 const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange }) => {
-    const [weights, setWeights] = useState(data)
-    const [borderColor, setBorderColor] = useState('red')
+    const [weights, setWeights] = useState(data);
+    const [borderColor, setBorderColor] = useState('red');
 
     useEffect(() => {
-        const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0)
-        setBorderColor(totalWeight === maxValue ? 'green' : 'red')
-    }, [weights, maxValue])
+        const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
+        setBorderColor(totalWeight === maxValue ? 'green' : 'red');
+    }, [weights, maxValue]);
 
     const handleWeightChange = useCallback(
         (index: number, newWeight: number) => {
-            if (newWeight < 0) {
-                return
+          if (newWeight < 0) {
+            return;
+          }
+      
+          const updatedWeights = weights.map((item, idx) => {
+            if (idx === index) {
+              return { ...item, weight: newWeight };
             }
-
-            const updatedWeights = weights.map((item, idx) => {
-                if (idx === index) {
-                    return { ...item, weight: newWeight }
-                }
-                return item
-            })
-
-            const totalWeight = updatedWeights.reduce((acc, item) => acc + item.weight, 0)
-            if (totalWeight <= maxValue) {
-                setWeights(updatedWeights)
-                onChange && onChange(updatedWeights)
+            return item;
+          });
+      
+          const totalWeight = updatedWeights.reduce((acc, item) => acc + item.weight, 0);
+          if (totalWeight <= maxValue) {
+            setWeights(updatedWeights);
+            if (onChange) {
+              onChange(updatedWeights);
             }
+          }
         },
         [weights, maxValue, onChange]
-    )
-
-    const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0)
+      );
+      
+    const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
 
     return (
         <div>
@@ -61,7 +55,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
                         <td className="flex flex-row">
                             <svg
                                 className="w-6 h-6 mr-3"
-                                style={{ color: generateColor(item.variationKey) }}
+                                style={{ color: deterministicColor(item.variationKey) }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
                                 viewBox="0 0 24 24"
@@ -101,9 +95,9 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
                                     height: '25px',
                                     width: '100%',
                                     margin: '0px',
-                                    background: `linear-gradient(to right, ${generateColor(
+                                    background: `linear-gradient(to right, ${deterministicColor(
                                         item.variationKey
-                                    )}, ${generateColor(item.variationKey)}) no-repeat left`,
+                                    )}, ${deterministicColor(item.variationKey)}) no-repeat left`,
                                     backgroundSize: `${(item.weight / totalWeight) * totalWeight}% 100%`,
                                     WebkitAppearance: 'none',
                                     borderRadius: '0px',
@@ -155,7 +149,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
                                 <div
                                     key={item.variationKey}
                                     style={{
-                                        backgroundColor: generateColor(item.variationKey),
+                                        backgroundColor: deterministicColor(item.variationKey),
                                         flexBasis: `${(item.weight / maxValue) * 100}%`,
                                     }}
                                 />

@@ -43,6 +43,7 @@ import { AddNewInstanceModal } from '../pages/instances/instances.modal'
 import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal'
 import { CreateProjectModal } from '../pages/projects/projects.modal'
 import { CreateSDKModal } from '../pages/sdks/sdks.modal'
+import { CreateEnvironment } from '../pages/environments/environments.modal'
 
 const { InstanceKey, WorkspaceKey, ProjectKey, EnvironmentKey, FlagKey, SdkKey, VariationKey } = RouteParams
 
@@ -205,6 +206,9 @@ export const newRouter = createBrowserRouter(
                                     path=""
                                     loader={({ params }) => environmentsLoader({ queryClient, params })}
                                     element={<Environments />}
+                                    handle={{
+                                        rightContainer: () => <CreateEnvironment />,
+                                    }}
                                 />
                                 <Route path={`${EnvironmentKey}`}>
                                     <Route path="settings" element={<EditEnvironment />} />

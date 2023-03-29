@@ -35,7 +35,7 @@ export const useUpdateActiveEnvironment = () => {
 export const EnvironmentDropdown = () => {
     const { data: environments, isLoading } = useEnvironments()
     const { data: activeEnvironmentKey } = useActiveEnvironment()
-    const { mutate, isSuccess } = useUpdateActiveEnvironment()
+    const { mutate: setActiveEnvironmentKey, isSuccess } = useUpdateActiveEnvironment()
     const { pathname } = useLocation()
     const navigate = useNavigate()
 
@@ -73,7 +73,7 @@ export const EnvironmentDropdown = () => {
                 value: activeEnvironment.attributes.key,
             }}
             setSelected={(environment) => {
-                mutate(environment.value)
+                setActiveEnvironmentKey(environment.value)
             }}
         />
     )
