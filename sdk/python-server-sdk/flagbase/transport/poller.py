@@ -1,10 +1,13 @@
 import threading
 import http.client
+import ssl
 import json
 from urllib.parse import urlparse
 
 from flagbase.context import Context
 from flagbase.events import Events, EventType
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 class Poller:
     def __init__(self, context: Context, events: Events):
