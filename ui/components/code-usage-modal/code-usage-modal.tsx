@@ -1,6 +1,5 @@
 import { CodeBracketIcon } from '@heroicons/react/20/solid'
-import React, { useEffect, useState } from 'react'
-import { CreateWorkspaceModal } from '../../app/pages/workspaces/workspace.modal'
+import React, { useState } from 'react'
 import Button from '../button'
 import { ModalLayout } from '../layout'
 import { Typography } from 'antd'
@@ -8,6 +7,7 @@ import { useFlagbaseParams } from '../../app/lib/use-flagbase-params'
 import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown'
 import { useSDKs } from '../../app/pages/sdks/sdks'
 import { useVariations } from '../../app/pages/variations/variations'
+import { useFeatureFlag } from '@flagbase/react-client-sdk'
 
 const { Title, Text } = Typography
 interface ModalProps {
@@ -16,7 +16,7 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
-    const { instanceKey, workspaceKey, projectKey, flagKey } = useFlagbaseParams()
+    const { flagKey } = useFlagbaseParams()
 
     const { data: activeEnvironmentKey } = useActiveEnvironment()
     const { data: sdks } = useSDKs()
@@ -60,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                         {variations?.map(variation => (
                                 <div className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
                                 <label htmlFor="variation" className="block text-xs font-medium text-gray-500">
-                                    Variation Key for {variation.attributes.name} group
+                                    Variation key for {variation.attributes.name} cohort
                                 </label>
                                 <input
                                     type="text"
@@ -130,25 +130,18 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
 const CodeUsageModal = () => {
     const [showInCodeModal, setShowInCodeModal] = useState(false)
 
-    useEffect(() => {
-        console.log('show modal: ', showInCodeModal)
-    }, [showInCodeModal])
-
-    return (
+    return useFeatureFlag("use-in-code-modal", "control") === "treatment" ? (
         <>
             <Modal visible={showInCodeModal} setVisible={(show) => setShowInCodeModal(show)} />
             <Button
-                prefix={CodeBracketIcon}
+                suffix={CodeBracketIcon}
                 secondary
-                onClick={() => {
-                    setShowInCodeModal(!showInCodeModal)
-                    console.log(showInCodeModal)
-                }}
+                onClick={() => setShowInCodeModal(!showInCodeModal)}
             >
-                Show In-Code Usage
+                How to use my flag in code
             </Button>
         </>
-    )
+    ) : null
 }
 
 export default CodeUsageModal

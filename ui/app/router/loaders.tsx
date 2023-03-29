@@ -84,7 +84,11 @@ export const environmentsLoader = async ({
     params: { instanceKey: string; workspaceKey: string; projectKey: string }
 }) => {
     const { instanceKey, workspaceKey, projectKey } = params
-    const environments = queryClient.fetchQuery(['environments', instanceKey, workspaceKey, projectKey], {
+    const environments = queryClient.fetchQuery(getEnvironmentsKey({
+        instanceKey,
+        workspaceKey,
+        projectKey
+    }), {
         queryFn: async () => {
             await configureAxios(instanceKey)
             return fetchEnvironments(workspaceKey, projectKey)
@@ -188,7 +192,7 @@ export const targetingLoader = async ({
         throw new Error('Missing params')
     }
     if (!environmentKey) {
-        return defer({ targeting: [] })
+        return defer({ targetingRules: [] })
     }
     const variations = queryClient.fetchQuery(
         getVariationsKey({
@@ -274,6 +278,18 @@ export const getVariationsKey = ({
     flagKey: string
 }) => {
     return ['variations', instanceKey, workspaceKey, projectKey, flagKey]
+}
+
+export const getEnvironmentsKey = ({
+    instanceKey,
+    workspaceKey,
+    projectKey,
+}: {
+    instanceKey: string
+    workspaceKey: string
+    projectKey: string
+}) => {
+    return ['environments', instanceKey, workspaceKey, projectKey]
 }
 
 export const getVariationKey = ({

@@ -32,3 +32,35 @@ export const updateEnvironment = async ({
 }) => {
     return axios.patch(`/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`, body)
 }
+
+export type EnvironmentCreateBody = {
+    key: string
+    name: string
+    description: string
+    tags: string[]
+}
+
+type Environment = {
+    type: 'variation'
+    id: string
+    attributes: {
+        description: string
+        key: string
+        name: string
+        tags: string[]
+    }
+}
+
+export const createEnvironment = async ({
+    workspaceKey,
+    projectKey,
+    environment,
+}: {
+    workspaceKey: string
+    projectKey: string
+    environment: EnvironmentCreateBody
+}): Promise<Environment> => {
+    const { data } = await axios.post(`/projects/${workspaceKey}/${projectKey}/environments`, environment)
+    return data
+}
+

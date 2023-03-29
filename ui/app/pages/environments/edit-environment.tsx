@@ -10,7 +10,8 @@ import { EditEntityHeading } from '../../../components/text/heading'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { updateEnvironment, deleteEnvironment } from './api'
-import { getEnvironmentKey, useEnvironments } from './environments'
+import { useEnvironments } from './environments'
+import { getEnvironmentsKey } from '../../router/loaders';
 
 export const useUpdateEnvironment = () => {
     const queryClient = useQueryClient()
@@ -66,7 +67,7 @@ export const useRemoveEnvironment = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: getEnvironmentKey({
+                queryKey: getEnvironmentsKey({
                     instanceKey: instanceKey!,
                     workspaceKey: workspaceKey!,
                     projectKey: projectKey!,
