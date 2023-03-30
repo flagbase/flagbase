@@ -13,6 +13,7 @@ import { Toggle } from '../../../components/input/toggle'
 import { useMutation, useQueryClient } from 'react-query'
 import { getTargetingRulesKey } from '../../router/loaders'
 import { useNotification } from '../../hooks/use-notification'
+import { ArrowPathIcon, MinusCircleIcon } from '@heroicons/react/24/outline'
 
 const options = [
     { name: 'Equal', value: 'equal' },
@@ -131,23 +132,26 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             <Field component={TagInput} name="tags" label="Tags" />
                         </div>
                     </div>
-                    <div className="flex">
+                    <div className="flex gap-3">
                         <Button
                             disabled={objectsEqual(values, rule) || !isValidVariationSum(values.ruleVariations)}
-                            className={`mt-3 mr-3 py-1 justify-center ${
+                            className={`py-2 justify-center ${
                                 objectsEqual(values, rule) || !isValidVariationSum(values.ruleVariations)
                                     ? 'bg-indigo-50 hover:bg-indigo-50'
                                     : 'bg-indigo-600'
                             }`}
                             type="submit"
                             isLoading={updateLoading}
+                            suffix={ArrowPathIcon}
                         >
                             Update
                         </Button>
                         <Button
-                            className="mt-3 py-1 justify-center mr-5 bg-red-500 hover:bg-red-600"
+                            secondary
+                            className="py-2"
                             onClick={() => deleteTargetingRuleMutation.mutate(rule.key)}
                             isLoading={deleteLoading}
+                            suffix={MinusCircleIcon}
                         >
                             Delete
                         </Button>

@@ -1,8 +1,8 @@
 /* eslint-disable react/prop-types */
-import { PlusCircleIcon } from '@heroicons/react/24/outline'
+import { ArrowPathIcon, PlusCircleIcon } from '@heroicons/react/24/outline'
 import { Form, Formik } from 'formik'
-import React, { Suspense, useEffect, useState } from 'react'
-import { Await, useLoaderData, useRevalidator } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { useRevalidator } from 'react-router-dom'
 import Button from '../../../components/button/button'
 import { Loader } from '../../../components/loader'
 import { Switch } from '@headlessui/react'
@@ -18,7 +18,6 @@ import {
 } from './api'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { isValidVariationSum, objectsEqual } from './targeting.utils'
-import TargetingRule from './targeting-rule'
 import RolloutSlider from '../../../components/rollout-slider'
 import EmptyState from '../../../components/empty-state'
 import CodeUsageModal from '../../../components/code-usage-modal'
@@ -65,7 +64,13 @@ export const useUpdateTargeting = () => {
             const shouldUpdate = !objectsEqual(newRule, rule)
             if (shouldUpdate) {
                 await patchTargeting(
-                    { workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key },
+                    {
+                        workspaceKey,
+                        projectKey,
+                        environmentKey,
+                        flagKey,
+                        ruleKey: rule.key,
+                    },
                     rule,
                     newRule
                 )
@@ -73,7 +78,12 @@ export const useUpdateTargeting = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: getTargetingKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+                queryKey: getTargetingKey({
+                    workspaceKey,
+                    projectKey,
+                    environmentKey,
+                    flagKey,
+                }),
             })
             notification.addNotification({
                 type: 'success',
@@ -97,7 +107,12 @@ export const useTargeting = () => {
     const query = useQuery<TargetingResponse>(getTargetingKey({ workspaceKey, projectKey, environmentKey, flagKey }), {
         queryFn: async () => {
             await configureAxios(instanceKey!)
-            return fetchTargeting({ workspaceKey, projectKey, environmentKey, flagKey })
+            return fetchTargeting({
+                workspaceKey,
+                projectKey,
+                environmentKey,
+                flagKey,
+            })
         },
         enabled: !!instanceKey && !!workspaceKey,
     })
@@ -113,7 +128,12 @@ export const useAddTargetingRule = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({
-                queryKey: getTargetingRulesKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+                queryKey: getTargetingRulesKey({
+                    workspaceKey,
+                    projectKey,
+                    environmentKey,
+                    flagKey,
+                }),
             })
         },
     })
@@ -123,11 +143,21 @@ export const useAddTargetingRule = () => {
 export const useTargetingRules = () => {
     const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
     const query = useQuery<TargetingRuleResponse[]>(
-        getTargetingRulesKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+        getTargetingRulesKey({
+            workspaceKey,
+            projectKey,
+            environmentKey,
+            flagKey,
+        }),
         {
             queryFn: async () => {
                 await configureAxios(instanceKey!)
-                return fetchTargetingRules({ workspaceKey, projectKey, environmentKey, flagKey })
+                return fetchTargetingRules({
+                    workspaceKey,
+                    projectKey,
+                    environmentKey,
+                    flagKey,
+                })
             },
             enabled: !!instanceKey && !!workspaceKey,
             refetchOnWindowFocus: false,
@@ -147,10 +177,12 @@ export const Targeting = () => {
     const addTargetingRuleMutation = useAddTargetingRule()
     const updateTargetingMutation = useUpdateTargeting()
 
+    const { refetch: refetchTargeting } = targetingQuery
+    const { refetch: refetchTargetingRules } = targetingRulesQuery
     useEffect(() => {
-        targetingQuery.refetch()
-        targetingRulesQuery.refetch()
-    }, [environmentKey])
+        refetchTargeting()
+        refetchTargetingRules()
+    }, [environmentKey, refetchTargeting, refetchTargetingRules])
 
     const revalidator = useRevalidator()
 
@@ -160,7 +192,10 @@ export const Targeting = () => {
     }
 
     const updateTargeting = async (currentValues: TargetingRequest, newValues: TargetingRequest) => {
-        updateTargetingMutation.mutate({ rule: currentValues, newRule: newValues })
+        updateTargetingMutation.mutate({
+            rule: currentValues,
+            newRule: newValues,
+        })
     }
 
     if (targetingQuery.isLoading || targetingQuery.isIdle) {
@@ -255,6 +290,7 @@ export const Targeting = () => {
                                             <Switch.Group as="div" className="flex items-center mr-3">
                                                 <Switch
                                                     name="enabled"
+                                                    disabled={updateTargetingMutation.isLoading}
                                                     checked={values?.enabled}
                                                     onChange={async (checked: boolean) => {
                                                         await updateTargeting(targeting.attributes, {
@@ -264,8 +300,10 @@ export const Targeting = () => {
                                                         return setFieldValue('enabled', checked)
                                                     }}
                                                     className={classNames(
-                                                        values?.enabled ? 'bg-indigo-600' : 'bg-gray-200',
-                                                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
+                                                        values.enabled ? 'bg-indigo-600' : 'bg-gray-200',
+                                                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200',
+                                                        'ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                        'disabled:opacity-50 disabled:cursor-not-allowed'
                                                     )}
                                                 >
                                                     <span
@@ -319,11 +357,12 @@ export const Targeting = () => {
                                         <Button
                                             isLoading={isLoading}
                                             disabled={!isValidVariationSum(values.fallthroughVariations)}
-                                            className={`mt-3 mr-3 py-1 justify-center ${
+                                            className={`mt-3 mr-3 py-2 justify-center ${
                                                 !isValidVariationSum(values?.fallthroughVariations)
                                                     ? 'bg-indigo-50 hover:bg-indigo-50'
                                                     : 'bg-indigo-600'
                                             }`}
+                                            suffix={ArrowPathIcon}
                                             type="submit"
                                         >
                                             Update

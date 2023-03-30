@@ -47,10 +47,10 @@ export const NotificationProvider: React.FC = ({ children }) => {
     // Render the provider component with the context value and child components
     return (
         <NotificationContext.Provider value={contextValue}>
-            {notifications.map(({ show = true, timeout = 3000, type, title, content }, index) => (
-                <Notification show={show} key={index} type={type} title={title} content={content} />
-            ))}
             {children}
+            {notifications.map(({ show = true, timeout = 3000, type, title, content }, index) => (
+                <Notification show={show} key={index} type={type} title={title} content={content} timeout={timeout} />
+            ))}
         </NotificationContext.Provider>
     )
 }
