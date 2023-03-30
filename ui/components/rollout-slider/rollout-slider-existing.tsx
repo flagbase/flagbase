@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import deterministicColor from '../../app/lib/deterministic-color';
-import { } from './index';
 import { RolloutSliderProps } from './types';
 
+const MAX_RANGE = 100;
 
 const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
     const [weights, setWeights] = useState(data);
@@ -10,7 +10,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
 
     useEffect(() => {
         const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
-        setBorderColor(totalWeight === 100 ? 'green' : 'red');
+        setBorderColor(totalWeight === MAX_RANGE ? 'green' : 'red');
     }, [data]);
 
     useEffect(() => {
@@ -31,14 +31,14 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
           });
       
           const totalWeight = updatedWeights.reduce((acc, item) => acc + item.weight, 0);
-          if (totalWeight <= 100) {
+          if (totalWeight <= MAX_RANGE) {
             setWeights(updatedWeights)
             if (onChange) {
                 onChange(updatedWeights);
             }
           }
         },
-        [data, 100, onChange]
+        [data, MAX_RANGE, onChange]
       );
       
     const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
@@ -89,12 +89,12 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
                                 style={{
                                     appearance: 'none',
                                     height: '25px',
-                                    width: '100%',
+                                    width: 'MAX_RANGE%',
                                     margin: '0px',
                                     background: `linear-gradient(to right, ${deterministicColor(
                                         item.variationKey
                                     )}, ${deterministicColor(item.variationKey)}) no-repeat left`,
-                                    backgroundSize: `${(item.weight / totalWeight) * totalWeight}% 100%`,
+                                    backgroundSize: `${(item.weight / totalWeight) * totalWeight}% MAX_RANGE%`,
                                     WebkitAppearance: 'none',
                                     borderRadius: '0px',
                                     cursor: 'pointer',
@@ -146,7 +146,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
                                     key={item.variationKey}
                                     style={{
                                         backgroundColor: deterministicColor(item.variationKey),
-                                        flexBasis: `${(item.weight / 100) * 100}%`,
+                                        flexBasis: `${(item.weight / MAX_RANGE) * MAX_RANGE}%`,
                                     }}
                                 />
                             ))}
