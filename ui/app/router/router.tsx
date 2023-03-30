@@ -90,7 +90,13 @@ export const getVariationPath = ({
 }) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+})
 
 const ModalWithButton = ({ buttonText, modal }: { buttonText: string; modal: React.FC<ModalProps> }) => {
     const [visible, setVisible] = useState(false)

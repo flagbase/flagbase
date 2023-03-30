@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client'
 import { QueryClientProvider } from 'react-query'
 import { RouterProvider } from 'react-router-dom'
 import { newRouter, queryClient } from './router/router'
+import { NotificationProvider } from './hooks/use-notification'
 
 const mainElement = document.createElement('div')
 mainElement.setAttribute('id', 'root')
@@ -18,10 +19,12 @@ root.render(
     <FlagbaseProvider
         clientKey="sdk-client_025729af-b5a4-435c-9144-d14ba816d174" // TODO: add prod key to prod env
         identity={{ identifier: 'USER_ID', traits: { age: 25 } }}
-        opts={{ pollingIntervalMs: 5000 }}  // TODO: add prod key to prod env
+        opts={{ pollingIntervalMs: 5000 }} // TODO: add prod key to prod env
     >
         <QueryClientProvider client={queryClient}>
-            <RouterProvider router={newRouter} />
+            <NotificationProvider>
+                <RouterProvider router={newRouter} />
+            </NotificationProvider>
         </QueryClientProvider>
     </FlagbaseProvider>
 )

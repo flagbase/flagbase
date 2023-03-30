@@ -9,7 +9,7 @@ export function Notification({
     setShow,
     title,
     content,
-    timeout = 5000,
+    timeout = 3000,
     type = 'success',
 }: {
     show: boolean
@@ -17,7 +17,7 @@ export function Notification({
     title: string
     content: string
     timeout?: number
-    type: 'success' | 'error'
+    type: 'success' | 'error' | 'warning' | 'info'
 }) {
     //setShow to false after 5 seconds
     const [showNotification, setShowNotification] = useState(show)
@@ -29,7 +29,7 @@ export function Notification({
                 setShowNotification(false)
             }, timeout)
         }
-    }, [show])
+    }, [show, timeout])
     return (
         <>
             {/* Global notification live region, render this permanently at the end of the document */}
