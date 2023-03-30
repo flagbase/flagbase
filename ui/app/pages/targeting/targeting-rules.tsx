@@ -36,7 +36,7 @@ export const TargetingRules = () => {
         )
     }
 
-    if (targetingRulesQuery.isError || variationsQuery.isError) {
+    if (targetingRulesQuery.isError || targetingRulesQuery.isIdle || variationsQuery.isError) {
         return (
             <EmptyState
                 cta={

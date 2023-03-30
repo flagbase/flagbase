@@ -28,6 +28,7 @@ import { configureAxios } from '../../lib/axios'
 import { fetchTargeting, fetchTargetingRules } from '../flags/api'
 import { useVariations } from '../variations/variations'
 import { TargetingRules } from './targeting-rules'
+import { useNotification } from '../../hooks/use-notification'
 
 type VariationResponse = {
     type: 'variation'
@@ -54,6 +55,42 @@ export const newRuleFactory = (variations: VariationResponse[]) => ({
         weight: Math.round(100 / variations.length),
     })),
 })
+
+export const useUpdateTargeting = () => {
+    const queryClient = useQueryClient()
+    const notification = useNotification()
+    const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
+    const mutation = useMutation({
+        mutationFn: async ({ newRule, rule }: { newRule: TargetingRequest; rule: TargetingRequest }) => {
+            const shouldUpdate = !objectsEqual(newRule, rule)
+            if (shouldUpdate) {
+                await patchTargeting(
+                    { workspaceKey, projectKey, environmentKey, flagKey, ruleKey: rule.key },
+                    rule,
+                    newRule
+                )
+            }
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: getTargetingKey({ workspaceKey, projectKey, environmentKey, flagKey }),
+            })
+            notification.addNotification({
+                type: 'success',
+                title: 'Success',
+                content: 'Targeting rule updated',
+            })
+        },
+        onError: () => {
+            notification.addNotification({
+                type: 'error',
+                title: 'Error',
+                content: 'Failed to update targeting rule',
+            })
+        },
+    })
+    return mutation
+}
 
 export const useTargeting = () => {
     const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
@@ -100,7 +137,7 @@ export const useTargetingRules = () => {
 }
 
 export const Targeting = () => {
-    const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
+    const { environmentKey } = useFlagbaseParams()
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     const targetingQuery = useTargeting()
@@ -108,6 +145,7 @@ export const Targeting = () => {
     const variationsQuery = useVariations()
 
     const addTargetingRuleMutation = useAddTargetingRule()
+    const updateTargetingMutation = useUpdateTargeting()
 
     useEffect(() => {
         targetingQuery.refetch()
@@ -122,11 +160,7 @@ export const Targeting = () => {
     }
 
     const updateTargeting = async (currentValues: TargetingRequest, newValues: TargetingRequest) => {
-        const shouldUpdate = !objectsEqual(newValues, currentValues)
-        if (shouldUpdate) {
-            patchTargeting({ workspaceKey, projectKey, environmentKey, flagKey }, currentValues, newValues)
-            revalidator.revalidate()
-        }
+        updateTargetingMutation.mutate({ rule: currentValues, newRule: newValues })
     }
 
     if (targetingQuery.isLoading || targetingQuery.isIdle) {
@@ -301,7 +335,7 @@ export const Targeting = () => {
                     )}
                 </Formik>
             </div>
-            <div className={!targeting.attributes.enabled ? 'blur-sm mb-10' : 'mb-10'}>
+            <div className={targeting.attributes.enabled ? 'mb-10' : 'blur-sm mb-10 pointer-events-none'}>
                 <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
                     <div className="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
                         <div className="ml-4 mt-2">
