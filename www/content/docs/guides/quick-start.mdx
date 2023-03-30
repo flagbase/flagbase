@@ -194,7 +194,7 @@ user = Identity(
     "some-user-id",
     {"some-trait-key": "blue"}
 )
-show_feature = flagbase.variation("example-flag", user, "control") == "treatment"
+show_feature = flagbase.variation("example-flag", user, "control")
 
 if show_feature == "treatment":
     show_my_new_feature()
