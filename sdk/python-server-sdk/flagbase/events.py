@@ -19,20 +19,13 @@ class Events:
         if event_key not in self.events:
             return
         for listener_fn in self.events[event_key].values():            
-            match event_name:
-                case (
-                    EventType.LOG_CRITICAL,
-                    EventType.LOG_ERROR,
-                    EventType.LOG_WARNING,
-                    EventType.LOG_INFO
-                ):
-                    if event_name in self.context.get_config().get_log_events():
-                        self._log_event(
-                            event_name=event_name,
-                            event_message=event_message,
-                            event_context=event_context)
-                case _:
-                    listener_fn(event_message, event_context)
+            if event_name in self.context.get_config().get_log_events():
+                self._log_event(
+                    event_name=event_name,
+                    event_message=event_message,
+                    event_context=event_context)
+            listener_fn(event_message, event_context)
+
 
     def on(self, event_name: EventType, listener_fn: ListenerFn):
         event_key = event_name.value
@@ -56,14 +49,13 @@ class Events:
         self.events = {}
 
     def _log_event(self, event_name: EventType, event_message: str, event_context: Any = None):
-        match event_name:
-            case EventType.LOG_CRITICAL:
-                logging.CRITICAL(event_message % (event_context,))
-            case EventType.LOG_ERROR:
-                logging.ERROR(event_message % (event_context,))
-            case EventType.LOG_WARNING:
-                logging.WARNING(event_message % (event_context,))
-            case EventType.LOG_INFO:
-                logging.INFO(event_message % (event_context,))
-            case EventType.LOG_DEBUG:
-                logging.DEBUG(event_message % (event_context,))
+        if event_name == EventType.LOG_CRITICAL:
+            logging.CRITICAL(event_message % (event_context,))
+        elif event_name == EventType.LOG_ERROR:
+            logging.ERROR(event_message % (event_context,))
+        elif event_name == EventType.LOG_WARNING:
+            logging.WARNING(event_message % (event_context,))
+        elif event_name == EventType.LOG_INFO:
+            logging.INFO(event_message % (event_context,))
+        elif event_name == EventType.LOG_DEBUG:
+            logging.DEBUG(event_message % (event_context,))
