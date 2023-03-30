@@ -21,4 +21,6 @@ class Store:
 
     def exists(self, flag_key: str):
         return flag_key in self.flags
-
+    
+    def __str__ (self):
+        return self.get_flags().__str__

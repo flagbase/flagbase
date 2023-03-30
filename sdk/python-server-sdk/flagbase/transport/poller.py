@@ -1,9 +1,5 @@
-import threading
-import http.client
-import ssl
-import json
+import threading, http.client, logging, ssl, json
 from urllib.parse import urlparse
-
 from flagbase.context import Context
 from flagbase.events import Events, EventType
 
@@ -16,6 +12,7 @@ class Poller:
         self._stop_event = threading.Event()
         self._polling_thread = None
         self._initialised_event = threading.Event()
+        self._initialised = False
 
     def _poll(self):
         try:
@@ -47,14 +44,12 @@ class Poller:
                         event_message="Retrieved full flagset from service.",
                         event_context=self.context.get_raw_flags().get_flags())
 
-                    if etag == "initial":
-                        self.events.emit(
-                            event_name=EventType.CLIENT_READY,
-                            event_message="Client is ready! Initial flagset has been retrieved.",
-                            event_context=self.context.get_raw_flags().get_flags())
+                    # release lock only on initial
+                    if etag == 'initial':
+                        self._initialised_event.set()
+                        self._initialised = True
 
                     etag = response.getheader("Etag")                    
-                    self._initialised_event.set()
 
                 elif response.status == 304:
                     self.events.emit(
@@ -62,16 +57,25 @@ class Poller:
                         event_message="Retrieved cached flagset from service.")
 
                 elif response.status != 200 or response.status != 304:
-                    msg = f"Unexpected response from poller [{polling_service_url}], with status code {response.status}: {response.read()}"
+                    event_message = f"Unexpected response from poller [{polling_service_url}], with status code {response.status}"
+                    errors = str(json.loads(response.read().decode('utf-8')))
                     self.events.emit(
                         event_name=EventType.NETWORK_FETCH_ERROR,
-                        event_message=msg)
-
-                    raise Exception(msg)
+                        event_message=event_message,
+                        event_context=errors)
+                    self.events.emit(
+                        event_name=EventType.LOG_ERROR,
+                        event_message=event_message,
+                        event_context=errors)
+                    raise Exception(event_message, errors)
 
                 self._stop_event.wait(polling_interval_ms / 1000)
         except Exception as e:
-            print(f"[Flagbase]: Something went wrong when trying to retrieve rules from server... Error: {e}")
+            msg = "Something went wrong when trying to retrieve rules from server."
+            if self._initialised == False:
+                # manually log error if not initialised, 
+                # because the logging event listener hasn't been affed
+                logging.error(msg, exc_info=e)
             pass
 
     def start(self):

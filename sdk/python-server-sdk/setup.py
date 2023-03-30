@@ -4,11 +4,6 @@ from pathlib import Path
 
 long_description = (Path(__file__).parent / "README.md").read_text()
 
-INSTALL_REQUIRES = [
-    # using in-built http.client instead
-    # 'requests>=2.26.0'
-]
-
 with open(path.join(path.abspath(path.dirname(__file__)), 'flagbase', 'version.py'), encoding='utf-8') as f:
     exec(f.read())
 
@@ -23,7 +18,7 @@ setup(
     packages=find_packages(),
     author_email='cjoy@flagbase.com',
     url='https://flagbase.com',
-    install_requires=INSTALL_REQUIRES,
+    install_requires=[],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
