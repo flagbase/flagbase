@@ -39,8 +39,10 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
     }
 
     const deleteRule = async (ruleKey: string) => {
+        setIsLoading(true)
         deleteTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey, ruleKey })
         revalidator.revalidate()
+        setTimeout(() => setIsLoading(false), 2000)
     }
     return (
         <Formik initialValues={{ ...rule }} onSubmit={updateRule}>
@@ -66,12 +68,11 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                             <div className="flex gap-5 items-center mb-4">
                                 <Field component={Toggle} type="checkbox" name="negate" label="Negate" />
                             </div>
-                            <div className="flex gap-5 items-center mb-4">
+                            <div className="flex gap-5 items-center">
                                 <code className="text-xl font-bold uppercase">Then Serve</code>
                             </div>
                             <RolloutSlider
                                 data={rule?.ruleVariations}
-                                maxValue={100}
                                 onChange={(data) => {
                                     data.forEach((varation, i) => {
                                         setFieldValue(`ruleVariations.${i}.weight`, varation.weight)
@@ -79,8 +80,8 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                                 }}
                             />
                         </div>
-                        <div className="flex-auto w-20">
-                            <Field component={Input} name="key" label="Key" />
+                        <div className="flex-auto w-20 pl-5">
+                            <Field component={Input} name="key" label="Rule Key" />
                             <Field component={Input} name="name" label="Name" />
                             <Field component={Input} name="description" label="Description" />
                             <Field component={TagInput} name="tags" label="Tags" />

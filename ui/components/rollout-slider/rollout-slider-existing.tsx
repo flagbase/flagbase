@@ -1,25 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import deterministicColor from '../../app/lib/deterministic-color';
+import { } from './index';
+import { RolloutSliderProps } from './types';
 
-type Variation = {
-    variationKey: string
-    weight: number
-}
 
-type RolloutSliderProps = {
-    data: Variation[]
-    maxValue: number
-    onChange?: (data: Variation[]) => void
-}
-  
-const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange }) => {
+const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
     const [weights, setWeights] = useState(data);
     const [borderColor, setBorderColor] = useState('red');
 
     useEffect(() => {
         const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
-        setBorderColor(totalWeight === maxValue ? 'green' : 'red');
-    }, [data, maxValue]);
+        setBorderColor(totalWeight === 100 ? 'green' : 'red');
+    }, [data]);
 
     useEffect(() => {
         setWeights(data);
@@ -39,14 +31,14 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
           });
       
           const totalWeight = updatedWeights.reduce((acc, item) => acc + item.weight, 0);
-          if (totalWeight <= maxValue) {
+          if (totalWeight <= 100) {
             setWeights(updatedWeights)
             if (onChange) {
                 onChange(updatedWeights);
             }
           }
         },
-        [data, maxValue, onChange]
+        [data, 100, onChange]
       );
       
     const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);
@@ -154,7 +146,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, maxValue, onChange 
                                     key={item.variationKey}
                                     style={{
                                         backgroundColor: deterministicColor(item.variationKey),
-                                        flexBasis: `${(item.weight / maxValue) * 100}%`,
+                                        flexBasis: `${(item.weight / 100) * 100}%`,
                                     }}
                                 />
                             ))}

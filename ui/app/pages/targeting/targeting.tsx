@@ -87,6 +87,7 @@ export const useTargetingRules = () => {
 export const Targeting = () => {
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoadingNewRule, setIsLoadingNewRule] = useState<boolean>(false)
 
     const { data: targeting, isLoading: isTargetingLoading, refetch: refetchTargeting } = useTargeting();
     const { data: targetingRules, isLoading: isTargetingRulesLoading, refetch: refetchTargetingRules } = useTargetingRules();
@@ -100,13 +101,13 @@ export const Targeting = () => {
     const revalidator = useRevalidator();
 
     const createRule = async (variations: VariationResponse[]) => {
-        setIsLoading(true)
+        setIsLoadingNewRule(true)
         const newRule = newRuleFactory(variations)
         await createTargetingRule({ workspaceKey, projectKey, environmentKey, flagKey }, newRule)
-        setIsLoading(false)
+        setTimeout(() => setIsLoadingNewRule(false), 2000)
         revalidator.revalidate()
     }
-
+    
     const updateTargeting = async (currentValues: TargetingRequest, newValues: TargetingRequest) => {
         const shouldUpdate = !objectsEqual(newValues, currentValues)
         if (shouldUpdate) {
@@ -187,10 +188,10 @@ export const Targeting = () => {
                                                 </div>
                                                 <div className="overflow-hidden bg-white shadow sm:rounded-md">
                                                     <div className="block hover:bg-gray-50 px-4 py-4 sm:px-6">
+                                                <code className="text-xl font-bold uppercase">Serve</code>
                                                         {targeting.attributes.fallthroughVariations && (
                                                             <RolloutSlider
                                                                 data={values.fallthroughVariations}
-                                                                maxValue={100}
                                                                 onChange={(data) => {
                                                                     data.forEach((varation, i) =>
                                                                         setFieldValue(
@@ -235,7 +236,7 @@ export const Targeting = () => {
                                                 suffix={PlusCircleIcon}
                                                 onClick={async () => await createRule(variations)}
                                                 secondary
-                                                isLoading={isLoading}
+                                                isLoading={isLoadingNewRule}
                                             >
                                                 New Rule
                                             </Button>
