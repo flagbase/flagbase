@@ -33,7 +33,7 @@ export const useUpdateActiveEnvironment = () => {
 }
 
 export const EnvironmentDropdown = () => {
-    const { data: environments, isLoading } = useEnvironments()
+    const { data: environments, isLoading, isError } = useEnvironments()
     const { data: activeEnvironmentKey } = useActiveEnvironment()
     const { mutate: setActiveEnvironmentKey, isSuccess } = useUpdateActiveEnvironment()
     const { pathname } = useLocation()
@@ -60,6 +60,10 @@ export const EnvironmentDropdown = () => {
             value: environment.attributes.key,
         }
     })
+
+    if (isError) {
+        return null;
+    }
 
     if (isLoading || !environmentList || !activeEnvironment) {
         return <Loader size="small" />
