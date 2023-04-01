@@ -4,10 +4,9 @@ import { AddNewInstanceModal } from './instances.modal'
 import Button from '../../../components/button'
 import { Await, useLoaderData } from 'react-router-dom'
 import { fetchAccessToken } from '../workspaces/api'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { axios } from '../../lib/axios'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import Input from '../../../components/input'
 import EmptyProject from '../../../components/empty-state/empty-state'
 import { StackedEntityList, StackedEntityListProps } from '../../../components/list/stacked-list'
 import { Loader } from '../../../components/loader'
@@ -92,7 +91,7 @@ export const useInstance = (instanceKey: string | undefined) => {
 
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
 
-export const useInstances = (options?: any) => {
+export const useInstances = (options?: UseQueryOptions<Instance[]>) => {
     // Define a query to fetch the instances object from the server
     const query = useQuery<Instance[]>(['instances'], getInstances, {
         ...options,

@@ -62,7 +62,7 @@ export const EnvironmentDropdown = () => {
     })
 
     if (isError) {
-        return null;
+        return null
     }
 
     if (isLoading || !environmentList || !activeEnvironment) {

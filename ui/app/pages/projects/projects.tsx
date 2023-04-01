@@ -5,7 +5,6 @@ import Table from '../../../components/table/table'
 import { createProject, deleteProject, fetchProjects, Project } from './api'
 import Button from '../../../components/button'
 import { CreateProjectModal } from './projects.modal'
-import { Link } from 'react-router-dom'
 import { constants, projectsColumn } from './projects.constants'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { Workspace } from '../workspaces/api'
@@ -16,6 +15,7 @@ import { RawInput } from '../../../components/input/input'
 import Tag from '../../../components/tag'
 import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { useInstances } from '../instances/instances'
 
 const { Text } = Typography
 
@@ -92,13 +92,16 @@ export const useAddProject = (instanceKey: string, workspaceKey: string) => {
 
 export const useProjects = (options?: any) => {
     const { instanceKey, workspaceKey } = useFlagbaseParams()
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
     const query = useQuery<Project[]>(['projects', instanceKey, workspaceKey], {
         ...options,
         queryFn: async () => {
             await configureAxios(instanceKey!)
             return fetchProjects(workspaceKey!)
         },
-        enabled: !!instanceKey && !!workspaceKey,
+        enabled: !!instanceKey && !!workspaceKey && instances && instances.length > 0,
         refetchOnWindowFocus: false,
     })
     return query
@@ -113,7 +116,7 @@ const Projects = () => {
 
     return (
         <Suspense fallback={<Loader />}>
-            <Await resolve={prefetchedProjects} errorElement={<p>Error loading package location!</p>}>
+            <Await resolve={prefetchedProjects}>
                 <div className="mt-5">
                     <CreateProjectModal visible={visible} setVisible={setVisible} />
 

@@ -13,6 +13,7 @@ import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getFlagsKey } from '../../router/loaders'
 import { useActiveEnvironment, useUpdateActiveEnvironment } from '../environments/environment-dropdown'
 import { Environment, useEnvironments } from '../environments/environments'
+import { useInstances } from '../instances/instances'
 import { createFlag, deleteFlag, fetchFlags, Flag, FlagCreateBody, updateFlag } from './api'
 import { flagConstants, flagsColumn } from './constants'
 import { CreateFlag } from './flags.modal'
@@ -162,6 +163,9 @@ export const useAddFlag = () => {
 
 export const useFlags = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
     const query = useQuery<Flag[]>(
         getFlagsKey({
             instanceKey,
@@ -171,10 +175,9 @@ export const useFlags = () => {
         {
             queryFn: async () => {
                 await configureAxios(instanceKey!)
-                return fetchFlags({ workspaceKey, projectKey })
+                return fetchFlags({ workspaceKey: workspaceKey!, projectKey: projectKey! })
             },
-            enabled: !!workspaceKey && !!projectKey,
-            refetchOnWindowFocus: false,
+            enabled: !!workspaceKey && !!projectKey && instances && instances.length > 0,
         }
     )
     return query

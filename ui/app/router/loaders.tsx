@@ -1,5 +1,4 @@
-import { QueryClient } from 'react-query'
-import { defer } from 'react-router-dom'
+import { defer, Params } from 'react-router-dom'
 import { configureAxios } from '../lib/axios'
 import { FlagbaseParams } from '../lib/use-flagbase-params'
 import { fetchEnvironments } from '../pages/environments/api'
@@ -9,10 +8,11 @@ import { fetchProjects } from '../pages/projects/api'
 import { fetchSdkList } from '../pages/sdks/api'
 import { fetchVariations } from '../pages/variations/api'
 import { fetchWorkspaces } from '../pages/workspaces/api'
+import { queryClient } from './router'
 
 export const getInstances = () => JSON.parse(localStorage.getItem('instances') || '[]')
 
-export const instancesQuery = async (queryClient: QueryClient, instanceKey?: string): Promise<Instance[]> => {
+export const instancesQuery = async (instanceKey?: string): Promise<Instance[]> => {
     const instances = await queryClient.fetchQuery({
         queryKey: ['instances'],
         queryFn: async () => getInstances(),
@@ -28,7 +28,7 @@ export const instancesQuery = async (queryClient: QueryClient, instanceKey?: str
     return instances
 }
 
-export const instancesLoader = (queryClient: QueryClient) => async () => {
+export const instancesLoader = async () => {
     // ⬇️ return data or fetch it
     const instances = queryClient.fetchQuery({
         queryKey: ['instances'],
@@ -45,28 +45,22 @@ export const workspaceQuery = ({ instanceKey }: { instanceKey: string }) => ({
     },
 })
 
-export const workspacesLoader = async ({
-    queryClient,
-    params,
-}: {
-    queryClient: QueryClient
-    params: { instanceKey: string }
-}) => {
+export const workspacesLoader = async ({ params }: { params: Params<'instanceKey'> }) => {
     const { instanceKey } = params
-    const [instance] = await instancesQuery(queryClient, instanceKey)
+    if (!instanceKey) {
+        return defer({ workspaces: [] })
+    }
+    const [instance] = await instancesQuery(instanceKey)
     await configureAxios(instanceKey)
     const workspaces = queryClient.fetchQuery(workspaceQuery({ instanceKey }))
     return defer({ workspaces, instance })
 }
 
-export const projectsLoader = async ({
-    queryClient,
-    params,
-}: {
-    queryClient: QueryClient
-    params: { instanceKey: string; workspaceKey: string }
-}) => {
+export const projectsLoader = async ({ params }: { params: Params<'instanceKey' | 'workspaceKey'> }) => {
     const { instanceKey, workspaceKey } = params
+    if (!instanceKey || !workspaceKey) {
+        return defer({ projects: [] })
+    }
     const projects = queryClient.fetchQuery(['projects', instanceKey, workspaceKey], {
         queryFn: async () => {
             await configureAxios(instanceKey)
@@ -77,23 +71,27 @@ export const projectsLoader = async ({
 }
 
 export const environmentsLoader = async ({
-    queryClient,
     params,
 }: {
-    queryClient: QueryClient
-    params: { instanceKey: string; workspaceKey: string; projectKey: string }
+    params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'>
 }) => {
     const { instanceKey, workspaceKey, projectKey } = params
-    const environments = queryClient.fetchQuery(getEnvironmentsKey({
-        instanceKey,
-        workspaceKey,
-        projectKey
-    }), {
-        queryFn: async () => {
-            await configureAxios(instanceKey)
-            return fetchEnvironments(workspaceKey, projectKey)
-        },
-    })
+    if (!instanceKey || !workspaceKey || !projectKey) {
+        return defer({ environments: [] })
+    }
+    const environments = queryClient.fetchQuery(
+        getEnvironmentsKey({
+            instanceKey,
+            workspaceKey,
+            projectKey,
+        }),
+        {
+            queryFn: async () => {
+                await configureAxios(instanceKey)
+                return fetchEnvironments(workspaceKey, projectKey)
+            },
+        }
+    )
     return defer({ environments })
 }
 
@@ -111,7 +109,11 @@ export const getSdkKey = ({
     return ['sdks', instanceKey, workspaceKey, projectKey, environmentKey]
 }
 
-export const sdkLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
+export const sdkLoader = async ({
+    params,
+}: {
+    params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey'>
+}) => {
     const { instanceKey, workspaceKey, projectKey, environmentKey } = params
     if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
         throw new Error('Missing params')
@@ -134,11 +136,13 @@ export const getFlagsKey = ({
     instanceKey,
     workspaceKey,
     projectKey,
-}: {
-    instanceKey: string
-    workspaceKey: string
-    projectKey: string
-}) => {
+}:
+    | {
+          instanceKey: string
+          workspaceKey: string
+          projectKey: string
+      }
+    | Params<'instanceKey' | 'workspaceKey' | 'projectKey'>) => {
     return ['flags', instanceKey, workspaceKey, projectKey]
 }
 
@@ -162,7 +166,7 @@ export const getTargetingRulesKey = ({
     return ['targeting', 'rules', instanceKey, workspaceKey, projectKey, environmentKey, flagKey]
 }
 
-export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryClient; params: FlagbaseParams }) => {
+export const flagsLoader = async ({ params }: { params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'> }) => {
     const { instanceKey, workspaceKey, projectKey } = params
     if (!workspaceKey || !projectKey || !instanceKey) {
         throw new Error('Missing params')
@@ -181,11 +185,9 @@ export const flagsLoader = async ({ queryClient, params }: { queryClient: QueryC
 }
 
 export const targetingLoader = async ({
-    queryClient,
     params,
 }: {
-    queryClient: QueryClient
-    params: FlagbaseParams
+    params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey' | 'flagKey'>
 }) => {
     const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = params
     if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
@@ -238,11 +240,9 @@ export const targetingLoader = async ({
 }
 
 export const targetingRulesLoader = async ({
-    queryClient,
     params,
 }: {
-    queryClient: QueryClient
-    params: FlagbaseParams
+    params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey' | 'flagKey'>
 }) => {
     const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } = params
     if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
@@ -309,11 +309,9 @@ export const getVariationKey = ({
 }
 
 export const variationsLoader = async ({
-    queryClient,
     params,
 }: {
-    queryClient: QueryClient
-    params: FlagbaseParams
+    params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'flagKey'>
 }) => {
     const { instanceKey, workspaceKey, projectKey, flagKey } = params
     if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {

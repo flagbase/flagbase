@@ -8,7 +8,7 @@ import Input from '../../../components/input'
 import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
 import { CreateWorkspaceModal } from './workspace.modal'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient, UseQueryOptions } from 'react-query'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
 import EmptyState from '../../../components/empty-state'
 import { configureAxios } from '../../lib/axios'
@@ -16,6 +16,7 @@ import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { Instance } from '../instances/instances.functions'
 import { useNotification } from '../../hooks/use-notification'
+import { useInstances } from '../instances/instances'
 
 export const useAddWorkspace = () => {
     const queryClient = useQueryClient()
@@ -95,14 +96,18 @@ export const useRemoveWorkspace = (instanceKey: string | undefined) => {
     return mutation
 }
 
-export const useWorkspaces = (instanceKey: string | undefined, options?: any) => {
+export const useWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
+    const { instanceKey } = useFlagbaseParams()
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
     const query = useQuery<Workspace[]>(['workspaces', instanceKey?.toLocaleLowerCase()], {
         queryFn: async () => {
             await configureAxios(instanceKey!)
             return fetchWorkspaces()
         },
-        enabled: !!instanceKey,
-        staleTime: Infinity,
+        enabled: instances && instances.length > 0,
+        ...options,
     })
     return query
 }

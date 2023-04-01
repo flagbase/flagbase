@@ -1,17 +1,17 @@
-import { DocumentDuplicateIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
+import { DocumentDuplicateIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
 import React, { Suspense, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
-import { RawInput } from '../../../components/input/input'
 import { Loader } from '../../../components/loader'
 import { Notification } from '../../../components/notification/notification'
 import Table from '../../../components/table/table'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
-import { FlagbaseParams, useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getSdkKey } from '../../router/loaders'
+import { useInstances } from '../instances/instances'
 import { fetchSdkList, SDK } from './api'
 import { CreateSDKModal } from './sdks.modal'
 
@@ -51,12 +51,16 @@ export const sdkColumns = [
 
 export const useSDKs = () => {
     const { instanceKey, workspaceKey, projectKey, environmentKey } = useFlagbaseParams()
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
     const queryKey = getSdkKey({
         instanceKey: instanceKey!,
         workspaceKey: workspaceKey!,
         projectKey: projectKey!,
         environmentKey: environmentKey!,
     })
+
     const query = useQuery<SDK[]>(queryKey, {
         queryFn: async () => {
             await configureAxios(instanceKey!)
@@ -66,8 +70,8 @@ export const useSDKs = () => {
                 environmentKey: environmentKey!,
             })
         },
-        enabled: !!instanceKey,
-        staleTime: Infinity,
+        enabled:
+            !!instanceKey && !!workspaceKey && !!projectKey && !!environmentKey && instances && instances.length > 0,
     })
     return query
 }

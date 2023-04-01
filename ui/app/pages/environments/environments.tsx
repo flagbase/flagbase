@@ -8,6 +8,7 @@ import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getEnvironmentsKey } from '../../router/loaders'
+import { useInstances } from '../instances/instances'
 import { fetchEnvironments, createEnvironment, EnvironmentCreateBody } from './api'
 
 export type Environment = {
@@ -23,6 +24,9 @@ export type Environment = {
 
 export const useEnvironments = () => {
     const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
     const query = useQuery<Environment[]>(
         getEnvironmentsKey({
             instanceKey: instanceKey!,
@@ -34,7 +38,7 @@ export const useEnvironments = () => {
                 await configureAxios(instanceKey!)
                 return fetchEnvironments(workspaceKey!, projectKey!)
             },
-            enabled: !!instanceKey && !!workspaceKey,
+            enabled: !!instanceKey && !!workspaceKey && !!projectKey && instances && instances.length > 0,
         }
     )
     return query
@@ -56,7 +60,7 @@ export const useAddEnvironment = () => {
                 queryKey: getEnvironmentsKey({
                     instanceKey: instanceKey!,
                     workspaceKey: workspaceKey!,
-                    projectKey: projectKey!
+                    projectKey: projectKey!,
                 }),
             })
         },

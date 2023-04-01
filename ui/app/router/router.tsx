@@ -18,7 +18,7 @@ import {
     variationsLoader,
     workspacesLoader,
 } from './loaders'
-import { QueryClient } from 'react-query'
+import { QueryCache, QueryClient } from 'react-query'
 import MainWorkspaces from '../pages/workspaces/workspaces.main'
 import Environments from '../pages/environments/environments'
 import { Error } from '../pages/error'
@@ -95,6 +95,11 @@ export const queryClient = new QueryClient({
             refetchOnWindowFocus: false,
         },
     },
+    queryCache: new QueryCache({
+        onError: (error, query) => {
+            console.error(error, query.queryKey)
+        },
+    }),
 })
 
 const ModalWithButton = ({ buttonText, modal }: { buttonText: string; modal: React.FC<ModalProps> }) => {
@@ -120,7 +125,7 @@ export const newRouter = createBrowserRouter(
             <Route path="/" element={<Navigate to="/instances" />} />
             <Route path="/instances" element={<PageHeadings />}>
                 <Route
-                    loader={instancesLoader(queryClient)}
+                    loader={instancesLoader}
                     path=""
                     element={<Instances />}
                     handle={{
@@ -132,7 +137,7 @@ export const newRouter = createBrowserRouter(
             </Route>
             <Route path={`/${InstanceKey}/workspaces`} element={<PageHeadings />}>
                 <Route
-                    loader={({ params }) => workspacesLoader({ queryClient, params })}
+                    loader={workspacesLoader}
                     errorElement={<Error />}
                     path=""
                     element={<MainWorkspaces />}
@@ -143,12 +148,12 @@ export const newRouter = createBrowserRouter(
                     }}
                 />
                 <Route path="settings" element={<EditInstance />} />
-                <Route path={`${WorkspaceKey}`}>
+                <Route path={`${WorkspaceKey}`} errorElement={<Error />}>
                     <Route path="settings" element={<EditWorkspace />} />
                     <Route path="" element={<>Workspace view</>} />
                     <Route path="projects">
                         <Route
-                            loader={({ params }) => projectsLoader({ queryClient, params })}
+                            loader={projectsLoader}
                             path=""
                             element={<Projects />}
                             handle={{
@@ -158,14 +163,14 @@ export const newRouter = createBrowserRouter(
                             }}
                         />
 
-                        <Route path={`${ProjectKey}`}>
+                        <Route path={`${ProjectKey}`} errorElement={<Error />}>
                             <Route path="settings" element={<EditProject />} />
                             <Route path="" element={<Project />} />
                             <Route path="flags">
                                 <Route
                                     path=""
                                     element={<Flags />}
-                                    loader={({ params }) => flagsLoader({ queryClient, params })}
+                                    loader={flagsLoader}
                                     handle={{
                                         rightContainer: () => (
                                             <ModalWithButton buttonText={'Create Flag'} modal={CreateFlag} />
@@ -173,17 +178,13 @@ export const newRouter = createBrowserRouter(
                                     }}
                                 />
                                 <Route path={`${FlagKey}`}>
-                                    <Route
-                                        path="settings"
-                                        element={<FlagSettings />}
-                                        loader={({ params }) => flagsLoader({ queryClient, params })}
-                                    />
+                                    <Route path="settings" element={<FlagSettings />} loader={flagsLoader} />
                                 </Route>
                                 <Route path={FlagKey}>
                                     <Route path="variations">
                                         <Route
                                             path=""
-                                            loader={({ params }) => variationsLoader({ queryClient, params })}
+                                            loader={variationsLoader}
                                             element={<Variations />}
                                             handle={{
                                                 rightContainer: () => <CreateVariation />,
@@ -193,14 +194,11 @@ export const newRouter = createBrowserRouter(
                                             <Route path="settings" element={<VariationSettings />} />
                                         </Route>
                                     </Route>
-                                    <Route path={`environments/${EnvironmentKey}`}>
+                                    <Route path={`environments/${EnvironmentKey}`} errorElement={<Error />}>
                                         <Route
-                                            path={''}
+                                            path=""
                                             element={<Targeting />}
-                                            loader={({ params }) => targetingLoader({ queryClient, params })}
-                                            handle={{
-                                                rightContainer: () => <EnvironmentDropdown />,
-                                            }}
+                                            loader={targetingLoader}
                                             errorElement={<Error />}
                                         />
                                     </Route>
@@ -209,7 +207,7 @@ export const newRouter = createBrowserRouter(
                             <Route path="environments">
                                 <Route
                                     path=""
-                                    loader={({ params }) => environmentsLoader({ queryClient, params })}
+                                    loader={environmentsLoader}
                                     element={<Environments />}
                                     handle={{
                                         rightContainer: () => <CreateEnvironment />,
@@ -221,18 +219,14 @@ export const newRouter = createBrowserRouter(
                                         <Route
                                             path=""
                                             element={<Sdks />}
-                                            loader={({ params }) => sdkLoader({ queryClient, params })}
+                                            loader={sdkLoader}
                                             handle={{
                                                 rightContainer: () => (
                                                     <ModalWithButton buttonText={'Create SDK'} modal={CreateSDKModal} />
                                                 ),
                                             }}
                                         />
-                                        <Route
-                                            path={`${SdkKey}`}
-                                            element={<SdkSettings />}
-                                            loader={({ params }) => sdkLoader({ queryClient, params })}
-                                        />
+                                        <Route path={`${SdkKey}`} element={<SdkSettings />} loader={sdkLoader} />
                                     </Route>
                                 </Route>
 

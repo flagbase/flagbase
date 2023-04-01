@@ -1,5 +1,5 @@
 import React from 'react'
-import { useAsyncError, useRouteError } from 'react-router-dom'
+import { useRouteError } from 'react-router-dom'
 import Button from '../../../components/button'
 
 type ErrorType = {

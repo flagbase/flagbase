@@ -2,7 +2,6 @@ import React, { createElement, Fragment, ReactNode, useEffect } from 'react'
 
 import { Link, Outlet, useLocation, useMatches, useParams } from 'react-router-dom'
 import flag from '../../assets/flagbaseLogo.svg'
-import flagOld from '../../assets/flag.svg'
 import { useState } from 'react'
 import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react'
 import {
@@ -11,7 +10,6 @@ import {
     ChevronDownIcon,
     ChevronRightIcon,
     XMarkIcon,
-    CodeBracketIcon
 } from '@heroicons/react/24/outline'
 import { useInstances } from '../../app/pages/instances/instances'
 import {
@@ -36,7 +34,6 @@ import { Flag } from '../../app/pages/flags/api'
 import { useVariations } from '../../app/pages/variations/variations'
 import { useSDKs } from '../../app/pages/sdks/sdks'
 import { Footer } from './footer'
-import CodeUsageModal from '../code-usage-modal'
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`
@@ -236,10 +233,10 @@ const MobileNavigation = ({
     mobileMenuOpen: boolean
     setMobileMenuOpen: any
 }) => {
-    const { instanceKey, workspaceKey, projectKey, flagKey } = useFlagbaseParams()
+    const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams()
 
     const { data: instances } = useInstances()
-    const { data: workspaces } = useWorkspaces(instanceKey)
+    const { data: workspaces } = useWorkspaces()
     const { data: projects } = useProjects()
     const { data: environments } = useEnvironments()
     const { data: flags } = useFlags()
@@ -512,8 +509,10 @@ export const PageHeadings = () => {
 
     const { instanceKey, workspaceKey, projectKey, environmentKey, sdkKey, flagKey, variationKey } = useFlagbaseParams()
 
-    const { data: instances } = useInstances()
-    const { data: workspaces } = useWorkspaces(instanceKey)
+    const { data: instances } = useInstances({
+        select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    })
+    const { data: workspaces } = useWorkspaces()
     const { data: projects } = useProjects()
     const { data: environments } = useEnvironments()
     const { data: flags } = useFlags()

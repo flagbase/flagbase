@@ -34,7 +34,6 @@ export const useUpdateTargetingRule = () => {
     const { workspaceKey, projectKey, environmentKey, flagKey } = useFlagbaseParams()
     const mutation = useMutation({
         mutationFn: async ({ newRule, rule }: { newRule: TargetingRuleRequest; rule: TargetingRuleRequest }) => {
-            console.log('newRule', newRule, 'rule', rule)
             const shouldUpdate = !objectsEqual(newRule, rule)
             if (shouldUpdate) {
                 await updateTargetingRule(
