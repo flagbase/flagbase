@@ -15,9 +15,11 @@ import { configureAxios } from '../../lib/axios'
 import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { Instance } from '../instances/instances.functions'
+import { useNotification } from '../../hooks/use-notification'
 
 export const useAddWorkspace = () => {
     const queryClient = useQueryClient()
+    const notification = useNotification()
     const { instanceKey } = useFlagbaseParams()
     const mutation = useMutation({
         mutationFn: async (values: Omit<Workspace['attributes'], 'key'>) => {
@@ -25,6 +27,11 @@ export const useAddWorkspace = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['workspaces', instanceKey] })
+            notification.addNotification({
+                type: 'success',
+                title: 'Success',
+                content: 'Workspace created',
+            })
         },
     })
     return mutation
@@ -70,6 +77,7 @@ export const useUpdateWorkspace = (instanceKey: string | undefined) => {
 
 export const useRemoveWorkspace = (instanceKey: string | undefined) => {
     const queryClient = useQueryClient()
+    const notification = useNotification()
     const mutation = useMutation({
         mutationFn: async (key: string) => {
             await configureAxios(instanceKey!)
@@ -77,6 +85,11 @@ export const useRemoveWorkspace = (instanceKey: string | undefined) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['workspaces', instanceKey?.toLocaleLowerCase()] })
+            notification.addNotification({
+                type: 'success',
+                title: 'Success',
+                content: 'Workspace deleted',
+            })
         },
     })
     return mutation

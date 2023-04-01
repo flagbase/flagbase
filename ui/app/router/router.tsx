@@ -37,7 +37,6 @@ import Button from '../../components/button'
 import { CreateVariation } from '../pages/variations/variations.modal'
 import VariationSettings from '../pages/variations/variation.settings'
 import { CreateFlag, ModalProps } from '../pages/flags/flags.modal'
-import { ButtonProps } from 'antd'
 import { PlusCircleIcon } from '@heroicons/react/20/solid'
 import { AddNewInstanceModal } from '../pages/instances/instances.modal'
 import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal'
@@ -90,7 +89,13 @@ export const getVariationPath = ({
 }) =>
     `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`
 
-export const queryClient = new QueryClient()
+export const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            refetchOnWindowFocus: false,
+        },
+    },
+})
 
 const ModalWithButton = ({ buttonText, modal }: { buttonText: string; modal: React.FC<ModalProps> }) => {
     const [visible, setVisible] = useState(false)

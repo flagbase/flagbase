@@ -83,7 +83,7 @@ module.exports = {
         historyApiFallback: true,
         compress: true,
         hot: true,
-        port: 4000,
+        port: 3000,
         devMiddleware: {
             writeToDisk: true,
         },
@@ -93,8 +93,10 @@ module.exports = {
         filename: 'js/[name].js',
         publicPath: '/',
     },
-    plugins: [new HtmlWebpackPlugin({
-        title: "Flagbase",
-        favicon: './assets/favicon.ico'
-    })],
+    plugins: [
+        new HtmlWebpackPlugin({
+            title: 'Flagbase',
+            favicon: './assets/favicon.ico',
+        }),
+    ],
 }

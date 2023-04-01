@@ -43,6 +43,8 @@ export const configureAxios = async (instanceKey: string) => {
         (instance: Instance) => instance.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase()
     )
     if (!instance) {
+        // TODO: handle instance not found issue better
+        window.location.replace('/instances')
         throw new Error('Instance not found')
     }
 
