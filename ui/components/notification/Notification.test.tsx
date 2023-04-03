@@ -50,3 +50,22 @@ test('notification shows info with text', async ({ mount }, testInfo) => {
         contentType: 'image/png',
     })
 })
+
+test('notification hidden after 3 seconds', async ({ mount, page }, testInfo) => {
+    const component = await mount(
+        <Notification type="success" show title="Success" content="This was a triumph" timeout={100} />
+    )
+    await expect(component).toContainText('Success')
+    await expect(component).toContainText('This was a triumph')
+
+    await page.waitForTimeout(200)
+
+    await expect(component).not.toContainText('Success')
+    await expect(component).not.toContainText('This was a triumph')
+
+    await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
+    await testInfo.attach(strToImagePath(testInfo.title), {
+        body: await component.screenshot(),
+        contentType: 'image/png',
+    })
+})
