@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react'
 import { CheckCircleIcon, ExclamationCircleIcon } from '@heroicons/react/24/outline'
 import { XMarkIcon } from '@heroicons/react/20/solid'
 
-export function Notification({
+export default function Notification({
     show = true,
     setShow,
     title,
@@ -61,6 +61,18 @@ export function Notification({
                                         )}
                                         {type === 'success' && (
                                             <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
+                                        )}
+                                        {type === 'warning' && (
+                                            <ExclamationCircleIcon
+                                                className="h-6 w-6 text-yellow-400"
+                                                aria-hidden="true"
+                                            />
+                                        )}
+                                        {type === 'info' && (
+                                            <ExclamationCircleIcon
+                                                className="h-6 w-6 text-blue-400"
+                                                aria-hidden="true"
+                                            />
                                         )}
                                     </div>
                                     <div className="ml-3 w-0 flex-1 pt-0.5">

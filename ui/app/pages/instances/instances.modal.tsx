@@ -7,7 +7,7 @@ import Input from '../../../components/input'
 import Button from '../../../components/button/button'
 import { useAddInstance } from './instances'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Notification } from '../../../components/notification/notification'
+import Notification from '../../../components/notification'
 import { KeyInput } from '../../../components/input/input'
 import { Instance } from './instances.functions'
 
