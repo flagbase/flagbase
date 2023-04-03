@@ -7,7 +7,7 @@ import Input from '../../../components/input'
 import Button from '../../../components/button/button'
 import { useAddInstance } from './instances'
 import { PlusCircleIcon } from '@heroicons/react/24/outline'
-import { Notification } from '../../../components/notification/notification'
+import Notification from '../../../components/notification'
 import { KeyInput } from '../../../components/input/input'
 import { Instance } from './instances.functions'
 
@@ -20,10 +20,10 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
     const { isSuccess, isError } = mutation
 
     const onSubmit = (values: OmittedInstance, { setSubmitting }: FormikHelpers<OmittedInstance>) => {
-        setIsLoading(true);
+        setIsLoading(true)
         mutation.mutate(values)
         setSubmitting(false)
-        setTimeout(() => setIsLoading(false), 2000);
+        setTimeout(() => setIsLoading(false), 2000)
     }
 
     useEffect(() => {
@@ -106,7 +106,12 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                                     placeholder="Secret"
                                     type="password"
                                 />
-                                <Button type="submit" className="mt-3 py-2 justify-center" suffix={PlusCircleIcon} isLoading={isLoading}>
+                                <Button
+                                    type="submit"
+                                    className="mt-3 py-2 justify-center"
+                                    suffix={PlusCircleIcon}
+                                    isLoading={isLoading}
+                                >
                                     Add Instance
                                 </Button>
                             </Form>

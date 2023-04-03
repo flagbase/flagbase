@@ -31,13 +31,16 @@
         "storybook": "start-storybook -p 6006",
         "build-storybook": "build-storybook",
         "lint": "eslint .",
-        "lint:fix": "eslint . --fix"
+        "lint:fix": "eslint . --fix",
+        "test-ct": "playwright test -c playwright-ct.config.ts",
+        "test-ct-update": "playwright test --update-snapshots -c playwright-ct.config.ts"
     },
     "devDependencies": {
         "@babel/core": "^7.16.7",
         "@babel/preset-env": "^7.16.7",
         "@babel/preset-react": "^7.16.7",
         "@babel/preset-typescript": "^7.16.7",
+        "@playwright/experimental-ct-react": "^1.32.1",
         "@storybook/react": "^7.0.0-rc.1",
         "@testing-library/jest-dom": "^5.16.1",
         "@testing-library/react": "^14.0.0",

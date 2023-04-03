@@ -6,7 +6,7 @@ import { SettingsContainer } from '../../../components/container/SettingsContain
 import Input from '../../../components/input/input'
 import { TagInput } from '../../../components/input/tag-input'
 import { Loader } from '../../../components/loader'
-import { Notification } from '../../../components/notification/notification'
+import Notification from '../../../components/notification'
 import { EditEntityHeading } from '../../../components/text/heading'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { Flag } from './api'

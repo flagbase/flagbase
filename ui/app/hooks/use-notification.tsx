@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react'
-import { Notification } from '../../components/notification/notification'
+import Notification from '../../components/notification'
 
 type NotificationType = {
     title: string
