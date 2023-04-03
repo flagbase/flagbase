@@ -6,7 +6,6 @@ import { PlusCircleIcon } from '@heroicons/react/24/solid'
 
 test.use({ viewport: { width: 500, height: 500 } })
 test.afterEach(async ({ page }, testInfo) => {
-    console.log('attaching screenshot to test result', testInfo.title)
     await testInfo.attach(strToImagePath(testInfo.title), {
         body: await page.screenshot(),
         contentType: 'image/png',
