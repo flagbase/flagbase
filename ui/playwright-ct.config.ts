@@ -27,6 +27,7 @@ export default defineConfig({
         /* Port to use for Playwright component endpoint. */
         ctPort: 3100,
     },
+    snapshotPathTemplate: '{testDir}/__snapshots__/{testFilePath}/{arg}{ext}',
 
     /* Configure projects for major browsers */
     projects: [

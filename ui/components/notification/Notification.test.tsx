@@ -4,16 +4,18 @@ import Notification from '.'
 import { strToImagePath } from '../../helpers'
 
 test.use({ viewport: { width: 500, height: 500 } })
+test.afterEach(async ({ page }, testInfo) => {
+    await testInfo.attach(strToImagePath(testInfo.title), {
+        body: await page.screenshot(),
+        contentType: 'image/png',
+    })
+})
 
 test('notification shows success with text', async ({ mount }, testInfo) => {
     const component = await mount(<Notification type="success" show title="Success" content="This was a triumph" />)
     await expect(component).toContainText('Success')
     await expect(component).toContainText('This was a triumph')
     await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
-    await testInfo.attach(strToImagePath(testInfo.title), {
-        body: await component.screenshot(),
-        contentType: 'image/png',
-    })
 })
 
 test('notification shows error with text', async ({ mount }, testInfo) => {
@@ -21,10 +23,6 @@ test('notification shows error with text', async ({ mount }, testInfo) => {
     await expect(component).toContainText('Error')
     await expect(component).toContainText('Houston we have a problem')
     await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
-    await testInfo.attach(strToImagePath(testInfo.title), {
-        body: await component.screenshot(),
-        contentType: 'image/png',
-    })
 })
 
 test('notification shows warning with text', async ({ mount }, testInfo) => {
@@ -32,10 +30,6 @@ test('notification shows warning with text', async ({ mount }, testInfo) => {
     await expect(component).toContainText('Warning')
     await expect(component).toContainText('This is not a drill')
     await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
-    await testInfo.attach(strToImagePath(testInfo.title), {
-        body: await component.screenshot(),
-        contentType: 'image/png',
-    })
 })
 
 test('notification shows info with text', async ({ mount }, testInfo) => {
@@ -45,10 +39,6 @@ test('notification shows info with text', async ({ mount }, testInfo) => {
     await expect(component).toContainText('Info')
     await expect(component).toContainText('All your base are belong to us')
     await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
-    await testInfo.attach(strToImagePath(testInfo.title), {
-        body: await component.screenshot(),
-        contentType: 'image/png',
-    })
 })
 
 test('notification hidden after 3 seconds', async ({ mount, page }, testInfo) => {
@@ -64,8 +54,4 @@ test('notification hidden after 3 seconds', async ({ mount, page }, testInfo) =>
     await expect(component).not.toContainText('This was a triumph')
 
     await expect(component).toHaveScreenshot(strToImagePath(testInfo.title))
-    await testInfo.attach(strToImagePath(testInfo.title), {
-        body: await component.screenshot(),
-        contentType: 'image/png',
-    })
 })
