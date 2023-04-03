@@ -5,7 +5,6 @@ import { createWorkspace, deleteWorkspace, fetchWorkspaces, updateWorkspace, Wor
 import Button from '../../../components/button'
 import { constants, workspaceColumns } from './workspace.constants'
 import Input from '../../../components/input'
-import { SearchOutlined } from '@ant-design/icons'
 import { convertWorkspaces } from './workspaces.helpers'
 import { CreateWorkspaceModal } from './workspace.modal'
 import { useMutation, useQuery, useQueryClient, UseQueryOptions } from 'react-query'
@@ -16,6 +15,7 @@ import { Loader } from '../../../components/loader'
 import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { Instance } from '../instances/instances.functions'
 import { useNotification } from '../../hooks/use-notification'
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
 import { useInstances } from '../instances/instances'
 
 export const useAddWorkspace = () => {
@@ -138,7 +138,7 @@ const MainWorkspaces = () => {
                                 <Input
                                     onChange={(event) => setFilter(event.target.value)}
                                     placeholder="Search"
-                                    prefix={SearchOutlined}
+                                    prefix={MagnifyingGlassIcon}
                                 />
                             </div>
                         </div>
