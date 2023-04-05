@@ -1,26 +1,58 @@
-# Flagbase
-![Status](https://img.shields.io/badge/status-MVP-inactive)
+![Flagbase.com](./www/content/assets/readme/readme-banner-v2.svg)
+
+<center>
+
+![Status](https://img.shields.io/badge/status-alpha-inactive)
 ![GitHub](https://img.shields.io/github/license/flagbase/flagbase)
+ [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com) 
 ![Build](https://img.shields.io/github/actions/workflow/status/flagbase/flagbase/release-flagbase-core.yml?branch=master)
+![Commits](https://img.shields.io/github/commit-activity/m/flagbase/flagbase/master)
 
-[Flagbase](https://flagbase.com) is an open source feature management platform, enabling you to manage, track and deliver feature flags to all your applications.
+</center>
 
-<div align="center">
-  <img width="570px"  src="./www/content/assets/docs/intro/readme-banner.svg" /></br>
-</div>
+
+# **[Flagbase](https://flagbase.com)**: Democratizing Feature Management 
+
+[Flagbase](https://flagbase.com) is an open-source feature management platform, allowing you to manage, track and deliver feature flags to all your applications, in real-time. Flagbase was built with performance in mind, whilst being simple to use. 
+
+Flagbase offers these three key features:
+* Workspace / Projects / Environments
+* Feature Flags / Advanced Targeting
+* Segments for reusable targeting
+* Custom IAM roles and policies
+
+Integrating Flagbase in your application is super simple. Get started by following our **[Quick Start Guide](https://flagbase.com/docs/guides/quick-start)** today! 
 
 ## Features
 
-Flagbase is quite minimal at its core, yet extendable to suite your organisation's needs. Flagbase offers the following features:
-* Minimalist/composable targeting rules
-* Percentage rollouts + configurable hashing function (used for bucketing)
+Whilst Flagbase is quite minimal at its core - its extendable nature allows you to tailor it your organisation's needs. 
+
+Below are some of the features Flagbase offers:
+
+### Intuitive Targeting
+Flagbase uses a percentage-based targeting system by default - allowing you to incrementally release you feature to a particular segment of your users over time.
+![Targeting demo](./www/content/assets/readme/targeting-demo.gif)
+
+### Client and Server SDKs
+Flagbase offers client-side and server-side SDKs for feature flagging. Client-side SDKs, embedded in client applications, personalize features for end-users but may have slower performance. Server-side SDKs handle server-to-server communication, maintain security, and are designed for high traffic and scalability.
+
+Client SDK             |  Server SDK
+:-------------------------:|:-------------------------:
+![](./www/content/assets/blog/introducing-flagbase/client-side-evaluation.png)  |  ![](./www/content/assets/blog/introducing-flagbase/server-side-evaluation.png)
+
+### Well-designed Resource Hierarchy
+Flagbase's resource hierarchy consists of instances, access, workspaces, projects, environments, flags, identities, segments, and targeting. An instance is a single Flagbase core installation using a shared PostgreSQL database. Access refers to key/secret pairs restricting operations on resources. Workspaces group projects, while projects contain flags and segments across multiple environments. Environments represent different targeting states. Flags determine feature states, while identities are flag observer/consumers. Segments group users based on traits, and targeting rules map conditions to flag variations within specific environments.
+
+![Resource Hierarchy](./www/content/assets/readme/resource-hierarchy.png)
+
+### Other Features
 * Multiple transports (HTTP long-polling, SSE)
 * Robust Identity & Access Management (IAM) that uses a hybrid RBAC/ABAC design policy based access control
 * Extend to use additional contextual data from flag evaluations, using your own data sources
 * Self hosted: can be provisioned to the cloud of your choice or run on-prem
 
 ## Getting started
-Flagbase is very easy to get up and running. Follow these steps to get started:
+Flagbase is very easy to get up and running. Follow our [quick start guide](https://flagbase.com/docs/guides/quick-start) to get up an running:
 1. [Set up the core](https://flagbase.com/docs/core/setup): provision the service on server(s). You can use your preferred cloud vendor.
 2. [Integrate to your application](https://flagbase.com/docs/sdk/overview): use the SDK in your application to wrap features you want to control remotely.
 3. [Configure targeting](https://flagbase.com/docs/guides/targeting): set up your flag's targeting rules so users see feature variations intended for them.
@@ -45,6 +77,8 @@ Join us on [Github Discussions](https://github.com/flagbase/flagbase/discussions
 * [Help](https://github.com/flagbase/flagbase/discussions/categories/help): Stuck on something? Ask for help here 😄
 
 ## Other Resources
+* [Roadmap](https://github.com/orgs/flagbase/projects/3/views/1)
+* [Tasks Board](https://github.com/orgs/flagbase/projects/3/views/1)
 * [Architecture](https://flagbase.com/dev/core/architecture)
 * [Data models](https://flagbase.com/dev/core/data-models)
 
