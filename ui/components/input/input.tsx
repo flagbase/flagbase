@@ -1,34 +1,51 @@
 import React, { createElement, useEffect } from 'react'
-import { FieldInputProps, useFormikContext } from 'formik'
+import { FieldConfig, FieldInputProps, useField, useFormikContext } from 'formik'
 import { classNames } from '../../helpers'
 
 export type InputProps = {
     prefix?: React.ElementType
     label?: string
-    placeholder?: string
-} & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'prefix'>
+} & FieldConfig &
+    React.InputHTMLAttributes<HTMLInputElement>
 
-const Input: React.FC<InputProps> = ({ prefix, className, ...props }) => {
+const Input: React.FC<InputProps> = ({ prefix, className, label, ...props }) => {
+    const [field, meta] = useField(props)
     return (
-        <div className="relative rounded-md shadow-sm">
-            {prefix && (
-                <div
-                    data-testid="prefix"
-                    className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
-                >
-                    {createElement(prefix)}
-                </div>
-            )}
-            <input
-                type="text"
-                className={classNames(
-                    `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
-                    prefix ? 'pl-10' : '',
-                    'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
-                    className ? className : ''
+        <div>
+            <div className="relative rounded-md shadow-sm">
+                {prefix && (
+                    <div
+                        data-testid="prefix"
+                        className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                    >
+                        {createElement(prefix, { className: 'h-5 w-5 text-gray-400' })}
+                    </div>
                 )}
-                {...props}
-            />
+                <input
+                    type="text"
+                    className={classNames(
+                        `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
+                        prefix ? 'pl-10' : '',
+                        'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
+                        meta.touched && meta.error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '',
+                        className ? className : ''
+                    )}
+                    {...field}
+                    {...props}
+                    placeholder={undefined}
+                />
+                <label
+                    htmlFor={props.id || props.name}
+                    className="absolute top-4 left-4 pointer-events-none font-medium text-gray-700"
+                >
+                    {label}
+                </label>
+                {meta.touched && meta.error ? (
+                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500 text-sm">
+                        {meta.error}
+                    </div>
+                ) : null}
+            </div>
         </div>
     )
 }

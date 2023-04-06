@@ -1,13 +1,12 @@
 import React, { createElement } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { classNames } from '../../helpers'
 import LoadingText from '../loading-text'
 
 export type ButtonProps = {
     children: React.ReactChild
+    className: string
     suffix?: any
     prefix?: any
-    goBack?: boolean
     secondary?: boolean
     isLoading?: boolean
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
@@ -17,16 +16,15 @@ const Button: React.FC<ButtonProps> = ({
     prefix,
     secondary,
     suffix,
-    goBack = false,
     isLoading = false,
+    onClick,
     ...props
 }) => {
-    const navigate = useNavigate()
-
     return (
         <button
             type="button"
             className={classNames(
+                'py-2',
                 isLoading
                     ? 'inline-flex items-center rounded-md bg-white px-3 py-2 text-sm text-black font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-white'
                     : '',
@@ -39,14 +37,7 @@ const Button: React.FC<ButtonProps> = ({
                 className
             )}
             {...props}
-            onClick={(e) => {
-                if (props.onClick) {
-                    props.onClick(e)
-                }
-                if (goBack) {
-                    navigate(-1)
-                }
-            }}
+            onClick={onClick}
             disabled={isLoading}
         >
             {prefix && createElement(prefix, { className: 'mr-3 h-5 w-5' })}
