@@ -74,7 +74,6 @@ const Table: React.FC<TableProps> = ({
                 return {
                     onClick: (event) => {
                         event.preventDefault()
-                        console.log('record', record, rowIndex)
                         const { href } = record
                         if (href) {
                             navigate(href)
