@@ -61,7 +61,6 @@ const Input: React.FC<InputProps> = ({ icon, className, label, ...props }) => {
 };
 
 export const KeyInput: React.FC<InputProps> = ({ ...props }) => {
-  const [field, meta] = useField<string>(props);
   const {
     setFieldValue,
     values: { name },
@@ -70,39 +69,58 @@ export const KeyInput: React.FC<InputProps> = ({ ...props }) => {
     if (name && name.trim() !== '') {
       setFieldValue('key', name.split(' ').join('-').toLowerCase());
     }
-  }, [name, meta.value, setFieldValue]);
+  }, [name, setFieldValue]);
 
   return <Input {...props} />;
 };
 
 type RawInputProps = {
-  prefix?: any;
+  icon?: React.ElementType;
+  className: string;
   label?: string;
+  value: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
 
 export const RawInput: React.FC<RawInputProps> = ({
-  prefix,
+  icon,
   label,
+  className,
+  value,
   ...props
 }) => {
-  const { placeholder } = props;
-
   return (
-    <div className="relative rounded-md shadow-sm">
-      {prefix && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-          {createElement(prefix, { className: 'h-5 w-5' })}
-        </div>
-      )}
-      <input
-        type="text"
-        className={classNames(
-          `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
-          prefix ? 'pl-10' : '',
+    <div>
+      <div className="relative rounded-md shadow-sm">
+        {icon && (
+          <div
+            data-testid="prefix"
+            className="pointer-events-none absolute inset-y-0 right-4 flex items-center"
+          >
+            {createElement(icon, { className: 'h-5 w-5 text-gray-500' })}
+          </div>
         )}
-        placeholder={placeholder}
-        {...props}
-      />
+        <input
+          type="text"
+          className={classNames(
+            `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 h-14 pb-0`,
+            'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
+            className ? className : '',
+            'peer text-xl',
+          )}
+          {...props}
+        />
+        <label
+          htmlFor={label}
+          className={classNames(
+            `left-3 absolute peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-700 transition-all`,
+            !value ? 'top-4' : '',
+            value ? 'top-0 text-sm' : '',
+            'peer-disabled:top-0 peer-disabled:text-sm',
+          )}
+        >
+          {label}
+        </label>
+      </div>
     </div>
   );
 };
