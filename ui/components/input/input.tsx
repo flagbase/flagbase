@@ -6,10 +6,17 @@ import { Instance } from '../../app/pages/instances/instances.functions';
 export type InputProps = {
   icon?: React.ElementType;
   label?: string;
+  autocomplete?: string;
 } & FieldConfig &
   React.InputHTMLAttributes<HTMLInputElement>;
 
-const Input: React.FC<InputProps> = ({ icon, className, label, ...props }) => {
+const Input: React.FC<InputProps> = ({
+  icon,
+  className,
+  label,
+  autoComplete = 'off',
+  ...props
+}) => {
   const [field, meta] = useField(props);
 
   return (
@@ -26,7 +33,7 @@ const Input: React.FC<InputProps> = ({ icon, className, label, ...props }) => {
         <input
           type="text"
           className={classNames(
-            `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500  h-14`,
+            `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500  h-14 pb-0`,
             'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
             meta.touched && meta.error
               ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
@@ -37,15 +44,16 @@ const Input: React.FC<InputProps> = ({ icon, className, label, ...props }) => {
           {...field}
           {...props}
           placeholder={undefined}
+          autoComplete={autoComplete}
         />
         <label
           htmlFor={props.id || props.name}
           className={classNames(
-            `absolute peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-700 transition-all`,
+            `absolute peer-focus:top-1 peer-focus:text-xs  pointer-events-none text-gray-700 transition-all`,
             !meta.value ? 'top-4' : '',
-            meta.value ? 'top-0 text-sm' : '',
+            meta.value ? 'top-1 text-xs' : '',
             icon ? 'left-11' : 'left-3',
-            'peer-disabled:top-0 peer-disabled:text-sm',
+            'peer-disabled:top-1 peer-disabled:text-xs',
           )}
         >
           {label}
@@ -76,7 +84,7 @@ export const KeyInput: React.FC<InputProps> = ({ ...props }) => {
 
 type RawInputProps = {
   icon?: React.ElementType;
-  className: string;
+  className?: string;
   label?: string;
   value: string;
 } & React.InputHTMLAttributes<HTMLInputElement>;
@@ -114,7 +122,7 @@ export const RawInput: React.FC<RawInputProps> = ({
           className={classNames(
             `left-3 absolute peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-700 transition-all`,
             !value ? 'top-4' : '',
-            value ? 'top-0 text-sm' : '',
+            value ? 'top-0 text-xs' : '',
             'peer-disabled:top-0 peer-disabled:text-sm',
           )}
         >

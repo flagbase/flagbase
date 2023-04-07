@@ -1,17 +1,18 @@
-import Axios from 'axios';
-import { Instance } from '../context/instance';
+import Axios, { AxiosError, AxiosResponse } from 'axios';
 import { fetchAccessToken } from '../pages/workspaces/api';
 import { getInstances } from '../router/loaders';
 import { queryClient } from '../router/router';
+import { Instance } from '../pages/instances/instances.functions';
 
 export const axios = Axios.create();
 
 axios.interceptors.response.use(
-  (response) => {
+  (response: AxiosResponse) => {
     return response.data;
   },
-  (error) => {
+  (error: AxiosError<{ message: string }>) => {
     const message = error.response?.data?.message || error.message;
+
     return Promise.reject({
       message,
       status: error.response?.status || 404,
@@ -34,12 +35,13 @@ const getCachedAccessToken = async (
   } else {
     const { accessToken } = await fetchAccessToken(accessKey, accessSecret);
     sessionStorage.setItem(hashKey, accessToken);
+
     return { accessToken };
   }
 };
 
 export const configureAxios = async (instanceKey: string) => {
-  const instances = await queryClient.fetchQuery({
+  const instances = await queryClient.fetchQuery<Instance[]>({
     queryKey: ['instances'],
     queryFn: () => getInstances(),
   });

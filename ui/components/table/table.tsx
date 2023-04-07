@@ -10,6 +10,7 @@ import EmptyState from '../empty-state';
 import Button from '../button/button';
 import { useNavigate } from 'react-router-dom';
 import { DocumentDuplicateIcon } from '@heroicons/react/20/solid';
+import { useNotification } from '../../app/hooks/use-notification';
 
 export type TableProps = {
   loading: boolean;
@@ -25,7 +26,7 @@ const StyledTable = styled(AntdTable)`
 `;
 
 export const CopyRow = ({ text }: { text: string }) => {
-  const [copied, setCopied] = useState(false);
+  const { addNotification } = useNotification();
 
   return (
     <div className="flex gap-1 items-center">
@@ -35,11 +36,12 @@ export const CopyRow = ({ text }: { text: string }) => {
         className="p-1 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100"
         onClick={(event) => {
           event.preventDefault();
-          navigator.clipboard.writeText(text).then(() => {
-            setCopied(true);
-            setTimeout(() => {
-              setCopied(false);
-            }, 3000);
+          void navigator.clipboard.writeText(text).then(() => {
+            addNotification({
+              type: 'success',
+              title: 'Copied',
+              content: 'Copied to clipboard',
+            });
           });
         }}
       >

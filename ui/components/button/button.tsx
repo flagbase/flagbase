@@ -4,7 +4,7 @@ import { Loader } from '../loader';
 
 export type ButtonProps = {
   children: React.ReactChild;
-  className: string;
+  className?: string;
   suffix?: React.ElementType;
   prefix?: React.ElementType;
   isLoading?: boolean;
@@ -38,9 +38,13 @@ const Button: React.FC<ButtonProps> = ({
       )}
       {...props}
     >
-      {prefix && createElement(prefix, { className: 'mr-3 h-5 w-5' })}
+      {prefix &&
+        !isLoading &&
+        createElement(prefix, { className: 'mr-3 h-5 w-5' })}
       {isLoading ? <Loader size="extraSmall" /> : props.children}
-      {suffix && createElement(suffix, { className: 'ml-3 -mr-1 h-5 w-5' })}
+      {suffix &&
+        !isLoading &&
+        createElement(suffix, { className: 'ml-3 -mr-1 h-5 w-5' })}
     </button>
   );
 };

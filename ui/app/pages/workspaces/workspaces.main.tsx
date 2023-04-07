@@ -105,12 +105,15 @@ export const useRemoveWorkspace = (instanceKey: string | undefined) => {
   const notification = useNotification();
   const mutation = useMutation({
     mutationFn: async (key: string) => {
-      await configureAxios(instanceKey!);
+      if (!instanceKey) {
+        throw new Error('instanceKey is undefined');
+      }
+      await configureAxios(instanceKey);
 
       return deleteWorkspace(key);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         queryKey: ['workspaces', instanceKey?.toLocaleLowerCase()],
       });
       notification.addNotification({
@@ -134,9 +137,12 @@ export const useWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
     ['workspaces', instanceKey?.toLocaleLowerCase()],
     {
       queryFn: async () => {
-        await configureAxios(instanceKey!);
+        if (instanceKey) {
+          await configureAxios(instanceKey);
 
-        return fetchWorkspaces();
+          return fetchWorkspaces();
+        }
+        throw new Error('instanceKey is undefined');
       },
       enabled: instances && instances.length > 0,
       ...options,

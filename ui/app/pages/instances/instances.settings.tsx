@@ -1,4 +1,4 @@
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../../../components/button/button';
@@ -60,28 +60,14 @@ export const EditInstance = () => {
           validationSchema={InstanceSchema}
         >
           <Form className="flex flex-col gap-5 mb-14">
-            <Field component={Input} name="name" label="Instance Name" />
-            <Field component={Input} name="key" label="Instance Key" />
-            <Field
-              component={Input}
-              name="connectionString"
-              label="Connection String"
-            />
-            <Field component={Input} name="accessKey" label="Access Key" />
-            <Field
-              component={Input}
-              name="accessSecret"
-              label="Access Secret"
-              type="password"
-            />
+            <Input name="name" label="Instance Name" />
+            <Input name="key" label="Instance Key" />
+            <Input name="connectionString" label="Connection String" />
+            <Input name="accessKey" label="Access Key" />
+            <Input name="accessSecret" label="Access Secret" type="password" />
 
             <div className="flex justify-start gap-3">
-              <Button
-                type="submit"
-                className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
-              >
-                Update
-              </Button>
+              <Button type="submit">Update</Button>
             </div>
           </Form>
         </Formik>

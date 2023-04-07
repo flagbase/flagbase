@@ -77,31 +77,35 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
             validationSchema={InstanceSchema}
             validateOnMount
           >
-            {({ errors, isValid, isInitialValid }) => (
+            {({ isValid }) => (
               <Form className="flex flex-col gap-3">
                 <Input
                   id="name"
                   name="name"
                   label="Name"
                   placeholder="Flagbase Instance"
+                  autoComplete="off"
                 />
                 <KeyInput
                   id="key"
                   name="key"
                   placeholder="flagbase-instance"
                   label="Key"
+                  autoComplete="off"
                 />
                 <Input
                   id="connectionString"
                   name="connectionString"
                   label="Connection String"
                   placeholder="URL"
+                  autoComplete="url"
                 />
                 <Input
                   id="accessKey"
                   name="accessKey"
                   label="Access Key"
                   placeholder="Key"
+                  autoComplete="off"
                 />
                 <Input
                   id="accessSecret"
@@ -109,6 +113,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                   label="Access Secret"
                   placeholder="Secret"
                   type="password"
+                  autoComplete="off"
                 />
                 <Button
                   type="submit"

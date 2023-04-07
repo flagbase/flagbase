@@ -1,46 +1,58 @@
-import { axios } from '../../lib/axios'
-import { UpdateBody } from '../workspaces/api'
+import { axios } from '../../lib/axios';
+import { UpdateBody } from '../workspaces/api';
 
 export interface Project {
-    type: string
-    id: string
-    attributes: {
-        description: string
-        key: string
-        name: string
-        tags: string[]
-    }
+  type: string;
+  id: string;
+  attributes: {
+    description: string;
+    key: string;
+    name: string;
+    tags: string[];
+  };
 }
 export interface ProjectResponse {
-    data: Project[]
+  data: Project[];
 }
 
 export const fetchProjects = async (workspaceKey: string) => {
-    const result = await axios.get<ProjectResponse>(`/projects/${workspaceKey}`)
-    return result.data
-}
+  const result = await axios.get<Project[]>(`/projects/${workspaceKey}`);
 
-export const deleteProject = async ({ workspaceKey, projectKey }: { workspaceKey: string; projectKey: string }) => {
-    return axios.delete(`/projects/${workspaceKey}/${projectKey}`)
-}
+  return result.data;
+};
 
-export const createProject = async (name: string, description: string, tags: string[], workspaceKey: string) => {
-    return axios.post(`/projects/${workspaceKey}`, {
-        key: name.toLowerCase().replace(' ', '-'),
-        name,
-        description,
-        tags,
-    })
-}
+export const deleteProject = async ({
+  workspaceKey,
+  projectKey,
+}: {
+  workspaceKey: string;
+  projectKey: string;
+}) => {
+  return axios.delete(`/projects/${workspaceKey}/${projectKey}`);
+};
+
+export const createProject = async (
+  name: string,
+  description: string,
+  tags: string[],
+  workspaceKey: string,
+) => {
+  return axios.post(`/projects/${workspaceKey}`, {
+    key: name.toLowerCase().replace(' ', '-'),
+    name,
+    description,
+    tags,
+  });
+};
 
 export const updateProject = async ({
-    workspaceKey,
-    projectKey,
-    body,
+  workspaceKey,
+  projectKey,
+  body,
 }: {
-    workspaceKey: string
-    projectKey: string
-    body: UpdateBody[]
+  workspaceKey: string;
+  projectKey: string;
+  body: UpdateBody[];
 }) => {
-    return axios.patch(`/projects/${workspaceKey}/${projectKey}`, body)
-}
+  return axios.patch(`/projects/${workspaceKey}/${projectKey}`, body);
+};

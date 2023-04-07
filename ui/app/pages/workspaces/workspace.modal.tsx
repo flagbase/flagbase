@@ -1,6 +1,6 @@
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Modal, notification, Typography } from 'antd';
-import { Field, Form, Formik } from 'formik';
+import { Typography } from 'antd';
+import { Form, Formik } from 'formik';
 import React, { useEffect } from 'react';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
@@ -8,6 +8,8 @@ import { TagInput } from '../../../components/input/tag-input';
 import { ModalLayout } from '../../../components/layout';
 import { Instance } from '../instances/instances.functions';
 import { useAddWorkspace } from './workspaces.main';
+import { useNotification } from '../../hooks/use-notification';
+import { NewWorkspaceSchema } from './workspace.constants';
 
 const { Title, Text } = Typography;
 
@@ -23,16 +25,31 @@ interface WorkspaceModal {
 }
 
 const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
-  const { mutate: addWorkspace, error } = useAddWorkspace();
+  const { addNotification } = useNotification();
+  const {
+    mutate: addWorkspace,
+    error,
+    isLoading,
+    isSuccess,
+  } = useAddWorkspace();
 
   useEffect(() => {
     if (error) {
-      notification.error({
-        message: 'Error',
-        description: 'Could not create workspace',
+      addNotification({
+        type: 'error',
+        title: 'Error',
+        content: 'Could not create workspace',
       });
     }
-  }, [error]);
+    if (isSuccess) {
+      addNotification({
+        type: 'success',
+        title: 'Success',
+        content: 'Workspace created successfully',
+      });
+      setVisible(false);
+    }
+  }, [error, isSuccess, setVisible]);
 
   return (
     <ModalLayout open={visible} onClose={() => setVisible(false)}>
@@ -45,6 +62,7 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
         </div>
         <div className="flex flex-col gap-3 mt-3">
           <Formik
+            validateOnMount
             initialValues={{
               name: '',
               description: '',
@@ -56,30 +74,33 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
                 description: values.description,
                 tags: values.tags,
               });
-              setVisible(false);
             }}
+            validationSchema={NewWorkspaceSchema}
           >
-            <Form className="flex flex-col gap-3">
-              <Input id="name" name="name" placeholder="Workspace name" />
-              <Input
-                id="description"
-                name="description"
-                placeholder="Description"
-              />
-              <Field
-                component={TagInput}
-                id="tags"
-                name="tags"
-                placeholder="Tags (separate by comma)"
-              />
-              <Button
-                className="mt-3 py-2 justify-center"
-                suffix={PlusCircleIcon}
-                type="submit"
-              >
-                Add Workspace
-              </Button>
-            </Form>
+            {({ isValid }) => (
+              <Form className="flex flex-col gap-3">
+                <Input id="name" name="name" label="Workspace name" />
+                <Input
+                  id="description"
+                  name="description"
+                  label="Description"
+                />
+                <TagInput
+                  id="tags"
+                  name="tags"
+                  label="Tags (separate by comma)"
+                />
+                <Button
+                  isLoading={isLoading}
+                  disabled={!isValid}
+                  className="mt-3 py-2 justify-center"
+                  suffix={PlusCircleIcon}
+                  type="submit"
+                >
+                  Add Workspace
+                </Button>
+              </Form>
+            )}
           </Formik>
         </div>
       </>
