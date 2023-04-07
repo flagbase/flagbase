@@ -15,6 +15,19 @@ const meta: Meta<typeof Button> = {
             options: Object.keys(Icons),
             mapping: Icons,
         },
+        suffix: {
+            options: Object.keys(Icons),
+            mapping: Icons,
+        },
+        isLoading: {
+            control: {
+                type: 'boolean',
+            },
+        },
+    },
+    args: {
+        isLoading: false,
+        type: 'button',
     },
 }
 
@@ -23,9 +36,49 @@ type Story = StoryObj<typeof Button>
 
 // More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 
-export const Default: Story = {
+export const Primary: Story = {
     args: {
-        type: 'button',
+        children: 'Primary Button',
+    },
+}
+
+export const Secondary: Story = {
+    args: {
+        children: 'Secondary Button',
+        variant: 'secondary',
+    },
+}
+
+export const Disabled: Story = {
+    args: {
+        children: 'Disabled Button',
+        disabled: true,
+    },
+}
+
+export const WithPrefix: Story = {
+    args: {
+        children: 'With Prefix',
+        prefix: Icons.MagnifyingGlassIcon,
+    },
+}
+
+export const WithSuffix: Story = {
+    args: {
+        children: 'With Suffix',
+        suffix: Icons.MagnifyingGlassIcon,
+    },
+}
+
+export const IsLoading: Story = {
+    args: {
         children: 'Button',
+        isLoading: true,
+    },
+}
+
+export const LongText: Story = {
+    args: {
+        children: 'This is a very long text that will be truncated',
     },
 }

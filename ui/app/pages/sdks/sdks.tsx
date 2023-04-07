@@ -1,16 +1,15 @@
-import { DocumentDuplicateIcon, MagnifyingGlassIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
+import { DocumentDuplicateIcon, PlusCircleIcon } from '@heroicons/react/20/solid'
 import React, { Suspense, useState } from 'react'
 import { useQuery } from 'react-query'
 import { Await, Link, useLoaderData } from 'react-router-dom'
 import Button from '../../../components/button'
 import EmptyState from '../../../components/empty-state'
-import { RawInput } from '../../../components/input/input'
 import { Loader } from '../../../components/loader'
 import Notification from '../../../components/notification'
 import Table from '../../../components/table/table'
 import Tag from '../../../components/tag'
 import { configureAxios } from '../../lib/axios'
-import { FlagbaseParams, useFlagbaseParams } from '../../lib/use-flagbase-params'
+import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { getSdkKey } from '../../router/loaders'
 import { fetchSdkList, SDK } from './api'
 import { CreateSDKModal } from './sdks.modal'
@@ -127,7 +126,7 @@ export const Sdks = () => {
                     <Link
                         to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`}
                     >
-                        <Button secondary className="py-2">
+                        <Button variant="secondary" className="py-2">
                             Edit
                         </Button>
                     </Link>
