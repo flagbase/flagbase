@@ -34,7 +34,7 @@ export const useEnvironments = () => {
                 await configureAxios(instanceKey!)
                 return fetchEnvironments(workspaceKey!, projectKey!)
             },
-            enabled: !!instanceKey && !!workspaceKey,
+            enabled: !!instanceKey && !!workspaceKey && !!projectKey,
         }
     )
     return query

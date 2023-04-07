@@ -10,8 +10,8 @@ export const flagsColumn = [
     },
     {
         title: 'Key',
-        dataIndex: 'key',
-        key: 'key',
+        dataIndex: 'flagKey',
+        key: 'flagKey',
     },
     {
         title: 'Description',

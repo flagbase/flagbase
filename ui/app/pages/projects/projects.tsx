@@ -64,11 +64,13 @@ export const convertProjects = ({
         })
 }
 
-export const useRemoveProject = (instanceKey: string, workspaceKey: string) => {
+export const useRemoveProject = () => {
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
     const queryClient = useQueryClient()
     const mutation = useMutation({
+        mutationKey: ['projects', instanceKey, workspaceKey],
         mutationFn: async (projectKey: string) => {
-            await deleteProject(projectKey)
+            await deleteProject({ projectKey, workspaceKey })
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['projects', instanceKey, workspaceKey] })
@@ -77,9 +79,11 @@ export const useRemoveProject = (instanceKey: string, workspaceKey: string) => {
     return mutation
 }
 
-export const useAddProject = (instanceKey: string, workspaceKey: string) => {
+export const useAddProject = () => {
+    const { instanceKey, workspaceKey } = useFlagbaseParams()
     const queryClient = useQueryClient()
     const mutation = useMutation({
+        mutationKey: ['projects', instanceKey, workspaceKey],
         mutationFn: async (values: Omit<Workspace['attributes'], 'key'>) => {
             await createProject(values.name, values.description, values.tags, workspaceKey)
         },
@@ -99,7 +103,6 @@ export const useProjects = (options?: any) => {
             return fetchProjects(workspaceKey!)
         },
         enabled: !!instanceKey && !!workspaceKey,
-        refetchOnWindowFocus: false,
     })
     return query
 }
