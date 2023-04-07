@@ -33,6 +33,7 @@ export const instancesQuery = async (
   if (!instances.length) {
     throw new Error('No instances found');
   }
+
   return instances;
 };
 
@@ -42,6 +43,7 @@ export const instancesLoader = async () => {
     queryKey: ['instances'],
     queryFn: () => getInstances(),
   });
+
   return defer({ instances });
 };
 
@@ -49,6 +51,7 @@ export const workspaceQuery = ({ instanceKey }: { instanceKey: string }) => ({
   queryKey: ['workspaces', instanceKey.toLocaleLowerCase()],
   queryFn: async () => {
     await configureAxios(instanceKey);
+
     return fetchWorkspaces();
   },
 });
@@ -65,10 +68,11 @@ export const workspacesLoader = async ({
   const [instance] = await instancesQuery(instanceKey);
   await configureAxios(instanceKey);
   const workspaces = queryClient.fetchQuery(workspaceQuery({ instanceKey }));
+
   return defer({ workspaces, instance });
 };
 
-export const projectsLoader = async ({
+export const projectsLoader = ({
   params,
 }: {
   params: Params<'instanceKey' | 'workspaceKey'>;
@@ -82,14 +86,16 @@ export const projectsLoader = async ({
     {
       queryFn: async () => {
         await configureAxios(instanceKey);
+
         return fetchProjects(workspaceKey);
       },
     },
   );
+
   return defer({ projects });
 };
 
-export const environmentsLoader = async ({
+export const environmentsLoader = ({
   params,
 }: {
   params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'>;
@@ -107,10 +113,12 @@ export const environmentsLoader = async ({
     {
       queryFn: async () => {
         await configureAxios(instanceKey);
+
         return fetchEnvironments(workspaceKey, projectKey);
       },
     },
   );
+
   return defer({ environments });
 };
 
@@ -128,7 +136,7 @@ export const getSdkKey = ({
   return ['sdks', instanceKey, workspaceKey, projectKey, environmentKey];
 };
 
-export const sdkLoader = async ({
+export const sdkLoader = ({
   params,
 }: {
   params: Params<
@@ -143,6 +151,7 @@ export const sdkLoader = async ({
   const sdks = queryClient.fetchQuery(queryKey, {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchSdkList({
         environmentKey,
         projectKey,
@@ -150,6 +159,7 @@ export const sdkLoader = async ({
       });
     },
   });
+
   return defer({ sdks });
 };
 
@@ -202,7 +212,7 @@ export const getTargetingRulesKey = ({
   ];
 };
 
-export const flagsLoader = async ({
+export const flagsLoader = ({
   params,
 }: {
   params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'>;
@@ -215,12 +225,14 @@ export const flagsLoader = async ({
   const flags = queryClient.fetchQuery(queryKey, {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchFlags({
         projectKey,
         workspaceKey,
       });
     },
   });
+
   return defer({ flags });
 };
 
@@ -249,6 +261,7 @@ export const targetingLoader = async ({
     {
       queryFn: async () => {
         await configureAxios(instanceKey);
+
         return fetchVariations({
           workspaceKey,
           projectKey,
@@ -260,6 +273,7 @@ export const targetingLoader = async ({
   const targeting = queryClient.fetchQuery(getTargetingKey(params), {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchTargeting({
         workspaceKey,
         projectKey,
@@ -271,6 +285,7 @@ export const targetingLoader = async ({
   const targetingRules = queryClient.fetchQuery(getTargetingRulesKey(params), {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchTargetingRules({
         workspaceKey,
         projectKey,
@@ -279,10 +294,11 @@ export const targetingLoader = async ({
       });
     },
   });
+
   return defer({ targeting, targetingRules, variations });
 };
 
-export const targetingRulesLoader = async ({
+export const targetingRulesLoader = ({
   params,
 }: {
   params: Params<
@@ -301,6 +317,7 @@ export const targetingRulesLoader = async ({
   const targetingRules = queryClient.fetchQuery(queryKey, {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchTargetingRules({
         workspaceKey,
         projectKey,
@@ -309,6 +326,7 @@ export const targetingRulesLoader = async ({
       });
     },
   });
+
   return defer({ targetingRules });
 };
 
@@ -318,11 +336,15 @@ export const getVariationsKey = ({
   projectKey,
   flagKey,
 }: {
-  instanceKey: string;
-  workspaceKey: string;
-  projectKey: string;
-  flagKey: string;
+  instanceKey?: string;
+  workspaceKey?: string;
+  projectKey?: string;
+  flagKey?: string;
 }) => {
+  if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
+    return ['variations'];
+  }
+
   return ['variations', instanceKey, workspaceKey, projectKey, flagKey];
 };
 
@@ -375,6 +397,7 @@ export const variationsLoader = async ({
   const variations = queryClient.fetchQuery(queryKey, {
     queryFn: async () => {
       await configureAxios(instanceKey);
+
       return fetchVariations({
         workspaceKey,
         projectKey,
@@ -382,5 +405,6 @@ export const variationsLoader = async ({
       });
     },
   });
+
   return defer({ variations });
 };
