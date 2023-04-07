@@ -1,6 +1,7 @@
 import React, { createElement } from 'react';
 import { classNames } from '../../helpers';
 import { Loader } from '../loader';
+import { useFormikContext } from 'formik';
 
 export type ButtonProps = {
   children: React.ReactChild;
@@ -19,12 +20,19 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   ...props
 }) => {
+  const { isValid, isSubmitting } = useFormikContext() || {
+    isValid: true,
+    isSubmitting: false,
+  };
+
+  const loading = isLoading || isSubmitting;
+
   return (
     <button
       type="button"
       className={classNames(
         'py-3 flex justify-center transition-colors duration-200 ease-in-out',
-        isLoading
+        loading
           ? 'inline-flex items-center rounded-md bg-white px-3 py-2 text-sm text-black font-semibold shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-white'
           : '',
         variant === 'primary'
@@ -36,14 +44,15 @@ const Button: React.FC<ButtonProps> = ({
         'disabled:bg-gray-200 disabled:text-gray-500 disabled:cursor-not-allowed',
         className,
       )}
+      disabled={!isValid}
       {...props}
     >
       {prefix &&
-        !isLoading &&
+        !loading &&
         createElement(prefix, { className: 'mr-3 h-5 w-5' })}
-      {isLoading ? <Loader size="extraSmall" /> : props.children}
+      {loading ? <Loader size="extraSmall" /> : props.children}
       {suffix &&
-        !isLoading &&
+        !loading &&
         createElement(suffix, { className: 'ml-3 -mr-1 h-5 w-5' })}
     </button>
   );

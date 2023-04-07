@@ -73,6 +73,13 @@ export const getProjectPath = (
   projectKey: string,
 ) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`;
 
+export const getEnvironmentsPath = (
+  instanceKey: string,
+  workspaceKey: string,
+  projectKey: string,
+) =>
+  `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`;
+
 export const getEnvironmentPath = (
   instanceKey: string,
   workspaceKey: string,

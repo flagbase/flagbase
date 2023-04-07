@@ -11,10 +11,26 @@ import { Heading } from '../../../components/text/heading';
 import Text from '../../../components/text/text';
 import { EnvironmentCreateBody } from './api';
 import { useAddEnvironment } from './environments';
+import * as Yup from 'yup';
+import { useNotification } from '../../hooks/use-notification';
+import { notification } from 'antd';
+
+const NewEnvironmentSchema = Yup.object().shape({
+  key: Yup.string()
+    .min(3, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  name: Yup.string()
+    .min(3, 'Too Short!')
+    .max(50, 'Too Long!')
+    .required('Required'),
+  description: Yup.string().optional(),
+  tags: Yup.array().of(Yup.string()),
+});
 
 const CreateEnvironment = () => {
   const showFeature = useFeatureFlag('create-environment-button', 'control');
-
+  const { addNotification } = useNotification();
   const mutation = useAddEnvironment();
   const [visible, setVisible] = useState(false);
 
@@ -25,8 +41,8 @@ const CreateEnvironment = () => {
           <div className="text-center">
             <Heading>Add a new environment</Heading>
             <Text>
-              Create a new environment. An environment isolates changes you make
-              when updating your flags or segments.
+              An environment isolates changes you make when updating your flags
+              or segments.
             </Text>
           </div>
           <Formik
@@ -39,39 +55,32 @@ const CreateEnvironment = () => {
               } as EnvironmentCreateBody
             }
             onSubmit={async (values) => {
-              mutation.mutate({
+              const result = await mutation.mutateAsync({
                 key: values.key,
                 name: values.name,
                 description: values.description,
                 tags: values.tags,
               });
               setVisible(false);
+              addNotification({
+                type: 'success',
+                title: 'Success',
+                content: 'Environment created',
+              });
+
+              return result;
             }}
+            validationSchema={NewEnvironmentSchema}
+            validateOnMount
           >
             <Form className="flex flex-col gap-3">
-              <Field
-                component={Input}
-                id="name"
-                name="name"
-                placeholder="Environment name"
-              />
-              <Field
-                component={KeyInput}
-                id="key"
-                name="key"
-                placeholder="Key"
-              />
-              <Field
-                component={Input}
-                id="description"
-                name="description"
-                placeholder="Description"
-              />
-              <Field
-                component={TagInput}
+              <Input id="name" name="name" label="Environment name" />
+              <KeyInput id="key" name="key" label="Key" />
+              <Input id="description" name="description" label="Description" />
+              <TagInput
                 id="tags"
                 name="tags"
-                placeholder="Tags (separate by comma)"
+                label="Tags (separate by comma)"
               />
               <Button
                 className="mt-3 py-2 justify-center"

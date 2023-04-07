@@ -92,8 +92,10 @@ export const useUpdateWorkspace = (instanceKey: string | undefined) => {
         ],
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['workspaces', instanceKey] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['workspaces', instanceKey],
+      });
     },
   });
 
