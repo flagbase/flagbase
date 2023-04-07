@@ -200,7 +200,7 @@ const Instances: React.FC = () => {
                 description="Join an instance now"
                 cta={
                   <Button
-                    className="py-2"
+                    className="py-2 w-fit"
                     onClick={() => setVisible(true)}
                     type="button"
                     suffix={PlusCircleIcon}

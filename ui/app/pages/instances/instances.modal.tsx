@@ -11,7 +11,7 @@ import Notification from '../../../components/notification';
 import { KeyInput } from '../../../components/input/input';
 import { Instance } from './instances.functions';
 
-type OmittedInstance = Omit<Instance, 'expiresAt'>;
+type OmittedInstance = Omit<Instance, 'expiresAt' | 'id' | 'accessToken'>;
 
 export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
   const [showError, setShowError] = useState(false);
@@ -75,39 +75,35 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
             }}
             onSubmit={onSubmit}
             validationSchema={InstanceSchema}
+            validateOnMount
           >
-            {({ errors }) => (
+            {({ errors, isValid, isInitialValid }) => (
               <Form className="flex flex-col gap-3">
-                <Field
-                  component={Input}
+                <Input
                   id="name"
                   name="name"
                   label="Name"
                   placeholder="Flagbase Instance"
                 />
-                <Field
-                  component={KeyInput}
+                <KeyInput
                   id="key"
                   name="key"
                   placeholder="flagbase-instance"
                   label="Key"
                 />
-                <Field
-                  component={Input}
+                <Input
                   id="connectionString"
                   name="connectionString"
                   label="Connection String"
                   placeholder="URL"
                 />
-                <Field
-                  component={Input}
+                <Input
                   id="accessKey"
                   name="accessKey"
                   label="Access Key"
                   placeholder="Key"
                 />
-                <Field
-                  component={Input}
+                <Input
                   id="accessSecret"
                   name="accessSecret"
                   label="Access Secret"
@@ -119,6 +115,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
                   className="mt-3 py-2 justify-center"
                   suffix={PlusCircleIcon}
                   isLoading={isLoading}
+                  disabled={!isValid}
                 >
                   Add Instance
                 </Button>

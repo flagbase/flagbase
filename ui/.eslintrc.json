@@ -1,42 +1,48 @@
 {
-    "root": true,
-    "parser": "@typescript-eslint/parser",
-    "env": {
-        "node": true,
-        "browser": true,
-        "commonjs": true,
-        "es6": true,
-        "amd": true
-    },
-    "extends": [
-        "eslint:recommended",
-        "plugin:@typescript-eslint/recommended",
-        "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "plugin:prettier/recommended",
-        "plugin:react/recommended",
-        "plugin:react-hooks/recommended",
-        "plugin:storybook/recommended"
-    ],
-    "plugins": ["@typescript-eslint", "prettier", "react", "react-hooks", "storybook"],
-    "settings": {
-        "react": {
-            "version": "detect"
-        }
-    },
-    "parserOptions": {
-        "project": "./tsconfig.json",
-        "tsconfigRootDir": ".",
-        "ecmaVersion": "latest",
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
-    },
-    "rules": {
-        "padding-line-between-statements": [
-            "error",
-            { "blankLine": "always", "prev": "*", "next": "return" }
-        ],
-        "curly": ["error", "all"]
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "env": {
+    "node": true,
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "amd": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@typescript-eslint/recommended-requiring-type-checking",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:storybook/recommended"
+  ],
+  "plugins": [
+    "@typescript-eslint",
+    "prettier",
+    "react",
+    "react-hooks",
+    "storybook"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
     }
+  },
+  "parserOptions": {
+    "project": "./tsconfig.json",
+    "tsconfigRootDir": ".",
+    "ecmaVersion": "latest",
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "rules": {
+    "padding-line-between-statements": [
+      "error",
+      { "blankLine": "always", "prev": "*", "next": "return" }
+    ],
+    "curly": ["error", "all"]
+  }
 }
