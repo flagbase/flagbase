@@ -3,32 +3,32 @@ import { FieldConfig, FieldInputProps, useField, useFormikContext } from 'formik
 import { classNames } from '../../helpers'
 
 export type InputProps = {
-    prefix?: React.ElementType
+    icon?: React.ElementType
     label?: string
 } & FieldConfig &
     React.InputHTMLAttributes<HTMLInputElement>
 
-const Input: React.FC<InputProps> = ({ prefix, className, label, ...props }) => {
+const Input: React.FC<InputProps> = ({ icon, className, label, ...props }) => {
     const [field, meta] = useField(props)
     return (
         <div>
             <div className="relative rounded-md shadow-sm">
-                {prefix && (
+                {icon && (
                     <div
                         data-testid="prefix"
-                        className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                        className="pointer-events-none absolute inset-y-0 right-4 flex items-center"
                     >
-                        {createElement(prefix, { className: 'h-5 w-5 text-gray-400' })}
+                        {createElement(icon, { className: 'h-5 w-5 text-gray-500' })}
                     </div>
                 )}
                 <input
                     type="text"
                     className={classNames(
-                        `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm`,
-                        prefix ? 'pl-10' : '',
+                        `block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500  h-14`,
                         'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
                         meta.touched && meta.error ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : '',
-                        className ? className : ''
+                        className ? className : '',
+                        'peer text-xl'
                     )}
                     {...field}
                     {...props}
@@ -36,16 +36,18 @@ const Input: React.FC<InputProps> = ({ prefix, className, label, ...props }) => 
                 />
                 <label
                     htmlFor={props.id || props.name}
-                    className="absolute top-4 left-4 pointer-events-none font-medium text-gray-700"
+                    className={classNames(
+                        `absolute top-4 left-3 peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-700 transition-all`,
+                        meta.value ? 'top-0 text-sm' : '',
+                        icon ? 'left-11' : ''
+                    )}
                 >
                     {label}
                 </label>
-                {meta.touched && meta.error ? (
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-red-500 text-sm">
-                        {meta.error}
-                    </div>
-                ) : null}
             </div>
+            {meta.touched && meta.error ? (
+                <div className="pr-3 flex items-center pointer-events-none text-red-500 text-sm mt-1">{meta.error}</div>
+            ) : null}
         </div>
     )
 }

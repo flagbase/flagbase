@@ -16,6 +16,7 @@ import { useFlagbaseParams } from '../../lib/use-flagbase-params'
 import { Instance } from '../instances/instances.functions'
 import { useNotification } from '../../hooks/use-notification'
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid'
+import { PlusCircleIcon } from '@heroicons/react/20/solid'
 import { useInstances } from '../instances/instances'
 
 export const useAddWorkspace = () => {
@@ -138,7 +139,7 @@ const MainWorkspaces = () => {
                                 <Input
                                     onChange={(event) => setFilter(event.target.value)}
                                     placeholder="Search"
-                                    prefix={MagnifyingGlassIcon}
+                                    icon={MagnifyingGlassIcon}
                                 />
                             </div>
                         </div>

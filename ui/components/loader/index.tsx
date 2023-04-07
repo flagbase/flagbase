@@ -2,11 +2,12 @@ import React from 'react'
 import { classNames } from '../../helpers'
 
 const buttonSizeClasses = {
+    extraSmall: 'w-6 h-6',
     small: 'w-10 h-10',
     large: 'w-20 h-20',
 }
 
-export const Loader = ({ size = 'small' }: { size?: 'small' | 'large' }) => {
+export const Loader = ({ size = 'small' }: { size?: 'extraSmall' | 'small' | 'large' }) => {
     const sizeClass = buttonSizeClasses[size]
 
     return (

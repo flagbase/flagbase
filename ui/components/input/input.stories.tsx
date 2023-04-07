@@ -15,7 +15,7 @@ const meta: Meta<typeof Input> = {
     tags: ['autodocs'],
     // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
     argTypes: {
-        prefix: {
+        icon: {
             options: Object.keys(Icons),
             mapping: Icons,
         },
@@ -53,17 +53,17 @@ export const WithPlaceholder: Story = {
     ],
 }
 
-export const WithPrefix: Story = {
+export const WithIcon: Story = {
     args: {
         label: 'Name',
         name: 'name',
-        prefix: MagnifyingGlassIcon,
+        icon: MagnifyingGlassIcon,
     },
     decorators: [
         (Story) => (
             <div className="w-1/3 mx-auto">
                 <Formik
-                    initialValues={{ name: 'John Wick' }}
+                    initialValues={{ name: '' }}
                     onSubmit={() => {}}
                     validationSchema={Yup.object().shape({
                         name: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('This field is required'),

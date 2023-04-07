@@ -131,7 +131,7 @@ export const Sdks = () => {
                     <Link
                         to={`/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdk.id}`}
                     >
-                        <Button secondary className="py-2">
+                        <Button variant="secondary" className="py-2">
                             Edit
                         </Button>
                     </Link>
