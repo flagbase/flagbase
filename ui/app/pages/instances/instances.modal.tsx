@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { ReactState } from '../workspaces/workspace.modal';
-import { ModalLayout } from '../../../components/layout';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
-import { InstanceSchema } from './instances.constants';
-import Input from '../../../components/input';
-import Button from '../../../components/button/button';
-import { useAddInstance } from './instances';
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import Notification from '../../../components/notification';
-import { KeyInput } from '../../../components/input/input';
+import { Form, Formik, FormikHelpers } from 'formik';
+
+import { useAddInstance } from './instances';
+import { InstanceSchema } from './instances.constants';
 import { Instance } from './instances.functions';
+import Button from '../../../components/button/button';
+import Input from '../../../components/input';
+import { KeyInput } from '../../../components/input/input';
+import { ModalLayout } from '../../../components/layout';
+import Notification from '../../../components/notification';
+import { ReactState } from '../workspaces/workspace.modal';
 
 type OmittedInstance = Omit<Instance, 'expiresAt' | 'id' | 'accessToken'>;
 

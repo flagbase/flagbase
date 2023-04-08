@@ -1,19 +1,22 @@
 import { app, BrowserWindow } from 'electron';
+import installExtension, {
+  REACT_DEVELOPER_TOOLS,
+  REDUX_DEVTOOLS,
+} from 'electron-devtools-installer';
 import * as path from 'path';
 import * as url from 'url';
-import installExtension, { REACT_DEVELOPER_TOOLS, REDUX_DEVTOOLS } from 'electron-devtools-installer';
 
 let mainWindow: Electron.BrowserWindow | null;
 
-function createWindow () {
+function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1100,
     height: 700,
     backgroundColor: '#FFFFFF',
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false
-    }
+      contextIsolation: false,
+    },
   });
 
   if (process.env.NODE_ENV === 'development') {
@@ -23,8 +26,8 @@ function createWindow () {
       url.format({
         pathname: path.join(__dirname, 'renderer/index.html'),
         protocol: 'file:',
-        slashes: true
-      })
+        slashes: true,
+      }),
     );
   }
 
@@ -33,7 +36,8 @@ function createWindow () {
   });
 }
 
-app.on('ready', createWindow)
+app
+  .on('ready', createWindow)
   .whenReady()
   .then(() => {
     if (process.env.NODE_ENV === 'development') {

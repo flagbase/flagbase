@@ -1,6 +1,13 @@
 import React, { Suspense } from 'react';
+
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Await, useLoaderData } from 'react-router-dom';
+
+import {
+  fetchEnvironments,
+  createEnvironment,
+  EnvironmentCreateBody,
+} from './api';
 import Button from '../../../components/button';
 import {
   StackedEntityList,
@@ -12,11 +19,6 @@ import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getEnvironmentsKey } from '../../router/loaders';
 import { useInstances } from '../instances/instances';
-import {
-  fetchEnvironments,
-  createEnvironment,
-  EnvironmentCreateBody,
-} from './api';
 
 export type Environment = {
   type: string;
@@ -44,6 +46,7 @@ export const useEnvironments = () => {
     {
       queryFn: async () => {
         await configureAxios(instanceKey!);
+
         return fetchEnvironments(workspaceKey!, projectKey!);
       },
       enabled:
@@ -54,6 +57,7 @@ export const useEnvironments = () => {
         instances.length > 0,
     },
   );
+
   return query;
 };
 

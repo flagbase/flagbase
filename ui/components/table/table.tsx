@@ -1,16 +1,18 @@
 import React from 'react';
+
+import styled from '@emotion/styled';
+import { DocumentDuplicateIcon } from '@heroicons/react/20/solid';
 import {
   Table as AntdTable,
   TableColumnProps,
   TableProps as AntdTableProps,
   TableColumnType,
 } from 'antd';
-import styled from '@emotion/styled';
-import EmptyState from '../empty-state';
-import Button from '../button/button';
 import { useNavigate } from 'react-router-dom';
-import { DocumentDuplicateIcon } from '@heroicons/react/20/solid';
+
 import { useNotification } from '../../app/hooks/use-notification';
+import Button from '../button/button';
+import EmptyState from '../empty-state';
 
 export type TableProps = {
   loading: boolean;

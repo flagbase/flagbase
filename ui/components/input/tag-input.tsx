@@ -1,8 +1,10 @@
-import { FormikFormProps, useField, useFormikContext } from 'formik';
 import React, { createElement, useState } from 'react';
+
+import { FormikFormProps, useField, useFormikContext } from 'formik';
+
+import { Instance } from '../../app/pages/instances/instances.functions';
 import { classNames } from '../../helpers';
 import Tag from '../tag';
-import { Instance } from '../../app/pages/instances/instances.functions';
 
 export type TagInputProps = {
   prefix?: React.ReactNode;

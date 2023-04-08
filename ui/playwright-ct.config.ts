@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-import * as dotenv from 'dotenv';
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 

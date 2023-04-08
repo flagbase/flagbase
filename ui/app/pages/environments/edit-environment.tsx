@@ -1,7 +1,11 @@
-import { Form, Formik, Field } from 'formik';
 import React from 'react';
+
+import { Form, Formik, Field } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+
+import { updateEnvironment, deleteEnvironment } from './api';
+import { useEnvironments } from './environments';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
@@ -9,8 +13,6 @@ import Notification from '../../../components/notification';
 import { EditEntityHeading } from '../../../components/text/heading';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
-import { updateEnvironment, deleteEnvironment } from './api';
-import { useEnvironments } from './environments';
 import { getEnvironmentsKey } from '../../router/loaders';
 import {
   getEnvironmentPath,

@@ -1,7 +1,9 @@
-import { Switch } from '@headlessui/react';
-import { classNames } from '../../helpers';
 import React from 'react';
+
+import { Switch } from '@headlessui/react';
 import { FieldConfig, useField, useFormikContext } from 'formik';
+
+import { classNames } from '../../helpers';
 
 type ToggleProps = {
   label?: string;

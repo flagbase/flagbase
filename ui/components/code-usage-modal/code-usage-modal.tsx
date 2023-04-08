@@ -1,13 +1,15 @@
-import { CodeBracketIcon } from '@heroicons/react/20/solid';
 import React, { useState } from 'react';
-import Button from '../button';
-import { ModalLayout } from '../layout';
+
+import { useFeatureFlag } from '@flagbase/react-client-sdk';
+import { CodeBracketIcon } from '@heroicons/react/20/solid';
 import { Typography } from 'antd';
+
 import { useFlagbaseParams } from '../../app/lib/use-flagbase-params';
 import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown';
 import { useSDKs } from '../../app/pages/sdks/sdks';
 import { useVariations } from '../../app/pages/variations/variations';
-import { useFeatureFlag } from '@flagbase/react-client-sdk';
+import Button from '../button';
+import { ModalLayout } from '../layout';
 
 const { Title, Text } = Typography;
 interface ModalProps {
@@ -40,6 +42,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
               href="https://flagbase.com/docs/sdk/overview"
               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
               target="_blank"
+              rel="noreferrer"
             >
               SDK docs
             </a>{' '}
@@ -74,7 +77,10 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
           </p>
           <div className="flex flex-col ">
             {variations?.map((variation) => (
-              <div className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+              <div
+                key={variation.id}
+                className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600"
+              >
                 <label
                   htmlFor="variation"
                   className="block text-xs font-medium text-gray-500"
@@ -95,7 +101,11 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
           <div className="flex flex-col ">
             <p>
               Make sure you have{' '}
-              <a href="https://flagbase.com/docs/sdk/overview" target="_blank">
+              <a
+                href="https://flagbase.com/docs/sdk/overview"
+                target="_blank"
+                rel="noreferrer"
+              >
                 set up the SDK
               </a>{' '}
               in your app, using the relevant server or client keys.

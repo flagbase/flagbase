@@ -1,16 +1,18 @@
+import React, { useState } from 'react';
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import * as Yup from 'yup';
+
+import { VariationCreateBody } from './api';
+import { useAddVariation } from './variations';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
+import { KeyInput } from '../../../components/input/input';
 import { TagInput } from '../../../components/input/tag-input';
 import { ModalLayout } from '../../../components/layout';
 import { Heading } from '../../../components/text/heading';
 import Text from '../../../components/text/text';
-import { VariationCreateBody } from './api';
-import { useAddVariation } from './variations';
-import * as Yup from 'yup';
-import { KeyInput } from '../../../components/input/input';
 
 const CreateVariation = () => {
   const mutation = useAddVariation();

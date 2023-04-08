@@ -1,6 +1,10 @@
+import React, { Dispatch, SetStateAction } from 'react';
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Field, Form, Formik } from 'formik';
-import React, { Dispatch, SetStateAction } from 'react';
+
+import { FlagCreateBody } from './api';
+import { useAddFlag } from './flags';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
@@ -8,8 +12,6 @@ import { TagInput } from '../../../components/input/tag-input';
 import { ModalLayout } from '../../../components/layout';
 import { Heading } from '../../../components/text/heading';
 import Text from '../../../components/text/text';
-import { FlagCreateBody } from './api';
-import { useAddFlag } from './flags';
 
 export interface ModalProps {
   visible: boolean;

@@ -1,7 +1,13 @@
+import React, { useState } from 'react';
+
 import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { notification } from 'antd';
 import { Field, Form, Formik } from 'formik';
-import React, { useState } from 'react';
+import * as Yup from 'yup';
+
+import { EnvironmentCreateBody } from './api';
+import { useAddEnvironment } from './environments';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
@@ -9,11 +15,7 @@ import { TagInput } from '../../../components/input/tag-input';
 import { ModalLayout } from '../../../components/layout';
 import { Heading } from '../../../components/text/heading';
 import Text from '../../../components/text/text';
-import { EnvironmentCreateBody } from './api';
-import { useAddEnvironment } from './environments';
-import * as Yup from 'yup';
 import { useNotification } from '../../hooks/use-notification';
-import { notification } from 'antd';
 
 const NewEnvironmentSchema = Yup.object().shape({
   key: Yup.string()

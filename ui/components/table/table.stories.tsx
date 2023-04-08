@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { Story, Meta } from '@storybook/react';
 
 import Table, { TableProps } from './table';

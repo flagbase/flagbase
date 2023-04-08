@@ -1,6 +1,9 @@
-import { Form, Formik } from 'formik';
 import React from 'react';
+
+import { Form, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
+
+import { Instance } from './instances.functions';
 import Button from '../../../components/button/button';
 import Input from '../../../components/input/input';
 import {
@@ -9,7 +12,6 @@ import {
   useUpdateInstance,
 } from '../instances/instances';
 import { InstanceSchema } from '../instances/instances.constants';
-import { Instance } from './instances.functions';
 
 export const EditInstance = () => {
   const { instanceKey } = useParams<{ instanceKey: string }>();

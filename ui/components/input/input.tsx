@@ -1,7 +1,9 @@
 import React, { createElement, useEffect } from 'react';
+
 import { FieldConfig, useField, useFormikContext } from 'formik';
-import { classNames } from '../../helpers';
+
 import { Instance } from '../../app/pages/instances/instances.functions';
+import { classNames } from '../../helpers';
 
 export type InputProps = {
   icon?: React.ElementType;

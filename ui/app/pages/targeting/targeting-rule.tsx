@@ -1,23 +1,25 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
+
+import { ArrowPathIcon, MinusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
-import Button from '../../../components/button/button';
-import Input from '../../../components/input/input';
-import { Select } from '../../../components/input/select';
+import { useMutation, useQueryClient } from 'react-query';
+
 import {
   TargetingRuleRequest,
   deleteTargetingRule,
   updateTargetingRule,
 } from './api';
-import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { isValidVariationSum, objectsEqual } from './targeting.utils';
-import RolloutSlider from '../../../components/rollout-slider';
+import Button from '../../../components/button/button';
+import Input from '../../../components/input/input';
+import { Select } from '../../../components/input/select';
 import { TagInput } from '../../../components/input/tag-input';
 import { Toggle } from '../../../components/input/toggle';
-import { useMutation, useQueryClient } from 'react-query';
-import { getTargetingRulesKey } from '../../router/loaders';
+import RolloutSlider from '../../../components/rollout-slider';
 import { useNotification } from '../../hooks/use-notification';
-import { ArrowPathIcon, MinusCircleIcon } from '@heroicons/react/24/outline';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { getTargetingRulesKey } from '../../router/loaders';
 
 const options = [
   { name: 'Equal', value: 'equal' },
@@ -77,6 +79,7 @@ export const useUpdateTargetingRule = () => {
       });
     },
   });
+
   return mutation;
 };
 

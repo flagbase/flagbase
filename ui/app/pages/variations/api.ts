@@ -1,4 +1,5 @@
 import { createPatch } from 'rfc6902';
+
 import { axios } from '../../lib/axios';
 
 type Variation = {
@@ -50,6 +51,7 @@ export const createVariation = async ({
     `/flags/${workspaceKey}/${projectKey}/${flagKey}/variations`,
     variation,
   );
+
   return data;
 };
 
@@ -76,6 +78,7 @@ export const updateVariation = async (
   newTargeting: VariationUpdateBody,
 ): Promise<{ data: any }> => {
   const request = createPatch(oldTargeting, newTargeting);
+
   return axios.patch(
     `flags/${workspaceKey}/${projectKey}/${flagKey}/variations/${variationKey}`,
     request,

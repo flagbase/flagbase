@@ -1,17 +1,19 @@
-import { Form, Formik, Field } from 'formik';
 import React, { useEffect } from 'react';
+
+import { Form, Formik, Field } from 'formik';
 import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+
+import { updateProject } from './api';
+import { useProjects, useRemoveProject } from './projects';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
+import { Loader } from '../../../components/loader';
 import { EditEntityHeading } from '../../../components/text/heading';
+import { useNotification } from '../../hooks/use-notification';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
-import { updateProject } from './api';
-import { useProjects, useRemoveProject } from './projects';
-import { Loader } from '../../../components/loader';
-import { useNotification } from '../../hooks/use-notification';
 
 export const useUpdateProject = () => {
   const queryClient = useQueryClient();

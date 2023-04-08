@@ -1,10 +1,8 @@
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import React, { useEffect } from 'react';
+
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { useRevalidator } from 'react-router-dom';
-import Button from '../../../components/button/button';
-import EmptyState from '../../../components/empty-state/empty-state';
-import { Loader } from '../../../components/loader';
-import { useVariations } from '../variations/variations';
+
 import { TargetingRuleRequest } from './api';
 import {
   newRuleFactory,
@@ -12,6 +10,10 @@ import {
   useTargetingRules,
 } from './targeting';
 import TargetingRule from './targeting-rule';
+import Button from '../../../components/button/button';
+import EmptyState from '../../../components/empty-state/empty-state';
+import { Loader } from '../../../components/loader';
+import { useVariations } from '../variations/variations';
 
 export const TargetingRules = () => {
   const targetingRulesQuery = useTargetingRules();

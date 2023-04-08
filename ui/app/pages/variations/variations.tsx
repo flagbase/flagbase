@@ -1,16 +1,18 @@
 import React, { Suspense } from 'react';
-import { Await, useLoaderData } from 'react-router-dom';
-import Table from '../../../components/table/table';
-import Button from '../../../components/button';
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { Await, useLoaderData } from 'react-router-dom';
+
+import { createVariation, fetchVariations, VariationCreateBody } from './api';
+import Button from '../../../components/button';
 import EmptyState from '../../../components/empty-state';
 import { Loader } from '../../../components/loader';
+import Table from '../../../components/table/table';
 import Tag from '../../../components/tag';
+import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationsKey } from '../../router/loaders';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { configureAxios } from '../../lib/axios';
-import { createVariation, fetchVariations, VariationCreateBody } from './api';
 import { getVariationPath } from '../../router/router';
 
 export const variationColumns = [
@@ -143,6 +145,8 @@ export const useVariations = () => {
         Boolean(flagKey) &&
         Boolean(instanceKey),
       refetchOnWindowFocus: false,
+      cacheTime: 10 * 1000,
+      staleTime: 15 * 1000,
     },
   );
 

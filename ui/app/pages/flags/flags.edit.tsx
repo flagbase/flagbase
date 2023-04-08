@@ -1,6 +1,10 @@
-import { Field, Form, Formik } from 'formik';
 import React, { Suspense } from 'react';
+
+import { Field, Form, Formik } from 'formik';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
+
+import { Flag } from './api';
+import { useFlags, useRemoveFlag, useUpdateFlag } from './flags';
 import Button from '../../../components/button/button';
 import { SettingsContainer } from '../../../components/container/SettingsContainer';
 import Input from '../../../components/input/input';
@@ -9,8 +13,6 @@ import { Loader } from '../../../components/loader';
 import Notification from '../../../components/notification';
 import { EditEntityHeading } from '../../../components/text/heading';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
-import { Flag } from './api';
-import { useFlags, useRemoveFlag, useUpdateFlag } from './flags';
 
 export const FlagSettings = () => {
   const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams();

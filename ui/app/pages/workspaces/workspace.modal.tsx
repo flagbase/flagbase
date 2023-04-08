@@ -1,15 +1,17 @@
+import React, { useEffect } from 'react';
+
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Typography } from 'antd';
 import { Form, Formik } from 'formik';
-import React, { useEffect } from 'react';
+
+import { NewWorkspaceSchema } from './workspace.constants';
+import { useAddWorkspace } from './workspaces.main';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
 import { ModalLayout } from '../../../components/layout';
-import { Instance } from '../instances/instances.functions';
-import { useAddWorkspace } from './workspaces.main';
 import { useNotification } from '../../hooks/use-notification';
-import { NewWorkspaceSchema } from './workspace.constants';
+import { Instance } from '../instances/instances.functions';
 
 const { Title, Text } = Typography;
 

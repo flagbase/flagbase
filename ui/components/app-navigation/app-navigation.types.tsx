@@ -1,5 +1,6 @@
-import { PageHeaderProps } from "antd";
-import { ReactElement } from "react";
+import { ReactElement } from 'react';
+
+import { PageHeaderProps } from 'antd';
 
 export interface ButtonProps {
   title: string;
@@ -7,11 +8,11 @@ export interface ButtonProps {
 }
 
 export type FlagbaseSubMenuProps =
-  | "Home"
-  | "Instance"
-  | "Workspace"
-  | "Project"
-  | "Flags";
+  | 'Home'
+  | 'Instance'
+  | 'Workspace'
+  | 'Project'
+  | 'Flags';
 
 export type FlagbaseSubMenuValues = {
   title: ReactElement;

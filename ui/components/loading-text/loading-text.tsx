@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 
 function LoadingAnimation() {
-  const [text, setText] = useState(".");
+  const [text, setText] = useState('.');
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setText((prevText) =>
-        prevText === "....." ? "." : prevText + "."
-      );
+      setText((prevText) => (prevText === '.....' ? '.' : prevText + '.'));
     }, 250);
 
     return () => clearInterval(intervalId);
@@ -15,6 +13,5 @@ function LoadingAnimation() {
 
   return <div className="w-10 text-black">{text}</div>;
 }
-
 
 export default LoadingAnimation;

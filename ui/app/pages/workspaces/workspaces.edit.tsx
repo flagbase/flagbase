@@ -1,17 +1,19 @@
-import { Form, Formik } from 'formik';
 import React from 'react';
+
+import { Form, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
-import Button from '../../../components/button/button';
-import Input from '../../../components/input/input';
-import { TagInput } from '../../../components/input/tag-input';
-import Notification from '../../../components/notification';
-import { EditEntityHeading } from '../../../components/text/heading';
+
 import {
   useRemoveWorkspace,
   useUpdateWorkspace,
   useWorkspaces,
 } from './workspaces.main';
+import Button from '../../../components/button/button';
+import Input from '../../../components/input/input';
+import { TagInput } from '../../../components/input/tag-input';
 import { Loader } from '../../../components/loader';
+import Notification from '../../../components/notification';
+import { EditEntityHeading } from '../../../components/text/heading';
 
 export const EditWorkspace = () => {
   const navigate = useNavigate();

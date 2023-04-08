@@ -1,14 +1,11 @@
-import React, { createElement, Fragment, ReactNode, useEffect } from 'react';
+import React, {
+  createElement,
+  Fragment,
+  ReactNode,
+  useEffect,
+  useState,
+} from 'react';
 
-import {
-  Link,
-  Outlet,
-  useLocation,
-  useMatches,
-  useParams,
-} from 'react-router-dom';
-import flag from '../../assets/flagbaseLogo.svg';
-import { useState } from 'react';
 import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react';
 import {
   ArrowLeftCircleIcon,
@@ -17,7 +14,31 @@ import {
   ChevronRightIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import {
+  Link,
+  Outlet,
+  useLocation,
+  useMatches,
+  useParams,
+} from 'react-router-dom';
+
+import { Footer } from './footer';
+import { useFlagbaseParams } from '../../app/lib/use-flagbase-params';
+import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown';
+import {
+  Environment,
+  useEnvironments,
+} from '../../app/pages/environments/environments';
+import { Project } from '../../app/pages/projects/api';
+import { useProjects } from '../../app/pages/projects/projects';
+import { Instance } from '../../app/pages/instances/instances.functions';
+import { useFlags } from '../../app/pages/flags/flags';
+import { Flag } from '../../app/pages/flags/api';
+import { useSDKs } from '../../app/pages/sdks/sdks';
+import { useVariations } from '../../app/pages/variations/variations';
 import { useInstances } from '../../app/pages/instances/instances';
+import { Workspace } from '../../app/pages/workspaces/api';
+import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main';
 import {
   getEnvironmentPath,
   getFlagPath,
@@ -27,22 +48,7 @@ import {
   getWorkspacePath,
   getWorkspacesPath,
 } from '../../app/router/router';
-import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main';
-import { Workspace } from '../../app/pages/workspaces/api';
-import { useProjects } from '../../app/pages/projects/projects';
-import { useFlagbaseParams } from '../../app/lib/use-flagbase-params';
-import {
-  Environment,
-  useEnvironments,
-} from '../../app/pages/environments/environments';
-import { Project } from '../../app/pages/projects/api';
-import { Instance } from '../../app/pages/instances/instances.functions';
-import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown';
-import { useFlags } from '../../app/pages/flags/flags';
-import { Flag } from '../../app/pages/flags/api';
-import { useVariations } from '../../app/pages/variations/variations';
-import { useSDKs } from '../../app/pages/sdks/sdks';
-import { Footer } from './footer';
+import flag from '../../assets/flagbaseLogo.svg';
 import { CopyRow } from '../table';
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`;
@@ -518,7 +524,7 @@ const PageHeading = ({
 }) => {
   const location = useLocation();
   const pathname = decodeURI(location.pathname);
-  let matches = useMatches() as any;
+  const matches = useMatches() as any;
   const { handle: { rightContainer } = { rightContainer: null } } =
     matches.find((match) => match?.handle) ?? {};
 

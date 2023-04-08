@@ -1,7 +1,9 @@
 import React from 'react';
-import { Story, Meta } from '@storybook/react';
-import { colors } from '../../styles';
+
 import styled from '@emotion/styled';
+import { Story, Meta } from '@storybook/react';
+
+import { colors } from '../../styles';
 
 export default {
   title: 'Theme/Colors',
@@ -23,6 +25,7 @@ const Template: Story = () => {
       {color}
     </ColorTile>
   ));
+
   return <div>{colorTiles}</div>;
 };
 

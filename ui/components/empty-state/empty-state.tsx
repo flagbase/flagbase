@@ -1,5 +1,7 @@
-import { BackspaceIcon } from '@heroicons/react/24/outline';
 import React from 'react';
+
+import { BackspaceIcon } from '@heroicons/react/24/outline';
+
 import Button from '../button/button';
 
 const EmptyProject = ({

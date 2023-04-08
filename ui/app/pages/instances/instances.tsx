@@ -1,24 +1,26 @@
 import React, { Suspense, useState } from 'react';
-import { AddNewInstanceModal } from './instances.modal';
-import Button from '../../../components/button';
-import { Await, useLoaderData } from 'react-router-dom';
-import { fetchAccessToken } from '../workspaces/api';
+
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import {
   UseQueryOptions,
   useMutation,
   useQuery,
   useQueryClient,
 } from 'react-query';
-import { axios } from '../../lib/axios';
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { Await, useLoaderData } from 'react-router-dom';
+
+import { Instance } from './instances.functions';
+import { AddNewInstanceModal } from './instances.modal';
+import Button from '../../../components/button';
 import EmptyProject from '../../../components/empty-state/empty-state';
 import {
   StackedEntityList,
   StackedEntityListProps,
 } from '../../../components/list/stacked-list';
 import { Loader } from '../../../components/loader';
+import { axios } from '../../lib/axios';
 import WelcomeModal from '../welcome/welcome.modal';
-import { Instance } from './instances.functions';
+import { fetchAccessToken } from '../workspaces/api';
 
 export const useUpdateInstance = () => {
   const queryClient = useQueryClient();

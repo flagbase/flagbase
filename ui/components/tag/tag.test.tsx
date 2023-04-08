@@ -1,5 +1,7 @@
 import React from 'react';
+
 import { test, expect } from '@playwright/experimental-ct-react';
+
 import Tag from '.';
 
 test.use({ viewport: { width: 500, height: 500 } });

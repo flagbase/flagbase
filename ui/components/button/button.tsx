@@ -1,7 +1,9 @@
-import React, { createElement } from 'react';
+import React, { createElement, useContext } from 'react';
+
+import { FormikContext } from 'formik';
+
 import { classNames } from '../../helpers';
 import { Loader } from '../loader';
-import { useFormikContext } from 'formik';
 
 export type ButtonProps = {
   children: React.ReactChild;
@@ -20,10 +22,16 @@ const Button: React.FC<ButtonProps> = ({
   variant = 'primary',
   ...props
 }) => {
-  const { isValid, isSubmitting } = useFormikContext() || {
-    isValid: true,
-    isSubmitting: false,
-  };
+  let isValid = true;
+  let isSubmitting = false;
+
+  const formikContext = useContext(FormikContext);
+  if (formikContext) {
+    const { isValid: formikIsValid, isSubmitting: formikIsSubmitting } =
+      formikContext;
+    isValid = formikIsValid;
+    isSubmitting = formikIsSubmitting;
+  }
 
   const loading = isLoading || isSubmitting;
 

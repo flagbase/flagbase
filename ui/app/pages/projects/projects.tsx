@@ -1,7 +1,18 @@
-import { Typography } from 'antd';
 import React, { Suspense, useState } from 'react';
+
+import {
+  MagnifyingGlassIcon,
+  PlusCircleIcon,
+} from '@heroicons/react/24/outline';
+import { Typography } from 'antd';
+import {
+  UseQueryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from 'react-query';
 import { Await, useLoaderData } from 'react-router-dom';
-import Table from '../../../components/table/table';
+
 import {
   createProject,
   deleteProject,
@@ -9,26 +20,17 @@ import {
   Project,
   ProjectResponse,
 } from './api';
-import Button from '../../../components/button';
-import { CreateProjectModal } from './projects.modal';
 import { constants, projectsColumn } from './projects.constants';
-import {
-  UseQueryOptions,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from 'react-query';
-import { Workspace } from '../workspaces/api';
-import { configureAxios } from '../../lib/axios';
-import {
-  MagnifyingGlassIcon,
-  PlusCircleIcon,
-} from '@heroicons/react/24/outline';
+import { CreateProjectModal } from './projects.modal';
+import Button from '../../../components/button';
 import EmptyState from '../../../components/empty-state';
 import { RawInput } from '../../../components/input/input';
-import Tag from '../../../components/tag';
 import { Loader } from '../../../components/loader';
+import Table from '../../../components/table/table';
+import Tag from '../../../components/tag';
+import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { Workspace } from '../workspaces/api';
 
 const { Text } = Typography;
 

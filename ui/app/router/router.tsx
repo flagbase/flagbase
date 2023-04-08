@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   Route,
   Navigate,
@@ -6,13 +7,6 @@ import {
   createRoutesFromElements,
 } from 'react-router-dom';
 
-import { RouteParams } from './router.types';
-import Projects from '../pages/projects';
-import Flags from '../pages/flags';
-import PageLayout from '../../components/page-layout';
-import '../tailwind/tailwind.css';
-import { PageHeadings } from '../../components/page-layout/page-layout';
-import EditProject from '../pages/projects/projects.edit';
 import {
   environmentsLoader,
   flagsLoader,
@@ -23,29 +17,40 @@ import {
   variationsLoader,
   workspacesLoader,
 } from './loaders';
-import { QueryCache, QueryClient } from 'react-query';
-import MainWorkspaces from '../pages/workspaces/workspaces.main';
-import Environments from '../pages/environments/environments';
-import { Error } from '../pages/error';
-import { Project } from '../pages/projects/project';
-import { EditInstance } from '../pages/instances/instances.settings';
-import { EditWorkspace } from '../pages/workspaces/workspaces.edit';
-import Instances from '../pages/instances/instances';
-import { Sdks } from '../pages/sdks/sdks';
+import { RouteParams } from './router.types';
+import Button from '../../components/button';
+import PageLayout from '../../components/page-layout';
+import { PageHeadings } from '../../components/page-layout/page-layout';
 import { EditEnvironment } from '../pages/environments/edit-environment';
+import { EnvironmentDropdown } from '../pages/environments/environment-dropdown';
+import Environments from '../pages/environments/environments';
+import Flags from '../pages/flags';
+import Projects from '../pages/projects';
+import '../tailwind/tailwind.css';
+import { Project } from '../pages/projects/project';
+import EditProject from '../pages/projects/projects.edit';
+
+import { QueryCache, QueryClient } from 'react-query';
+
+import { CreateProjectModal } from '../pages/projects/projects.modal';
 import { SdkSettings } from '../pages/sdks/sdk.settings';
+import { Sdks } from '../pages/sdks/sdks';
 import { Targeting } from '../pages/targeting/targeting';
+import { EditWorkspace } from '../pages/workspaces/workspaces.edit';
+import MainWorkspaces from '../pages/workspaces/workspaces.main';
+import { Error } from '../pages/error';
+import { EditInstance } from '../pages/instances/instances.settings';
+import Instances from '../pages/instances/instances';
 import Variations from '../pages/variations/variations';
 import { FlagSettings } from '../pages/flags/flags.edit';
-import { EnvironmentDropdown } from '../pages/environments/environment-dropdown';
-import Button from '../../components/button';
 import { CreateVariation } from '../pages/variations/variations.modal';
 import VariationSettings from '../pages/variations/variation.settings';
 import { CreateFlag, ModalProps } from '../pages/flags/flags.modal';
+
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
+
 import { AddNewInstanceModal } from '../pages/instances/instances.modal';
 import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal';
-import { CreateProjectModal } from '../pages/projects/projects.modal';
 import { CreateSDKModal } from '../pages/sdks/sdks.modal';
 import { CreateEnvironment } from '../pages/environments/environments.modal';
 

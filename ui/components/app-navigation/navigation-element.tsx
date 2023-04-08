@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import React, { useState } from 'react';
-import styled from '@emotion/styled';
+
 import { jsx } from '@emotion/react';
+import styled from '@emotion/styled';
 import { Divider } from 'antd';
 
 const StyledNavigationElement = styled.div`
@@ -35,7 +36,6 @@ type NavigationElementProps = {
   onHover: () => void;
   offHover: () => void;
   onClick: () => void;
-
 };
 
 type NavigationSubMenuProps = {
@@ -52,7 +52,7 @@ const NavigationSubMenu: React.FC<NavigationSubMenuProps> = ({
   onMouseOver,
   onMouseLeave,
   subMenuContent,
-  title
+  title,
 }) => {
   return show && subMenuContent.length > 0 ? (
     <StyledNavigationSubMenu
@@ -61,10 +61,12 @@ const NavigationSubMenu: React.FC<NavigationSubMenuProps> = ({
     >
       <h2 css={{ color: 'white' }}>{title}</h2>
       <StyledDivider />
-      <li css={{
-        listStyle: 'none',
-        fontWeight: 'normal'
-      }}>
+      <li
+        css={{
+          listStyle: 'none',
+          fontWeight: 'normal',
+        }}
+      >
         {subMenuContent?.map((content, index) => (
           <li key={`submenu_content_${index}_${content.title}`}>
             {content.title}
@@ -83,11 +85,14 @@ export const NavigationElement: React.FC<NavigationElementProps> = ({
   onHover,
   offHover,
   onClick,
-  isHover
+  isHover,
 }) => {
   return (
-    <StyledNavigationElement onClick={onClick} onMouseOver={() => onHover(title)}>
-      {title} 
+    <StyledNavigationElement
+      onClick={onClick}
+      onMouseOver={() => onHover(title)}
+    >
+      {title}
       <NavigationSubMenu
         title={title}
         subMenuContent={subMenuContent}

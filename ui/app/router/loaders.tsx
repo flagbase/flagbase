@@ -1,4 +1,6 @@
 import { defer, Params } from 'react-router-dom';
+
+import { queryClient } from './router';
 import { configureAxios } from '../lib/axios';
 import { FlagbaseParams } from '../lib/use-flagbase-params';
 import { fetchEnvironments } from '../pages/environments/api';
@@ -12,7 +14,6 @@ import { fetchProjects } from '../pages/projects/api';
 import { fetchSdkList } from '../pages/sdks/api';
 import { fetchVariations } from '../pages/variations/api';
 import { fetchWorkspaces } from '../pages/workspaces/api';
-import { queryClient } from './router';
 
 export const getInstances = (): Instance[] =>
   JSON.parse(localStorage.getItem('instances') || '[]') as Instance[];
@@ -383,7 +384,7 @@ export const getVariationKey = ({
   ];
 };
 
-export const variationsLoader = async ({
+export const variationsLoader = ({
   params,
 }: {
   params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'flagKey'>;
@@ -404,6 +405,8 @@ export const variationsLoader = async ({
         flagKey,
       });
     },
+    cacheTime: 10 * 1000,
+    staleTime: 15 * 1000,
   });
 
   return defer({ variations });

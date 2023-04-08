@@ -1,6 +1,7 @@
+import { createPatch } from 'rfc6902';
+
 import { axios } from '../../lib/axios';
 import { FlagbaseParams } from '../../lib/use-flagbase-params';
-import { createPatch } from 'rfc6902';
 
 export type Operator =
   | 'equals'
@@ -125,6 +126,7 @@ export const patchTargeting = async (
   newTargeting: TargetingRequest,
 ): Promise<{ data: TargetingRuleResponse }> => {
   const request = createPatch(oldTargeting, newTargeting);
+
   return axios.patch(
     `/targeting/${workspaceKey}/${projectKey}/${environmentKey}/${flagKey}`,
     request,

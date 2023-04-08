@@ -1,7 +1,11 @@
-import { Form, Formik, Field } from 'formik';
 import React from 'react';
+
+import { Form, Formik, Field } from 'formik';
 import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
+
+import { deleteVariation, updateVariation, VariationUpdateBody } from './api';
+import { useVariations, Variation } from './variations';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
@@ -10,8 +14,6 @@ import { EditEntityHeading } from '../../../components/text/heading';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationKey } from '../../router/loaders';
-import { deleteVariation, updateVariation, VariationUpdateBody } from './api';
-import { useVariations, Variation } from './variations';
 
 export const useUpdateVariation = () => {
   const queryClient = useQueryClient();
@@ -49,6 +51,7 @@ export const useUpdateVariation = () => {
       });
     },
   });
+
   return mutation;
 };
 
@@ -62,7 +65,7 @@ export const useRemoveVariation = () => {
         workspaceKey: workspaceKey!,
         projectKey: projectKey!,
         flagKey: flagKey!,
-        variationKey: variationKey!,
+        variationKey: variationKey,
       });
     },
     onSuccess: () => {
@@ -77,6 +80,7 @@ export const useRemoveVariation = () => {
       });
     },
   });
+
   return mutation;
 };
 

@@ -1,7 +1,9 @@
+import React, { Fragment, useEffect } from 'react';
+
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline';
 import { FormikFormProps, useField } from 'formik';
-import React, { Fragment, useEffect } from 'react';
+
 import { classNames } from '../../helpers';
 
 export type InputProps = {

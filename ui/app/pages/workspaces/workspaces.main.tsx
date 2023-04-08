@@ -1,6 +1,15 @@
 import React, { Suspense, useState } from 'react';
+
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query';
 import { Await, useLoaderData, useParams } from 'react-router-dom';
-import Table from '../../../components/table/table';
+
 import {
   createWorkspace,
   deleteWorkspace,
@@ -8,26 +17,19 @@ import {
   updateWorkspace,
   Workspace,
 } from './api';
-import Button from '../../../components/button';
 import { constants, workspaceColumns } from './workspace.constants';
-import { convertWorkspaces } from './workspaces.helpers';
 import { CreateWorkspaceModal } from './workspace.modal';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  UseQueryOptions,
-} from 'react-query';
+import { convertWorkspaces } from './workspaces.helpers';
+import Button from '../../../components/button';
 import EmptyState from '../../../components/empty-state';
-import { configureAxios } from '../../lib/axios';
-import { Loader } from '../../../components/loader';
-import { useFlagbaseParams } from '../../lib/use-flagbase-params';
-import { Instance } from '../instances/instances.functions';
-import { useNotification } from '../../hooks/use-notification';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { RawInput } from '../../../components/input/input';
+import { Loader } from '../../../components/loader';
+import Table from '../../../components/table/table';
+import { useNotification } from '../../hooks/use-notification';
+import { configureAxios } from '../../lib/axios';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { useInstances } from '../instances/instances';
+import { Instance } from '../instances/instances.functions';
 
 export const useAddWorkspace = () => {
   const queryClient = useQueryClient();
@@ -150,6 +152,7 @@ export const useWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
       ...options,
     },
   );
+
   return query;
 };
 

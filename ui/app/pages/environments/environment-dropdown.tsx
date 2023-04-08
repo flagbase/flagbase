@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
+
 import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { useLocation, useNavigate } from 'react-router-dom';
+
+import { useEnvironments } from './environments';
 import { RawSelect } from '../../../components/input/select';
 import { Loader } from '../../../components/loader';
-import { useEnvironments } from './environments';
 
 export const useActiveEnvironment = () => {
   const query = useQuery(['activeEnvironment'], {
@@ -26,6 +28,7 @@ export const useUpdateActiveEnvironment = () => {
       const returnEnvironment = environments?.find(
         (env) => env.attributes.key === environmentKey,
       );
+
       return returnEnvironment;
     },
     onSuccess: async () => {
@@ -52,6 +55,7 @@ export const EnvironmentDropdown = () => {
     const environmentPattern = /\/environments\/[^/]+/;
     const newEnvironmentPath = `/environments/${newEnvironmentKey}`;
     const updatedRoute = route.replace(environmentPattern, newEnvironmentPath);
+
     return updatedRoute;
   }
 

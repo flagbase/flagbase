@@ -1,8 +1,9 @@
 import Axios, { AxiosError, AxiosResponse } from 'axios';
+
+import { Instance } from '../pages/instances/instances.functions';
 import { fetchAccessToken } from '../pages/workspaces/api';
 import { getInstances } from '../router/loaders';
 import { queryClient } from '../router/router';
-import { Instance } from '../pages/instances/instances.functions';
 
 export const axios = Axios.create();
 
