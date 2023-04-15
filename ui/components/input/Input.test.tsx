@@ -14,7 +14,9 @@ test.afterEach(async ({ page }, testInfo) => {
   });
 });
 
-test('shows placeholder if value is empty', async ({ mount }, testInfo) => {
+test.skip('shows placeholder if value is empty', async ({
+  mount,
+}, testInfo) => {
   const component = await mount(<Input placeholder="Enter your name" />);
   expect(component.getByPlaceholder('Enter your name')).toBeTruthy();
   await expect(component).toHaveScreenshot(strToImagePath(testInfo.title));

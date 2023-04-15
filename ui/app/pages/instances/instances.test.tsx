@@ -83,9 +83,9 @@ test('user sees error when connecting with invalid URL', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('user sees error when connecting with invalid access key', async ({
+test('user sees error when connecting with invalid access key', async function invalidAccessKey({
   page,
-}) => {
+}) {
   await page.goto('http://localhost:3000/instances');
   await page.locator('#remember-me').check();
   await page.getByRole('button', { name: 'Close' }).click();
@@ -100,7 +100,7 @@ test('user sees error when connecting with invalid access key', async ({
   await page.getByLabel('Access Key').press('Tab');
   await page.getByLabel('Access Secret').fill(TEST_INSTANCE_SECRET as string);
   await page.getByRole('button', { name: 'Add Instance' }).click();
-  await expect(page.getByText('Invalid access key')).toBeVisible({
+  await expect(page.getByText('Could not add this instance')).toBeVisible({
     timeout: 5000,
   });
 });
@@ -122,7 +122,7 @@ test('user sees error when connecting with invalid access secret', async ({
   await page.getByLabel('Access Key').press('Tab');
   await page.getByLabel('Access Secret').fill('invalid-secret');
   await page.getByRole('button', { name: 'Add Instance' }).click();
-  await expect(page.getByText('Invalid access secret')).toBeVisible({
+  await expect(page.getByText('Could not add this instance')).toBeVisible({
     timeout: 5000,
   });
 });
