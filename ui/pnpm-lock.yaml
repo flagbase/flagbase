@@ -80,6 +80,7 @@ specifiers:
   react-draggable: ^4.4.5
   react-query: ^3.39.3
   react-router-dom: ^6.8.2
+  react-table: ^7.8.0
   rfc6902: ^5.0.1
   storybook: ^7.0.2
   style-loader: ^2.0.0
@@ -116,6 +117,7 @@ dependencies:
   react-draggable: 4.4.5_biqbaboplfbrettd7655fr4n2y
   react-query: 3.39.3_biqbaboplfbrettd7655fr4n2y
   react-router-dom: 6.9.0_biqbaboplfbrettd7655fr4n2y
+  react-table: 7.8.0_react@18.2.0
   rfc6902: 5.0.1
   tsconfig-paths: 4.1.2
   yup: 0.32.11
@@ -13175,6 +13177,14 @@ packages:
       react: '>=16.8'
     dependencies:
       '@remix-run/router': 1.4.0
+      react: 18.2.0
+    dev: false
+
+  /react-table/7.8.0_react@18.2.0:
+    resolution: {integrity: sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==}
+    peerDependencies:
+      react: ^16.8.3 || ^17.0.0-0 || ^18.0.0
+    dependencies:
       react: 18.2.0
     dev: false
 

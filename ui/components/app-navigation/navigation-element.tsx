@@ -1,9 +1,10 @@
 /** @jsx jsx */
-import React, { useState } from 'react';
+import React from 'react';
 
 import { jsx } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Divider } from 'antd';
+
+import { Divider } from '../divider';
 
 const StyledNavigationElement = styled.div`
   font-size: 25px;
@@ -23,10 +24,6 @@ const StyledNavigationSubMenu = styled.div`
   background-color: #24292e;
   border-radius: 15px;
   padding: 20px 30px;
-`;
-
-const StyledDivider = styled(Divider)`
-  border-top: 1px solid white;
 `;
 
 type NavigationElementProps = {
@@ -60,7 +57,7 @@ const NavigationSubMenu: React.FC<NavigationSubMenuProps> = ({
       onMouseLeave={onMouseLeave}
     >
       <h2 css={{ color: 'white' }}>{title}</h2>
-      <StyledDivider />
+      <Divider />
       <li
         css={{
           listStyle: 'none',

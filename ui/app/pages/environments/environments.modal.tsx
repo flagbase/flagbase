@@ -2,8 +2,7 @@ import React, { useState } from 'react';
 
 import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { notification } from 'antd';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { EnvironmentCreateBody } from './api';
@@ -12,9 +11,9 @@ import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
+import { Text } from '../../../components/text';
 import { Heading } from '../../../components/text/heading';
-import Text from '../../../components/text/text';
 import { useNotification } from '../../hooks/use-notification';
 
 const NewEnvironmentSchema = Yup.object().shape({
@@ -38,7 +37,7 @@ const CreateEnvironment = () => {
 
   return showFeature === 'treatment' ? (
     <>
-      <ModalLayout open={visible} onClose={() => setVisible(false)}>
+      <Modal open={visible} onClose={() => setVisible(false)}>
         <div className="flex flex-col gap-3">
           <div className="text-center">
             <Heading>Add a new environment</Heading>
@@ -94,7 +93,7 @@ const CreateEnvironment = () => {
             </Form>
           </Formik>
         </div>
-      </ModalLayout>
+      </Modal>
       <Button
         className="py-2"
         onClick={() => setVisible(true)}

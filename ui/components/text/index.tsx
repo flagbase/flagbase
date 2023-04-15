@@ -1,1 +1,2 @@
-export { default } from './text';
+export { Text } from './text';
+export { Heading } from './heading';

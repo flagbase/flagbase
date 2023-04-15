@@ -4,7 +4,6 @@ import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
 } from '@heroicons/react/24/outline';
-import { Typography } from 'antd';
 import {
   UseQueryOptions,
   useMutation,
@@ -28,11 +27,10 @@ import { RawInput } from '../../../components/input/input';
 import { Loader } from '../../../components/loader';
 import Table from '../../../components/table/table';
 import Tag from '../../../components/tag';
+import { Text } from '../../../components/text';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { Workspace } from '../workspaces/api';
-
-const { Text } = Typography;
 
 export const convertProjects = ({
   projects,

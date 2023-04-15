@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Field, Form, Formik } from 'formik';
@@ -8,7 +8,7 @@ import { createSdkKey, CreateSdkKeyRequest, deleteSdk, updateSdk } from './api';
 import Button from '../../../components/button/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
 import Notification from '../../../components/notification';
 import { Heading } from '../../../components/text/heading';
 import { configureAxios } from '../../lib/axios';
@@ -152,7 +152,7 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
         content="You can now manage your flags"
         show={isSuccess}
       />
-      <ModalLayout open={visible} onClose={() => setVisible(false)}>
+      <Modal open={visible} onClose={() => setVisible(false)}>
         <div className="flex flex-col gap-3">
           <div className="text-center">
             <Heading>Add a new SDK</Heading>
@@ -205,7 +205,7 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
             )}
           </Formik>
         </div>
-      </ModalLayout>
+      </Modal>
     </>
   );
 };

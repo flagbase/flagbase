@@ -1,9 +1,7 @@
 import React from 'react';
 
-import { Layout } from 'antd';
-
 const Segments: React.FC = () => {
-  return <Layout>Todo: List of segments</Layout>;
+  return <div>Todo: List of segments</div>;
 };
 
 export default Segments;

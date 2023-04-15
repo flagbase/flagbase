@@ -1,7 +1,7 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 
 import { FlagCreateBody } from './api';
 import { useAddFlag } from './flags';
@@ -9,9 +9,9 @@ import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
+import { Text } from '../../../components/text';
 import { Heading } from '../../../components/text/heading';
-import Text from '../../../components/text/text';
 
 export interface ModalProps {
   visible: boolean;
@@ -25,7 +25,7 @@ const CreateFlag: React.FC<{
   const mutation = useAddFlag();
 
   return (
-    <ModalLayout open={visible} onClose={() => setVisible(false)}>
+    <Modal open={visible} onClose={() => setVisible(false)}>
       <div className="flex flex-col gap-3">
         <div className="text-center">
           <Heading>Add a new flag</Heading>
@@ -67,7 +67,7 @@ const CreateFlag: React.FC<{
           </Form>
         </Formik>
       </div>
-    </ModalLayout>
+    </Modal>
   );
 };
 

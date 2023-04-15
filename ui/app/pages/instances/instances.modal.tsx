@@ -9,7 +9,7 @@ import { Instance } from './instances.functions';
 import Button from '../../../components/button/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
 import Notification from '../../../components/notification';
 import { ReactState } from '../workspaces/workspace.modal';
 
@@ -59,7 +59,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
         content="You can now manage your flags"
         show={isSuccess}
       />
-      <ModalLayout open={visible} onClose={() => setVisible(false)}>
+      <Modal open={visible} onClose={() => setVisible(false)}>
         <div className="flex flex-col gap-3">
           <div className="text-center">
             <h1 className="text-xl font-bold">Add a new instance</h1>
@@ -130,7 +130,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
             )}
           </Formik>
         </div>
-      </ModalLayout>
+      </Modal>
     </>
   );
 };

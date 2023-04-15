@@ -19,7 +19,7 @@ import EmptyState from '../../../components/empty-state';
 import { Loader } from '../../../components/loader';
 import Table from '../../../components/table/table';
 import Tag from '../../../components/tag';
-import Text from '../../../components/text/text';
+import { Text } from '../../../components/text';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getFlagsKey } from '../../router/loaders';

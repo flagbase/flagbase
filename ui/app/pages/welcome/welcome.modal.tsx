@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
 
 type WelcomeModalProps = {
   onClose: () => void;
@@ -9,7 +9,7 @@ type WelcomeModalProps = {
 
 const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose, isOpen }) => {
   return (
-    <ModalLayout
+    <Modal
       open={isOpen}
       onClose={onClose}
       className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-3xl sm:p-6"
@@ -101,7 +101,7 @@ const WelcomeModal: React.FC<WelcomeModalProps> = ({ onClose, isOpen }) => {
           </div>
         </div>
       </>
-    </ModalLayout>
+    </Modal>
   );
 };
 

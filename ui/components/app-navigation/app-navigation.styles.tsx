@@ -2,7 +2,6 @@ import React from 'react';
 
 import styled from '@emotion/styled';
 import { Dialog } from '@headlessui/react';
-import { PageHeader } from 'antd';
 
 export const PageHeaderStyled = () => (
   <header className="bg-white">

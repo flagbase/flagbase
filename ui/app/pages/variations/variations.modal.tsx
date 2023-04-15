@@ -10,9 +10,8 @@ import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { KeyInput } from '../../../components/input/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
-import { Heading } from '../../../components/text/heading';
-import Text from '../../../components/text/text';
+import Modal from '../../../components/modal';
+import { Text, Heading } from '../../../components/text';
 
 const CreateVariation = () => {
   const mutation = useAddVariation();
@@ -20,7 +19,7 @@ const CreateVariation = () => {
 
   return (
     <>
-      <ModalLayout open={visible} onClose={() => setVisible(false)}>
+      <Modal open={visible} onClose={() => setVisible(false)}>
         <div className="flex flex-col gap-3">
           <div className="text-center">
             <Heading>Add a new variation</Heading>
@@ -74,7 +73,7 @@ const CreateVariation = () => {
             </Form>
           </Formik>
         </div>
-      </ModalLayout>
+      </Modal>
       <Button
         className="py-2"
         onClick={() => setVisible(true)}

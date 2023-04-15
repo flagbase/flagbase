@@ -1,7 +1,6 @@
 import React, { Dispatch, SetStateAction, useEffect } from 'react';
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Typography } from 'antd';
 import { Form, Formik } from 'formik';
 
 import { useAddProject } from './projects';
@@ -9,10 +8,9 @@ import { NewProjectSchema } from './projects.constants';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
+import { Heading } from '../../../components/text/heading';
 import { useNotification } from '../../hooks/use-notification';
-
-const { Title, Text } = Typography;
 
 interface WorkspaceModal {
   visible: boolean;
@@ -40,10 +38,10 @@ const CreateProjectModal: React.FC<{
   }, [mutation.isError, mutation.isSuccess, setVisible]);
 
   return (
-    <ModalLayout open={visible} onClose={() => setVisible(false)}>
+    <Modal open={visible} onClose={() => setVisible(false)}>
       <div className="flex flex-col gap-3">
         <div className="text-center">
-          <Title level={3}>Add a new project</Title>
+          <Heading level={3}>Add a new project</Heading>
           <Text>
             A project allows you to organise your flags, segments etc.
           </Text>
@@ -86,7 +84,7 @@ const CreateProjectModal: React.FC<{
           )}
         </Formik>
       </div>
-    </ModalLayout>
+    </Modal>
   );
 };
 

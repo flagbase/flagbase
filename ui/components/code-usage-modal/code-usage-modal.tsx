@@ -2,22 +2,21 @@ import React, { useState } from 'react';
 
 import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import { CodeBracketIcon } from '@heroicons/react/20/solid';
-import { Typography } from 'antd';
 
 import { useFlagbaseParams } from '../../app/lib/use-flagbase-params';
 import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown';
 import { useSDKs } from '../../app/pages/sdks/sdks';
 import { useVariations } from '../../app/pages/variations/variations';
 import Button from '../button';
-import { ModalLayout } from '../layout';
+import Modal from '../modal';
+import { Heading, Text } from '../text';
 
-const { Title, Text } = Typography;
 interface ModalProps {
   visible: boolean;
   setVisible(data: boolean): void;
 }
 
-const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
+const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
   const { flagKey } = useFlagbaseParams();
 
   const { data: activeEnvironmentKey } = useActiveEnvironment();
@@ -25,16 +24,16 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
   const { data: variations } = useVariations();
 
   return (
-    <ModalLayout
+    <Modal
       open={visible}
       onClose={() => setVisible(false)}
       className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6"
     >
       <>
         <div>
-          <Title className="text-center" level={3}>
+          <Heading className="text-center" level={3}>
             How to use your feature flag in code
-          </Title>
+          </Heading>
           <Text>
             When using feature flags in code, it is essential to reference the
             flag key and feature variations correctly. Check out our{' '}
@@ -158,7 +157,7 @@ const Modal: React.FC<ModalProps> = ({ visible, setVisible }) => {
           </Button>
         </div>
       </>
-    </ModalLayout>
+    </Modal>
   );
 };
 
@@ -167,13 +166,13 @@ const CodeUsageModal = () => {
 
   return useFeatureFlag('use-in-code-modal', 'control') === 'treatment' ? (
     <>
-      <Modal
+      <CodeModal
         visible={showInCodeModal}
         setVisible={(show) => setShowInCodeModal(show)}
       />
       <Button
         suffix={CodeBracketIcon}
-        secondary
+        variant="secondary"
         onClick={() => setShowInCodeModal(!showInCodeModal)}
       >
         How to use my flag in code

@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Typography } from 'antd';
 import { Form, Formik } from 'formik';
 
 import { NewWorkspaceSchema } from './workspace.constants';
@@ -9,11 +8,10 @@ import { useAddWorkspace } from './workspaces.main';
 import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
-import { ModalLayout } from '../../../components/layout';
+import Modal from '../../../components/modal';
+import { Heading, Text } from '../../../components/text';
 import { useNotification } from '../../hooks/use-notification';
 import { Instance } from '../instances/instances.functions';
-
-const { Title, Text } = Typography;
 
 interface ReactState {
   visible: boolean;
@@ -54,10 +52,12 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
   }, [error, isSuccess, setVisible]);
 
   return (
-    <ModalLayout open={visible} onClose={() => setVisible(false)}>
+    <Modal open={visible} onClose={() => setVisible(false)}>
       <>
         <div className="text-center">
-          <Title level={3}>Add a new workspace</Title>
+          <Heading className="mb-2" level={3}>
+            Add a new workspace
+          </Heading>
           <Text>
             Connect to a Flagbase workspace to begin managing your flags
           </Text>
@@ -106,7 +106,7 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
           </Formik>
         </div>
       </>
-    </ModalLayout>
+    </Modal>
   );
 };
 

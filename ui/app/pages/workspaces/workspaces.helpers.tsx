@@ -1,13 +1,11 @@
 import React from 'react';
 
-import { Typography } from 'antd';
 import { Link } from 'react-router-dom';
 
 import { Workspace } from './api';
 import Button from '../../../components/button/button';
 import Tag from '../../../components/tag';
-import { Instance } from '../../context/instance';
-import { Entity } from '../../lib/entity-store/entity-store';
+import { Instance } from '../instances/instances.functions';
 
 interface ConvertedWorkspace {
   id: number;

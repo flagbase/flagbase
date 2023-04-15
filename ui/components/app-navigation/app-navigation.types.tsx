@@ -1,7 +1,5 @@
 import { ReactElement } from 'react';
 
-import { PageHeaderProps } from 'antd';
-
 export interface ButtonProps {
   title: string;
   type: string;
@@ -23,7 +21,7 @@ export type FlagbaseSubMenuValues = {
 export type AppNavigationProps = {
   title: string;
   hasBackIcon?: boolean;
-} & PageHeaderProps;
+};
 
 export type SubMenuProps = {
   subMenuContent: Partial<Record<keyof FlagbaseSubMenuProps, string>>;
