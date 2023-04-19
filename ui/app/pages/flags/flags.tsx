@@ -59,7 +59,7 @@ const FlagLink = ({ flag }: { flag: Flag }) => {
     <Link
       to={`${flag.attributes.key}/environments/${environment?.attributes.key}`}
     >
-      <Button secondary className="py-2">
+      <Button variant="secondary" className="py-2">
         Modify
       </Button>
     </Link>
@@ -110,12 +110,15 @@ export const useUpdateFlag = () => {
       name: string;
       key: string;
     }) => {
-      await configureAxios(instanceKey!);
+      if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
+        return;
+      }
+      await configureAxios(instanceKey);
       await updateFlag({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-        environmentKey: environmentKey!,
-        flagKey: flagKey!,
+        workspaceKey: workspaceKey,
+        projectKey: projectKey,
+        environmentKey: environmentKey,
+        flagKey: flagKey,
         body: [
           {
             op: 'replace',
@@ -143,9 +146,9 @@ export const useUpdateFlag = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: getFlagsKey({
-          instanceKey: instanceKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
+          instanceKey,
+          workspaceKey,
+          projectKey,
         }),
       });
     },
@@ -161,20 +164,23 @@ export const useRemoveFlag = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async () => {
-      await configureAxios(instanceKey!);
+      if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
+        return;
+      }
+      await configureAxios(instanceKey);
 
       return deleteFlag({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-        flagKey: flagKey!,
+        workspaceKey,
+        projectKey,
+        flagKey,
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: getFlagsKey({
-          instanceKey: instanceKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
+          instanceKey,
+          workspaceKey,
+          projectKey,
         }),
       });
     },
@@ -190,8 +196,8 @@ export const useAddFlag = () => {
   return useMutation(
     (flag: FlagCreateBody) =>
       createFlag({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
+        workspaceKey,
+        projectKey,
         flag,
       }),
     {
@@ -218,11 +224,14 @@ export const useFlags = () => {
     }),
     {
       queryFn: async () => {
-        await configureAxios(instanceKey!);
+        if (!instanceKey || !workspaceKey || !projectKey) {
+          return [];
+        }
+        await configureAxios(instanceKey);
 
         return fetchFlags({
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
+          workspaceKey: workspaceKey,
+          projectKey: projectKey,
         });
       },
       enabled:
@@ -256,29 +265,31 @@ const Flags: React.FC = () => {
         {() => (
           <div className="mt-5">
             <CreateFlag visible={visible} setVisible={setVisible} />
-            <Table
-              loading={false}
-              dataSource={convertFlags({
-                flags,
-                environment: activeEnvironment,
-              })}
-              columns={flagsColumn}
-              emptyState={
-                <EmptyState
-                  title="No Flags"
-                  description={'Get started by creating a new flag.'}
-                  cta={
-                    <Button
-                      className="py-2"
-                      suffix={PlusCircleIcon}
-                      onClick={() => setVisible(true)}
-                    >
-                      {flagConstants.FLAG_ADD_TEXT}
-                    </Button>
-                  }
-                />
-              }
-            />
+            {flags && activeEnvironment && (
+              <Table
+                loading={false}
+                dataSource={convertFlags({
+                  flags,
+                  environment: activeEnvironment,
+                })}
+                columns={flagsColumn}
+                emptyState={
+                  <EmptyState
+                    title="No Flags"
+                    description={'Get started by creating a new flag.'}
+                    cta={
+                      <Button
+                        className="py-2"
+                        suffix={PlusCircleIcon}
+                        onClick={() => setVisible(true)}
+                      >
+                        {flagConstants.FLAG_ADD_TEXT}
+                      </Button>
+                    }
+                  />
+                }
+              />
+            )}
           </div>
         )}
       </Await>

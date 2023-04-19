@@ -2,3 +2,4 @@
 node_modules
 dist
 webpack/*.js
+ui/electron

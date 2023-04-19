@@ -147,7 +147,6 @@ const Instances: React.FC = () => {
   );
 
   const [visible, setVisible] = useState(false);
-  const [filter, setFilter] = useState('');
 
   const { instances: initialInstances } = useLoaderData() as {
     instances: Instance[];
@@ -162,17 +161,15 @@ const Instances: React.FC = () => {
       return [];
     }
 
-    return instances
-      .filter((instance) => instance.key.includes(filter))
-      .map((instance) => {
-        return {
-          id: instance.key,
-          href: `/${instance.key}/workspaces`,
-          status: 'Active',
-          title: instance.name,
-          location: instance.connectionString,
-        };
-      });
+    return instances.map((instance) => {
+      return {
+        id: instance.key,
+        href: `/${instance.key}/workspaces`,
+        status: 'Active',
+        title: instance.name,
+        location: instance.connectionString,
+      };
+    });
   };
 
   return (

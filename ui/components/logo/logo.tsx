@@ -7,7 +7,7 @@ import FlagbaseLogo from './logo-black.png';
 const Logo: React.FC = () => {
   return (
     <Link to="/">
-      <img width={35} src={FlagbaseLogo} />
+      <img width={35} src={FlagbaseLogo as string} />
     </Link>
   );
 };

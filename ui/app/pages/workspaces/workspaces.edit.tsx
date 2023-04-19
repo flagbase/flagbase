@@ -19,7 +19,7 @@ export const EditWorkspace = () => {
   const navigate = useNavigate();
   const { instanceKey, workspaceKey } =
     useParams<{ instanceKey: string; workspaceKey: string }>();
-  const workspacesQuery = useWorkspaces(instanceKey, {
+  const workspacesQuery = useWorkspaces({
     select: (workspaces) =>
       workspaces.filter(
         (workspace) => workspace.attributes.key === workspaceKey,

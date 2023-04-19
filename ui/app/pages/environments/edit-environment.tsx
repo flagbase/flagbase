@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Formik, Field } from 'formik';
+import { Form, Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,11 +14,7 @@ import { EditEntityHeading } from '../../../components/text/heading';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getEnvironmentsKey } from '../../router/loaders';
-import {
-  getEnvironmentPath,
-  getEnvironmentsPath,
-  getFlagsPath,
-} from '../../router/router';
+import { getEnvironmentsPath } from '../../router/router';
 
 export const useUpdateEnvironment = () => {
   const queryClient = useQueryClient();

@@ -62,20 +62,23 @@ export const useSDKs = () => {
       instances.filter((instance) => instance.key === instanceKey),
   });
   const queryKey = getSdkKey({
-    instanceKey: instanceKey!,
-    workspaceKey: workspaceKey!,
-    projectKey: projectKey!,
-    environmentKey: environmentKey!,
+    instanceKey,
+    workspaceKey,
+    projectKey,
+    environmentKey,
   });
 
   const query = useQuery<SDK[]>(queryKey, {
     queryFn: async () => {
-      await configureAxios(instanceKey!);
+      if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
+        return [];
+      }
+      await configureAxios(instanceKey);
 
       return fetchSdkList({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-        environmentKey: environmentKey!,
+        workspaceKey,
+        projectKey,
+        environmentKey,
       });
     },
     enabled:

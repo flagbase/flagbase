@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
+import { RolloutSliderProps } from './types';
 import deterministicColor from '../../app/lib/deterministic-color';
 import {} from './index';
-import { RolloutSliderProps } from './types';
 
 const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
   const [weights, setWeights] = useState(data);
@@ -42,7 +42,7 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
         }
       }
     },
-    [data, 100, onChange],
+    [data, onChange],
   );
 
   const totalWeight = weights.reduce((acc, item) => acc + item.weight, 0);

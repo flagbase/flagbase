@@ -18,7 +18,7 @@ export type TableProps = {
   loading: boolean;
   columns: TableColumnProps<TableColumnType<string>>[];
   emptyState: React.ReactElement;
-} & AntdTableProps<Object>;
+} & AntdTableProps<TableColumnType<string>>;
 
 const StyledTable = styled(AntdTable)`
   cursor: pointer;
@@ -73,7 +73,7 @@ const Table: React.FC<TableProps> = ({
       loading={loading}
       dataSource={dataSource}
       columns={columns}
-      onRow={(record, rowIndex) => {
+      onRow={(record) => {
         return {
           onClick: (event) => {
             event.preventDefault();

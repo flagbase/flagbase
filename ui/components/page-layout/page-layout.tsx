@@ -29,14 +29,14 @@ import {
   Environment,
   useEnvironments,
 } from '../../app/pages/environments/environments';
+import { Flag } from '../../app/pages/flags/api';
+import { useFlags } from '../../app/pages/flags/flags';
+import { useInstances } from '../../app/pages/instances/instances';
+import { Instance } from '../../app/pages/instances/instances.functions';
 import { Project } from '../../app/pages/projects/api';
 import { useProjects } from '../../app/pages/projects/projects';
-import { Instance } from '../../app/pages/instances/instances.functions';
-import { useFlags } from '../../app/pages/flags/flags';
-import { Flag } from '../../app/pages/flags/api';
 import { useSDKs } from '../../app/pages/sdks/sdks';
 import { useVariations } from '../../app/pages/variations/variations';
-import { useInstances } from '../../app/pages/instances/instances';
 import { Workspace } from '../../app/pages/workspaces/api';
 import { useWorkspaces } from '../../app/pages/workspaces/workspaces.main';
 import {
@@ -62,8 +62,6 @@ function classNames(...classes: string[]) {
 
 const MobileDropdown = ({
   name,
-  description,
-  href,
   children,
 }: {
   name: string;
@@ -140,7 +138,7 @@ const Breadcrumb = ({
             <a
               href="#"
               className={`${
-                chevron && 'ml-4'
+                chevron ? 'ml-4' : ''
               } text-sm font-medium text-gray-500 hover:text-gray-700`}
             >
               {name}
@@ -278,7 +276,7 @@ const MobileNavigation = ({
   setMobileMenuOpen,
 }: {
   mobileMenuOpen: boolean;
-  setMobileMenuOpen: any;
+  setMobileMenuOpen: (value: boolean) => void;
 }) => {
   const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams();
 
@@ -301,7 +299,7 @@ const MobileNavigation = ({
         <div className="flex items-center justify-between">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Flagbase</span>
-            <img className="h-8 w-auto" src={flag} alt="" />
+            <img className="h-8 w-auto" src={flag as string} alt="" />
           </Link>
           <button
             type="button"
@@ -324,7 +322,7 @@ const MobileNavigation = ({
                   {getInstanceDropdown(instances)}
                 </MobileDropdown>
               )}
-              {workspaces && (
+              {workspaces && instanceKey && (
                 <MobileDropdown
                   name="Workspaces"
                   description={workspaceDescription}
@@ -333,7 +331,7 @@ const MobileNavigation = ({
                   {getWorkspaceDropdown(workspaces, instanceKey)}
                 </MobileDropdown>
               )}
-              {projects && (
+              {projects && workspaceKey && instanceKey && (
                 <MobileDropdown
                   name="Projects"
                   description={projectsDescription}
@@ -342,7 +340,7 @@ const MobileNavigation = ({
                   {getProjectDropdown(projects, workspaceKey, instanceKey)}
                 </MobileDropdown>
               )}
-              {environments && (
+              {environments && instanceKey && workspaceKey && projectKey && (
                 <MobileDropdown
                   name="Environments"
                   description={environmentsDescription}
@@ -356,21 +354,25 @@ const MobileNavigation = ({
                   )}
                 </MobileDropdown>
               )}
-              {flags && (
-                <MobileDropdown
-                  name="Flags"
-                  description={flagsDescription}
-                  href="/"
-                >
-                  {getFlagDropdown(
-                    flags,
-                    instanceKey,
-                    workspaceKey,
-                    activeEnvironmentKey,
-                    projectKey,
-                  )}
-                </MobileDropdown>
-              )}
+              {flags &&
+                instanceKey &&
+                workspaceKey &&
+                activeEnvironmentKey &&
+                projectKey && (
+                  <MobileDropdown
+                    name="Flags"
+                    description={flagsDescription}
+                    href="/"
+                  >
+                    {getFlagDropdown(
+                      flags,
+                      instanceKey,
+                      workspaceKey,
+                      activeEnvironmentKey,
+                      projectKey,
+                    )}
+                  </MobileDropdown>
+                )}
             </div>
           </div>
         </div>
@@ -385,7 +387,7 @@ const Header = () => {
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: instances } = useInstances();
-  const { data: workspaces } = useWorkspaces(instanceKey);
+  const { data: workspaces } = useWorkspaces();
   const { data: projects } = useProjects();
   const { data: environments } = useEnvironments();
   const { data: flags } = useFlags();
@@ -414,7 +416,7 @@ const Header = () => {
         <div className="flex items-center gap-x-12 mr-10">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Flagbase</span>
-            <img className="h-5 w-auto" src={flag} alt="" />
+            <img className="h-5 w-auto" src={flag as string} alt="" />
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -503,9 +505,6 @@ const Header = () => {
       <MobileNavigation
         mobileMenuOpen={mobileMenuOpen}
         setMobileMenuOpen={setMobileMenuOpen}
-        instances={instances}
-        workspaces={workspaces}
-        projects={projects}
       />
     </header>
   );
@@ -520,7 +519,7 @@ const PageHeading = ({
   title: string;
   subtitle: string | ReactNode;
   tabs?: { name: string; href: string }[];
-  backHref?: string;
+  backHref?: string | undefined;
 }) => {
   const location = useLocation();
   const pathname = decodeURI(location.pathname);
@@ -531,7 +530,7 @@ const PageHeading = ({
   return (
     <header
       className={`bg-gray-50 pt-8 border-b border-gray-200 ${
-        !tabs || (tabs.length === 0 && 'pb-8')
+        !tabs || tabs.length === 0 ? 'pb-8' : ''
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">

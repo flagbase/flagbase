@@ -27,11 +27,14 @@ export const useUpdateSdk = () => {
       tags: string[];
       enabled: boolean;
     }) => {
-      await configureAxios(instanceKey!);
+      if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
+        return;
+      }
+      await configureAxios(instanceKey);
       await updateSdk({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-        environmentKey: environmentKey!,
+        workspaceKey,
+        projectKey,
+        environmentKey,
         sdkId: values.id,
         body: [
           {
@@ -53,12 +56,15 @@ export const useUpdateSdk = () => {
       });
     },
     onSuccess: () => {
+      if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
+        return;
+      }
       queryClient.invalidateQueries({
         queryKey: getSdkKey({
-          instanceKey: instanceKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
-          environmentKey: environmentKey!,
+          instanceKey,
+          workspaceKey,
+          projectKey,
+          environmentKey,
         }),
       });
     },
@@ -172,28 +178,20 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
           >
             {({ errors }) => (
               <Form className="flex flex-col gap-3">
-                <Field
-                  component={Input}
+                <Input
                   id="name"
                   name="name"
                   label="Name"
                   placeholder="sdk-name"
                 />
-                <Field
-                  component={Input}
+                <Input
                   id="description"
                   name="description"
                   label="Description"
                   placeholder="SDK Description"
                 />
 
-                <Field
-                  component={TagInput}
-                  id="tags"
-                  name="tags"
-                  label="Tags"
-                  placeholder="syd-region"
-                />
+                <TagInput id="tags" name="tags" label="Tags" />
                 <Button
                   type="submit"
                   className="mt-3 py-2 justify-center"

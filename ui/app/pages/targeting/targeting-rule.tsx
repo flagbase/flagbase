@@ -135,7 +135,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
       {({ values, setFieldValue }) => (
         <Form>
           <div className="flex">
-            <div className="flex-auto w-80">
+            <div className="flex flex-col w-3/5">
               <div className="flex gap-3 items-center mb-4">
                 <code className="text-xl font-bold uppercase">if</code>
                 <Input name="traitKey" label="Trait Key" />
@@ -145,7 +145,6 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                     setFieldValue('operator', operator);
                   }}
                   name="operator"
-                  label="Operator"
                   value={{
                     value: values.operator,
                     name: getNameFromValue(values.operator),
@@ -171,7 +170,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                 }}
               />
             </div>
-            <div className="flex-auto w-20 pl-5 gap-3">
+            <div className="flex flex-col w-2/5 gap-4 pl-5">
               <Input name="key" label="Rule Key" />
               <Input name="name" label="Name" />
               <Input name="description" label="Description" />

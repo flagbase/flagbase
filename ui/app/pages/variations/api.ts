@@ -29,7 +29,7 @@ export const fetchVariations = async ({
   projectKey: string;
   flagKey: string;
 }): Promise<Variation[]> => {
-  const { data } = await axios.get(
+  const { data } = await axios.get<Variation[]>(
     `/flags/${workspaceKey}/${projectKey}/${flagKey}/variations`,
   );
 

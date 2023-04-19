@@ -23,7 +23,7 @@ export const instancesQuery = async (
 ): Promise<Instance[]> => {
   const instances = await queryClient.fetchQuery({
     queryKey: ['instances'],
-    queryFn: async () => getInstances(),
+    queryFn: () => getInstances(),
   });
   if (instanceKey) {
     return instances.filter(
@@ -38,7 +38,7 @@ export const instancesQuery = async (
   return instances;
 };
 
-export const instancesLoader = async () => {
+export const instancesLoader = () => {
   // ⬇️ return data or fetch it
   const instances = queryClient.fetchQuery({
     queryKey: ['instances'],
@@ -237,7 +237,7 @@ export const flagsLoader = ({
   return defer({ flags });
 };
 
-export const targetingLoader = async ({
+export const targetingLoader = ({
   params,
 }: {
   params: Params<

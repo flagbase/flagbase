@@ -2,7 +2,12 @@ import React, { Suspense, useState } from 'react';
 
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { useMutation, useQuery, useQueryClient, UseQueryOptions } from 'react-query';
+import {
+  useMutation,
+  useQuery,
+  useQueryClient,
+  UseQueryOptions,
+} from 'react-query';
 import { Await, useLoaderData } from 'react-router-dom';
 
 import {
@@ -133,20 +138,25 @@ export const useRemoveWorkspace = (instanceKey: string | undefined) => {
 export const useWorkspaces = (options?: UseQueryOptions<Workspace[]>) => {
   const { instanceKey } = useFlagbaseParams();
   const { data: instances } = useInstances({
-    select: (instances) => instances.filter((instance) => instance.key === instanceKey),
+    select: (instances) =>
+      instances.filter((instance) => instance.key === instanceKey),
   });
-  const query = useQuery<Workspace[]>(['workspaces', instanceKey?.toLocaleLowerCase()], {
-    queryFn: async () => {
-      if (instanceKey) {
-        await configureAxios(instanceKey);
+  const query = useQuery<Workspace[]>(
+    ['workspaces', instanceKey?.toLocaleLowerCase()],
+    {
+      queryFn: async () => {
+        if (instanceKey) {
+          await configureAxios(instanceKey);
 
-        return fetchWorkspaces();
-      }
-      throw new Error('instanceKey is undefined');
+          return fetchWorkspaces();
+        } else {
+          throw new Error('instanceKey is undefined');
+        }
+      },
+      enabled: instances && instances.length > 0,
+      ...options,
     },
-    enabled: instances && instances.length > 0,
-    ...options,
-  });
+  );
 
   return query;
 };
@@ -158,7 +168,12 @@ const MainWorkspaces = () => {
   };
   const [createWorkspace, showCreateWorkspace] = useState(false);
   const [filter, setFilter] = useState('');
-  const { data: workspaces, isRefetching, isFetching, isLoading } = useWorkspaces();
+  const {
+    data: workspaces,
+    isRefetching,
+    isFetching,
+    isLoading,
+  } = useWorkspaces();
 
   return (
     <Suspense fallback={<Loader />}>
@@ -185,7 +200,13 @@ const MainWorkspaces = () => {
             <Table
               loading={isFetching || isRefetching || isLoading}
               dataSource={
-                workspaces ? convertWorkspaces(workspaces, instance, filter.toLowerCase()) : []
+                workspaces
+                  ? convertWorkspaces(
+                      workspaces,
+                      instance,
+                      filter.toLowerCase(),
+                    )
+                  : []
               }
               columns={workspaceColumns}
               emptyState={

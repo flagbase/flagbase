@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Formik, Field } from 'formik';
+import { Form, Formik } from 'formik';
 import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -27,26 +27,44 @@ export const useUpdateVariation = () => {
       initialValues: VariationUpdateBody;
       newValues: VariationUpdateBody;
     }) => {
-      await configureAxios(instanceKey!);
+      if (
+        !instanceKey ||
+        !workspaceKey ||
+        !projectKey ||
+        !flagKey ||
+        !variationKey
+      ) {
+        return;
+      }
+      await configureAxios(instanceKey);
       await updateVariation(
         {
-          flagKey: flagKey!,
-          variationKey: variationKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
+          flagKey: flagKey,
+          variationKey: variationKey,
+          workspaceKey: workspaceKey,
+          projectKey: projectKey,
         },
         initialValues,
         newValues,
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      if (
+        !instanceKey ||
+        !workspaceKey ||
+        !projectKey ||
+        !flagKey ||
+        !variationKey
+      ) {
+        return;
+      }
+      await queryClient.invalidateQueries({
         queryKey: getVariationKey({
-          instanceKey: instanceKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
-          flagKey: flagKey!,
-          variationKey: variationKey!,
+          instanceKey,
+          workspaceKey,
+          projectKey,
+          flagKey,
+          variationKey,
         }),
       });
     },
@@ -61,21 +79,39 @@ export const useRemoveVariation = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (variationKey: string) => {
+      if (
+        !instanceKey ||
+        !workspaceKey ||
+        !projectKey ||
+        !flagKey ||
+        !variationKey
+      ) {
+        return;
+      }
       await deleteVariation({
-        workspaceKey: workspaceKey!,
-        projectKey: projectKey!,
-        flagKey: flagKey!,
-        variationKey: variationKey,
+        workspaceKey,
+        projectKey,
+        flagKey,
+        variationKey,
       });
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      if (
+        !instanceKey ||
+        !workspaceKey ||
+        !projectKey ||
+        !flagKey ||
+        !variationKey
+      ) {
+        return;
+      }
+      await queryClient.invalidateQueries({
         queryKey: getVariationKey({
-          instanceKey: instanceKey!,
-          workspaceKey: workspaceKey!,
-          projectKey: projectKey!,
-          flagKey: flagKey!,
-          variationKey: variationKey!,
+          instanceKey,
+          workspaceKey,
+          projectKey,
+          flagKey,
+          variationKey,
         }),
       });
     },

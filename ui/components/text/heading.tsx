@@ -4,7 +4,7 @@ import { classNames } from '../../helpers';
 
 export const Heading = ({
   children,
-  level = 1,
+  level = 3,
   className = '',
 }: {
   children: ReactNode;

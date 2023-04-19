@@ -122,7 +122,7 @@ export const RawInput: React.FC<RawInputProps> = ({
         <label
           htmlFor={label}
           className={classNames(
-            `left-3 absolute peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-700 transition-all`,
+            `left-4 absolute peer-focus:top-0 peer-focus:text-sm  pointer-events-none text-gray-500 transition-all`,
             !value ? 'top-4' : '',
             value ? 'top-0 text-xs' : '',
             'peer-disabled:top-0 peer-disabled:text-sm',

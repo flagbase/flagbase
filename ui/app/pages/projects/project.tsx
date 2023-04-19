@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { useParams } from 'react-router-dom';
-
 import { useProjects } from './projects';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 export function Project() {
-  const { instanceKey, projectKey, workspaceKey } = useParams();
+  const { projectKey } = useFlagbaseParams();
   const { data: projects } = useProjects();
   const project = projects?.find(
     (project) => project.attributes.key === projectKey?.toLocaleLowerCase(),

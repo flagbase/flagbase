@@ -30,7 +30,9 @@ test('tag does not have delete button', async ({ mount }, testInfo) => {
 });
 
 test('tag has delete button', async ({ mount }, testInfo) => {
-  const component = await mount(<Tag onDelete={() => {}}>Generated</Tag>);
+  const component = await mount(
+    <Tag onDelete={() => console.log('deleted')}>Generated</Tag>,
+  );
   await expect(component.getByRole('button')).toHaveAttribute('type', 'button');
   const button = await component.getByRole('button').isVisible();
   expect(button).toBe(true);

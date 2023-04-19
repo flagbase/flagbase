@@ -9,6 +9,7 @@ import Button from '../../../components/button';
 import Input from '../../../components/input';
 import { TagInput } from '../../../components/input/tag-input';
 import Modal from '../../../components/modal';
+import { Text } from '../../../components/text';
 import { Heading } from '../../../components/text/heading';
 import { useNotification } from '../../hooks/use-notification';
 

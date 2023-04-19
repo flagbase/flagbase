@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
 
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Flag } from './api';

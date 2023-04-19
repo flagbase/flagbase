@@ -7,7 +7,6 @@ module.exports = {
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:prettier/recommended',
     'plugin:react/recommended',
     'plugin:react-hooks/recommended',
@@ -15,13 +14,7 @@ module.exports = {
     'plugin:import/recommended',
     'plugin:import/typescript',
   ],
-  plugins: [
-    '@typescript-eslint',
-    'prettier',
-    'react',
-    'react-hooks',
-    'storybook',
-  ],
+  plugins: ['prettier', 'react', 'react-hooks', 'storybook'],
   settings: {
     react: {
       version: 'detect',
@@ -32,7 +25,6 @@ module.exports = {
     },
   },
   parserOptions: {
-    project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
     sourceType: 'module',
   },
@@ -64,5 +56,7 @@ module.exports = {
         },
       },
     ],
+    '@typescript-eslint/no-empty-function': 'off',
+    'react/no-unescaped-entities': 'off',
   },
 };

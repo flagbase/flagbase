@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import { QueryCache, QueryClient } from 'react-query';
 import {
   Route,
   Navigate,
@@ -22,37 +24,30 @@ import Button from '../../components/button';
 import PageLayout from '../../components/page-layout';
 import { PageHeadings } from '../../components/page-layout/page-layout';
 import { EditEnvironment } from '../pages/environments/edit-environment';
-import { EnvironmentDropdown } from '../pages/environments/environment-dropdown';
 import Environments from '../pages/environments/environments';
+import { CreateEnvironment } from '../pages/environments/environments.modal';
+import { Error } from '../pages/error';
 import Flags from '../pages/flags';
+import { FlagSettings } from '../pages/flags/flags.edit';
+import { CreateFlag, ModalProps } from '../pages/flags/flags.modal';
+import Instances from '../pages/instances/instances';
+import { AddNewInstanceModal } from '../pages/instances/instances.modal';
+import { EditInstance } from '../pages/instances/instances.settings';
 import Projects from '../pages/projects';
 import '../tailwind/tailwind.css';
 import { Project } from '../pages/projects/project';
 import EditProject from '../pages/projects/projects.edit';
-
-import { QueryCache, QueryClient } from 'react-query';
-
 import { CreateProjectModal } from '../pages/projects/projects.modal';
 import { SdkSettings } from '../pages/sdks/sdk.settings';
 import { Sdks } from '../pages/sdks/sdks';
+import { CreateSDKModal } from '../pages/sdks/sdks.modal';
 import { Targeting } from '../pages/targeting/targeting';
+import VariationSettings from '../pages/variations/variation.settings';
+import Variations from '../pages/variations/variations';
+import { CreateVariation } from '../pages/variations/variations.modal';
+import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal';
 import { EditWorkspace } from '../pages/workspaces/workspaces.edit';
 import MainWorkspaces from '../pages/workspaces/workspaces.main';
-import { Error } from '../pages/error';
-import { EditInstance } from '../pages/instances/instances.settings';
-import Instances from '../pages/instances/instances';
-import Variations from '../pages/variations/variations';
-import { FlagSettings } from '../pages/flags/flags.edit';
-import { CreateVariation } from '../pages/variations/variations.modal';
-import VariationSettings from '../pages/variations/variation.settings';
-import { CreateFlag, ModalProps } from '../pages/flags/flags.modal';
-
-import { PlusCircleIcon } from '@heroicons/react/20/solid';
-
-import { AddNewInstanceModal } from '../pages/instances/instances.modal';
-import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal';
-import { CreateSDKModal } from '../pages/sdks/sdks.modal';
-import { CreateEnvironment } from '../pages/environments/environments.modal';
 
 const {
   InstanceKey,

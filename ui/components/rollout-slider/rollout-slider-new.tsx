@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { RolloutSliderProps, Variation } from './types';
 import deterministicColor from '../../app/lib/deterministic-color';
@@ -28,7 +28,7 @@ const VariationSection: React.FC<{
       className="variation"
       style={{
         background: deterministicColor(variation.variationKey),
-        width: width + '%',
+        width: `${width}%`,
         padding: 20,
         textAlign: 'center',
         position: 'relative',
@@ -53,7 +53,7 @@ const VariationSection: React.FC<{
           padding: 10,
         }}
       >
-        {Math.fround(width) + '%'}
+        {`${Math.fround(width)}%`}
       </span>
 
       {shouldShowThumb && (
@@ -123,6 +123,9 @@ const RolloutSlider: React.FC<RolloutSliderProps> = ({ data, onChange }) => {
 
               const resize = (e: MouseEvent & TouchEvent) => {
                 e.preventDefault();
+                if (!sliderWidth) {
+                  return;
+                }
                 const endDragX = e.touches ? e.touches[0].pageX : e.pageX;
                 const distanceMoved = endDragX - startDragX;
                 const maxPercent = widths[index] + widths[index + 1];
