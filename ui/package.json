@@ -41,7 +41,7 @@
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
     "@playwright/experimental-ct-react": "^1.32.1",
-    "@playwright/test": "^1.32.1",
+    "@playwright/test": "^1.32.3",
     "@storybook/addon-essentials": "^7.0.2",
     "@storybook/addon-interactions": "^7.0.2",
     "@storybook/addon-links": "^7.0.2",
