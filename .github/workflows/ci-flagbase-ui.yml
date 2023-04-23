@@ -55,6 +55,10 @@ jobs:
       - name: Lint UI
         run: pnpm run lint
 
+      # Install playwrite dependencies
+      - name: Install Playwright
+        run: pnpx playwright install --with-deps
+
       - name: Test UI
         run: pnpm run test
 
