@@ -72,8 +72,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
               name: '',
               key: '',
               connectionString: '',
-              accessSecret: '',
-              accessKey: '',
+              credentials: [],
             }}
             onSubmit={onSubmit}
             validationSchema={InstanceSchema}

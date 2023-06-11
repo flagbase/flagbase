@@ -5,12 +5,6 @@ import { strToImagePath } from '../../../helpers';
 const { TEST_INSTANCE_URL, TEST_INSTANCE_KEY, TEST_INSTANCE_SECRET } =
   process.env;
 
-test.beforeAll(() => {
-  if (!TEST_INSTANCE_URL || !TEST_INSTANCE_KEY || !TEST_INSTANCE_SECRET) {
-    throw new Error('Missing test instance credentials');
-  }
-});
-
 test.afterEach(async ({ page }, testInfo) => {
   await testInfo.attach(strToImagePath(testInfo.title), {
     body: await page.screenshot(),

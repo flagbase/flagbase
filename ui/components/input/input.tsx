@@ -54,7 +54,7 @@ const Input: React.FC<InputProps> = ({
             `absolute peer-focus:top-1 peer-focus:text-xs  pointer-events-none text-gray-700 transition-all`,
             !meta.value ? 'top-4' : '',
             meta.value ? 'top-1 text-xs' : '',
-            icon ? 'left-11' : 'left-3',
+            'left-3',
             'peer-disabled:top-1 peer-disabled:text-xs',
           )}
         >

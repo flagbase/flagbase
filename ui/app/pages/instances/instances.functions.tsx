@@ -1,4 +1,4 @@
-export type Instance = {
+export type APIInstance = {
   accessKey: string;
   accessSecret: string;
   accessToken: string;
@@ -7,4 +7,14 @@ export type Instance = {
   id: string;
   key: string;
   name: string;
+};
+
+export type Instance = {
+  name: string;
+  connectionString: string;
+  credentials: {
+    accessKey: string;
+    accessSecret: string;
+    accessToken: string;
+  }[];
 };
