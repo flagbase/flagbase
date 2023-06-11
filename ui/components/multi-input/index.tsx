@@ -1,14 +1,8 @@
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 
-import { PlusIcon } from '@heroicons/react/20/solid';
-import {
-  ErrorMessage,
-  Field,
-  FieldArray,
-  FieldConfig,
-  useField,
-  useFormikContext,
-} from 'formik';
+import { Transition } from '@headlessui/react';
+import { PlusIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { ErrorMessage, FieldArray, FieldConfig, useField } from 'formik';
 
 import Input from '../input/input';
 
@@ -18,71 +12,83 @@ export type MultiInputProps = {
   autocomplete?: string;
   name?: string;
   addText?: string;
+  multiInputLabels: {
+    [key: string]: string;
+  };
 } & FieldConfig &
   React.InputHTMLAttributes<HTMLInputElement>;
 
 const MultiInput: React.FC<MultiInputProps> = ({
-  icon,
-  className,
-  label,
   name,
-  autoComplete = 'off',
+  label,
   addText,
+  multiInputLabels,
   ...props
 }) => {
-  const [field, meta] = useField(props);
-  const context = useFormikContext();
-  console.log('TEST', field, meta);
-  console.log('context', context);
-  const { values } = context;
-  const inputs = values[name];
+  const [field] = useField({ name, ...props });
+  const inputs = field.value;
+  const [shape] = useState(inputs[0]);
+
+  if (!Array.isArray(inputs)) {
+    console.error('MultiInput: inputs is not an array');
+
+    return null;
+  }
 
   return (
     <div className="flex flex-col gap-3">
+      <div className="relative mb-3">
+        <div className="absolute inset-0 flex items-center" aria-hidden="true">
+          <div className="w-full border-t border-gray-300" />
+        </div>
+        <div className="relative flex justify-center">
+          <span className="bg-white px-3 text-base font-semibold leading-6 text-gray-900">
+            {label}
+          </span>
+        </div>
+      </div>
       <FieldArray name={name}>
         {({ remove, push }) => (
           <div>
-            {console.log('VALS', values)}
-            {inputs.length > 0 &&
-              inputs.map((friend, index) => (
-                <div className="row" key={index}>
-                  <div className="col">
-                    <label htmlFor={`friends.${index}.name`}>Name</label>
-                    <Input
-                      name={`${name}.${index}.name`}
-                      placeholder="Jane Doe"
-                      type="text"
-                    />
-                    <ErrorMessage
-                      name={`${name}.${index}.name`}
-                      component="div"
-                      className="field-error"
-                    />
-                  </div>
-                  <div className="col">
-                    <label htmlFor={`${name}.${index}.email`}>Email</label>
-                    <Input
-                      name={`${name}.${index}.email`}
-                      placeholder="jane@acme.com"
-                      type="email"
-                    />
-                    <ErrorMessage
-                      name={`${name}.${index}.name`}
-                      component="div"
-                      className="field-error"
-                    />
-                  </div>
-                  <div className="col">
-                    <button
-                      type="button"
-                      className="secondary"
+            <div className="flex flex-col gap-5 items-center">
+              {inputs.length > 0 &&
+                inputs.map((input, index: number) => (
+                  <div
+                    key={index}
+                    className="flex flex-col md:flex-row gap-5 items-center"
+                  >
+                    {Object.keys(input).map((key) => (
+                      <Transition
+                        key={`${name}.${index}.${key}`}
+                        appear={true}
+                        show={true}
+                        enter="transition-opacity duration-150"
+                        enterFrom="opacity-0"
+                        enterTo="opacity-100"
+                        leave="transition-opacity duration-150"
+                        leaveFrom="opacity-100"
+                        leaveTo="opacity-0"
+                      >
+                        <div>
+                          <Input
+                            label={multiInputLabels[key]}
+                            name={`${name}.${index}.${key}`}
+                            type="text"
+                          />
+                          <ErrorMessage
+                            name={`${name}.${index}.${key}`}
+                            component="div"
+                          />
+                        </div>
+                      </Transition>
+                    ))}
+                    <XCircleIcon
                       onClick={() => remove(index)}
-                    >
-                      X
-                    </button>
+                      className="h-5 w-5 cursor-pointer"
+                    />
                   </div>
-                </div>
-              ))}
+                ))}
+            </div>
 
             <div className="relative">
               <div
@@ -91,9 +97,9 @@ const MultiInput: React.FC<MultiInputProps> = ({
               >
                 <div className="w-full border-t border-gray-300" />
               </div>
-              <div className="relative flex justify-center">
+              <div className="relative flex justify-center mt-3">
                 <button
-                  onClick={() => push({ name: '', email: '' })}
+                  onClick={() => push(shape)}
                   type="button"
                   className="inline-flex items-center gap-x-1.5 rounded-full bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                 >

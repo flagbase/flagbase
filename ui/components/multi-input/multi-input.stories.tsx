@@ -28,22 +28,61 @@ type Story = StoryObj<typeof MultiInput>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'Enter your name',
-    name: 'name',
-    label: 'Name',
-    type: 'text',
+    label: 'Credentials',
     name: 'credentials',
     addText: 'Add another credential',
+    multiInputLabels: {
+      accessKey: 'Access Key',
+      accessSecret: 'Access Secret',
+    },
   },
   decorators: [
     (Story) => (
-      <div className="w-1/3 mx-auto">
+      <div className="mx-auto">
         <Formik
           initialValues={{
             credentials: [
               {
-                accessKey: 'Ali',
-                accessSecret: 'ali@lolz.com',
+                accessKey: '',
+                accessSecret: '',
+              },
+            ],
+          }}
+          onSubmit={() => {}}
+        >
+          <Form>
+            <Story />
+          </Form>
+        </Formik>
+      </div>
+    ),
+  ],
+};
+
+export const MobileViewPort: Story = {
+  args: {
+    label: 'Credentials',
+    name: 'credentials',
+    addText: 'Add another credential',
+    multiInputLabels: {
+      accessKey: 'Access Key',
+      accessSecret: 'Access Secret',
+    },
+  },
+  parameters: {
+    viewport: {
+      defaultViewport: 'mobile1',
+    },
+  },
+  decorators: [
+    (Story) => (
+      <div className="mx-auto">
+        <Formik
+          initialValues={{
+            credentials: [
+              {
+                accessKey: '',
+                accessSecret: '',
               },
             ],
           }}
