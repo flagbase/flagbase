@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Transition } from '@headlessui/react';
 import { PlusIcon, XCircleIcon } from '@heroicons/react/20/solid';
@@ -51,43 +51,42 @@ const MultiInput: React.FC<MultiInputProps> = ({
         {({ remove, push }) => (
           <div>
             <div className="flex flex-col gap-5 items-center">
-              {inputs.length > 0 &&
-                inputs.map((input, index: number) => (
-                  <div
-                    key={index}
-                    className="flex flex-col md:flex-row gap-5 items-center"
-                  >
-                    {Object.keys(input).map((key) => (
-                      <Transition
-                        key={`${name}.${index}.${key}`}
-                        appear={true}
-                        show={true}
-                        enter="transition-opacity duration-150"
-                        enterFrom="opacity-0"
-                        enterTo="opacity-100"
-                        leave="transition-opacity duration-150"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                      >
-                        <div>
-                          <Input
-                            label={multiInputLabels[key]}
-                            name={`${name}.${index}.${key}`}
-                            type="text"
-                          />
-                          <ErrorMessage
-                            name={`${name}.${index}.${key}`}
-                            component="div"
-                          />
-                        </div>
-                      </Transition>
-                    ))}
-                    <XCircleIcon
-                      onClick={() => remove(index)}
-                      className="h-5 w-5 cursor-pointer"
-                    />
-                  </div>
-                ))}
+              {inputs.map((input, index: number) => (
+                <div
+                  key={index}
+                  className="flex flex-col md:flex-row gap-5 items-center"
+                >
+                  {Object.keys(input).map((key) => (
+                    <Transition
+                      key={`${name}.${index}.${key}`}
+                      appear={true}
+                      show={true}
+                      enter="transition-opacity duration-150"
+                      enterFrom="opacity-0"
+                      enterTo="opacity-100"
+                      leave="transition-opacity duration-150"
+                      leaveFrom="opacity-100"
+                      leaveTo="opacity-0"
+                    >
+                      <div>
+                        <Input
+                          label={multiInputLabels[key]}
+                          name={`${name}.${index}.${key}`}
+                          type="text"
+                        />
+                        <ErrorMessage
+                          name={`${name}.${index}.${key}`}
+                          component="div"
+                        />
+                      </div>
+                    </Transition>
+                  ))}
+                  <XCircleIcon
+                    onClick={() => remove(index)}
+                    className="h-5 w-5 cursor-pointer"
+                  />
+                </div>
+              ))}
             </div>
 
             <div className="relative">
