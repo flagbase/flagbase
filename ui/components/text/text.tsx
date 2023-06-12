@@ -1,11 +1,10 @@
 import React from 'react';
 
 export type TextProps = {
-  children: React.ReactChild,
+  children: React.ReactChild;
+  className?: string;
 };
 
-const Text: React.FC<TextProps> = (props) => {
+export const Text: React.FC<TextProps> = (props) => {
   return <span {...props} />;
 };
-
-export default Text;

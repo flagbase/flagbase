@@ -9,7 +9,7 @@ on:
     branches:
       - master
     paths:
-      - 'ui/**'
+      - "ui/**"
 
 jobs:
   build:
@@ -49,17 +49,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build UI components
+      - name: Build UI
         run: pnpm run build
 
-      - name: Lint UI components
+      - name: Lint UI
         run: pnpm run lint
+
+      - name: Test UI
+        run: pnpm run test
 
       - name: "Deploy: dev-flagbase-ui-app-**.web.app"
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
           projectId: flagbase
           target: dev-flagbase-ui-app
           entryPoint: ./ui
