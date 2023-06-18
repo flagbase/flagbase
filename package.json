@@ -1,1 +1,10 @@
-{}
+{
+  "name": "flagbase-monorepo",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "ui/*",
+      "app/*"
+    ]
+  }
+}

@@ -10,7 +10,7 @@ import {
 } from 'antd';
 import { useNavigate } from 'react-router-dom';
 
-import { useNotification } from '../../app/hooks/use-notification';
+import { useNotification } from '../../hooks/use-notification';
 import Button from '../button/button';
 import EmptyState from '../empty-state';
 
