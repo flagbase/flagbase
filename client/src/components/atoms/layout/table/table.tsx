@@ -11,7 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { useNotification } from '../../hooks/use-notification';
-import { Button } from '../button';
+import { Button } from '../atoms/form/button';
 import EmptyState from '../empty-state';
 
 export type TableProps = {
@@ -31,11 +31,11 @@ export const CopyRow = ({ text }: { text: string }) => {
   const { addNotification } = useNotification();
 
   return (
-    <div className="flex gap-1 items-center">
+    <div className="flex items-center gap-1">
       <div>{text}</div>
       <button
         type="button"
-        className="p-1 rounded-full text-gray-400 hover:text-gray-500 hover:bg-gray-100"
+        className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
         onClick={(event) => {
           event.preventDefault();
           void navigator.clipboard.writeText(text).then(() => {
@@ -47,7 +47,7 @@ export const CopyRow = ({ text }: { text: string }) => {
           });
         }}
       >
-        <DocumentDuplicateIcon className="w-5 h-5 cursor-pointer" />
+        <DocumentDuplicateIcon className="h-5 w-5 cursor-pointer" />
       </button>
     </div>
   );

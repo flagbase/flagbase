@@ -7,7 +7,7 @@ import { useFlagbaseParams } from '../../app/lib/use-flagbase-params';
 import { useActiveEnvironment } from '../../app/pages/environments/environment-dropdown';
 import { useSDKs } from '../../app/pages/sdks/sdks';
 import { useVariations } from '../../app/pages/variations/variations';
-import Button from '../button';
+import Button from '../atoms/form/button';
 import Modal from '../modal';
 import { Heading, Text } from '../text';
 
@@ -27,7 +27,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
     <Modal
       open={visible}
       onClose={() => setVisible(false)}
-      className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6"
+      className="relative overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-2xl sm:p-6"
     >
       <>
         <div>
@@ -39,7 +39,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             flag key and feature variations correctly. Check out our{' '}
             <a
               href="https://flagbase.com/docs/sdk/overview"
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              className="font-medium text-blue-600 hover:underline dark:text-blue-500"
               target="_blank"
               rel="noreferrer"
             >
@@ -48,11 +48,11 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             for your specific programming language.
           </Text>
         </div>
-        <div className="flex flex-col gap-3 mt-3">
+        <div className="mt-3 flex flex-col gap-3">
           <p>
             Reference this flag key in your code:
             <div>
-              <div className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+              <div className="m-2 rounded-md px-3 pb-1.5 pt-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
                 <label
                   htmlFor="flagKey"
                   className="block text-xs font-medium text-gray-500"
@@ -63,7 +63,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                   type="text"
                   name="flagKey"
                   id="flagKey"
-                  className="truncate text-xl block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  className="block w-full truncate border-0 p-0 text-xl text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   value={flagKey}
                 />
               </div>
@@ -78,7 +78,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             {variations?.map((variation) => (
               <div
                 key={variation.id}
-                className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600"
+                className="m-2 rounded-md px-3 pb-1.5 pt-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600"
               >
                 <label
                   htmlFor="variation"
@@ -90,7 +90,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                   type="text"
                   name="variation"
                   id="variation"
-                  className="truncate text-xl block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                  className="block w-full truncate border-0 p-0 text-xl text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                   value={variation.attributes.key}
                 />
               </div>
@@ -111,10 +111,10 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             </p>
             {sdks?.map((sdk) => (
               <div key={sdk.id} className="flex flex-col">
-                <b className="text-center mt-4 font-bold text-sm capitalise">
+                <b className="capitalise mt-4 text-center text-sm font-bold">
                   SDK keys for {activeEnvironmentKey} environment
                 </b>
-                <div className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                <div className="m-2 rounded-md px-3 pb-1.5 pt-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
                   <label
                     htmlFor="client"
                     className="block text-xs font-medium text-gray-500"
@@ -125,11 +125,11 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                     type="text"
                     name="client"
                     id="client"
-                    className="truncate text-xl block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    className="block w-full truncate border-0 p-0 text-xl text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     value={sdk.attributes.clientKey}
                   />
                 </div>
-                <div className="m-2 rounded-md px-3 pt-2.5 pb-1.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                <div className="m-2 rounded-md px-3 pb-1.5 pt-2.5 shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
                   <label
                     htmlFor="server"
                     className="block text-xs font-medium text-gray-500"
@@ -140,7 +140,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
                     type="text"
                     name="server"
                     id="server"
-                    className="truncate text-xl block w-full border-0 p-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
+                    className="block w-full truncate border-0 p-0 text-xl text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6"
                     value={sdk.attributes.serverKey}
                   />
                 </div>
@@ -148,7 +148,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
             ))}
           </div>
           <Button
-            className="justify-center h-10"
+            className="h-10 justify-center"
             onClick={() => {
               setVisible(false);
             }}

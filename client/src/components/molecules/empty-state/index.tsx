@@ -2,9 +2,9 @@ import React from 'react';
 
 import { BackspaceIcon } from '@heroicons/react/24/outline';
 
-import { Button } from '../button';
+import { Button } from '../../atoms/form/button';
 
-const EmptyProject = ({
+export const EmptyProject = ({
   title,
   description,
   cta = (
@@ -40,4 +40,3 @@ const EmptyProject = ({
     </div>
   );
 };
-export default EmptyProject;

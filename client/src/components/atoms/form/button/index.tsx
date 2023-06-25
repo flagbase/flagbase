@@ -3,7 +3,7 @@ import React, { createElement, useContext } from 'react';
 import { cva } from 'class-variance-authority';
 import { FormikContext } from 'formik';
 
-import { Loader } from '../loader';
+import { Loader } from '../../../loader';
 
 export type ButtonProps = {
   children: React.ReactChild;
@@ -74,5 +74,3 @@ export function Button({
     </button>
   );
 }
-
-export default Button;
