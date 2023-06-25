@@ -2,7 +2,7 @@ import React from 'react';
 
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import Button from '.';
+import { Button } from '.';
 import { strToImagePath } from '../../helpers';
 
 test.use({ viewport: { width: 500, height: 500 } });

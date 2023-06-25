@@ -15,55 +15,12 @@ export type ButtonProps = {
 } & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 const buttonStyles = cva(
-  [
-    'py-3',
-    'py-3 py-4',
-    'flex',
-    'justify-center',
-    'transition-colors',
-    'duration-200',
-    'ease-in-out',
-    'disabled:bg-gray-200',
-    'disabled:text-gray-500',
-    'disabled:cursor-not-allowed',
-  ],
+  `inline-flex items-center justify-center rounded-md px-4 py-3 text-sm font-medium shadow-sm transition-colors duration-200 ease-in-out disabled:cursor-not-allowed disabled:bg-gray-200 disabled:text-gray-500`,
   {
     variants: {
       intent: {
-        primary: [
-          'inline-flex',
-          'items-center',
-          'rounded-md',
-          'border',
-          'border-transparent',
-          'bg-indigo-600',
-          'px-4',
-          'text-sm',
-          'font-medium',
-          'text-white',
-          'shadow-sm',
-          'hover:bg-indigo-700',
-          'focus:outline-none',
-          'focus:ring-2',
-          'focus:ring-indigo-500',
-          'focus:ring-offset-2',
-        ],
-        secondary: [
-          'inline-flex',
-          'items-center',
-          'rounded-md',
-          'bg-white',
-          'px-3',
-          'py-2',
-          'text-sm',
-          'font-semibold',
-          'text-gray-900',
-          'shadow-sm',
-          'ring-1',
-          'ring-inset',
-          'ring-gray-300',
-          'hover:bg-gray-50',
-        ],
+        primary: `border border-transparent bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2`,
+        secondary: `bg-white py-2 font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50`,
       },
     },
     defaultVariants: {
@@ -96,17 +53,24 @@ export function Button({
   return (
     <button
       type="button"
-      className={buttonStyles({ intent: variant, className })}
+      className={buttonStyles({
+        intent: variant,
+        className,
+      })}
       disabled={!isValid}
       {...props}
     >
       {prefix &&
         !loading &&
-        createElement(prefix, { className: 'mr-3 h-5 w-5' })}
+        createElement(prefix, {
+          className: 'mr-3 h-5 w-5',
+        })}
       {loading ? <Loader size="extraSmall" /> : props.children}
       {suffix &&
         !loading &&
-        createElement(suffix, { className: 'ml-3 -mr-1 h-5 w-5' })}
+        createElement(suffix, {
+          className: 'ml-3 -mr-1 h-5 w-5',
+        })}
     </button>
   );
 }
