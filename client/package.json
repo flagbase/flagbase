@@ -105,7 +105,7 @@
     "@ant-design/icons": "^5.0.1",
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
-    "@flagbase/react-client-sdk": "^0.0.10",
+    "@flagbase/react-client-sdk": "workspace:*",
     "@flagbase/ui": "workspace:*",
     "@headlessui/react": "^1.7.12",
     "@heroicons/react": "^2.0.16",

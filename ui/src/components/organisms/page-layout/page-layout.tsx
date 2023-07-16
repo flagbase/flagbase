@@ -48,7 +48,7 @@ import {
   getWorkspacePath,
   getWorkspacesPath,
 } from '../../app/router/router';
-import flag from '../../assets/flagbaseLogo.svg';
+// import flag from '../../assets/flagbaseLogo.svg';
 import { CopyRow } from '../table';
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`;
@@ -131,7 +131,7 @@ const Breadcrumb = ({
           <div className="flex items-center">
             {chevron && (
               <ChevronRightIcon
-                className="h-5 w-5 flex-shrink-0 text-gray-400"
+                className="h-5 w-5 shrink-0 text-gray-400"
                 aria-hidden="true"
               />
             )}
@@ -158,7 +158,7 @@ const Breadcrumb = ({
       >
         <Popover.Panel className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
           <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
-            <Link to={href} className="flex items-center gap-1 mb-2">
+            <Link to={href} className="mb-2 flex items-center gap-1">
               <ArrowLeftCircleIcon
                 className="h-5 w-5 flex-none text-indigo-600 hover:text-indigo-800"
                 aria-hidden="true"
@@ -295,11 +295,11 @@ const MobileNavigation = ({
       onClose={setMobileMenuOpen}
     >
       <div className="fixed inset-0 z-10" />
-      <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+      <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
         <div className="flex items-center justify-between">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Flagbase</span>
-            <img className="h-8 w-auto" src={flag as string} alt="" />
+            {/* <img className="h-8 w-auto" src={flag as string} alt="" /> */}
           </Link>
           <button
             type="button"
@@ -408,15 +408,15 @@ const Header = () => {
   const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey);
 
   return (
-    <header className="bg-gray-50 border-b border-gray-200">
+    <header className="border-b border-gray-200 bg-gray-50">
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between py-4 px-4 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between p-4 lg:px-8"
         aria-label="Global"
       >
-        <div className="flex items-center gap-x-12 mr-10">
+        <div className="mr-10 flex items-center gap-x-12">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Flagbase</span>
-            <img className="h-5 w-auto" src={flag as string} alt="" />
+            {/* <img className="h-5 w-auto" src={flag as string} alt="" /> */}
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -529,12 +529,12 @@ const PageHeading = ({
 
   return (
     <header
-      className={`bg-gray-50 pt-8 border-b border-gray-200 ${
+      className={`border-b border-gray-200 bg-gray-50 pt-8 ${
         !tabs || tabs.length === 0 ? 'pb-8' : ''
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
-        <div className="flex flex-row min-w-0 items-center gap-5">
+        <div className="flex min-w-0 flex-row items-center gap-5">
           {backHref && (
             <Link to={backHref}>
               <ArrowLeftCircleIcon
@@ -544,7 +544,7 @@ const PageHeading = ({
             </Link>
           )}
           <div className="flex flex-col">
-            <h1 className="text-xl font-bold leading-7 text-gray-900 sm:text-2xl sm:tracking-tight capitalize">
+            <h1 className="text-xl font-bold capitalize leading-7 text-gray-900 sm:text-2xl sm:tracking-tight">
               {title}
             </h1>
             <p className="mt-1 truncate text-sm text-gray-500">{subtitle}</p>
@@ -557,7 +557,7 @@ const PageHeading = ({
       {tabs && tabs.length > 0 && (
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
           {/* Mobile View */}
-          <div className="sm:hidden py-4">
+          <div className="py-4 sm:hidden">
             <label htmlFor="tabs" className="sr-only">
               Select a tab
             </label>
@@ -807,7 +807,7 @@ export const PageHeadings = () => {
         tabs={pageHeading.tabs}
         backHref={pageHeading.backHref}
       />
-      <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 pt-8">
+      <div className="mx-auto max-w-7xl pt-8 sm:px-6 lg:px-8">
         <Outlet />
       </div>
     </>
@@ -816,9 +816,9 @@ export const PageHeadings = () => {
 
 const PageLayout: React.FC = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-grow">
+      <main className="grow">
         <Outlet />
       </main>
       <Footer />

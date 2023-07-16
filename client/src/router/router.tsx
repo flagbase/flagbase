@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import { Button } from "@flagbase/ui";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
-import { QueryCache, QueryClient } from "react-query";
+import { Button } from '@flagbase/ui';
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import { QueryCache, QueryClient } from 'react-query';
 import {
   Route,
   Navigate,
   createBrowserRouter,
   createRoutesFromElements,
-} from "react-router-dom";
+} from 'react-router-dom';
 
 import {
   environmentsLoader,
@@ -19,34 +19,34 @@ import {
   targetingLoader,
   variationsLoader,
   workspacesLoader,
-} from "./loaders";
-import { RouteParams } from "./router.types";
-import PageLayout, { PageHeadings } from "../components/page-layout";
-import { EditEnvironment } from "../pages/environments/edit-environment";
-import Environments from "../pages/environments/environments";
-import { CreateEnvironment } from "../pages/environments/environments.modal";
-import { Error } from "../pages/error";
-import Flags from "../pages/flags";
-import { FlagSettings } from "../pages/flags/flags.edit";
-import { CreateFlag, ModalProps } from "../pages/flags/flags.modal";
-import Instances from "../pages/instances/instances";
-import { AddNewInstanceModal } from "../pages/instances/instances.modal";
-import { EditInstance } from "../pages/instances/instances.settings";
-import Projects from "../pages/projects";
-import "../tailwind/tailwind.css";
-import { Project } from "../pages/projects/project";
-import EditProject from "../pages/projects/projects.edit";
-import { CreateProjectModal } from "../pages/projects/projects.modal";
-import { SdkSettings } from "../pages/sdks/sdk.settings";
-import { Sdks } from "../pages/sdks/sdks";
-import { CreateSDKModal } from "../pages/sdks/sdks.modal";
-import { Targeting } from "../pages/targeting/targeting";
-import VariationSettings from "../pages/variations/variation.settings";
-import Variations from "../pages/variations/variations";
-import { CreateVariation } from "../pages/variations/variations.modal";
-import { CreateWorkspaceModal } from "../pages/workspaces/workspace.modal";
-import { EditWorkspace } from "../pages/workspaces/workspaces.edit";
-import MainWorkspaces from "../pages/workspaces/workspaces.main";
+} from './loaders';
+import { RouteParams } from './router.types';
+import PageLayout, { PageHeadings } from '../components/page-layout';
+import { EditEnvironment } from '../pages/environments/edit-environment';
+import Environments from '../pages/environments/environments';
+import { CreateEnvironment } from '../pages/environments/environments.modal';
+import { Error } from '../pages/error';
+import Flags from '../pages/flags';
+import { FlagSettings } from '../pages/flags/flags.edit';
+import { CreateFlag, ModalProps } from '../pages/flags/flags.modal';
+import Instances from '../pages/instances/instances';
+import { AddNewInstanceModal } from '../pages/instances/instances.modal';
+import { EditInstance } from '../pages/instances/instances.settings';
+import Projects from '../pages/projects';
+import '../tailwind/tailwind.css';
+import { Project } from '../pages/projects/project';
+import EditProject from '../pages/projects/projects.edit';
+import { CreateProjectModal } from '../pages/projects/projects.modal';
+import { SdkSettings } from '../pages/sdks/sdk.settings';
+import { Sdks } from '../pages/sdks/sdks';
+import { CreateSDKModal } from '../pages/sdks/sdks.modal';
+import { Targeting } from '../pages/targeting/targeting';
+import VariationSettings from '../pages/variations/variation.settings';
+import Variations from '../pages/variations/variations';
+import { CreateVariation } from '../pages/variations/variations.modal';
+import { CreateWorkspaceModal } from '../pages/workspaces/workspace.modal';
+import { EditWorkspace } from '../pages/workspaces/workspaces.edit';
+import MainWorkspaces from '../pages/workspaces/workspaces.main';
 
 const {
   InstanceKey,
@@ -69,13 +69,13 @@ export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
 export const getProjectPath = (
   instanceKey: string,
   workspaceKey: string,
-  projectKey: string
+  projectKey: string,
 ) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`;
 
 export const getEnvironmentsPath = (
   instanceKey: string,
   workspaceKey: string,
-  projectKey: string
+  projectKey: string,
 ) =>
   `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`;
 
@@ -83,7 +83,7 @@ export const getEnvironmentPath = (
   instanceKey: string,
   workspaceKey: string,
   projectKey: string,
-  environmentKey: string
+  environmentKey: string,
 ) =>
   `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`;
 
@@ -92,14 +92,14 @@ export const getFlagPath = (
   workspaceKey: string,
   projectKey: string,
   environmentKey: string,
-  flagKey: string
+  flagKey: string,
 ) =>
   `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/environments/${environmentKey}`;
 
 export const getFlagsPath = (
   instanceKey: string,
   workspaceKey: string,
-  projectKey: string
+  projectKey: string,
 ) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`;
 
 export const getVariationPath = ({
@@ -170,7 +170,7 @@ export const newRouter = createBrowserRouter(
           handle={{
             rightContainer: () => (
               <ModalWithButton
-                buttonText={"Join Instance"}
+                buttonText={'Join Instance'}
                 modal={AddNewInstanceModal}
               />
             ),
@@ -186,7 +186,7 @@ export const newRouter = createBrowserRouter(
           handle={{
             rightContainer: () => (
               <ModalWithButton
-                buttonText={"Create Workspace"}
+                buttonText={'Create Workspace'}
                 modal={CreateWorkspaceModal}
               />
             ),
@@ -204,7 +204,7 @@ export const newRouter = createBrowserRouter(
               handle={{
                 rightContainer: () => (
                   <ModalWithButton
-                    buttonText={"Create Project"}
+                    buttonText={'Create Project'}
                     modal={CreateProjectModal}
                   />
                 ),
@@ -222,7 +222,7 @@ export const newRouter = createBrowserRouter(
                   handle={{
                     rightContainer: () => (
                       <ModalWithButton
-                        buttonText={"Create Flag"}
+                        buttonText={'Create Flag'}
                         modal={CreateFlag}
                       />
                     ),
@@ -281,7 +281,7 @@ export const newRouter = createBrowserRouter(
                       handle={{
                         rightContainer: () => (
                           <ModalWithButton
-                            buttonText={"Create SDK"}
+                            buttonText={'Create SDK'}
                             modal={CreateSDKModal}
                           />
                         ),
@@ -305,6 +305,6 @@ export const newRouter = createBrowserRouter(
           </Route>
         </Route>
       </Route>
-    </Route>
-  )
+    </Route>,
+  ),
 );

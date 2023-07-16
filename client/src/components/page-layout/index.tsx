@@ -4,41 +4,41 @@ import React, {
   ReactNode,
   useEffect,
   useState,
-} from "react";
+} from 'react';
 
-import { Logo, CopyRow } from "@flagbase/ui";
-import { Disclosure, Transition, Popover, Dialog } from "@headlessui/react";
+import { Logo, CopyRow } from '@flagbase/ui';
+import { Disclosure, Transition, Popover, Dialog } from '@headlessui/react';
 import {
   ArrowLeftCircleIcon,
   Bars3Icon,
   ChevronDownIcon,
   ChevronRightIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline";
+} from '@heroicons/react/24/outline';
 import {
   Link,
   Outlet,
   useLocation,
   useMatches,
   useParams,
-} from "react-router-dom";
+} from 'react-router-dom';
 
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
-import { useActiveEnvironment } from "../../pages/environments/environment-dropdown";
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { useActiveEnvironment } from '../../pages/environments/environment-dropdown';
 import {
   Environment,
   useEnvironments,
-} from "../../pages/environments/environments";
-import { Flag } from "../../pages/flags/api";
-import { useFlags } from "../../pages/flags/flags";
-import { useInstances } from "../../pages/instances/instances";
-import { Instance } from "../../pages/instances/instances.functions";
-import { Project } from "../../pages/projects/api";
-import { useProjects } from "../../pages/projects/projects";
-import { useSDKs } from "../../pages/sdks/sdks";
-import { useVariations } from "../../pages/variations/variations";
-import { Workspace } from "../../pages/workspaces/api";
-import { useWorkspaces } from "../../pages/workspaces/workspaces.main";
+} from '../../pages/environments/environments';
+import { Flag } from '../../pages/flags/api';
+import { useFlags } from '../../pages/flags/flags';
+import { useInstances } from '../../pages/instances/instances';
+import { Instance } from '../../pages/instances/instances.functions';
+import { Project } from '../../pages/projects/api';
+import { useProjects } from '../../pages/projects/projects';
+import { useSDKs } from '../../pages/sdks/sdks';
+import { useVariations } from '../../pages/variations/variations';
+import { Workspace } from '../../pages/workspaces/api';
+import { useWorkspaces } from '../../pages/workspaces/workspaces.main';
 import {
   getEnvironmentPath,
   getFlagPath,
@@ -47,8 +47,8 @@ import {
   getProjectsPath,
   getWorkspacePath,
   getWorkspacesPath,
-} from "../../router/router";
-import { Footer } from "../footer";
+} from '../../router/router';
+import { Footer } from '../footer';
 
 const instancesDescription = `An "instance" refers to a Flagbase core installation, running on a single VPS or clustered in a datacenter.`;
 const workspaceDescription = `A workspace is the top-level resource which is used to group projects.`;
@@ -56,7 +56,7 @@ const projectsDescription = `A project is a collection of feature flags and sett
 const environmentsDescription = `An environment is a set of feature flags and settings that can be applied to a specific set of users.`;
 const flagsDescription = `A feature flag is a boolean value that determines whether a feature is enabled or disabled.`;
 function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
+  return classes.filter(Boolean).join(' ');
 }
 
 const MobileDropdown = ({
@@ -80,8 +80,8 @@ const MobileDropdown = ({
             {name}
             <ChevronDownIcon
               className={classNames(
-                open ? "rotate-180" : "",
-                "h-5 w-5 flex-none"
+                open ? 'rotate-180' : '',
+                'h-5 w-5 flex-none',
               )}
               aria-hidden="true"
             />
@@ -137,13 +137,13 @@ const Breadcrumb = ({
             <a
               href="#"
               className={`${
-                chevron ? "ml-4" : ""
+                chevron ? 'ml-4' : ''
               } text-sm font-medium text-gray-500 hover:text-gray-700`}
             >
               {name}
             </a>
           </div>
-        </li>{" "}
+        </li>{' '}
       </Popover.Button>
 
       <Transition
@@ -197,7 +197,7 @@ const getEnvironmentDropdown = (
   data: Environment[],
   instanceKey: string,
   workspaceKey: string,
-  projectKey: string
+  projectKey: string,
 ) => {
   return data.map((object) => {
     return {
@@ -207,7 +207,7 @@ const getEnvironmentDropdown = (
         instanceKey,
         workspaceKey,
         projectKey,
-        object.attributes.key
+        object.attributes.key,
       ),
     };
   });
@@ -216,7 +216,7 @@ const getEnvironmentDropdown = (
 const getProjectDropdown = (
   data: Project[],
   workspaceKey: string,
-  instanceKey: string
+  instanceKey: string,
 ) => {
   return data.map((object) => {
     return {
@@ -253,7 +253,7 @@ const getFlagDropdown = (
   instanceKey: string,
   workspaceKey: string,
   environmentKey: string,
-  projectKey: string
+  projectKey: string,
 ) => {
   return flags.map((flag) => {
     return {
@@ -264,7 +264,7 @@ const getFlagDropdown = (
         workspaceKey,
         projectKey,
         environmentKey,
-        flag.attributes.key
+        flag.attributes.key,
       ),
     };
   });
@@ -349,7 +349,7 @@ const MobileNavigation = ({
                     environments,
                     instanceKey,
                     workspaceKey,
-                    projectKey
+                    projectKey,
                   )}
                 </MobileDropdown>
               )}
@@ -368,7 +368,7 @@ const MobileNavigation = ({
                       instanceKey,
                       workspaceKey,
                       activeEnvironmentKey,
-                      projectKey
+                      projectKey,
                     )}
                   </MobileDropdown>
                 )}
@@ -393,16 +393,16 @@ const Header = () => {
   const { data: activeEnvironmentKey } = useActiveEnvironment();
 
   const activeInstance = instances?.find(
-    (instance) => instance.key === instanceKey
+    (instance) => instance.key === instanceKey,
   );
   const activeWorkspace = workspaces?.find(
-    (workspace) => workspace.attributes.key === workspaceKey
+    (workspace) => workspace.attributes.key === workspaceKey,
   );
   const activeProject = projects?.find(
-    (project) => project.attributes.key === projectKey
+    (project) => project.attributes.key === projectKey,
   );
   const activeEnvironment = environments?.find(
-    (environment) => environment.attributes.key === activeEnvironmentKey
+    (environment) => environment.attributes.key === activeEnvironmentKey,
   );
   const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey);
 
@@ -415,7 +415,7 @@ const Header = () => {
         <div className="mr-10 flex items-center gap-x-12">
           <Link to="/" className="-m-1.5 p-1.5">
             <span className="sr-only">Flagbase</span>
-            <img className="h-5 w-auto" src={flag as string} alt="" />
+            {/* <img className="h-5 w-auto" src={flag as string} alt="" /> */}
           </Link>
         </div>
         <div className="flex lg:hidden">
@@ -433,7 +433,7 @@ const Header = () => {
             {instances && (
               <Breadcrumb
                 chevron={false}
-                name={activeInstance?.name || "Instances"}
+                name={activeInstance?.name || 'Instances'}
                 type="Instance"
                 description={instancesDescription}
                 href="/instances"
@@ -444,9 +444,9 @@ const Header = () => {
             {workspaces && instanceKey && (
               <Breadcrumb
                 type="Workspace"
-                name={activeWorkspace?.attributes.name || "Workspaces"}
+                name={activeWorkspace?.attributes.name || 'Workspaces'}
                 description={workspaceDescription}
-                href={getWorkspacesPath(instanceKey || "")}
+                href={getWorkspacesPath(instanceKey || '')}
               >
                 {getWorkspaceDropdown(workspaces, instanceKey)}
               </Breadcrumb>
@@ -454,7 +454,7 @@ const Header = () => {
             {projects && instanceKey && workspaceKey && (
               <Breadcrumb
                 type="Project"
-                name={activeProject?.attributes.name || "Projects"}
+                name={activeProject?.attributes.name || 'Projects'}
                 description={projectsDescription}
                 href={getProjectsPath(instanceKey, workspaceKey)}
               >
@@ -464,7 +464,7 @@ const Header = () => {
             {environments && instanceKey && workspaceKey && projectKey && (
               <Breadcrumb
                 type="Environment"
-                name={activeEnvironment?.attributes.name || "Environments"}
+                name={activeEnvironment?.attributes.name || 'Environments'}
                 description={environmentsDescription}
                 href={getWorkspacesPath(instanceKey)}
               >
@@ -472,7 +472,7 @@ const Header = () => {
                   environments,
                   instanceKey,
                   workspaceKey,
-                  projectKey
+                  projectKey,
                 )}
               </Breadcrumb>
             )}
@@ -480,7 +480,7 @@ const Header = () => {
             {flags && instanceKey && workspaceKey && projectKey && (
               <Breadcrumb
                 type="Flag"
-                name={activeFlag?.attributes.name || "Flags"}
+                name={activeFlag?.attributes.name || 'Flags'}
                 description={flagsDescription}
                 href={getFlagsPath(instanceKey, workspaceKey, projectKey)}
               >
@@ -489,7 +489,7 @@ const Header = () => {
                   instanceKey,
                   workspaceKey,
                   activeEnvironmentKey,
-                  projectKey
+                  projectKey,
                 )}
               </Breadcrumb>
             )}
@@ -529,7 +529,7 @@ const PageHeading = ({
   return (
     <header
       className={`border-b border-gray-200 bg-gray-50 pt-8 ${
-        !tabs || tabs.length === 0 ? "pb-8" : ""
+        !tabs || tabs.length === 0 ? 'pb-8' : ''
       }`}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 xl:flex xl:items-center xl:justify-between">
@@ -581,11 +581,11 @@ const PageHeading = ({
                     to={tab.href}
                     className={classNames(
                       tab.href === pathname
-                        ? "border-indigo-500 text-indigo-600"
-                        : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                      "whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
+                        ? 'border-indigo-500 text-indigo-600'
+                        : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
+                      'whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium',
                     )}
-                    aria-current={tab.href === pathname ? "page" : undefined}
+                    aria-current={tab.href === pathname ? 'page' : undefined}
                   >
                     {tab.name}
                   </Link>
@@ -611,7 +611,7 @@ export const PageHeadings = () => {
   const location = useLocation();
 
   const [pageHeading, setPageHeading] = useState<PageHeadingType>({
-    title: "",
+    title: '',
     tabs: [],
   });
 
@@ -638,28 +638,28 @@ export const PageHeadings = () => {
   const { data: sdks } = useSDKs();
 
   const activeInstance = instances?.find(
-    (instance) => instance.key === instanceKey
+    (instance) => instance.key === instanceKey,
   );
   const activeWorkspace = workspaces?.find(
-    (workspace) => workspace.attributes.key === workspaceKey
+    (workspace) => workspace.attributes.key === workspaceKey,
   );
   const activeProject = projects?.find(
-    (project) => project.attributes.key === projectKey
+    (project) => project.attributes.key === projectKey,
   );
   const activeEnvironment = environments?.find(
-    (environment) => environment.attributes.key === activeEnvironmentKey
+    (environment) => environment.attributes.key === activeEnvironmentKey,
   );
   const activeFlag = flags?.find((flag) => flag.attributes.key === flagKey);
   const activeVariation = variations?.find(
-    (variation) => variation.attributes.key === variationKey
+    (variation) => variation.attributes.key === variationKey,
   );
   const activeSDK = sdks?.find((sdk) => sdk.id === sdkKey);
 
   useEffect(() => {
-    if (location.pathname.includes("instances")) {
+    if (location.pathname.includes('instances')) {
       setPageHeading({
-        title: "Instances",
-        subtitle: "Manage your instances",
+        title: 'Instances',
+        subtitle: 'Manage your instances',
         tabs: [],
         backHref: null,
       });
@@ -672,11 +672,11 @@ export const PageHeadings = () => {
     ) {
       setPageHeading({
         title: activeVariation?.attributes.name || variationKey,
-        subtitle: "Variations",
+        subtitle: 'Variations',
         backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations`,
         tabs: [
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`,
           },
         ],
@@ -688,17 +688,17 @@ export const PageHeadings = () => {
         backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
         tabs: [
           {
-            name: "Targeting",
+            name: 'Targeting',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/environments/${
               activeEnvironment?.attributes.key || environmentKey
             }`,
           },
           {
-            name: "Variations",
+            name: 'Variations',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations`,
           },
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/settings`,
           },
         ],
@@ -711,12 +711,12 @@ export const PageHeadings = () => {
       sdkKey
     ) {
       setPageHeading({
-        title: activeSDK?.attributes.name || "SDK Settings",
-        subtitle: "SDK",
+        title: activeSDK?.attributes.name || 'SDK Settings',
+        subtitle: 'SDK',
         backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
         tabs: [
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys/${sdkKey}`,
           },
         ],
@@ -724,15 +724,15 @@ export const PageHeadings = () => {
     } else if (instanceKey && workspaceKey && projectKey && environmentKey) {
       setPageHeading({
         title: environmentKey,
-        subtitle: "Environment",
+        subtitle: 'Environment',
         backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
         tabs: [
           {
-            name: "SDKs",
+            name: 'SDKs',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
           },
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/settings`,
           },
         ],
@@ -740,19 +740,19 @@ export const PageHeadings = () => {
     } else if (instanceKey && workspaceKey && projectKey) {
       setPageHeading({
         title: activeProject?.attributes.name || projectKey,
-        subtitle: "Project",
+        subtitle: 'Project',
         backHref: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
         tabs: [
           {
-            name: "Flags",
+            name: 'Flags',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
           },
           {
-            name: "Environments",
+            name: 'Environments',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`,
           },
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/settings`,
           },
         ],
@@ -760,15 +760,15 @@ export const PageHeadings = () => {
     } else if (instanceKey && workspaceKey) {
       setPageHeading({
         title: activeWorkspace?.attributes.name || workspaceKey,
-        subtitle: "Workspace",
+        subtitle: 'Workspace',
         backHref: `/${instanceKey}/workspaces`,
         tabs: [
           {
-            name: "Projects",
+            name: 'Projects',
             href: `/${instanceKey}/workspaces/${workspaceKey}/projects`,
           },
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/${workspaceKey}/settings`,
           },
         ],
@@ -776,15 +776,15 @@ export const PageHeadings = () => {
     } else if (instanceKey) {
       setPageHeading({
         title: activeInstance?.name || instanceKey,
-        subtitle: "Instance",
-        backHref: "/",
+        subtitle: 'Instance',
+        backHref: '/',
         tabs: [
           {
-            name: "Workspaces",
+            name: 'Workspaces',
             href: `/${instanceKey}/workspaces`,
           },
           {
-            name: "Settings",
+            name: 'Settings',
             href: `/${instanceKey}/workspaces/settings`,
           },
         ],

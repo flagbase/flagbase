@@ -1,9 +1,9 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader, Table, Tag, Text } from "@flagbase/ui";
-import { PlusCircleIcon } from "@heroicons/react/20/solid";
-import { useQueryClient, useMutation, useQuery } from "react-query";
-import { Await, Link, useLoaderData } from "react-router-dom";
+import { Button, EmptyState, Loader, Table, Tag, Text } from '@flagbase/ui';
+import { PlusCircleIcon } from '@heroicons/react/20/solid';
+import { useQueryClient, useMutation, useQuery } from 'react-query';
+import { Await, Link, useLoaderData } from 'react-router-dom';
 
 import {
   createFlag,
@@ -12,18 +12,18 @@ import {
   Flag,
   FlagCreateBody,
   updateFlag,
-} from "./api";
-import { flagConstants, flagsColumn } from "./constants";
-import { CreateFlag } from "./flags.modal";
-import { configureAxios } from "../../lib/axios";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
-import { getFlagsKey } from "../../router/loaders";
+} from './api';
+import { flagConstants, flagsColumn } from './constants';
+import { CreateFlag } from './flags.modal';
+import { configureAxios } from '../../lib/axios';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { getFlagsKey } from '../../router/loaders';
 import {
   useActiveEnvironment,
   useUpdateActiveEnvironment,
-} from "../environments/environment-dropdown";
-import { Environment, useEnvironments } from "../environments/environments";
-import { useInstances } from "../instances/instances";
+} from '../environments/environment-dropdown';
+import { Environment, useEnvironments } from '../environments/environments';
+import { useInstances } from '../instances/instances';
 
 export const useChangeDefaultEnvironment = () => {
   const queryClient = useQueryClient();
@@ -32,7 +32,7 @@ export const useChangeDefaultEnvironment = () => {
       return newEnvironment;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries(["defaultEnvironment"]);
+      queryClient.invalidateQueries(['defaultEnvironment']);
     },
   });
 
@@ -43,7 +43,7 @@ const FlagLink = ({ flag }: { flag: Flag }) => {
   const { data: environmentKey, isLoading } = useActiveEnvironment();
   const { data: environments } = useEnvironments();
   const environment = environments?.find(
-    (env) => env.attributes.key === environmentKey
+    (env) => env.attributes.key === environmentKey,
   );
 
   if (isLoading) {
@@ -116,23 +116,23 @@ export const useUpdateFlag = () => {
         flagKey: flagKey,
         body: [
           {
-            op: "replace",
-            path: "/name",
+            op: 'replace',
+            path: '/name',
             value: values.name,
           },
           {
-            op: "replace",
-            path: "/key",
+            op: 'replace',
+            path: '/key',
             value: values.key,
           },
           {
-            op: "replace",
-            path: "/description",
+            op: 'replace',
+            path: '/description',
             value: values.description,
           },
           {
-            op: "replace",
-            path: "/tags",
+            op: 'replace',
+            path: '/tags',
             value: values.tags,
           },
         ],
@@ -198,10 +198,10 @@ export const useAddFlag = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(
-          getFlagsKey({ instanceKey, workspaceKey, projectKey })
+          getFlagsKey({ instanceKey, workspaceKey, projectKey }),
         );
       },
-    }
+    },
   );
 };
 
@@ -231,7 +231,7 @@ export const useFlags = () => {
       },
       enabled:
         !!workspaceKey && !!projectKey && instances && instances.length > 0,
-    }
+    },
   );
 
   return query;
@@ -249,7 +249,7 @@ const Flags: React.FC = () => {
   }
 
   const activeEnvironment = environments?.find(
-    (env) => env.attributes.key === environmentKey
+    (env) => env.attributes.key === environmentKey,
   );
 
   const { data: flags } = useFlags();
@@ -271,7 +271,7 @@ const Flags: React.FC = () => {
                 emptyState={
                   <EmptyState
                     title="No Flags"
-                    description={"Get started by creating a new flag."}
+                    description={'Get started by creating a new flag.'}
                     cta={
                       <Button
                         className="py-2"
