@@ -12,11 +12,11 @@
     "directory": "ui"
   },
   "scripts": {
-    "start": "npm run dev",
-    "dev:electron": "cross-env NODE_ENV=development webpack --config webpack/electron.webpack.js --mode development && npm run start:electron",
+    "start": "pnpm run dev",
+    "dev:electron": "cross-env NODE_ENV=development webpack --config webpack/electron.webpack.js --mode development && pnpm run start:electron",
     "dev:react": "cross-env NODE_ENV=development webpack-dev-server --config webpack/react.webpack.js --mode development",
     "dev": "cross-env NODE_ENV=development webpack-dev-server --config webpack/web.webpack.js --mode development",
-    "electron:serve": "wait-on http-get://localhost:4000/ && npm run dev:electron",
+    "electron:serve": "wait-on http-get://localhost:4000/ && pnpm run dev:electron",
     "start:electron": "electron .",
     "build": "npm-run-all build:electron build:react build:web",
     "build:run": "npm-run-all build start:electron",
