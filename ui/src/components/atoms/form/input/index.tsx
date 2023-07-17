@@ -22,46 +22,40 @@ const InputIcon = ({ icon }: { icon: React.ElementType }) => {
   );
 };
 
-export const Input: React.FC<InputProps> = ({
-  icon,
+export const Input = ({
   className = '',
+  icon,
   label,
   autoComplete = 'off',
   ...props
-}) => {
+}: InputProps) => {
+  const inputClasses = classNames(
+    'block w-full rounded-md border-gray-300 h-14 pb-0 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 peer text-xl',
+    className,
+  );
+
+  const labelClasses = classNames(
+    'absolute peer-focus:top-1 peer-focus:text-xs  pointer-events-none text-gray-700 transition-all left-3 top-1 peer-disabled:top-1 peer-disabled:text-xs',
+  );
+
   return (
-    <div>
-      <div className="relative rounded-md shadow-sm">
-        {icon && <InputIcon icon={icon} />}
-        <input
-          type="text"
-          className={classNames(
-            `block w-full rounded-md border-gray-300 h-14 pb-0`,
-            `focus:border-indigo-500 focus:ring-indigo-500`,
-            'disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200',
-            'peer text-xl',
-            className,
-          )}
-          {...props}
-          placeholder={undefined}
-          autoComplete={autoComplete}
-        />
-        <label
-          htmlFor={props.id || props.name}
-          className={classNames(
-            `absolute peer-focus:top-1 peer-focus:text-xs  pointer-events-none text-gray-700 transition-all`,
-            'left-3',
-            'peer-disabled:top-1 peer-disabled:text-xs',
-          )}
-        >
-          {label}
-        </label>
-      </div>
+    <div className="relative rounded-md shadow-sm">
+      {icon && <InputIcon icon={icon} />}
+      <input
+        type="text"
+        className={inputClasses}
+        {...props}
+        placeholder={undefined}
+        autoComplete={autoComplete}
+      />
+      <label htmlFor={props.id || props.name} className={labelClasses}>
+        {label}
+      </label>
     </div>
   );
 };
 
-export const KeyInput: React.FC<InputProps> = ({ ...props }) => {
+export const KeyInput = (props: InputProps) => {
   const {
     setFieldValue,
     values: { name },

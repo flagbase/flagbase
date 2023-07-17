@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { Button, Input, KeyInput, Modal, Notification } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik, FormikHelpers } from 'formik';
+import { Field, Form, Formik, FormikHelpers } from 'formik';
 
 import { useAddInstance } from './instances';
 import { InstanceSchema } from './instances.constants';
@@ -76,6 +76,7 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
           >
             {({ isValid }) => (
               <Form className="flex flex-col gap-3">
+                <Field 
                 <Input
                   id="name"
                   name="name"

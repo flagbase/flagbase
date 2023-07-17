@@ -1,7 +1,8 @@
-const path = require('path')
+const path = require('path');
+
 const reactWebpack = require('./react.webpack.js');
 
-const rootPath = path.resolve(__dirname, '..')
+const rootPath = path.resolve(__dirname, '..');
 
 module.exports = {
   ...reactWebpack,
@@ -10,5 +11,5 @@ module.exports = {
     filename: 'js/[name].js',
     publicPath: '/',
   },
-  target: 'web'
+  target: 'web',
 };

@@ -4,7 +4,7 @@ import { Transition } from '@headlessui/react';
 import { PlusIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import { ErrorMessage, FieldArray, FieldConfig, useField } from 'formik';
 
-import Input from '../input/input';
+import { Input } from '../input';
 
 export type MultiInputProps = {
   icon?: React.ElementType;
@@ -50,11 +50,11 @@ const MultiInput: React.FC<MultiInputProps> = ({
       <FieldArray name={name}>
         {({ remove, push }) => (
           <div>
-            <div className="flex flex-col gap-5 items-center">
+            <div className="flex flex-col items-center gap-5">
               {inputs.map((input, index: number) => (
                 <div
                   key={index}
-                  className="flex flex-col md:flex-row gap-5 items-center"
+                  className="flex flex-col items-center gap-5 md:flex-row"
                 >
                   {Object.keys(input).map((key) => (
                     <Transition
@@ -96,7 +96,7 @@ const MultiInput: React.FC<MultiInputProps> = ({
               >
                 <div className="w-full border-t border-gray-300" />
               </div>
-              <div className="relative flex justify-center mt-3">
+              <div className="relative mt-3 flex justify-center">
                 <button
                   onClick={() => push(shape)}
                   type="button"
