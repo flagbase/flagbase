@@ -76,9 +76,14 @@ Join us on [Github Discussions](https://github.com/flagbase/flagbase/discussions
 * [Development](https://github.com/flagbase/flagbase/discussions/categories/dev): Where contributors discuss ideas
 * [Help](https://github.com/flagbase/flagbase/discussions/categories/help): Stuck on something? Ask for help here 😄
 
+## Roadmap
+Flagbase's roadmap consists of our step-by-step plan made up of different parts:
+* [Roadmap](https://roadmap.flagbase.com/)
+    * [Goals](https://roadmap.flagbase.com/goals): big things we want to achieve
+    * [Objectives](https://roadmap.flagbase.com/objectives): smaller goals that help reach the big ones
+    * [Tasks](https://roadmap.flagbase.com/tasks): to-do items that explain what needs to be done to meet each objective
+
 ## Other Resources
-* [Roadmap](https://github.com/orgs/flagbase/projects/3/views/1)
-* [Tasks Board](https://github.com/orgs/flagbase/projects/3/views/1)
 * [Architecture](https://flagbase.com/dev/core/architecture)
 * [Data models](https://flagbase.com/dev/core/data-models)
 
