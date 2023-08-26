@@ -4,8 +4,8 @@ import {
   Button,
   Loader,
   EmptyState,
-  StackedEntityList,
   StackedEntityListProps,
+  ListItem,
 } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import {
@@ -14,7 +14,7 @@ import {
   useQuery,
   useQueryClient,
 } from 'react-query';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await, Link, useLoaderData } from 'react-router-dom';
 
 import { Instance } from './instances.functions';
 import { AddNewInstanceModal } from './instances.modal';
@@ -56,7 +56,7 @@ export const useUpdateInstance = () => {
   return mutation;
 };
 
-export const useAddInstance = () => {
+export function useAddInstance() {
   const queryClient = useQueryClient();
   const mutation = useMutation({
     mutationFn: async (instance: Omit<Instance, 'expiresAt'>) => {
@@ -89,7 +89,7 @@ export const useAddInstance = () => {
   });
 
   return mutation;
-};
+}
 
 export const useRemoveInstance = () => {
   const queryClient = useQueryClient();
@@ -187,11 +187,16 @@ const Instances: React.FC = () => {
               />
             )}
             {initialInstances && (
-              <StackedEntityList
-                entities={transformInstancesToList(
-                  instances || initialInstances,
-                )}
-              />
+              <ul role="list" className="divide-y divide-gray-200">
+                {instances?.map((instance) => (
+                  <Link key={instance.key} to={`/${instance.key}/workspaces`}>
+                    <ListItem
+                      title={instance.name}
+                      description={instance.connectionString}
+                    />
+                  </Link>
+                ))}
+              </ul>
             )}
             {instances && instances.length === 0 && (
               <EmptyState

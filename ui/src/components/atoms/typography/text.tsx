@@ -5,6 +5,6 @@ export type TextProps = {
   className?: string;
 };
 
-export const Text: React.FC<TextProps> = (props) => {
+export const Text = (props: TextProps) => {
   return <span {...props} />;
 };

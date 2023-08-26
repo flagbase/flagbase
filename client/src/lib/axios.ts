@@ -1,9 +1,9 @@
-import Axios, { AxiosError, AxiosResponse } from "axios";
+import Axios, { AxiosError, AxiosResponse } from 'axios';
 
-import { Instance } from "../pages/instances/instances.functions";
-import { fetchAccessToken } from "../pages/workspaces/api";
-import { getInstances } from "../router/loaders";
-import { queryClient } from "../router/router";
+import { Instance } from '../pages/instances/instances.functions';
+import { fetchAccessToken } from '../pages/workspaces/api';
+import { getInstances } from '../router/loaders';
+import queryClient from '../router/query-client';
 
 export const axios = Axios.create();
 
@@ -18,14 +18,14 @@ axios.interceptors.response.use(
       message,
       status: error.response?.status || 404,
     });
-  }
+  },
 );
-axios.defaults.baseURL = "http://localhost:3000/";
+axios.defaults.baseURL = 'http://localhost:3000/';
 
 const getCachedAccessToken = async (
   connectionString: string,
   accessKey: string,
-  accessSecret: string
+  accessSecret: string,
 ) => {
   const hashKey = `${connectionString}-${accessKey}-${accessSecret}`;
   const cachedAccessToken = sessionStorage.getItem(hashKey);
@@ -43,12 +43,12 @@ const getCachedAccessToken = async (
 
 export const configureAxios = async (instanceKey: string) => {
   const instances = await queryClient.fetchQuery<Instance[]>({
-    queryKey: ["instances"],
+    queryKey: ['instances'],
     queryFn: () => getInstances(),
   });
   const instance = instances?.find(
     (instance: Instance) =>
-      instance.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase()
+      instance.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase(),
   );
   if (!instance) {
     return Promise.reject({
@@ -61,7 +61,7 @@ export const configureAxios = async (instanceKey: string) => {
   const { accessToken } = await getCachedAccessToken(
     instance.connectionString,
     instance.accessKey,
-    instance.accessSecret
+    instance.accessSecret,
   );
-  axios.defaults.headers.common["Authorization"] = `Bearer ${accessToken}`;
+  axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 };

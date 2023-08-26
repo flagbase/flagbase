@@ -56,13 +56,13 @@ const navigation = {
     },
   ],
 };
-export const Footer = () => {
+export function Footer() {
   return (
-    <footer className="bg-gray-50 mt-20" aria-labelledby="footer-heading">
+    <footer className="mt-20 bg-gray-50" aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="mx-auto max-w-7xl px-6 pb-8 pt-8 sm:pt-8 lg:px-8 lg:pt-32">
+      <div className="mx-auto max-w-7xl px-6 py-8 sm:pt-8 lg:px-8 lg:pt-32">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8">
             <div>
@@ -92,7 +92,7 @@ export const Footer = () => {
               ))}
               <a
                 href="https://github.com/flagbase/flagbase/issues/new"
-                className="text-gray-400 hover:text-gray-500 flex gap-2"
+                className="flex gap-2 text-gray-400 hover:text-gray-500"
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -191,4 +191,4 @@ export const Footer = () => {
       </div>
     </footer>
   );
-};
+}

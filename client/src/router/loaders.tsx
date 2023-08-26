@@ -1,38 +1,38 @@
-import { defer, Params } from "react-router-dom";
+import { defer, Params } from 'react-router-dom';
 
-import { queryClient } from "./router";
-import { configureAxios } from "../lib/axios";
-import { FlagbaseParams } from "../lib/use-flagbase-params";
-import { fetchEnvironments } from "../pages/environments/api";
+import queryClient from './query-client';
+import { configureAxios } from '../lib/axios';
+import { FlagbaseParams } from '../lib/use-flagbase-params';
+import { fetchEnvironments } from '../pages/environments/api';
 import {
   fetchFlags,
   fetchTargeting,
   fetchTargetingRules,
-} from "../pages/flags/api";
-import { Instance } from "../pages/instances/instances.functions";
-import { fetchProjects } from "../pages/projects/api";
-import { fetchSdkList } from "../pages/sdks/api";
-import { fetchVariations } from "../pages/variations/api";
-import { fetchWorkspaces } from "../pages/workspaces/api";
+} from '../pages/flags/api';
+import { Instance } from '../pages/instances/instances.functions';
+import { fetchProjects } from '../pages/projects/api';
+import { fetchSdkList } from '../pages/sdks/api';
+import { fetchVariations } from '../pages/variations/api';
+import { fetchWorkspaces } from '../pages/workspaces/api';
 
 export const getInstances = (): Instance[] =>
-  JSON.parse(localStorage.getItem("instances") || "[]") as Instance[];
+  JSON.parse(localStorage.getItem('instances') || '[]') as Instance[];
 
 export const instancesQuery = async (
-  instanceKey?: string
+  instanceKey?: string,
 ): Promise<Instance[]> => {
   const instances = await queryClient.fetchQuery({
-    queryKey: ["instances"],
+    queryKey: ['instances'],
     queryFn: () => getInstances(),
   });
   if (instanceKey) {
     return instances.filter(
       (instance: Instance) =>
-        instance.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase()
+        instance.key.toLocaleLowerCase() === instanceKey.toLocaleLowerCase(),
     );
   }
   if (!instances.length) {
-    throw new Error("No instances found");
+    throw new Error('No instances found');
   }
 
   return instances;
@@ -41,15 +41,16 @@ export const instancesQuery = async (
 export const instancesLoader = () => {
   // ⬇️ return data or fetch it
   const instances = queryClient.fetchQuery({
-    queryKey: ["instances"],
+    queryKey: ['instances'],
     queryFn: () => getInstances(),
   });
+  console.log('insatances', instances);
 
   return defer({ instances });
 };
 
 export const workspaceQuery = ({ instanceKey }: { instanceKey: string }) => ({
-  queryKey: ["workspaces", instanceKey.toLocaleLowerCase()],
+  queryKey: ['workspaces', instanceKey.toLocaleLowerCase()],
   queryFn: async () => {
     await configureAxios(instanceKey);
 
@@ -60,7 +61,7 @@ export const workspaceQuery = ({ instanceKey }: { instanceKey: string }) => ({
 export const workspacesLoader = async ({
   params,
 }: {
-  params: Params<"instanceKey">;
+  params: Params<'instanceKey'>;
 }) => {
   const { instanceKey } = params;
   if (!instanceKey) {
@@ -76,21 +77,21 @@ export const workspacesLoader = async ({
 export const projectsLoader = ({
   params,
 }: {
-  params: Params<"instanceKey" | "workspaceKey">;
+  params: Params<'instanceKey' | 'workspaceKey'>;
 }) => {
   const { instanceKey, workspaceKey } = params;
   if (!instanceKey || !workspaceKey) {
     return defer({ projects: [] });
   }
   const projects = queryClient.fetchQuery(
-    ["projects", instanceKey, workspaceKey],
+    ['projects', instanceKey, workspaceKey],
     {
       queryFn: async () => {
         await configureAxios(instanceKey);
 
         return fetchProjects(workspaceKey);
       },
-    }
+    },
   );
 
   return defer({ projects });
@@ -99,7 +100,7 @@ export const projectsLoader = ({
 export const environmentsLoader = ({
   params,
 }: {
-  params: Params<"instanceKey" | "workspaceKey" | "projectKey">;
+  params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'>;
 }) => {
   const { instanceKey, workspaceKey, projectKey } = params;
   if (!instanceKey || !workspaceKey || !projectKey) {
@@ -117,7 +118,7 @@ export const environmentsLoader = ({
 
         return fetchEnvironments(workspaceKey, projectKey);
       },
-    }
+    },
   );
 
   return defer({ environments });
@@ -134,19 +135,19 @@ export const getSdkKey = ({
   projectKey: string;
   environmentKey: string;
 }) => {
-  return ["sdks", instanceKey, workspaceKey, projectKey, environmentKey];
+  return ['sdks', instanceKey, workspaceKey, projectKey, environmentKey];
 };
 
 export const sdkLoader = ({
   params,
 }: {
   params: Params<
-    "instanceKey" | "workspaceKey" | "projectKey" | "environmentKey"
+    'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey'
   >;
 }) => {
   const { instanceKey, workspaceKey, projectKey, environmentKey } = params;
   if (!instanceKey || !workspaceKey || !projectKey || !environmentKey) {
-    throw new Error("Missing params");
+    throw new Error('Missing params');
   }
   const queryKey = getSdkKey(params);
   const sdks = queryClient.fetchQuery(queryKey, {
@@ -174,8 +175,8 @@ export const getFlagsKey = ({
       workspaceKey: string;
       projectKey: string;
     }
-  | Params<"instanceKey" | "workspaceKey" | "projectKey">) => {
-  return ["flags", instanceKey, workspaceKey, projectKey];
+  | Params<'instanceKey' | 'workspaceKey' | 'projectKey'>) => {
+  return ['flags', instanceKey, workspaceKey, projectKey];
 };
 
 export const getTargetingKey = ({
@@ -186,7 +187,7 @@ export const getTargetingKey = ({
   flagKey,
 }: Partial<FlagbaseParams>) => {
   return [
-    "targeting",
+    'targeting',
     instanceKey,
     workspaceKey,
     projectKey,
@@ -203,8 +204,8 @@ export const getTargetingRulesKey = ({
   flagKey,
 }: Partial<FlagbaseParams>) => {
   return [
-    "targeting",
-    "rules",
+    'targeting',
+    'rules',
     instanceKey,
     workspaceKey,
     projectKey,
@@ -216,11 +217,11 @@ export const getTargetingRulesKey = ({
 export const flagsLoader = ({
   params,
 }: {
-  params: Params<"instanceKey" | "workspaceKey" | "projectKey">;
+  params: Params<'instanceKey' | 'workspaceKey' | 'projectKey'>;
 }) => {
   const { instanceKey, workspaceKey, projectKey } = params;
   if (!workspaceKey || !projectKey || !instanceKey) {
-    throw new Error("Missing params");
+    throw new Error('Missing params');
   }
   const queryKey = getFlagsKey(params);
   const flags = queryClient.fetchQuery(queryKey, {
@@ -241,13 +242,13 @@ export const targetingLoader = ({
   params,
 }: {
   params: Params<
-    "instanceKey" | "workspaceKey" | "projectKey" | "environmentKey" | "flagKey"
+    'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey' | 'flagKey'
   >;
 }) => {
   const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } =
     params;
   if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
-    throw new Error("Missing params");
+    throw new Error('Missing params');
   }
   if (!environmentKey) {
     return defer({ targetingRules: [] });
@@ -269,7 +270,7 @@ export const targetingLoader = ({
           flagKey,
         });
       },
-    }
+    },
   );
   const targeting = queryClient.fetchQuery(getTargetingKey(params), {
     queryFn: async () => {
@@ -303,13 +304,13 @@ export const targetingRulesLoader = ({
   params,
 }: {
   params: Params<
-    "instanceKey" | "workspaceKey" | "projectKey" | "environmentKey" | "flagKey"
+    'instanceKey' | 'workspaceKey' | 'projectKey' | 'environmentKey' | 'flagKey'
   >;
 }) => {
   const { instanceKey, workspaceKey, projectKey, environmentKey, flagKey } =
     params;
   if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
-    throw new Error("Missing params");
+    throw new Error('Missing params');
   }
   if (!environmentKey) {
     return defer({ targeting: [] });
@@ -343,10 +344,10 @@ export const getVariationsKey = ({
   flagKey?: string;
 }) => {
   if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
-    return ["variations"];
+    return ['variations'];
   }
 
-  return ["variations", instanceKey, workspaceKey, projectKey, flagKey];
+  return ['variations', instanceKey, workspaceKey, projectKey, flagKey];
 };
 
 export const getEnvironmentsKey = ({
@@ -358,7 +359,7 @@ export const getEnvironmentsKey = ({
   workspaceKey: string;
   projectKey: string;
 }) => {
-  return ["environments", instanceKey, workspaceKey, projectKey];
+  return ['environments', instanceKey, workspaceKey, projectKey];
 };
 
 export const getVariationKey = ({
@@ -375,7 +376,7 @@ export const getVariationKey = ({
   variationKey: string;
 }) => {
   return [
-    "variations",
+    'variations',
     instanceKey,
     workspaceKey,
     projectKey,
@@ -387,11 +388,11 @@ export const getVariationKey = ({
 export const variationsLoader = ({
   params,
 }: {
-  params: Params<"instanceKey" | "workspaceKey" | "projectKey" | "flagKey">;
+  params: Params<'instanceKey' | 'workspaceKey' | 'projectKey' | 'flagKey'>;
 }) => {
   const { instanceKey, workspaceKey, projectKey, flagKey } = params;
   if (!workspaceKey || !projectKey || !instanceKey || !flagKey) {
-    throw new Error("Missing params");
+    throw new Error('Missing params');
   }
 
   const queryKey = getVariationsKey(params);

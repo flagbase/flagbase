@@ -10,7 +10,7 @@ import {
   useNotification,
 } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 
 import { useAddProject } from './projects';
 import { NewProjectSchema } from './projects.constants';
@@ -45,6 +45,7 @@ const CreateProjectModal: React.FC<{
       <div className="flex flex-col gap-3">
         <div className="text-center">
           <Heading level={3}>Add a new project</Heading>
+
           <Text>
             A project allows you to organise your flags, segments etc.
           </Text>

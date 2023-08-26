@@ -4,7 +4,6 @@
   "description": "ReactJS client-side SDK for Flagbase",
   "source": "src/index.ts",
   "main": "dist/index.js",
-  "module": "dist/module.js",
   "types": "dist/index.d.ts",
   "files": [
     "dist/"

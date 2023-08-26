@@ -59,7 +59,7 @@ function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ');
 }
 
-const MobileDropdown = ({
+function MobileDropdown({
   name,
   children,
 }: {
@@ -71,7 +71,7 @@ const MobileDropdown = ({
     description: string;
     href: string;
   }[];
-}) => {
+}) {
   return (
     <Disclosure as="div" className="-mx-3">
       {({ open }) => (
@@ -102,9 +102,9 @@ const MobileDropdown = ({
       )}
     </Disclosure>
   );
-};
+}
 
-const Breadcrumb = ({
+function Breadcrumb({
   name,
   description,
   type,
@@ -122,7 +122,7 @@ const Breadcrumb = ({
     description: string;
     href: string;
   }[];
-}) => {
+}) {
   return (
     <Popover className="relative">
       <Popover.Button className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900 ">
@@ -191,14 +191,14 @@ const Breadcrumb = ({
       </Transition>
     </Popover>
   );
-};
+}
 
-const getEnvironmentDropdown = (
+function getEnvironmentDropdown(
   data: Environment[],
   instanceKey: string,
   workspaceKey: string,
   projectKey: string,
-) => {
+) {
   return data.map((object) => {
     return {
       name: object.attributes.name,
@@ -211,13 +211,13 @@ const getEnvironmentDropdown = (
       ),
     };
   });
-};
+}
 
-const getProjectDropdown = (
+function getProjectDropdown(
   data: Project[],
   workspaceKey: string,
   instanceKey: string,
-) => {
+) {
   return data.map((object) => {
     return {
       name: object.attributes.name,
@@ -225,7 +225,7 @@ const getProjectDropdown = (
       href: getProjectPath(instanceKey, workspaceKey, object.attributes.key),
     };
   });
-};
+}
 
 const getWorkspaceDropdown = (data: Workspace[], instanceKey: string) => {
   return data.map((object) => {
@@ -248,13 +248,13 @@ const getInstanceDropdown = (data: Instance[]) => {
   );
 };
 
-const getFlagDropdown = (
+function getFlagDropdown(
   flags: Flag[],
   instanceKey: string,
   workspaceKey: string,
   environmentKey: string,
   projectKey: string,
-) => {
+) {
   return flags.map((flag) => {
     return {
       name: flag.attributes.name,
@@ -268,15 +268,15 @@ const getFlagDropdown = (
       ),
     };
   });
-};
+}
 
-const MobileNavigation = ({
+function MobileNavigation({
   mobileMenuOpen,
   setMobileMenuOpen,
 }: {
   mobileMenuOpen: boolean;
   setMobileMenuOpen: (value: boolean) => void;
-}) => {
+}) {
   const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams();
 
   const { data: instances } = useInstances();
@@ -378,9 +378,9 @@ const MobileNavigation = ({
       </Dialog.Panel>
     </Dialog>
   );
-};
+}
 
-const Header = () => {
+function Header() {
   const { instanceKey, workspaceKey, projectKey, flagKey } =
     useFlagbaseParams();
 
@@ -497,8 +497,8 @@ const Header = () => {
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           {/* <a href="#" className="text-sm font-semibold leading-6 text-gray-900">
-                          Log in <span aria-hidden="true">&rarr;</span>
-                      </a> */}
+                            Log in <span aria-hidden="true">&rarr;</span>
+                        </a> */}
         </div>
       </nav>
       <MobileNavigation
@@ -507,9 +507,9 @@ const Header = () => {
       />
     </header>
   );
-};
+}
 
-const PageHeading = ({
+function PageHeading({
   title,
   subtitle,
   tabs,
@@ -519,7 +519,7 @@ const PageHeading = ({
   subtitle: string | ReactNode;
   tabs?: { name: string; href: string }[];
   backHref?: string | undefined;
-}) => {
+}) {
   const location = useLocation();
   const pathname = decodeURI(location.pathname);
   const matches = useMatches() as any;
@@ -597,7 +597,7 @@ const PageHeading = ({
       )}
     </header>
   );
-};
+}
 
 type PageHeadingType = {
   title: string;
@@ -606,7 +606,7 @@ type PageHeadingType = {
   backHref?: string | null;
 };
 
-export const PageHeadings = () => {
+export function PageHeadings() {
   const { activeTab } = useParams<{ activeTab: string }>();
   const location = useLocation();
 
@@ -659,7 +659,7 @@ export const PageHeadings = () => {
     if (location.pathname.includes('instances')) {
       setPageHeading({
         title: 'Instances',
-        subtitle: 'Manage your instances',
+        subtitle: 'Manage your instancess',
         tabs: [],
         backHref: null,
       });
@@ -811,9 +811,9 @@ export const PageHeadings = () => {
       </div>
     </>
   );
-};
+}
 
-const PageLayout: React.FC = () => {
+function PageLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -823,6 +823,6 @@ const PageLayout: React.FC = () => {
       <Footer />
     </div>
   );
-};
+}
 
 export default PageLayout;

@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 // tailwind.config.js
-const tailwindforms = require("@tailwindcss/forms");
+const tailwindforms = require('@tailwindcss/forms');
 
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    './src/**/*.{js,jsx,ts,tsx}',
+    '../ui/src/components/**/*.{js,jsx,ts,tsx}',
+  ],
   plugins: [tailwindforms],
 };

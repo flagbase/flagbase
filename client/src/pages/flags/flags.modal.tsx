@@ -1,19 +1,11 @@
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction } from 'react';
 
-import {
-  Button,
-  Input,
-  KeyInput,
-  TagInput,
-  Modal,
-  Text,
-  Heading,
-} from "@flagbase/ui";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Form, Formik } from "formik";
+import { Button, Input, TagInput, Modal, Text, Heading } from '@flagbase/ui';
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { Form, Formik } from 'formik';
 
-import { FlagCreateBody } from "./api";
-import { useAddFlag } from "./flags";
+import { FlagCreateBody } from './api';
+import { useAddFlag } from './flags';
 
 export interface ModalProps {
   visible: boolean;
@@ -38,9 +30,9 @@ const CreateFlag: React.FC<{
         <Formik
           initialValues={
             {
-              key: "",
-              name: "",
-              description: "",
+              key: '',
+              name: '',
+              description: '',
               tags: [],
             } as FlagCreateBody
           }
@@ -56,7 +48,7 @@ const CreateFlag: React.FC<{
         >
           <Form className="flex flex-col gap-3">
             <Input id="name" name="name" label="Flag name" />
-            <KeyInput id="key" name="key" label="Key" />
+            {/* <KeyInput id="key" name="key" label="Key" /> */}
             <Input id="description" name="description" label="Description" />
             <TagInput id="tags" name="tags" label="Tags (separate by comma)" />
             <Button

@@ -117,26 +117,13 @@ export const getVariationPath = ({
 }) =>
   `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`;
 
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-  queryCache: new QueryCache({
-    onError: (error, query) => {
-      console.error(error, query.queryKey);
-    },
-  }),
-});
-
-const ModalWithButton = ({
+function ModalWithButton({
   buttonText,
   modal,
 }: {
   buttonText: string;
   modal: React.FC<ModalProps>;
-}) => {
+}) {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -156,9 +143,9 @@ const ModalWithButton = ({
       })}
     </>
   );
-};
+}
 
-export const newRouter = createBrowserRouter(
+export default createBrowserRouter(
   createRoutesFromElements(
     <Route path="/" element={<PageLayout />} errorElement={<Error />}>
       <Route path="/" element={<Navigate to="/instances" />} />

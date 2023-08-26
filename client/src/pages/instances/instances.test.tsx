@@ -1,6 +1,5 @@
+import { strToImagePath } from '@flagbase/ui';
 import { expect, test } from '@playwright/experimental-ct-react';
-
-import { strToImagePath } from '../../../helpers';
 
 const { TEST_INSTANCE_URL, TEST_INSTANCE_KEY, TEST_INSTANCE_SECRET } =
   process.env;

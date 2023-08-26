@@ -1,14 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  Input,
-  KeyInput,
-  TagInput,
-  Modal,
-  Text,
-  Heading,
-} from '@flagbase/ui';
+import { Button, Input, TagInput, Modal, Text, Heading } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
@@ -59,7 +51,7 @@ const CreateVariation = () => {
           >
             <Form className="flex flex-col gap-3">
               <Input id="name" name="name" label="Variation name" />
-              <KeyInput id="key" name="key" label="Key" />
+              {/* <KeyInput id="key" name="key" label="Key" /> */}
               <Input id="description" name="description" label="Description" />
               <TagInput
                 id="tags"

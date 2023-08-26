@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Input, KeyInput, Modal, Notification } from '@flagbase/ui';
+import { Button, Modal, Notification } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Field, Form, Formik, FormikHelpers } from 'formik';
+import { Form, Formik, FormikHelpers } from 'formik';
 
 import { useAddInstance } from './instances';
 import { InstanceSchema } from './instances.constants';
 import { Instance } from './instances.functions';
+import Input from '../../components/molecules/form/input';
+import { KeyInput } from '../../components/molecules/form/key-input';
 import { ReactState } from '../workspaces/workspace.modal';
 
 type OmittedInstance = Omit<Instance, 'expiresAt' | 'id' | 'accessToken'>;
@@ -76,7 +78,6 @@ export const AddNewInstanceModal = ({ visible, setVisible }: ReactState) => {
           >
             {({ isValid }) => (
               <Form className="flex flex-col gap-3">
-                <Field 
                 <Input
                   id="name"
                   name="name"

@@ -8,13 +8,10 @@ import * as Yup from 'yup';
 
 import { Input } from '.';
 
-// More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<typeof Input> = {
   title: 'Atoms/Form/Input',
   component: Input,
-  // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/7.0/react/writing-docs/docs-page
   tags: ['autodocs'],
-  // More on argTypes: https://storybook.js.org/docs/react/api/argtypes
   argTypes: {
     icon: {
       options: Object.keys(Icons),
@@ -26,11 +23,8 @@ const meta: Meta<typeof Input> = {
 export default meta;
 type Story = StoryObj<typeof Input>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
-
 export const WithPlaceholder: Story = {
   args: {
-    placeholder: 'Enter your name',
     name: 'name',
     label: 'Name',
     type: 'text',
@@ -65,7 +59,7 @@ export const WithIcon: Story = {
   },
   decorators: [
     (Story) => (
-      <div className="mx-auto w-1/3">
+      <div className=" w-1/3">
         <Formik
           initialValues={{ name: '' }}
           onSubmit={() => {}}
@@ -89,12 +83,11 @@ export const Disabled: Story = {
   args: {
     name: 'name',
     label: 'Name',
-    placeholder: 'Enter your name',
     disabled: true,
   },
   decorators: [
     (Story) => (
-      <div className="mx-auto w-1/3">
+      <div className=" w-1/3">
         <Formik
           initialValues={{ name: 'John Wick' }}
           onSubmit={() => {}}
@@ -117,11 +110,10 @@ export const Disabled: Story = {
 export const WithError: Story = {
   args: {
     name: 'name',
-    placeholder: 'Enter your name',
   },
   decorators: [
     (Story) => (
-      <div className="mx-auto w-1/3">
+      <div className=" w-1/3">
         <Formik
           initialValues={{ name: 'John Wick' }}
           onSubmit={() => {}}

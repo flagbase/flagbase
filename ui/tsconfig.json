@@ -21,4 +21,5 @@
     "src/**/*"
   ],
   "exclude": ["node_modules", "dist"],
+  "skipLibCheck": true,
 }

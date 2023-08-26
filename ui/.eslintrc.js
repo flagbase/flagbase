@@ -59,5 +59,6 @@ module.exports = {
     ],
     '@typescript-eslint/no-empty-function': 'off',
     'react/no-unescaped-entities': 'off',
+    'react/destructuring-assignment': ['error', 'always'],
   },
 };

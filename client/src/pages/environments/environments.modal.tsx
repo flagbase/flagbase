@@ -4,7 +4,6 @@ import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import {
   Button,
   Input,
-  KeyInput,
   TagInput,
   Modal,
   Text,
@@ -78,7 +77,7 @@ const CreateEnvironment = () => {
           >
             <Form className="flex flex-col gap-3">
               <Input id="name" name="name" label="Environment name" />
-              <KeyInput id="key" name="key" label="Key" />
+              {/* <KeyInput id="key" name="key" label="Key" /> */}
               <Input id="description" name="description" label="Description" />
               <TagInput
                 id="tags"

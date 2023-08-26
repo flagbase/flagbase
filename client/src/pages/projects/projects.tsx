@@ -1,14 +1,6 @@
 import React, { Suspense, useState } from 'react';
 
-import {
-  Button,
-  EmptyState,
-  RawInput,
-  Loader,
-  Table,
-  Tag,
-  Text,
-} from '@flagbase/ui';
+import { Button, EmptyState, Loader, Table, Tag, Text } from '@flagbase/ui';
 import {
   MagnifyingGlassIcon,
   PlusCircleIcon,
@@ -162,12 +154,12 @@ const Projects = () => {
 
           <div className="flex flex-col-reverse items-stretch gap-3 pb-5 md:flex-row">
             <div className="flex-auto">
-              <RawInput
+              {/* <RawInput
                 onChange={(event) => setFilter(event.target.value)}
                 value={filter}
                 icon={MagnifyingGlassIcon}
                 label="Search Projects"
-              />
+              /> */}
             </div>
           </div>
 
