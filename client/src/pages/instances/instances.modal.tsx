@@ -4,9 +4,9 @@ import { Button, Modal, Notification } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik, FormikHelpers } from 'formik';
 
-import { useAddInstance } from './instances';
 import { InstanceSchema } from './instances.constants';
 import { Instance } from './instances.functions';
+import { useAddInstance } from './instances.hooks';
 import Input from '../../components/molecules/form/input';
 import { KeyInput } from '../../components/molecules/form/key-input';
 import { ReactState } from '../workspaces/workspace.modal';

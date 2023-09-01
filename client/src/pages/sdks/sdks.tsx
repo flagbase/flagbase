@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useState } from 'react';
 
 import {
   Button,
@@ -7,52 +7,52 @@ import {
   Notification,
   Table,
   Tag,
-} from "@flagbase/ui";
+} from '@flagbase/ui';
 import {
   DocumentDuplicateIcon,
   PlusCircleIcon,
-} from "@heroicons/react/20/solid";
-import { useQuery } from "react-query";
-import { Await, Link, useLoaderData } from "react-router-dom";
+} from '@heroicons/react/20/solid';
+import { useQuery } from 'react-query';
+import { Await, Link, useLoaderData } from 'react-router-dom';
 
-import { fetchSdkList, SDK } from "./api";
-import { CreateSDKModal } from "./sdks.modal";
-import { configureAxios } from "../../lib/axios";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
-import { getSdkKey } from "../../router/loaders";
-import { useInstances } from "../instances/instances";
+import { fetchSdkList, SDK } from './api';
+import { CreateSDKModal } from './sdks.modal';
+import { configureAxios } from '../../lib/axios';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { getSdkKey } from '../../router/loaders';
+import { useInstances } from '../instances/instances.hooks';
 
 export const sdkColumns = [
   {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
   },
   {
-    title: "Client Key",
-    dataIndex: "clientKey",
-    key: "clientKey",
+    title: 'Client Key',
+    dataIndex: 'clientKey',
+    key: 'clientKey',
   },
   {
-    title: "Server Key",
-    dataIndex: "serverKey",
-    key: "serverKey",
+    title: 'Server Key',
+    dataIndex: 'serverKey',
+    key: 'serverKey',
   },
 
   {
-    title: "Description",
-    dataIndex: "description",
-    key: "description",
+    title: 'Description',
+    dataIndex: 'description',
+    key: 'description',
   },
   {
-    title: "Tags",
-    dataIndex: "tags",
-    key: "tags",
+    title: 'Tags',
+    dataIndex: 'tags',
+    key: 'tags',
   },
   {
-    title: "Actions",
-    dataIndex: "action",
-    key: "action",
+    title: 'Actions',
+    dataIndex: 'action',
+    key: 'action',
   },
 ];
 

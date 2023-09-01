@@ -1,9 +1,9 @@
 import Axios, { AxiosError, AxiosResponse } from 'axios';
 
+import { fetchAccessToken } from './access-token';
 import { Instance } from '../pages/instances/instances.functions';
-import { fetchAccessToken } from '../pages/workspaces/api';
-import { getInstances } from '../router/loaders';
 import queryClient from '../router/query-client';
+import { getInstances } from '../router/utils';
 
 export const axios = Axios.create();
 
@@ -34,7 +34,11 @@ const getCachedAccessToken = async (
       accessToken: cachedAccessToken,
     };
   } else {
-    const { accessToken } = await fetchAccessToken(accessKey, accessSecret);
+    const { accessToken } = await fetchAccessToken(
+      axios,
+      accessKey,
+      accessSecret,
+    );
     sessionStorage.setItem(hashKey, accessToken);
 
     return { accessToken };

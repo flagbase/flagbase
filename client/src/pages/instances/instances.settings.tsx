@@ -9,7 +9,7 @@ import {
   useInstance,
   useRemoveInstance,
   useUpdateInstance,
-} from '../instances/instances';
+} from './instances.hooks';
 import { InstanceSchema } from '../instances/instances.constants';
 
 export const EditInstance = () => {

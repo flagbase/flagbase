@@ -18,7 +18,7 @@ import {
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getEnvironmentsKey } from '../../router/loaders';
-import { useInstances } from '../instances/instances';
+import { useInstances } from '../instances/instances.hooks';
 
 export type Environment = {
   type: string;

@@ -12,7 +12,8 @@ import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { deleteVariation, updateVariation, VariationUpdateBody } from './api';
-import { useVariations, Variation } from './variations';
+import { Variation } from './variations';
+import { useVariations } from './variations.hooks';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationKey } from '../../router/loaders';

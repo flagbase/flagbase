@@ -5,13 +5,13 @@ import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { useRevalidator } from 'react-router-dom';
 
 import { TargetingRuleRequest } from './api';
+import TargetingRule from './targeting-rule';
 import {
   newRuleFactory,
   useAddTargetingRule,
   useTargetingRules,
-} from './targeting';
-import TargetingRule from './targeting-rule';
-import { useVariations } from '../variations/variations';
+} from './targeting.hooks';
+import { useVariations } from '../variations/variations.hooks';
 
 export const TargetingRules = () => {
   const targetingRulesQuery = useTargetingRules();

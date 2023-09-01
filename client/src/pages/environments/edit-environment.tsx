@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
-import { Button, Input, Notification, EditEntityHeading } from "@flagbase/ui";
-import { Form, Formik } from "formik";
-import { useMutation, useQueryClient } from "react-query";
-import { useNavigate } from "react-router-dom";
+import { Button, Input, Notification, EditEntityHeading } from '@flagbase/ui';
+import { Form, Formik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
+import { useNavigate } from 'react-router-dom';
 
-import { updateEnvironment, deleteEnvironment } from "./api";
-import { useEnvironments } from "./environments";
-import { configureAxios } from "../../lib/axios";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
-import { getEnvironmentsKey } from "../../router/loaders";
-import { getEnvironmentsPath } from "../../router/router";
+import { updateEnvironment, deleteEnvironment } from './api';
+import { useEnvironments } from './environments';
+import { configureAxios } from '../../lib/axios';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { getEnvironmentsKey } from '../../router/loaders';
+import { getEnvironmentsPath } from '../../router/router.paths';
 
 export const useUpdateEnvironment = () => {
   const queryClient = useQueryClient();
@@ -30,23 +30,23 @@ export const useUpdateEnvironment = () => {
         environmentKey: environmentKey!,
         body: [
           {
-            op: "replace",
-            path: "/name",
+            op: 'replace',
+            path: '/name',
             value: values.name,
           },
           {
-            op: "replace",
-            path: "/key",
+            op: 'replace',
+            path: '/key',
             value: values.key,
           },
           {
-            op: "replace",
-            path: "/description",
+            op: 'replace',
+            path: '/description',
             value: values.description,
           },
           {
-            op: "replace",
-            path: "/tags",
+            op: 'replace',
+            path: '/tags',
             value: values.tags,
           },
         ],
@@ -54,7 +54,7 @@ export const useUpdateEnvironment = () => {
     },
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ["workspaces", instanceKey],
+        queryKey: ['workspaces', instanceKey],
       });
     },
   });
@@ -95,14 +95,14 @@ export const EditEnvironment = () => {
   const { data: environments, isLoading } = useEnvironments();
   const environment = environments?.find(
     (environment) =>
-      environment.attributes.key === environmentKey?.toLocaleLowerCase()
+      environment.attributes.key === environmentKey?.toLocaleLowerCase(),
   );
   if (!environment && !isLoading) {
-    throw new Error("Environment not found");
+    throw new Error('Environment not found');
   }
 
   if (!instanceKey || !workspaceKey || !projectKey) {
-    throw new Error("Missing required params");
+    throw new Error('Missing required params');
   }
 
   const { mutateAsync: remove } = useRemoveEnvironment();
@@ -127,14 +127,14 @@ export const EditEnvironment = () => {
         <Notification
           type="error"
           show={!!error}
-          title={"Error"}
-          content={"Something went wrong. Please try again later."}
+          title={'Error'}
+          content={'Something went wrong. Please try again later.'}
         />
         <Notification
           type="error"
           show={!!isSuccess}
-          title={"Success"}
-          content={"Project updated successfully!"}
+          title={'Success'}
+          content={'Project updated successfully!'}
         />
         <Formik
           initialValues={{

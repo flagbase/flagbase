@@ -12,10 +12,10 @@ import { Form, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
-  useRemoveWorkspace,
-  useUpdateWorkspace,
   useWorkspaces,
-} from './workspaces.main';
+  useUpdateWorkspace,
+  useRemoveWorkspace,
+} from './workspaces.hooks';
 
 export const EditWorkspace = () => {
   const navigate = useNavigate();

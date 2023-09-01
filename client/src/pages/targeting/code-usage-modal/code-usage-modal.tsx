@@ -7,7 +7,7 @@ import { CodeBracketIcon } from '@heroicons/react/20/solid';
 import { useFlagbaseParams } from '../../../lib/use-flagbase-params';
 import { useActiveEnvironment } from '../../environments/environment-dropdown';
 import { useSDKs } from '../../sdks/sdks';
-import { useVariations } from '../../variations/variations';
+import { useVariations } from '../../variations/variations.hooks';
 
 interface ModalProps {
   visible: boolean;

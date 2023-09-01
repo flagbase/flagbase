@@ -6,7 +6,7 @@ import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { VariationCreateBody } from './api';
-import { useAddVariation } from './variations';
+import { useAddVariation } from './variations.hooks';
 
 const CreateVariation = () => {
   const mutation = useAddVariation();

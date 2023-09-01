@@ -1,35 +1,5 @@
 import { axios } from '../../lib/axios';
 
-export interface AccessTokenResponse {
-  access: {
-    expiresAt: Date;
-    id: string;
-  };
-  token: string;
-}
-
-export interface AccessToken {
-  expiresAt: Date;
-  id: string;
-  accessToken: string;
-}
-
-export const fetchAccessToken = async (
-  key: string,
-  secret: string,
-): Promise<AccessToken> => {
-  const result = await axios.post<AccessTokenResponse>(`/access/token`, {
-    key,
-    secret,
-  });
-
-  return {
-    expiresAt: result.data.access.expiresAt,
-    id: result.data.access.id,
-    accessToken: result.data.token,
-  };
-};
-
 export interface Workspace {
   type: string;
   id: string;

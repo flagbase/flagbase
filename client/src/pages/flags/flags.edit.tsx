@@ -1,4 +1,4 @@
-import React, { Suspense } from "react";
+import React, { Suspense } from 'react';
 
 import {
   Button,
@@ -8,13 +8,13 @@ import {
   TagInput,
   Input,
   SettingsContainer,
-} from "@flagbase/ui";
-import { Form, Formik } from "formik";
-import { Await, useLoaderData, useNavigate } from "react-router-dom";
+} from '@flagbase/ui';
+import { Form, Formik } from 'formik';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
-import { Flag } from "./api";
-import { useFlags, useRemoveFlag, useUpdateFlag } from "./flags";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
+import { Flag } from './api';
+import { useFlags, useRemoveFlag, useUpdateFlag } from './flags.hooks';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 export const FlagSettings = () => {
   const { instanceKey, workspaceKey, projectKey } = useFlagbaseParams();
@@ -31,7 +31,7 @@ export const FlagSettings = () => {
   const removeFlag = () => {
     remove();
     navigate(
-      `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`
+      `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`,
     );
   };
 

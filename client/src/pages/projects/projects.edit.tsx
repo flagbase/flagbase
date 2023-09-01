@@ -13,7 +13,7 @@ import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
 import { updateProject } from './api';
-import { useProjects, useRemoveProject } from './projects';
+import { useProjects, useRemoveProject } from './projects.hooks';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 

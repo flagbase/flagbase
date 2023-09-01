@@ -10,10 +10,10 @@ import {
   useNotification,
 } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Field, Form, Formik } from 'formik';
+import { Form, Formik } from 'formik';
 
-import { useAddProject } from './projects';
 import { NewProjectSchema } from './projects.constants';
+import { useAddProject } from './projects.hooks';
 
 interface WorkspaceModal {
   visible: boolean;

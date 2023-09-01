@@ -13,7 +13,7 @@ import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
 
 import { NewWorkspaceSchema } from './workspace.constants';
-import { useAddWorkspace } from './workspaces.main';
+import { useAddWorkspace } from './workspaces.hooks';
 import { Instance } from '../instances/instances.functions';
 
 interface ReactState {

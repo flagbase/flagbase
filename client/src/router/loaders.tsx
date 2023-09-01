@@ -1,6 +1,7 @@
 import { defer, Params } from 'react-router-dom';
 
 import queryClient from './query-client';
+import { getInstances } from './utils';
 import { configureAxios } from '../lib/axios';
 import { FlagbaseParams } from '../lib/use-flagbase-params';
 import { fetchEnvironments } from '../pages/environments/api';
@@ -14,9 +15,6 @@ import { fetchProjects } from '../pages/projects/api';
 import { fetchSdkList } from '../pages/sdks/api';
 import { fetchVariations } from '../pages/variations/api';
 import { fetchWorkspaces } from '../pages/workspaces/api';
-
-export const getInstances = (): Instance[] =>
-  JSON.parse(localStorage.getItem('instances') || '[]') as Instance[];
 
 export const instancesQuery = async (
   instanceKey?: string,

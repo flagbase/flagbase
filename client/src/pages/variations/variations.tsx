@@ -2,14 +2,11 @@ import React, { Suspense } from 'react';
 
 import { Button, EmptyState, Table, Tag, Loader } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
 import { Await, useLoaderData } from 'react-router-dom';
 
-import { createVariation, fetchVariations, VariationCreateBody } from './api';
-import { configureAxios } from '../../lib/axios';
+import { useVariations } from './variations.hooks';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
-import { getVariationsKey } from '../../router/loaders';
-import { getVariationPath } from '../../router/router';
+import { getVariationPath } from '../../router/router.paths';
 
 export const variationColumns = [
   {
@@ -79,77 +76,7 @@ const convertVariationsToTable = ({
   });
 };
 
-export const useAddVariation = () => {
-  const queryClient = useQueryClient();
-  const { instanceKey, workspaceKey, projectKey, flagKey } =
-    useFlagbaseParams();
-  const mutation = useMutation({
-    mutationFn: async (values: VariationCreateBody) => {
-      if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
-        throw new Error('Missing required params');
-      }
-      await createVariation({
-        workspaceKey,
-        projectKey,
-        flagKey,
-        variation: values,
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: getVariationsKey({
-          instanceKey,
-          workspaceKey,
-          projectKey,
-          flagKey,
-        }),
-      });
-    },
-  });
-
-  return mutation;
-};
-
-export const useVariations = () => {
-  const { instanceKey, workspaceKey, projectKey, flagKey } =
-    useFlagbaseParams();
-
-  const query = useQuery<Variation[]>(
-    getVariationsKey({
-      instanceKey,
-      workspaceKey,
-      projectKey,
-      flagKey,
-    }),
-    {
-      queryFn: async () => {
-        if (!instanceKey || !workspaceKey || !projectKey || !flagKey) {
-          throw new Error('Missing required params');
-        }
-
-        await configureAxios(instanceKey);
-
-        return fetchVariations({
-          workspaceKey: workspaceKey,
-          projectKey: projectKey,
-          flagKey: flagKey,
-        });
-      },
-      enabled:
-        Boolean(workspaceKey) &&
-        Boolean(projectKey) &&
-        Boolean(flagKey) &&
-        Boolean(instanceKey),
-      refetchOnWindowFocus: false,
-      cacheTime: 10 * 1000,
-      staleTime: 15 * 1000,
-    },
-  );
-
-  return query;
-};
-
-const Variations = () => {
+function Variations() {
   const { variations: prefetchedVariations } = useLoaderData() as {
     variations: Variation[];
   };
@@ -182,6 +109,6 @@ const Variations = () => {
       </Await>
     </Suspense>
   );
-};
+}
 
 export default Variations;

@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { Button } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
-import { QueryCache, QueryClient } from 'react-query';
 import {
   Route,
   Navigate,
@@ -21,7 +20,8 @@ import {
   workspacesLoader,
 } from './loaders';
 import { RouteParams } from './router.types';
-import PageLayout, { PageHeadings } from '../components/page-layout';
+import PageLayout from '../components/page-layout';
+import { PageHeadings } from '../components/page-layout/page-headings';
 import { EditEnvironment } from '../pages/environments/edit-environment';
 import Environments from '../pages/environments/environments';
 import { CreateEnvironment } from '../pages/environments/environments.modal';
@@ -57,65 +57,6 @@ const {
   SdkKey,
   VariationKey,
 } = RouteParams;
-
-export const getWorkspacesPath = (instanceKey: string) =>
-  `/${instanceKey}/workspaces`;
-export const getWorkspacePath = (instanceKey: string, workspaceKey: string) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects`;
-
-export const getProjectsPath = (instanceKey: string, workspaceKey: string) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects`;
-
-export const getProjectPath = (
-  instanceKey: string,
-  workspaceKey: string,
-  projectKey: string,
-) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`;
-
-export const getEnvironmentsPath = (
-  instanceKey: string,
-  workspaceKey: string,
-  projectKey: string,
-) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments`;
-
-export const getEnvironmentPath = (
-  instanceKey: string,
-  workspaceKey: string,
-  projectKey: string,
-  environmentKey: string,
-) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`;
-
-export const getFlagPath = (
-  instanceKey: string,
-  workspaceKey: string,
-  projectKey: string,
-  environmentKey: string,
-  flagKey: string,
-) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/environments/${environmentKey}`;
-
-export const getFlagsPath = (
-  instanceKey: string,
-  workspaceKey: string,
-  projectKey: string,
-) => `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags`;
-
-export const getVariationPath = ({
-  instanceKey,
-  workspaceKey,
-  projectKey,
-  flagKey,
-  variationKey,
-}: {
-  instanceKey: string;
-  workspaceKey: string;
-  projectKey: string;
-  flagKey: string;
-  variationKey: string;
-}) =>
-  `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/flags/${flagKey}/variations/${variationKey}/settings`;
 
 function ModalWithButton({
   buttonText,
