@@ -1,14 +1,7 @@
 import React, { createElement, useState } from 'react';
 
-import {
-  FieldHookConfig,
-  FormikFormProps,
-  useField,
-  useFormikContext,
-} from 'formik';
-
-import { classNames } from '../../../../helpers';
-import { Tag } from '../../layout/tag';
+import { Tag, classNames } from '@flagbase/ui';
+import { FieldHookConfig, useField, useFormikContext } from 'formik';
 
 export type TagInputProps = {
   prefix?: React.ElementType;
