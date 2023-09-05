@@ -15,7 +15,6 @@ import { NewWorkspaceSchema } from './workspace.constants';
 import { useAddWorkspace } from './workspaces.hooks';
 import { TagInput } from '../../components/molecules/form/tag-input';
 import { Instance } from '../instances/instances.functions';
-import { TagInput } from '../../components/molecules/form/tag-input';
 
 interface ReactState {
   visible: boolean;

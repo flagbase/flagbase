@@ -1,43 +1,13 @@
 import * as React from 'react';
 
+import { classNames } from '@flagbase/ui';
 import {
-  createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
 
-type Workspace = {
-  id: number;
-  title: JSX.Element;
-  href: string;
-  name: JSX.Element;
-  action: JSX.Element;
-  description: JSX.Element;
-  tags: JSX.Element[];
-  key: string;
-};
-
-const columnHelper = createColumnHelper<Workspace>();
-
-const columns = [
-  columnHelper.accessor('name', {
-    header: () => 'Name',
-    footer: (info) => info.column.id,
-  }),
-  columnHelper.accessor('description', {
-    header: () => 'Description',
-    footer: (info) => info.column.id,
-  }),
-  columnHelper.accessor('tags', {
-    header: () => 'Tags',
-    footer: (info) => info.column.id,
-  }),
-];
-
-export function Table({ dataSource }) {
-  const [data, setData] = React.useState(() => [...dataSource]);
-
+export function Table({ data, columns }: { data: any[]; columns: any[] }) {
   const table = useReactTable({
     data,
     columns,
@@ -45,13 +15,17 @@ export function Table({ dataSource }) {
   });
 
   return (
-    <div className="p-2">
-      <table>
+    <div className="-mx-4 mt-10 ring-1 ring-gray-300 sm:mx-0 sm:rounded-lg">
+      <table className="min-w-full divide-y divide-gray-300">
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <th key={header.id}>
+                <th
+                  scope="col"
+                  className="hidden px-3 py-3.5 text-left text-sm font-semibold text-gray-900 lg:table-cell"
+                  key={header.id}
+                >
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -65,9 +39,19 @@ export function Table({ dataSource }) {
         </thead>
         <tbody>
           {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
+            <tr
+              onClick={() => {
+                console.log(row);
+              }}
+              key={row.id}
+            >
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id}>
+                <td
+                  className={classNames(
+                    'relative py-4 pl-4 pr-3 text-sm sm:pl-6',
+                  )}
+                  key={cell.id}
+                >
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}
                 </td>
               ))}

@@ -51,7 +51,7 @@ const MainWorkspaces = () => {
             </div>
             <Table
               loading={isFetching || isRefetching || isLoading}
-              dataSource={
+              data={
                 workspaces
                   ? convertWorkspaces(
                       workspaces,

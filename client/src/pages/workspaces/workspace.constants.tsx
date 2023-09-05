@@ -1,3 +1,4 @@
+import { createColumnHelper } from '@tanstack/react-table';
 import * as Yup from 'yup';
 
 export const constants = {
@@ -6,22 +7,34 @@ export const constants = {
   error: 'Could not load workspaces. Please try again.',
 };
 
+type Workspace = {
+  id: number;
+  title: JSX.Element;
+  href: string;
+  name: JSX.Element;
+  action: JSX.Element;
+  description: JSX.Element;
+  tags: JSX.Element[];
+  key: string;
+};
+
+const columnHelper = createColumnHelper<Workspace>();
+
+const getCellValue = (cell: any) => cell.getValue();
+
 export const workspaceColumns = [
-  {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: 'Description',
-    dataIndex: 'description',
-    key: 'description',
-  },
-  {
-    title: 'Tags',
-    dataIndex: 'tags',
-    key: 'tags',
-  },
+  columnHelper.accessor('name', {
+    header: () => 'Name',
+    cell: getCellValue,
+  }),
+  columnHelper.accessor('description', {
+    header: () => 'Description',
+    cell: getCellValue,
+  }),
+  columnHelper.accessor('tags', {
+    header: () => 'Tags',
+    cell: getCellValue,
+  }),
 ];
 
 export const NewWorkspaceSchema = Yup.object().shape({

@@ -1,13 +1,14 @@
 import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader, Table } from '@flagbase/ui';
+import { Button, EmptyState, Loader } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Await, useLoaderData } from 'react-router-dom';
 
 import { Project } from './api';
 import { constants, projectsColumn } from './projects.constants';
-import { useProjects } from './projects.hooks';
+import { convertProjects, useProjects } from './projects.hooks';
 import { CreateProjectModal } from './projects.modal';
+import { Table } from '../../components/organisms/table';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 const Projects = () => {
@@ -38,8 +39,7 @@ const Projects = () => {
 
           {projects && workspaceKey && instanceKey && (
             <Table
-              loading={false}
-              dataSource={convertProjects({
+              data={convertProjects({
                 projects,
                 workspaceKey,
                 instanceKey,
