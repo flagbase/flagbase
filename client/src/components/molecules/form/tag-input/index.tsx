@@ -1,9 +1,7 @@
-import React, { createElement, useState } from 'react';
+import React, { createElement, useState, useCallback } from 'react';
 
-import { FieldHookConfig, useField, useFormikContext } from 'formik';
-
-import { classNames } from '../../../../helpers';
-import { Tag } from '../../layout/tag';
+import { Tag, classNames } from '@flagbase/ui';
+import { FieldHookConfig, useField } from 'formik';
 
 export type TagInputProps = {
   prefix?: React.ElementType;
@@ -14,30 +12,30 @@ export type TagInputProps = {
 export const TagInput: React.FC<TagInputProps> = ({
   prefix,
   label,
-  fieldConfig,
+  ...props
 }) => {
-  const [field, meta] = useField<string[]>(fieldConfig);
+  const [field, meta, helpers] = useField<string[]>(props);
   const [inputValue, setInputValue] = useState('');
-  const { placeholder } = fieldConfig;
-  const { setFieldValue } = useFormikContext();
-  const name = field.name;
   const tags = meta.value;
+  const { name } = field;
+  const { setValue } = helpers;
 
-  const onDelete = (tag: string) => {
-    const newTags = tags.filter((t) => t !== tag);
-    setFieldValue(name, newTags);
-  };
+  const onDelete = useCallback(
+    (tag: string) => {
+      const newTags = tags.filter((t) => t !== tag);
+      setValue(newTags);
+    },
+    [tags, setValue],
+  );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    //if keyCode is enter, tab or comma
-    console.log('key', event.keyCode);
     if (
-      (event.keyCode === 13 || event.keyCode === 9 || event.keyCode === 188) &&
+      (event.key === 'Enter' || event.key === 'Tab' || event.key === ',') &&
       inputValue !== ''
     ) {
       event.preventDefault();
       const newTags = [...tags, inputValue];
-      setFieldValue(name, newTags);
+      setValue(newTags);
       setInputValue('');
     }
   };
@@ -51,12 +49,8 @@ export const TagInput: React.FC<TagInputProps> = ({
           </div>
         )}
         <div className="flex w-full flex-wrap items-center gap-3 rounded-md border border-gray-300 p-2 sm:text-sm">
-          {tags.map((tag, index) => (
-            <Tag
-              className="h-fit py-2"
-              key={`${tag}_${index}`}
-              onDelete={onDelete}
-            >
+          {tags.map((tag) => (
+            <Tag className="h-fit py-2" key={tag} onDelete={onDelete}>
               {tag}
             </Tag>
           ))}
@@ -68,17 +62,16 @@ export const TagInput: React.FC<TagInputProps> = ({
               prefix ? 'pl-10' : '',
               'peer',
             )}
-            placeholder={placeholder}
             onKeyDown={handleKeyDown}
             onChange={(event) => setInputValue(event.target.value)}
             value={inputValue}
+            aria-label={label || 'Tag Input'}
           />
           <label
-            htmlFor={label}
+            htmlFor={name}
             className={classNames(
-              `left-3 absolute peer-focus:top-0 peer-focus:text-xs  pointer-events-none text-gray-700 transition-all`,
-              tags.length === 0 ? 'top-4' : '',
-              tags.length > 0 ? 'top-0 text-xs' : '',
+              `left-3 absolute peer-focus:top-0 peer-focus:text-xs pointer-events-none text-gray-700 transition-all`,
+              tags.length === 0 ? 'top-4' : 'top-0 text-xs',
               'peer-disabled:top-0 peer-disabled:text-xs bg-white',
             )}
           >

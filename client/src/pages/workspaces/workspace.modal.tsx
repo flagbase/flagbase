@@ -5,7 +5,6 @@ import {
   Text,
   Button,
   Input,
-  TagInput,
   Modal,
   useNotification,
 } from '@flagbase/ui';
@@ -14,6 +13,7 @@ import { Form, Formik } from 'formik';
 
 import { NewWorkspaceSchema } from './workspace.constants';
 import { useAddWorkspace } from './workspaces.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 import { Instance } from '../instances/instances.functions';
 
 interface ReactState {

@@ -115,7 +115,7 @@
     "react-draggable": "^4.4.5",
     "react-query": "^3.39.3",
     "react-router-dom": "^6.8.2",
-    "react-table": "^7.8.0",
+    "@tanstack/react-table": "^8.9.3",
     "rfc6902": "^5.0.1",
     "tsconfig-paths": "^4.1.0",
     "vite-plugin-dts": "^2.3.0",
