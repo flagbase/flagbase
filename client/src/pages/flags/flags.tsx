@@ -1,6 +1,6 @@
 import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader, Table } from '@flagbase/ui';
+import { Button, EmptyState, Loader } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { Await, useLoaderData } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ import { Flag } from './api';
 import { flagConstants, flagsColumn } from './constants';
 import { convertFlags, useFlags } from './flags.hooks';
 import { CreateFlag } from './flags.modal';
+import { Table } from '../../components/organisms/table';
 import {
   useActiveEnvironment,
   useUpdateActiveEnvironment,
@@ -40,7 +41,7 @@ const Flags: React.FC = () => {
             {flags && activeEnvironment && (
               <Table
                 loading={false}
-                dataSource={convertFlags({
+                data={convertFlags({
                   flags,
                   environment: activeEnvironment,
                 })}

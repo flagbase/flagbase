@@ -6,6 +6,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
+import { useNavigate } from 'react-router-dom';
 
 export function Table({ data, columns }: { data: any[]; columns: any[] }) {
   const table = useReactTable({
@@ -13,6 +14,8 @@ export function Table({ data, columns }: { data: any[]; columns: any[] }) {
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
+
+  const navigate = useNavigate();
 
   return (
     <div className="-mx-4 mt-10 ring-1 ring-gray-300 sm:mx-0 sm:rounded-lg">
@@ -40,8 +43,9 @@ export function Table({ data, columns }: { data: any[]; columns: any[] }) {
         <tbody>
           {table.getRowModel().rows.map((row) => (
             <tr
+              className="cursor-pointer hover:bg-slate-50"
               onClick={() => {
-                console.log(row);
+                navigate(row.original.href);
               }}
               key={row.id}
             >

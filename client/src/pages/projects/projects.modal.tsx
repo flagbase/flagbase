@@ -3,7 +3,6 @@ import React, { Dispatch, SetStateAction, useEffect } from 'react';
 import {
   Button,
   Input,
-  TagInput,
   Modal,
   Text,
   Heading,
@@ -14,6 +13,7 @@ import { Form, Formik } from 'formik';
 
 import { NewProjectSchema } from './projects.constants';
 import { useAddProject } from './projects.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 
 interface WorkspaceModal {
   visible: boolean;
