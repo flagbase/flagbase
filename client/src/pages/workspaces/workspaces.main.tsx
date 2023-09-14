@@ -10,7 +10,7 @@ import { constants, workspaceColumns } from './workspace.constants';
 import { CreateWorkspaceModal } from './workspace.modal';
 import { convertWorkspaces } from './workspaces.helpers';
 import { useWorkspaces } from './workspaces.hooks';
-import { Table } from '../../components/organisms/table';
+import { Table } from '../../components/organisms/table/table';
 import { Instance } from '../instances/instances.functions';
 
 const MainWorkspaces = () => {
