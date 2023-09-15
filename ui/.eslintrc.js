@@ -13,6 +13,7 @@ module.exports = {
     'plugin:storybook/recommended',
     'plugin:import/recommended',
     'plugin:import/typescript',
+    'plugin:tailwindcss/recommended',
   ],
   plugins: ['prettier', 'react', 'react-hooks', 'storybook'],
   settings: {
@@ -58,5 +59,6 @@ module.exports = {
     ],
     '@typescript-eslint/no-empty-function': 'off',
     'react/no-unescaped-entities': 'off',
+    'react/destructuring-assignment': ['error', 'always'],
   },
 };

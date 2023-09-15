@@ -1,0 +1,4 @@
+packages:
+  - "client/**"
+  - "ui/**"
+  - "sdk/react-client-sdk/**"

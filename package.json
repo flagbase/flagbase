@@ -1,1 +1,11 @@
-{}
+{
+  "name": "flagbase-monorepo",
+  "private": true,
+  "workspaces": {
+    "packages": [
+      "ui/*",
+      "app/*",
+      "sdk/react-client-sdk/*"
+    ]
+  }
+}
