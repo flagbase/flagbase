@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { updateEnvironment, deleteEnvironment } from './api';
 import { useEnvironments } from './environments';
+import { TagInput } from '../../components/molecules/form/tag-input';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getEnvironmentsKey } from '../../router/loaders';

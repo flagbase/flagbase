@@ -1,1 +1,1 @@
-export { default } from "./flags";
+export { default } from './flags';

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { useNotification } from '@flagbase/ui';
+import { DocumentDuplicateIcon } from '@heroicons/react/20/solid';
 
 export const CopyRow = ({ text }: { text: string }) => {
   const { addNotification } = useNotification();
