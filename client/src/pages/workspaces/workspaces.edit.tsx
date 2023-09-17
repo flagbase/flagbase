@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Button,
   Input,
-  TagInput,
   Loader,
   Notification,
   EditEntityHeading,
@@ -16,6 +15,7 @@ import {
   useUpdateWorkspace,
   useRemoveWorkspace,
 } from './workspaces.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 
 export const EditWorkspace = () => {
   const navigate = useNavigate();

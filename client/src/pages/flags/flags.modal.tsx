@@ -1,11 +1,12 @@
 import React, { Dispatch, SetStateAction } from 'react';
 
-import { Button, Input, TagInput, Modal, Text, Heading } from '@flagbase/ui';
+import { Button, Input, Modal, Text, Heading } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
 
 import { FlagCreateBody } from './api';
 import { useAddFlag } from './flags.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 
 export interface ModalProps {
   visible: boolean;

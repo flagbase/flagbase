@@ -3,7 +3,6 @@ import React, { useEffect } from 'react';
 import {
   Button,
   Input,
-  TagInput,
   Loader,
   EditEntityHeading,
   useNotification,
@@ -14,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { updateProject } from './api';
 import { useProjects, useRemoveProject } from './projects.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 

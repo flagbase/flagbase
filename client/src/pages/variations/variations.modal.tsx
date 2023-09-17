@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 
-import { Button, Input, TagInput, Modal, Text, Heading } from '@flagbase/ui';
+import { Button, Input, Modal, Text, Heading } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
 import * as Yup from 'yup';
 
 import { VariationCreateBody } from './api';
 import { useAddVariation } from './variations.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 
 const CreateVariation = () => {
   const mutation = useAddVariation();

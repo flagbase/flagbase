@@ -1,22 +1,16 @@
-import React from "react";
+import React from 'react';
 
-import {
-  Button,
-  Input,
-  TagInput,
-  Notification,
-  Modal,
-  Heading,
-} from "@flagbase/ui";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
-import { Form, Formik } from "formik";
-import { useMutation, useQueryClient } from "react-query";
+import { Button, Input, Notification, Modal, Heading } from '@flagbase/ui';
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { Form, Formik } from 'formik';
+import { useMutation, useQueryClient } from 'react-query';
 
-import { createSdkKey, CreateSdkKeyRequest, deleteSdk, updateSdk } from "./api";
-import { configureAxios } from "../../lib/axios";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
-import { getSdkKey } from "../../router/loaders";
-import { ReactState } from "../workspaces/workspace.modal";
+import { createSdkKey, CreateSdkKeyRequest, deleteSdk, updateSdk } from './api';
+import { TagInput } from '../../components/molecules/form/tag-input';
+import { configureAxios } from '../../lib/axios';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
+import { getSdkKey } from '../../router/loaders';
+import { ReactState } from '../workspaces/workspace.modal';
 
 export const useUpdateSdk = () => {
   const queryClient = useQueryClient();
@@ -40,18 +34,18 @@ export const useUpdateSdk = () => {
         sdkId: values.id,
         body: [
           {
-            op: "replace",
-            path: "/description",
+            op: 'replace',
+            path: '/description',
             value: values.description,
           },
           {
-            op: "replace",
-            path: "/tags",
+            op: 'replace',
+            path: '/tags',
             value: values.tags,
           },
           {
-            op: "replace",
-            path: "/enabled",
+            op: 'replace',
+            path: '/enabled',
             value: values.enabled,
           },
         ],
@@ -132,10 +126,10 @@ export const useAddSdk = () => {
             workspaceKey: workspaceKey!,
             projectKey: projectKey!,
             environmentKey: environmentKey!,
-          })
+          }),
         );
       },
-    }
+    },
   );
 };
 
@@ -168,8 +162,8 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
           <Formik
             initialValues={
               {
-                name: "",
-                description: "",
+                name: '',
+                description: '',
                 tags: [],
               } as CreateSdkKeyRequest
             }

@@ -1,22 +1,22 @@
-import React, { Suspense } from "react";
+import React, { Suspense } from 'react';
 
 import {
   Button,
   Input,
-  TagInput,
   SettingsContainer,
   Loader,
   Notification,
   EditEntityHeading,
   Toggle,
-} from "@flagbase/ui";
-import { Field, Form, Formik } from "formik";
-import { Await, useLoaderData, useNavigate } from "react-router-dom";
+} from '@flagbase/ui';
+import { Field, Form, Formik } from 'formik';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
-import { SDK } from "./api";
-import { useSDKs } from "./sdks";
-import { useRemoveSdk, useUpdateSdk } from "./sdks.modal";
-import { useFlagbaseParams } from "../../lib/use-flagbase-params";
+import { SDK } from './api';
+import { useSDKs } from './sdks';
+import { useRemoveSdk, useUpdateSdk } from './sdks.modal';
+import { TagInput } from '../../components/molecules/form/tag-input';
+import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 export const SdkSettings = () => {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export const SdkSettings = () => {
     }
     remove(sdk.id);
     navigate(
-      `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`
+      `/${instanceKey}/workspaces/${workspaceKey}/projects/${projectKey}/environments/${environmentKey}/sdk-keys`,
     );
   };
 
