@@ -30,11 +30,12 @@ const Input = ({
 
   const labelClasses = classNames(
     'absolute',
+    'left-3 top-3',
     'peer-focus:top-1 peer-focus:text-xs',
     'pointer-events-none',
     'text-gray-700 transition-all',
-    'left-3 top-1',
     'peer-disabled:top-1 peer-disabled:text-xs',
+    props.value ? 'top-1 text-xs' : 'top-3',
   );
 
   return (

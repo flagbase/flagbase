@@ -1,10 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import * as Icons from '@heroicons/react/24/solid';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Form, Formik } from 'formik';
-import * as Yup from 'yup';
 
 import { Input } from '.';
 
@@ -28,27 +26,20 @@ export const WithPlaceholder: Story = {
     name: 'name',
     label: 'Name',
     type: 'text',
+    value: 'Hello',
   },
-  decorators: [
-    (Story) => (
-      <div className="w-1/3">
-        <Formik
-          initialValues={{ name: '' }}
-          onSubmit={() => {}}
-          validationSchema={Yup.object().shape({
-            name: Yup.string()
-              .min(2, 'Too Short!')
-              .max(50, 'Too Long!')
-              .required('This field is required'),
-          })}
-        >
-          <Form>
-            <Story />
-          </Form>
-        </Formik>
-      </div>
-    ),
-  ],
+  render: (args) => {
+    console.log('args', args);
+    const [value, setValue] = useState(args.value);
+
+    return (
+      <Input
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
+  },
 };
 
 export const WithIcon: Story = {
@@ -57,26 +48,18 @@ export const WithIcon: Story = {
     name: 'name',
     icon: MagnifyingGlassIcon,
   },
-  decorators: [
-    (Story) => (
-      <div className=" w-1/3">
-        <Formik
-          initialValues={{ name: '' }}
-          onSubmit={() => {}}
-          validationSchema={Yup.object().shape({
-            name: Yup.string()
-              .min(2, 'Too Short!')
-              .max(50, 'Too Long!')
-              .required('This field is required'),
-          })}
-        >
-          <Form>
-            <Story />
-          </Form>
-        </Formik>
-      </div>
-    ),
-  ],
+  render: (args) => {
+    console.log('args', args);
+    const [value, setValue] = useState('');
+
+    return (
+      <Input
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
+  },
 };
 
 export const Disabled: Story = {
@@ -85,52 +68,34 @@ export const Disabled: Story = {
     label: 'Name',
     disabled: true,
   },
-  decorators: [
-    (Story) => (
-      <div className=" w-1/3">
-        <Formik
-          initialValues={{ name: 'John Wick' }}
-          onSubmit={() => {}}
-          validationSchema={Yup.object().shape({
-            name: Yup.string()
-              .min(2, 'Too Short!')
-              .max(50, 'Too Long!')
-              .required('This field is required'),
-          })}
-        >
-          <Form>
-            <Story />
-          </Form>
-        </Formik>
-      </div>
-    ),
-  ],
+  render: (args) => {
+    console.log('args', args);
+    const [value, setValue] = useState('');
+
+    return (
+      <Input
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
+  },
 };
 
 export const WithError: Story = {
   args: {
     name: 'name',
   },
-  decorators: [
-    (Story) => (
-      <div className=" w-1/3">
-        <Formik
-          initialValues={{ name: 'John Wick' }}
-          onSubmit={() => {}}
-          validationSchema={Yup.object().shape({
-            name: Yup.string()
-              .min(2, 'Too Short!')
-              .max(50, 'Too Long!')
-              .required('This field is required'),
-          })}
-          initialErrors={{ name: 'This field is required' }}
-          initialTouched={{ name: true }}
-        >
-          <Form>
-            <Story />
-          </Form>
-        </Formik>
-      </div>
-    ),
-  ],
+  render: (args) => {
+    console.log('args', args);
+    const [value, setValue] = useState('');
+
+    return (
+      <Input
+        {...args}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    );
+  },
 };

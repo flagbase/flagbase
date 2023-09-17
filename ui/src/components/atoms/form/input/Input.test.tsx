@@ -3,7 +3,7 @@ import React from 'react';
 import { PlusCircleIcon } from '@heroicons/react/24/solid';
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import Input from '.';
+import Input from './input';
 import { strToImagePath } from '../../../../helpers';
 
 test.use({ viewport: { width: 500, height: 500 } });
@@ -14,10 +14,8 @@ test.afterEach(async ({ page }, testInfo) => {
   });
 });
 
-test.skip('shows placeholder if value is empty', async ({
-  mount,
-}, testInfo) => {
-  const component = await mount(<Input placeholder="Enter your name" />);
+test('shows placeholder if value is empty', async ({ mount }, testInfo) => {
+  const component = await mount(<Input name="Name" />);
   expect(component.getByPlaceholder('Enter your name')).toBeTruthy();
   await expect(component).toHaveScreenshot(strToImagePath(testInfo.title));
 });
