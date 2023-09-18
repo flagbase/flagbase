@@ -1,4 +1,4 @@
-name: ci-flagbase-ui
+name: ci-flagbase-client
 
 defaults:
   run:
@@ -49,13 +49,13 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build UI
+      - name: Build Client
         run: pnpm run build
 
-      - name: Lint UI
+      - name: Lint Client
         run: pnpm run lint
 
-      # - name: Test UI
+      # - name: Test Client
       #   run: pnpm run test
 
       - name: "Deploy: dev-flagbase-client-**.web.app"
