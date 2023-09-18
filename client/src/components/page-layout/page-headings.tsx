@@ -1,8 +1,8 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 
-import { CopyRow } from '@flagbase/ui';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
 
+import { CopyRow } from './copy-row';
 import PageHeading from './page-heading';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { useActiveEnvironment } from '../../pages/environments/environment-dropdown';

@@ -12,7 +12,6 @@ export * from './components/atoms/layout/list-item';
 export * from './components/atoms/form/button';
 export * from './components/atoms/form/input';
 export * from './components/atoms/form/select';
-export * from './components/atoms/form/tag-input';
 export * from './components/atoms/form/toggle';
 
 // Typography Components

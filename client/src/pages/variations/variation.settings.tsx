@@ -1,12 +1,6 @@
 import React from 'react';
 
-import {
-  Button,
-  Input,
-  TagInput,
-  Notification,
-  EditEntityHeading,
-} from '@flagbase/ui';
+import { Button, Input, Notification, EditEntityHeading } from '@flagbase/ui';
 import { Form, Formik } from 'formik';
 import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
@@ -14,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { deleteVariation, updateVariation, VariationUpdateBody } from './api';
 import { Variation } from './variations';
 import { useVariations } from './variations.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 import { configureAxios } from '../../lib/axios';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationKey } from '../../router/loaders';

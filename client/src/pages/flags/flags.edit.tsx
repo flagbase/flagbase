@@ -5,7 +5,6 @@ import {
   EditEntityHeading,
   Notification,
   Loader,
-  TagInput,
   Input,
   SettingsContainer,
 } from '@flagbase/ui';
@@ -14,6 +13,7 @@ import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Flag } from './api';
 import { useFlags, useRemoveFlag, useUpdateFlag } from './flags.hooks';
+import { TagInput } from '../../components/molecules/form/tag-input';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 export const FlagSettings = () => {
