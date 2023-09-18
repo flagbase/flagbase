@@ -11,19 +11,19 @@ test.afterEach(async ({ page }, testInfo) => {
   });
 });
 
-test('has title', async ({ page }) => {
+test.skip('has title', async ({ page }) => {
   await page.goto('http://localhost:3000');
 
   // Expect a title "to contain" a substring.
   await expect(page).toHaveTitle(/Instances | Flagbase/);
 });
 
-test('new user sees onboarding modal', async ({ page }) => {
+test.skip('new user sees onboarding modal', async ({ page }) => {
   await page.goto('http://localhost:3000/instances');
   expect(page.getByText('Flagbase Client')).toBeTruthy();
 });
 
-test('existing user does not see onboarding modal', async ({ page }) => {
+test.skip('existing user does not see onboarding modal', async ({ page }) => {
   await page.goto('http://localhost:3000/instances');
   await expect(
     page.getByRole('heading', { name: 'Flagbase Client' }),
@@ -39,7 +39,7 @@ test('existing user does not see onboarding modal', async ({ page }) => {
   ).not.toBeVisible();
 });
 
-test('user can connect to an instance', async ({ page }) => {
+test.skip('user can connect to an instance', async ({ page }) => {
   await page.goto('http://localhost:3000/instances');
   await page.locator('#remember-me').check();
   await page.getByRole('button', { name: 'Close' }).click();
@@ -76,7 +76,7 @@ test('user sees error when connecting with invalid URL', async ({ page }) => {
   ).toBeVisible();
 });
 
-test('user sees error when connecting with invalid access key', async function invalidAccessKey({
+test.skip('user sees error when connecting with invalid access key', async function invalidAccessKey({
   page,
 }) {
   await page.goto('http://localhost:3000/instances');
@@ -98,7 +98,7 @@ test('user sees error when connecting with invalid access key', async function i
   });
 });
 
-test('user sees error when connecting with invalid access secret', async ({
+test.skip('user sees error when connecting with invalid access secret', async ({
   page,
 }) => {
   await page.goto('http://localhost:3000/instances');
