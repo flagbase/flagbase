@@ -1,7 +1,7 @@
 {
   "hosting": [
     {
-      "target": "prod-flagbase-ui-app",
+      "target": "prod-flagbase-client",
       "public": "./dist/web",
       "ignore": [
         "firebase.json",
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "target": "staging-flagbase-ui-app",
+      "target": "staging-flagbase-client",
       "public": "./dist/web",
       "ignore": [
         "firebase.json",
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "target": "dev-flagbase-ui-app",
+      "target": "dev-flagbase-client",
       "public": "./dist/web",
       "ignore": [
         "firebase.json",
