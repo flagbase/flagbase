@@ -42,6 +42,8 @@ true&&(function polyfill() {
     }
 }());
 
+const tailwind = '';
+
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 function getDefaultExportFromCjs (x) {
@@ -695,4 +697,4 @@ window.playwrightUpdate = async (rootElement, component) => {
 };
 
 pwRegister({  });
-//# sourceMappingURL=index-feb19ab6.js.map
+//# sourceMappingURL=index-a823d8ef.js.map
