@@ -4,7 +4,6 @@ import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import {
   Button,
   Input,
-  TagInput,
   Modal,
   Text,
   Heading,
@@ -16,6 +15,7 @@ import * as Yup from 'yup';
 
 import { EnvironmentCreateBody } from './api';
 import { useAddEnvironment } from './environments';
+import { TagInput } from '../../components/molecules/form/tag-input';
 
 const NewEnvironmentSchema = Yup.object().shape({
   key: Yup.string()

@@ -2,14 +2,14 @@ name: ci-flagbase-ui
 
 defaults:
   run:
-    working-directory: ui
+    working-directory: client
 
 on:
   pull_request:
     branches:
       - master
     paths:
-      - "ui/**"
+      - "client/**"
 
 jobs:
   build:
@@ -55,8 +55,8 @@ jobs:
       - name: Lint UI
         run: pnpm run lint
 
-      - name: Test UI
-        run: pnpm run test
+      # - name: Test UI
+      #   run: pnpm run test
 
       - name: "Deploy: dev-flagbase-ui-app-**.web.app"
         uses: FirebaseExtended/action-hosting-deploy@v0

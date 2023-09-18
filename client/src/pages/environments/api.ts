@@ -1,15 +1,15 @@
-import { axios } from "../../lib/axios";
-import { UpdateBody } from "../workspaces/api";
+import { axios } from '../../lib/axios';
+import { UpdateBody } from '../workspaces/api';
 
 export const fetchEnvironments = async (
   workspaceKey: string,
-  projectsKey: string
+  projectsKey: string,
 ) => {
   if (!workspaceKey || !projectsKey) {
-    return Promise.reject("Missing workspaceKey or projectsKey");
+    return Promise.reject('Missing workspaceKey or projectsKey');
   }
   const result = await axios.get(
-    `/projects/${workspaceKey}/${projectsKey}/environments`
+    `/projects/${workspaceKey}/${projectsKey}/environments`,
   );
 
   return result.data;
@@ -25,7 +25,7 @@ export const deleteEnvironment = async ({
   environmentKey: string;
 }) => {
   return axios.delete(
-    `/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`
+    `/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`,
   );
 };
 
@@ -42,7 +42,7 @@ export const updateEnvironment = async ({
 }) => {
   return axios.patch(
     `/projects/${workspaceKey}/${projectKey}/environments/${environmentKey}`,
-    body
+    body,
   );
 };
 
@@ -54,7 +54,7 @@ export type EnvironmentCreateBody = {
 };
 
 type Environment = {
-  type: "variation";
+  type: 'variation';
   id: string;
   attributes: {
     description: string;
@@ -75,7 +75,7 @@ export const createEnvironment = async ({
 }): Promise<Environment> => {
   const { data } = await axios.post(
     `/projects/${workspaceKey}/${projectKey}/environments`,
-    environment
+    environment,
   );
 
   return data;

@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { Input, TagInput } from '@flagbase/ui';
+import { Input } from '@flagbase/ui';
+
+import { TagInput } from '../../molecules/form/tag-input';
 
 const formMap = {
   input: Input,
@@ -10,10 +12,10 @@ const formMap = {
 const FormFields = ({ form }) => {
   console.log('FORM', form);
 
-  return form.map((field) => {
+  return form.map((field, index) => {
     const Component = formMap[field.type];
 
-    return <Component {...field} />;
+    return <Component key={index} {...field} />;
   });
 };
 
