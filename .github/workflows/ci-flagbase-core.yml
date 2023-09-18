@@ -3,7 +3,7 @@ name: ci-flagbase-core
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'core/**'
 

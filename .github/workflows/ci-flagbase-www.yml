@@ -3,7 +3,7 @@ name: ci-flagbase-www
 on:
   pull_request:
     branches:
-      - master
+      - main
     paths:
       - 'www/**'
 

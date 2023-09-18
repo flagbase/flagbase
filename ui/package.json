@@ -8,6 +8,7 @@
   "license": "MIT",
   "main": "./dist/index.js",
   "scripts": {
+    "prepare": "pnpm run build",
     "start": "storybook dev -p 6006",
     "build": "vite build",
     "test": "pnpm run test-ct",

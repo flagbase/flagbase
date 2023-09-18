@@ -3,7 +3,7 @@ name: release-flagbase-ui-app
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'ui/**'
 
