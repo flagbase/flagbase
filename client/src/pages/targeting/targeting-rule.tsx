@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 
-import { Button, Input, Select, Toggle, useNotification } from '@flagbase/ui';
+import { Button, Input, Select, useNotification } from '@flagbase/ui';
 import { ArrowPathIcon, MinusCircleIcon } from '@heroicons/react/24/outline';
 import { Form, Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
@@ -14,6 +14,7 @@ import {
 import RolloutSlider from './rollout-slider';
 import { isValidVariationSum, objectsEqual } from './targeting.utils';
 import { TagInput } from '../../components/molecules/form/tag-input';
+import Toggle from '../../components/molecules/form/toggle/toggle';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getTargetingRulesKey } from '../../router/loaders';
 
