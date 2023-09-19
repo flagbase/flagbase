@@ -128,3 +128,5 @@ coverage.txt
 
 
 **/playwright/.cache
+
+client/playwright-report/
