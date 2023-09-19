@@ -3,7 +3,7 @@ name: release-flagbase-core
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'core/**'
 

@@ -1,15 +1,15 @@
-name: ci-flagbase-ui
+name: ci-flagbase-client
 
 defaults:
   run:
-    working-directory: ui
+    working-directory: client
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "ui/**"
+      - "client/**"
 
 jobs:
   build:
@@ -49,11 +49,20 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build UI
+      - name: Build Client
         run: pnpm run build
 
-      - name: Lint UI
+      - name: Lint Client
         run: pnpm run lint
 
-      # - name: Test UI
+      # - name: Test Client
       #   run: pnpm run test
+
+      - name: "Deploy: dev-flagbase-client-**.web.app"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
+          projectId: flagbase
+          target: dev-flagbase-ui-app
+          entryPoint: ./client

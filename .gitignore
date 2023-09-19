@@ -125,3 +125,6 @@ dist
 coverage.txt
 
 .firebase
+
+
+**/playwright/.cache

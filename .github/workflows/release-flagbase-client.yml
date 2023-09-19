@@ -1,15 +1,15 @@
-name: release-flagbase-ui-app
+name: release-flagbase-client
 
 on:
   push:
     branches:
-      - master
+      - main
     paths:
-      - 'ui/**'
+      - 'client/**'
 
 jobs:
   release:
-    name: "Deploy: app.flagbase.xyz"
+    name: "Deploy: client.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch

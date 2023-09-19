@@ -3,7 +3,7 @@ name: release-flagbase-www
 on:
   push:
     branches:
-      - master
+      - main
     paths:
       - 'www/**'
       - 'core/api/swagger/**'
