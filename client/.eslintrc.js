@@ -4,17 +4,7 @@ module.exports = {
   env: {
     node: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
-    'plugin:storybook/recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-    'plugin:tailwindcss/recommended',
-  ],
+  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'plugin:react/recommended', 'plugin:react-hooks/recommended', 'plugin:storybook/recommended', 'plugin:import/recommended', 'plugin:import/typescript', 'plugin:tailwindcss/recommended', 'plugin:storybook/recommended'],
   plugins: ['prettier', 'react', 'react-hooks', 'storybook'],
   settings: {
     react: {
