@@ -7,7 +7,6 @@ import {
   Loader,
   Notification,
   EditEntityHeading,
-  Toggle,
 } from '@flagbase/ui';
 import { Field, Form, Formik } from 'formik';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
@@ -16,6 +15,7 @@ import { SDK } from './api';
 import { useSDKs } from './sdks';
 import { useRemoveSdk, useUpdateSdk } from './sdks.modal';
 import { TagInput } from '../../components/molecules/form/tag-input';
+import Toggle from '../../components/molecules/form/toggle/toggle';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 export const SdkSettings = () => {
