@@ -10,59 +10,64 @@ on:
       - main
     paths:
       - "client/**"
+      - ".github/workflows/ci-flagbase-client.yml"
 
 jobs:
-  build:
-    name: Install, build and lint & deploy dev preview
+  build-and-publish:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 16
-
+          node-version: 18
       - uses: pnpm/action-setup@v2
-        name: Install pnpm
         id: pnpm-install
         with:
           version: 7
           run_install: false
-
-      - name: Get pnpm store directory
-        id: pnpm-cache
+      - id: pnpm-cache
         shell: bash
         run: |
           echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
-
       - uses: actions/cache@v3
-        name: Setup pnpm cache
         with:
           path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build Client
-        run: pnpm run build
-
-      - name: Lint Client
-        run: pnpm run lint
-
-      # - name: Test Client
-      #   run: pnpm run test
-
-      - name: "Deploy: dev-flagbase-client-**.web.app"
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - run: |
+          pnpm install
+          pnpm build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
           projectId: flagbase
           target: dev-flagbase-ui-app
           entryPoint: ./client
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+      - id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - run: |
+          pnpm install
+          pnpm lint
