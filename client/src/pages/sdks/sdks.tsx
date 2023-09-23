@@ -173,7 +173,6 @@ export const Sdks = () => {
               show={copied}
               setShow={setCopied}
             />
-
             TODO: redo the table for SDKs
             {/* <Table
               loading={false}

@@ -13,17 +13,15 @@
   },
   "scripts": {
     "start": "pnpm run dev",
-    "test": "pnpm run test-ct",
-    "test:update": "npm run test -- -u",
+    "test": "playwright test -c playwright.config.ts",
+    "test:update": "pnpm run test -- -u",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test-ct": "playwright test -c playwright-ct.config.ts",
-    "test-ct-update": "playwright test --update-snapshots -c playwright-ct.config.ts",
     "dev": "vite",
     "build": "vite build",
+    "build:storybook": "storybook build",
     "serve": "vite preview",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "storybook": "storybook dev -p 6006"
   },
   "devDependencies": {
     "@babel/core": "^7.16.7",
