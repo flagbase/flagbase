@@ -8,14 +8,20 @@ import {
 } from '@tanstack/react-table';
 import { useNavigate } from 'react-router-dom';
 
-export function Table({ data, columns }: { data: any[]; columns: any[] }) {
+export default function Table({
+  data,
+  columns,
+}: {
+  data: any[];
+  columns: any[];
+}) {
+  const navigate = useNavigate();
+
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
   });
-
-  const navigate = useNavigate();
 
   return (
     <div className="-mx-4 mt-10 ring-1 ring-gray-300 sm:mx-0 sm:rounded-lg">

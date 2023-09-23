@@ -8,7 +8,7 @@ import { Project } from './api';
 import { constants, projectsColumn } from './projects.constants';
 import { convertProjects, useProjects } from './projects.hooks';
 import { CreateProjectModal } from './projects.modal';
-import { Table } from '../../components/organisms/table/table';
+import Table from '../../components/organisms/table/table';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 const Projects = () => {

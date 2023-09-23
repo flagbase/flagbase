@@ -5,7 +5,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { Await, useLoaderData } from 'react-router-dom';
 
 import { useVariations } from './variations.hooks';
-import { Table } from '../../components/organisms/table/table';
+import Table from '../../components/organisms/table/table';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationPath } from '../../router/router.paths';
 
