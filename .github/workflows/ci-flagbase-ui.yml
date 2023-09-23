@@ -13,7 +13,7 @@ on:
       - ".github/workflows/ci-flagbase-ui.yml"
 
 jobs:
-  install:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -35,18 +35,32 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - run: pnpm install
-
-  build:
-    needs: install
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: pnpm run build
+      - run: |
+        pnpm install
+        pnpm build
 
   lint:
-    needs: install
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: pnpm run lint
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+      - id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - run: |
+        pnpm install
+        pnpm lint
