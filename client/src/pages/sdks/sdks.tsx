@@ -5,7 +5,7 @@ import {
   EmptyState,
   Loader,
   Notification,
-  Table,
+  // Table,
   Tag,
 } from '@flagbase/ui';
 import {
@@ -174,7 +174,8 @@ export const Sdks = () => {
               setShow={setCopied}
             />
 
-            <Table
+            TODO: redo the table for SDKs
+            {/* <Table
               loading={false}
               dataSource={convertSdksToList(sdks)}
               columns={sdkColumns}
@@ -193,7 +194,7 @@ export const Sdks = () => {
                   }
                 />
               }
-            />
+            /> */}
           </div>
         )}
       </Await>
