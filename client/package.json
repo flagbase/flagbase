@@ -13,7 +13,7 @@
     "directory": "ui"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "bunx --bun vite",
     "preview": "vite preview",
     "test": "playwright test -c playwright.config.ts",
     "test:update": "pnpm run test -- -u",
