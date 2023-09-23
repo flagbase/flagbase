@@ -176,7 +176,7 @@ export default function Poller(
       3000;
 
     let lastRefreshed: number = -1;
-    let timerId: number = setTimeout(() => {}, 1);
+    let timerId: NodeJS.Timer = setTimeout(() => {}, 1);
 
     const schedule = async () => {
       timerId = setTimeout(async () => {

@@ -40,6 +40,6 @@
     "react": "^16.6.3 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@flagbase/js-client-sdk": "^0.0.6"
+    "@flagbase/js-client-sdk": "workspace:*"
   }
 }
