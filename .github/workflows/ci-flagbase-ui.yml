@@ -36,8 +36,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - run: |
-        pnpm install
-        pnpm build
+          pnpm install
+          pnpm build
 
   lint:
     runs-on: ubuntu-latest
@@ -62,5 +62,5 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - run: |
-        pnpm install
-        pnpm lint
+          pnpm install
+          pnpm lint
