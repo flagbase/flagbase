@@ -2,25 +2,29 @@ import * as React from 'react';
 
 import { classNames } from '@flagbase/ui';
 import {
+  ColumnDef,
+  Row,
   flexRender,
   getCoreRowModel,
+  noop,
   useReactTable,
 } from '@tanstack/react-table';
-import { useNavigate } from 'react-router-dom';
 
-export default function Table({
+export type TableProps<TData, TValue> = {
+  data: TData[];
+  columns: ColumnDef<TData, TValue>[];
+  trOnClick: (href: Row<TData>) => void;
+};
+
+export default function Table<TData, TValue>({
   data,
   columns,
-}: {
-  data: any[];
-  columns: any[];
-}) {
-  const navigate = useNavigate();
-
+  trOnClick = noop,
+}: TableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
+    getCoreRowModel: getCoreRowModel<TData>(),
   });
 
   return (
@@ -51,7 +55,7 @@ export default function Table({
             <tr
               className="cursor-pointer hover:bg-slate-50"
               onClick={() => {
-                navigate(row.original.href);
+                trOnClick(row);
               }}
               key={row.id}
             >

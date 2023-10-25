@@ -4,41 +4,49 @@ import { Tag } from '@flagbase/ui';
 import { Meta } from '@storybook/react';
 import { createColumnHelper } from '@tanstack/react-table';
 
-import Table from './table';
+import Table, { TableProps } from './table';
 
 type Entity = {
-  key: string;
   name: string;
   description: string;
-  tags: React.JSX.Element;
-  toggle: string;
+  tags: string[];
   onClick?: () => void;
 };
+
 const columnHelper = createColumnHelper<Entity>();
 
-const Tags = (tags: string[]) =>
-  tags.map((tag) => (
-    <Tag className="h-fit py-2" key={tag}>
+const Tags = ({ tags }: { tags: string[] }) => {
+  console.log('tags', tags);
+  if (!tags) {
+    return null;
+  }
+
+  return tags.map((tag) => (
+    <Tag className="mx-2 h-fit py-2" key={tag}>
       {tag}
     </Tag>
   ));
-const meta: Meta<typeof Table> = {
+};
+
+const data: Entity[] = [
+  {
+    name: 'hello',
+    description: 'world',
+    tags: ['Sydney', 'Melbourne', 'Townsville'],
+    onClick: () => console.log('hello world'),
+  },
+  {
+    name: 'foo',
+    description: 'bar',
+    tags: ['Sydney', 'Melbourne', 'Townsville'],
+    onClick: () => console.log('foo bar'),
+  },
+];
+
+const meta: Meta<TableProps<Entity, any>> = {
   component: Table,
   args: {
-    data: [
-      {
-        key: 'hello',
-        name: 'hello',
-        description: 'world',
-        tags: () => <Tags tags={['foo', 'bar']} />,
-        onClick: () => console.log('hello world'),
-      },
-      {
-        name: 'foo',
-        description: 'bar',
-        onClick: () => console.log('foo bar'),
-      },
-    ],
+    data,
     columns: [
       columnHelper.accessor('name', {
         header: () => 'Name',
@@ -48,6 +56,7 @@ const meta: Meta<typeof Table> = {
       }),
       columnHelper.accessor('tags', {
         header: () => 'Tags',
+        cell: (props) => <Tags tags={props.getValue()} />,
       }),
     ],
   },
