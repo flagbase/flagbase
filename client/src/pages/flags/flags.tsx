@@ -8,7 +8,7 @@ import { Flag } from './api';
 import { flagConstants, flagsColumn } from './constants';
 import { convertFlags, useFlags } from './flags.hooks';
 import { CreateFlag } from './flags.modal';
-import Table from '../../components/organisms/table/table';
+import Table from '../../components/organisms/table';
 import {
   useActiveEnvironment,
   useUpdateActiveEnvironment,
