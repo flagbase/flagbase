@@ -1,10 +1,10 @@
 import React from 'react';
 
-import { strToImagePath } from '@flagbase/ui';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import Table from '.';
 import { tableSampleColumns, tableSampleData } from './table.scenarios';
+import { strToImagePath } from '../../../helpers';
 
 test.use({ viewport: { width: 500, height: 500 } });
 test.afterEach(async ({ page }, testInfo) => {

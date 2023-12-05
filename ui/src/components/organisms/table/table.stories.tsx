@@ -9,6 +9,11 @@ const meta: Meta<TableProps<Entity, any>> = {
     data: tableSampleData,
     columns: tableSampleColumns,
   },
+  argTypes: {
+    trOnClick: {
+      action: 'trOnClick',
+    },
+  },
 };
 
 export default meta;

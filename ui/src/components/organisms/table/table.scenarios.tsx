@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { Tag } from '@flagbase/ui';
 import { createColumnHelper } from '@tanstack/react-table';
+
+import { Tag } from '../../atoms/layout/tag';
 
 export type Entity = {
   name: string;

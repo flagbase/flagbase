@@ -1,11 +1,10 @@
 import React, { Suspense } from 'react';
 
-import { Tag, Loader } from '@flagbase/ui';
+import { Tag, Loader, Table } from '@flagbase/ui';
 import { createColumnHelper } from '@tanstack/react-table';
 import { Await, useLoaderData } from 'react-router-dom';
 
 import { useVariations } from './variations.hooks';
-import Table from '../../components/organisms/table';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 import { getVariationPath } from '../../router/router.paths';
 

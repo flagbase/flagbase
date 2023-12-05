@@ -1,14 +1,13 @@
 import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader } from '@flagbase/ui';
+import { Button, EmptyState, Loader, Table } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Flag } from './api';
 import { flagConstants, flagsColumn } from './constants';
 import { convertFlags, useFlags } from './flags.hooks';
 import { CreateFlag } from './flags.modal';
-import Table from '../../components/organisms/table';
 import {
   useActiveEnvironment,
   useUpdateActiveEnvironment,
@@ -21,6 +20,7 @@ const Flags: React.FC = () => {
   const { data: environmentKey } = useActiveEnvironment();
   const { mutate } = useUpdateActiveEnvironment();
   const { data: environments } = useEnvironments();
+  const navigate = useNavigate();
 
   if (!environmentKey && environments?.length) {
     mutate(environments[0].attributes.key);
@@ -31,6 +31,10 @@ const Flags: React.FC = () => {
   );
 
   const { data: flags } = useFlags();
+
+  const rowOnClick = (flag: Flag) => {
+    navigate(flag.href);
+  };
 
   return (
     <Suspense fallback={<Loader />}>
@@ -46,6 +50,7 @@ const Flags: React.FC = () => {
                   environment: activeEnvironment,
                 })}
                 columns={flagsColumn}
+                trOnClick={rowOnClick}
                 emptyState={
                   <EmptyState
                     title="No Flags"

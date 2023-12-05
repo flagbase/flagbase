@@ -14,7 +14,7 @@ import { Form, Formik } from 'formik';
 import { NewWorkspaceSchema } from './workspace.constants';
 import { useAddWorkspace } from './workspaces.hooks';
 import { TagInput } from '../../components/molecules/form/tag-input';
-import { Instance } from '../instances/instances.functions';
+import { APIInstance } from '../instances/instances.functions';
 
 interface ReactState {
   visible: boolean;
@@ -24,7 +24,7 @@ interface ReactState {
 interface WorkspaceModal {
   visible: boolean;
   setVisible(data: boolean): void;
-  instance: Instance;
+  instance: APIInstance;
 }
 
 const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {

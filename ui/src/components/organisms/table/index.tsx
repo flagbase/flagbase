@@ -1,22 +1,22 @@
 import * as React from 'react';
 
-import { classNames } from '@flagbase/ui';
 import {
   ColumnDef,
-  Row,
   flexRender,
   getCoreRowModel,
   noop,
   useReactTable,
 } from '@tanstack/react-table';
 
+import { classNames } from '../../../helpers';
+
 export type TableProps<TData, TValue> = {
   data: TData[];
   columns: ColumnDef<TData, TValue>[];
-  trOnClick: (href: Row<TData>) => void;
+  trOnClick: (href: TData) => void;
 };
 
-export default function Table<TData, TValue>({
+export function Table<TData, TValue>({
   data,
   columns,
   trOnClick = noop,
@@ -55,7 +55,7 @@ export default function Table<TData, TValue>({
             <tr
               className="cursor-pointer hover:bg-slate-50"
               onClick={() => {
-                trOnClick(row);
+                trOnClick(row.original);
               }}
               key={row.id}
             >

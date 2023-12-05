@@ -1,22 +1,22 @@
 import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader, Input } from '@flagbase/ui';
+import { Button, EmptyState, Loader, Input, Table } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/20/solid';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Workspace } from './api';
 import { constants, workspaceColumns } from './workspace.constants';
 import { CreateWorkspaceModal } from './workspace.modal';
-import { convertWorkspaces } from './workspaces.helpers';
+import { ConvertedWorkspace, convertWorkspaces } from './workspaces.helpers';
 import { useWorkspaces } from './workspaces.hooks';
-import Table from '../../components/organisms/table';
-import { Instance } from '../instances/instances.functions';
+import { APIInstance } from '../instances/instances.functions';
 
 const MainWorkspaces = () => {
+  const navigate = useNavigate();
   const { instance, workspaces: prefetchedWorkspaces } = useLoaderData() as {
     workspaces: Workspace[];
-    instance: Instance;
+    instance: APIInstance;
   };
   const [createWorkspace, showCreateWorkspace] = useState(false);
   const [filter, setFilter] = useState('');
@@ -26,6 +26,10 @@ const MainWorkspaces = () => {
     isFetching,
     isLoading,
   } = useWorkspaces();
+
+  const rowOnClick = (workspace: ConvertedWorkspace) => {
+    navigate(workspace.href);
+  };
 
   return (
     <Suspense fallback={<Loader />}>
@@ -60,6 +64,7 @@ const MainWorkspaces = () => {
                     )
                   : []
               }
+              trOnClick={rowOnClick}
               columns={workspaceColumns}
               emptyState={
                 <EmptyState
