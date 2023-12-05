@@ -6,6 +6,7 @@ export * from './components/atoms/layout/notification';
 export * from './components/atoms/layout/stacked-list';
 export * from './components/atoms/layout/tag';
 export * from './components/atoms/layout/list-item';
+export * from './components/organisms/table';
 
 // Form Components
 export * from './components/atoms/form/button';

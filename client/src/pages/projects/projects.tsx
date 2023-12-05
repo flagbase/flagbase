@@ -1,14 +1,13 @@
 import React, { Suspense, useState } from 'react';
 
-import { Button, EmptyState, Loader } from '@flagbase/ui';
+import { Button, EmptyState, Loader, Table } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Await, useLoaderData } from 'react-router-dom';
+import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Project } from './api';
 import { constants, projectsColumn } from './projects.constants';
 import { convertProjects, useProjects } from './projects.hooks';
 import { CreateProjectModal } from './projects.modal';
-import { Table } from '../../components/organisms/table/table';
 import { useFlagbaseParams } from '../../lib/use-flagbase-params';
 
 const Projects = () => {
@@ -19,6 +18,11 @@ const Projects = () => {
   };
   const { instanceKey, workspaceKey } = useFlagbaseParams();
   const { data: projects } = useProjects();
+  const navigate = useNavigate();
+
+  const rowOnClick = (project: Project) => {
+    navigate(project.href);
+  };
 
   return (
     <Suspense fallback={<Loader />}>
@@ -46,6 +50,7 @@ const Projects = () => {
                 filter,
               })}
               columns={projectsColumn}
+              trOnClick={rowOnClick}
               emptyState={
                 <EmptyState
                   title="No Projects"

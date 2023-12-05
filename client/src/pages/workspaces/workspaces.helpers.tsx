@@ -1,12 +1,12 @@
 import React from 'react';
 
-import { Button, Tag } from '@flagbase/ui';
+import { Tag } from '@flagbase/ui';
 import { Link } from 'react-router-dom';
 
 import { Workspace } from './api';
-import { Instance } from '../instances/instances.functions';
+import { APIInstance } from '../instances/instances.functions';
 
-interface ConvertedWorkspace {
+export type ConvertedWorkspace = {
   id: number;
   title: JSX.Element;
   href: string;
@@ -15,11 +15,11 @@ interface ConvertedWorkspace {
   description: JSX.Element;
   tags: JSX.Element[];
   key: string;
-}
+};
 
 export const convertWorkspaces = (
   workspaceList: Workspace[],
-  instance: Instance,
+  instance: APIInstance,
   filter: string,
 ): ConvertedWorkspace[] => {
   if (!workspaceList) {
@@ -46,15 +46,6 @@ export const convertWorkspaces = (
             to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}
           >
             <span>{currentWorkspace.attributes.name}</span>
-          </Link>
-        ),
-        action: (
-          <Link
-            to={`/${instance.key}/workspaces/${currentWorkspace?.attributes.key}/projects`}
-          >
-            <Button secondary className="py-2">
-              Connect
-            </Button>
           </Link>
         ),
         description: <span>{currentWorkspace.attributes.description}</span>,
