@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  core:
+    build: .
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/usr/src/app
+    links:
+      - db
+    command: bash -c "bash ./scripts/wait-for-it.sh db:5432 -q -- diesel setup && cargo watch -x run"
+
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/pgdata
+    environment:
+      POSTGRES_DB: flagbase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: supersecretpassword
+      PGDATA: /var/lib/postgresql/data/pgdata
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U flagbase"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata: {}
