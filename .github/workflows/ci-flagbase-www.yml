@@ -35,11 +35,11 @@ jobs:
           pnpm install
           pnpm build
 
-      # - name: "Deploy: dev-flagbase-website-**.web.app"
-      #   uses: FirebaseExtended/action-hosting-deploy@v0
-      #   with:
-      #     repoToken: '${{ secrets.GITHUB_TOKEN }}'
-      #     firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
-      #     projectId: flagbase
-      #     target: dev-flagbase-website
-      #     entryPoint: ./www
+      - name: "Deploy: dev-flagbase-website-**.web.app"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
+          projectId: flagbase
+          target: dev-flagbase-website
+          entryPoint: ./www

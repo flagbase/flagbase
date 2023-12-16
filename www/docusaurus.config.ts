@@ -52,6 +52,18 @@ const config: Config = {
         },
       } satisfies Preset.Options,
     ],
+    [
+      'redocusaurus',
+      {
+        specs: [{
+          route: '/docs/core/api',
+          spec: '../core/api/swagger/swagger.yaml',
+        }],
+        theme: {
+          primaryColor: '#0b58a5',
+        },
+      }
+    ],
   ],
 
   plugins: [

@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "start": "docusaurus start",
-    "build": "docusaurus build",
+    "pre-build": "cp ../core/api/swagger/swagger.yaml static/swagger.yaml",
+    "start": "pnpm pre-build && docusaurus start",
+    "build": "pnpm pre-build && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -22,7 +23,8 @@
     "clsx": "^2.0.0",
     "prism-react-renderer": "^2.3.0",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "redocusaurus": "^2.0.0"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "3.0.1",
