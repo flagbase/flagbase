@@ -7,6 +7,7 @@
       "ui/*",
       "app/*",
       "www/*",
+      "sdk/js-client-sdk/*",
       "sdk/react-client-sdk/*"
     ]
   }

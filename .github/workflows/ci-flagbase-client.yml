@@ -2,7 +2,7 @@ name: ci-flagbase-client
 
 defaults:
   run:
-    working-directory: client
+    working-directory: ./client
 
 on:
   pull_request:

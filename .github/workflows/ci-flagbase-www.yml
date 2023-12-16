@@ -2,7 +2,7 @@ name: ci-flagbase-www
 
 defaults:
   run:
-    working-directory: www
+    working-directory: ./www
 
 on:
   pull_request:
