@@ -5,7 +5,8 @@
     "packages": [
       "ui/*",
       "app/*",
-      "sdk/react-client-sdk/*"
+      "sdk/react-client-sdk/*",
+      "www/website/*"
     ]
   }
 }

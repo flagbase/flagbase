@@ -1,21 +1,27 @@
 # Flagbase React Client SDK
 
-This is the official React client-side SDK for Flagbase. With this SDK, you can use lagbase feature flags and experiments in your React applications. 
+This is the official React client-side SDK for Flagbase. With this SDK, you can use Flagbase feature flags and experiments in your React applications.
 
 ## Installation
+
 You can install the package using npm:
+
 ```sh
 $ npm install @flagbase/react-client-sdk
 ```
+
 or yarn:
+
 ```sh
 yarn add @flagbase/react-client-sdk
 ```
 
 ## Usage
+
 1. Import the SDK
 
 To use the SDK, import it at the top of your file:
+
 ```js
 import FlagbaseProvider, { useFeatureFlag } from "@flagbase/react-client-sdk";
 ```
@@ -23,6 +29,7 @@ import FlagbaseProvider, { useFeatureFlag } from "@flagbase/react-client-sdk";
 2. Wrap your app in the FlagbaseProvider
 
 Wrap your app with the FlagbaseProvider component to enable the SDK to communicate with the Flagbase service. Pass in the clientKey and optionally, identity and opts props:
+
 ```js
 function App() {
   return (
@@ -45,7 +52,9 @@ Use the useFeatureFlag hook to get the value of a feature flag. Pass in the flag
 function MyComponent() {
   const isFeatureEnabled = useFeatureFlag("MY_FEATURE", false);
 
-  return <div>{isFeatureEnabled ? "Feature enabled!" : "Feature disabled."}</div>;
+  return (
+    <div>{isFeatureEnabled ? "Feature enabled!" : "Feature disabled."}</div>
+  );
 }
 ```
 
