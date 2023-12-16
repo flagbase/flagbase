@@ -10,6 +10,7 @@ on:
       - main
     paths:
       - "www/**"
+      - ".github/workflows/ci-flagbase-www.yml"
 
 jobs:
   build-and-deploy-branch:
