@@ -72,6 +72,7 @@ This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Fl
 - **[`/core`](./core/README.md)**: Code for `flagbased`, the service used to manage protected resources and stream feature flags to the SDKs. This service can be run in multiple worker modes, including `poller`, `streamer` and `API`.
 - **[`/sdk`](./sdk/README.md)**: SDKs retrieve and evaluate feature flags from the service.
 - **[`/ui`](./ui/README.md)**: UI interacts with the [Core API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags, etc).
+- **[`/www`](./www/README.md)**: Code for [flagbase.com](https://flagbase.com), build using [Docusaurus](https://docusaurus.io/).
 
 ## Support
 
