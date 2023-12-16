@@ -12,8 +12,7 @@ on:
       - "www/**"
 
 jobs:
-  build:
-    name: Install, build & deploy dev preview
+  build-and-deploy-branch:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -23,7 +22,7 @@ jobs:
       - uses: pnpm/action-setup@v2
         id: pnpm-install
         with:
-          version: 7
+          version: 8
           run_install: false
       - id: pnpm-cache
         shell: bash
@@ -35,12 +34,9 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - run: |
-          pnpm install
-          pnpm build
-
-      - name: "Deploy: dev-flagbase-website-**.web.app"
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - run: pnpm install
+      - run: pnpm build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
