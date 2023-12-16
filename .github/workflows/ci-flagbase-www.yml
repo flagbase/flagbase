@@ -1,5 +1,9 @@
 name: ci-flagbase-www
 
+defaults:
+  run:
+    working-directory: www
+
 on:
   pull_request:
     branches:
