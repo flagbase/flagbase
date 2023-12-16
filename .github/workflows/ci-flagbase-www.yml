@@ -1,29 +1,45 @@
 name: ci-flagbase-www
 
+defaults:
+  run:
+    working-directory: ./www
+
 on:
   pull_request:
     branches:
       - main
     paths:
-      - 'www/**'
+      - "www/**"
 
 jobs:
-  build:
-    name: Install, build & deploy dev preview
+  build-and-deploy-branch:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@master
-
-      - name: Build
-        run: docker-compose run www yarn build
-        working-directory: ./www
-
-      - name: "Deploy: dev-flagbase-website-**.web.app"
-        uses: FirebaseExtended/action-hosting-deploy@v0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}'
+          node-version: 18
+      - uses: pnpm/action-setup@v2
+        id: pnpm-install
+        with:
+          version: 8
+          run_install: false
+      - id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+      - run: pnpm -F=@flagbase/www install
+      - run: pnpm -F=@flagbase/www build
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
           projectId: flagbase
           target: dev-flagbase-website
           entryPoint: ./www

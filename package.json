@@ -3,10 +3,12 @@
   "private": true,
   "workspaces": {
     "packages": [
+      "client/*",
       "ui/*",
       "app/*",
-      "sdk/react-client-sdk/*",
-      "www/website/*"
+      "www/*",
+      "sdk/js-client-sdk/*",
+      "sdk/react-client-sdk/*"
     ]
   }
 }

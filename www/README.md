@@ -1,24 +1,41 @@
-# www
-This folder contains the markdown files that make up the flagbase website ([flagbase.com](https://flagbase.com)). Please note that it does not contain all pages on the website and is only a partial subset of the contents that are available on our website.
+# Website
 
-### Directory structure
-* **_app_**: app to preview what content will look like on flagbase.com
-* **content/blog**: blog posts ~ announcements, feature releases, engineering decisions etc.
-* **content/dev**: documents related to our development practices, project plans & roadmaps, architectural decisions, changelogs
-* **content/docs**: product related guides / tutorials
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
 
-### Running the site locally
-For debugging purposes, you can run a minimal version of the website.
+### Installation
 
-You can preview the website using docker & docker-compose, using the following command:
-```sh
-$ docker-compose up
+```
+$ pnpm
 ```
 
-### Building the site locally
-```sh
-$ docker-compose run www yarn build
+### Local Development
+
+```
+$ pnpm start
 ```
 
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
+### Build
 
+```
+$ pnpm build
+```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+Using SSH:
+
+```
+$ USE_SSH=true pnpm deploy
+```
+
+Not using SSH:
+
+```
+$ GIT_USER=<Your GitHub username> pnpm deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.

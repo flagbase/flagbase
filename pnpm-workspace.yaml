@@ -1,4 +1,6 @@
 packages:
   - "client/**"
   - "ui/**"
+  - "www/**"
+  - "sdk/js-client-sdk/**"
   - "sdk/react-client-sdk/**"
