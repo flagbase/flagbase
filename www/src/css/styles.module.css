@@ -1,0 +1,113 @@
+/* stylelint-disable docusaurus/copyright-header */
+
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+
+.heroBanner {
+  padding: 4rem 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.homeHeroBanner {
+  background-color: #24292e;
+  padding: 1em;
+  padding-top: 50px;
+  padding-bottom: 30px;
+  min-height: 70vh;
+  border-bottom-right-radius: 6em;
+}
+
+.homeHeroSubtitleBanner {
+  color: #24292e;
+}
+
+.readDocs {
+  margin-top: -20px;
+  margin-right: 10px;
+  height: 30px;
+  font-size: 12px;
+}
+
+@media screen and (max-width: 966px) {
+  .heroBanner {
+    padding: 2rem;
+  }
+}
+
+.whiteButton {
+  background-color: white;
+}
+
+.signUpButton {
+  background-color: #348dfe;
+  border: 1px solid #348dfe;
+  color: #ffffff;
+  margin-bottom: 0.5em;
+}
+
+.githubButton {
+  margin-right: 0.5em;
+  background-color: #2b3137;
+  color: #ffffff;
+}
+
+.slackButton {
+  color: #2b3137;
+}
+
+.slackButton:hover {
+  background-color: #ffffff;
+  color: #2b3137;
+}
+
+.learnMoreLink {
+  margin-top: 0.5em;
+}
+
+.learnMoreLink a {
+  color: #348dfe;
+}
+
+/* Feature Timeline */
+
+.featureTimelineImg {
+  height: 200px;
+  width: 350px;
+}
+
+.featureTimelineTitle {
+  font-size: larger;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.featureTimelineText {
+  font-size: 1.1em;
+}
+
+.featureTimelineRow {
+  margin-bottom: 2.5em;
+}
+
+/* Feature Grid */
+
+.featureGridImage {
+  height: 150px;
+  width: 150px;
+}
+
+.featureGridTitle {
+  margin-top: 1em;
+  font-size: larger;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.featureGridText {
+  font-size: 1em;
+}
