@@ -1,6 +1,6 @@
 {
-  "version": "0.0.0",
   "name": "@flagbase/client",
+  "version": "0.0.0",
   "description": "Shared containers, components and styles that make up Flagbase UI",
   "keywords": [],
   "author": "Flagbase Team <hello@flagbase.com>",
