@@ -1,6 +1,14 @@
-# flagbase.com
+# www
 
-[Flagbase.com](https://flagbase.com) is built using [Docusaurus](https://docusaurus.io/).
+**[Flagbase.com](https://flagbase.com)** is built using [Docusaurus](https://docusaurus.io/).
+
+## Project structure
+
+- `blog`: This directory contains all the blog posts for flagbase. Each blog post is in its own directory and the authors.yml file likely contains information about the authors of the posts.
+- `dev`: This directory contains development-related documents or scripts, categorized into core, intro, sdk, and ui.
+- `docs`: This directory contains the user-facing documentation for flagbase. It's divided into core, guides, intro, and sdk.
+- `src`: This directory contains the source code for your project. It's divided into components (React components), css (stylesheets), pages (the pages of your website), and utils (utility functions).
+- `static`: This directory contains static files that are copied into the root of the build directory.
 
 ### Installation
 
