@@ -9,27 +9,22 @@ on:
 
 jobs:
   release:
-    name: "Deploy: core.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
+      - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: "DockerHub: Set up docker buildx"
-        uses: docker/setup-buildx-action@v2
-      - name: "DockerHub: Build and push"
-        uses: docker/build-push-action@v4
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/build-push-action@v4
         with:
           context: ./core
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/core:latest
-      - name: "Deploy: core.flagbase.xyz"
-        uses: peter-evans/repository-dispatch@v1
+      - uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
           repository: ${{ secrets.FLAGBASE_COM_REPO }}
-          event-type: ${{ secrets.FLAGBASE_COM_RELEASE_CORE_EVENT_TYPE }}
+          event-type: release-core

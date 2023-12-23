@@ -5,14 +5,8 @@
   "targets": {
     "flagbase": {
       "hosting": {
-        "prod-flagbase-ui-app": [
-          "prod-flagbase-ui-app"
-        ],
-        "staging-flagbase-ui-app": [
-          "staging-flagbase-ui-app"
-        ],
-        "dev-flagbase-ui-app": [
-          "dev-flagbase-ui-app"
+        "flagbase-client": [
+          "flagbase-client"
         ]
       }
     }
