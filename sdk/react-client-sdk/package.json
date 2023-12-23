@@ -18,28 +18,28 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "@types/react-dom": "^18.2.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "typescript": "^4.9.5",
-    "@storybook/addon-essentials": "^7.0.0-rc.8",
-    "@storybook/addon-interactions": "^7.0.0-rc.8",
-    "@storybook/addon-links": "^7.0.0-rc.8",
-    "@storybook/blocks": "^7.0.0-rc.8",
+    "@storybook/addon-essentials": "^7.6.6",
+    "@storybook/addon-interactions": "^7.6.6",
+    "@storybook/addon-links": "^7.6.6",
+    "@storybook/blocks": "^7.6.6",
     "@storybook/builder-vite": "^0.4.2",
-    "@storybook/react": "^7.0.0-rc.8",
-    "@storybook/react-vite": "^7.0.0-rc.8",
-    "@storybook/testing-library": "^0.0.14-next.1",
+    "@storybook/react": "^7.6.6",
+    "@storybook/react-vite": "^7.6.6",
+    "@storybook/testing-library": "0.0.14-next.2",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
     "@vitejs/plugin-react": "^3.1.0",
     "prop-types": "^15.8.1",
-    "storybook": "^7.0.0-rc.8",
-    "vite": "^4.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.6.6",
+    "typescript": "^4.9.5",
+    "vite": "^4.5.1"
   },
   "peerDependencies": {
     "react": "^16.6.3 || ^17.0.0 || ^18.0.0"
   },
   "dependencies": {
-    "@flagbase/js-client-sdk": "^0.0.6"
+    "@flagbase/js-client-sdk": "workspace:^"
   }
 }

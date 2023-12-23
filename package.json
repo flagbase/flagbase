@@ -6,7 +6,7 @@
       "client/*",
       "ui/*",
       "app/*",
-      "www/*",
+      "website/*",
       "sdk/js-client-sdk/*",
       "sdk/react-client-sdk/*"
     ]
