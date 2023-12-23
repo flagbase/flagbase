@@ -9,15 +9,13 @@ on:
 
 jobs:
   release:
-    name: "Deploy: client.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
+      - uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
           repository: ${{ secrets.FLAGBASE_COM_REPO }}
-          event-type: ${{ secrets.FLAGBASE_COM_RELEASE_UI_APP_EVENT_TYPE }}
+          event-type: release-client
     concurrency:
       group: ${{ github.ref }}
       cancel-in-progress: true

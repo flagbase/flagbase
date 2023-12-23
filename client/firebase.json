@@ -1,37 +1,7 @@
 {
   "hosting": [
     {
-      "target": "prod-flagbase-ui-app",
-      "public": "./dist",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "target": "staging-flagbase-ui-app",
-      "public": "./dist",
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
-    },
-    {
-      "target": "dev-flagbase-ui-app",
+      "target": "flagbase-client",
       "public": "./dist",
       "ignore": [
         "firebase.json",
