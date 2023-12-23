@@ -1,4 +1,4 @@
-![Flagbase.com](./www/static/readme/readme-banner-v2.svg)
+![Flagbase.com](./website/static/readme/readme-banner-v2.svg)
 
 <center>
 
@@ -32,7 +32,7 @@ Below are some of the features Flagbase offers:
 ### Intuitive Targeting
 
 Flagbase uses a percentage-based targeting system by default - allowing you to incrementally release you feature to a particular segment of your users over time.
-![Targeting demo](./www/static/readme/targeting-demo.gif)
+![Targeting demo](./website/static/readme/targeting-demo.gif)
 
 ### Client and Server SDKs
 
@@ -40,13 +40,13 @@ Flagbase offers client-side and server-side SDKs for feature flagging. Client-si
 
 |                     Client SDK                      |                     Server SDK                      |
 | :-------------------------------------------------: | :-------------------------------------------------: |
-| ![](./www/static/readme/client-side-evaluation.png) | ![](./www/static/readme/server-side-evaluation.png) |
+| ![](./website/static/readme/client-side-evaluation.png) | ![](./website/static/readme/server-side-evaluation.png) |
 
 ### Well-designed Resource Hierarchy
 
 Flagbase's resource hierarchy consists of instances, access, workspaces, projects, environments, flags, identities, segments, and targeting. An instance is a single Flagbase core installation using a shared PostgreSQL database. Access refers to key/secret pairs restricting operations on resources. Workspaces group projects, while projects contain flags and segments across multiple environments. Environments represent different targeting states. Flags determine feature states, while identities are flag observer/consumers. Segments group users based on traits, and targeting rules map conditions to flag variations within specific environments.
 
-![Resource Hierarchy](./www/static/readme/resource-hierarchy.png)
+![Resource Hierarchy](./website/static/readme/resource-hierarchy.png)
 
 ### Other Features
 
@@ -72,7 +72,7 @@ This [monorepo](https://en.wikipedia.org/wiki/Monorepo) contains the code for Fl
 - **[`/core`](./core/README.md)**: Code for `flagbased`, the service used to manage protected resources and stream feature flags to the SDKs. This service can be run in multiple worker modes, including `poller`, `streamer` and `API`.
 - **[`/sdk`](./sdk/README.md)**: SDKs retrieve and evaluate feature flags from the service.
 - **[`/ui`](./ui/README.md)**: UI interacts with the [Core API](https://flagbase.com/docs/api). It is used to manage resources (e.g. workspaces, projects, environments, flags, etc).
-- **[`/www`](./www/README.md)**: Code for [flagbase.com](https://flagbase.com), build using [Docusaurus](https://docusaurus.io/).
+- **[`/website`](./website/README.md)**: Code for [flagbase.com](https://flagbase.com), build using [Docusaurus](https://docusaurus.io/).
 
 ## Support
 

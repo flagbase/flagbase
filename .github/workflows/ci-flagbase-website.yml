@@ -1,16 +1,16 @@
-name: ci-flagbase-www
+name: ci-flagbase-website
 
 defaults:
   run:
-    working-directory: ./www
+    working-directory: ./website
 
 on:
   pull_request:
     branches:
       - main
     paths:
-      - "www/**"
-      - ".github/workflows/ci-flagbase-www.yml"
+      - "website/**"
+      - ".github/workflows/ci-flagbase-website.yml"
 
 jobs:
   build-and-deploy-branch:
@@ -35,12 +35,12 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
-      - run: pnpm -F=@flagbase/www install
-      - run: pnpm -F=@flagbase/www build
+      - run: pnpm -F=@flagbase/website install
+      - run: pnpm -F=@flagbase/website build
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_FLAGBASE }}"
           projectId: flagbase
-          target: dev-flagbase-website
-          entryPoint: ./www
+          target: flagbase-website
+          entryPoint: ./website

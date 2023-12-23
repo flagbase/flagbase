@@ -5,8 +5,8 @@
   "targets": {
     "flagbase": {
       "hosting": {
-        "dev-flagbase-website": [
-          "dev-flagbase-website"
+        "flagbase-website": [
+          "flagbase-website"
         ]
       }
     }

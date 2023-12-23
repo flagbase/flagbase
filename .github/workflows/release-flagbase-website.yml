@@ -1,20 +1,18 @@
-name: release-flagbase-www
+name: release-flagbase-website
 
 on:
   push:
     branches:
       - main
     paths:
-      - 'www/**'
+      - 'website/**'
       - 'core/api/swagger/**'
 
 jobs:
   release:
-    name: "Deploy: www.flagbase.xyz"
     runs-on: ubuntu-latest
     steps:
-      - name: Repository Dispatch
-        uses: peter-evans/repository-dispatch@v1
+      - uses: peter-evans/repository-dispatch@v1
         with:
           token: ${{ secrets.FLAGBASE_COM_ACCESS_TOKEN }}
           repository: ${{ secrets.FLAGBASE_COM_REPO }}

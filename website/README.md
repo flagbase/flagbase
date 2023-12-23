@@ -1,4 +1,4 @@
-# www
+# website
 
 **[Flagbase.com](https://flagbase.com)** is built using [Docusaurus](https://docusaurus.io/).
 
