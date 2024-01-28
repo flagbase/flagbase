@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Input, Notification, EditEntityHeading } from '@flagbase/ui';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -154,10 +154,15 @@ export const EditEnvironment = () => {
           }}
         >
           <Form className="mb-14 flex flex-col gap-5">
-            <Input name="name" label="Project Name" />
-            <Input name="key" label="Key" />
-            <Input name="description" label="Description" />
-            <TagInput name="tags" label="Tags" />
+            <Field as={Input} name="name" label="Name" />
+            <Field as={Input} name="key" label="Key" />
+            <Field as={Input} name="description" label="Description" />
+            <Field
+              as={TagInput}
+              name="tags"
+              label="Tags"
+              placeholder="Add a tag"
+            />
 
             <div className="flex justify-start gap-3">
               <Button

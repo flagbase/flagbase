@@ -33,7 +33,7 @@ export const WithPlaceholder: Story = {
     (Story) => (
       <div className="w-1/3">
         <Formik
-          initialValues={{ name: '' }}
+          initialValues={{ name: 'John Wick' }}
           onSubmit={() => {}}
           validationSchema={Yup.object().shape({
             name: Yup.string()
