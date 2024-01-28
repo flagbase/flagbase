@@ -7,7 +7,7 @@ import {
   Notification,
   EditEntityHeading,
 } from '@flagbase/ui';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -85,10 +85,19 @@ export const EditWorkspace = () => {
             }}
           >
             <Form className="mb-14 flex flex-col gap-5">
-              <Input name="name" label="Workspace Name" />
-              <Input name="key" label="Workspace Key" />
-              <Input name="description" label="Description" />
-              <TagInput name="tags" label="Tags" />
+              <Field as={Input} name="name" label="Workspace Name" />
+              <Field as={Input} name="key" label="Workspace Key" />
+              <Field
+                as={Input}
+                name="description"
+                label="Workspace Description"
+              />
+              <Field
+                as={TagInput}
+                name="tags"
+                label="Workspace Tags"
+                placeholder="Add a tag"
+              />
 
               <div className="flex justify-start gap-3">
                 <Button

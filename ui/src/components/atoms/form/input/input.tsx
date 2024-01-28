@@ -23,7 +23,6 @@ const Input = ({
   autoComplete = 'off',
   ...props
 }: InputProps) => {
-  console.log('props', props);
   const inputClasses = classNames(
     'block w-full rounded-md border-gray-300 h-14 pb-0 focus:border-indigo-500 focus:ring-indigo-500 disabled:bg-gray-50 disabled:text-gray-500 disabled:ring-gray-200 peer text-xl',
     className,

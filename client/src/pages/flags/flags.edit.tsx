@@ -8,7 +8,7 @@ import {
   Input,
   SettingsContainer,
 } from '@flagbase/ui';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { Await, useLoaderData, useNavigate } from 'react-router-dom';
 
 import { Flag } from './api';
@@ -81,10 +81,10 @@ export const FlagSettings = () => {
               }}
             >
               <Form className="flex flex-col gap-3">
-                <Input name="name" label="Name" />
-                <Input name="key" label="Key" />
-                <Input name="description" label="Description" />
-                <TagInput name="tags" label="Tags" />
+                <Field as={Input} name="name" label="Name" />
+                <Field as={Input} name="key" label="Key" />
+                <Field as={Input} name="description" label="Description" />
+                <Field as={TagInput} name="tags" label="Tags" />
                 <div className="my-4 flex justify-start gap-3">
                   <Button
                     type="submit"

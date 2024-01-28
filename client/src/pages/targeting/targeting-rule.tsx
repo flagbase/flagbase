@@ -3,7 +3,7 @@ import React from 'react';
 
 import { Button, Input, Select, useNotification } from '@flagbase/ui';
 import { ArrowPathIcon, MinusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 
 import {
@@ -135,7 +135,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
             <div className="flex w-3/5 flex-col">
               <div className="mb-4 flex items-center gap-3">
                 <code className="text-xl font-bold uppercase">if</code>
-                <Input name="traitKey" label="Trait Key" />
+                <Field as={Input} name="traitKey" label="Trait Key" />
                 <Select
                   options={options}
                   onChange={(operator: string) => {
@@ -147,7 +147,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                     name: getNameFromValue(values.operator),
                   }}
                 />
-                <Input name="traitValue" label="Trait Value" />
+                <Field as={Input} name="traitValue" label="Trait Value" />
               </div>
               <div className="mb-4 flex items-center gap-5">
                 <Toggle type="checkbox" name="negate" label="Negate" />
@@ -168,10 +168,10 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
               />
             </div>
             <div className="flex w-2/5 flex-col gap-4 pl-5">
-              <Input name="key" label="Rule Key" />
-              <Input name="name" label="Name" />
-              <Input name="description" label="Description" />
-              <TagInput name="tags" label="Tags" />
+              <Field as={Input} name="key" label="Rule Key" />
+              <Field as={Input} name="name" label="Name" />
+              <Field as={Input} name="description" label="Description" />
+              <Field as={TagInput} name="tags" label="Tags" />
             </div>
           </div>
           <div className="flex gap-3">
