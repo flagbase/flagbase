@@ -174,13 +174,15 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
           >
             {({ errors }) => (
               <Form className="flex flex-col gap-3">
-                <Field as={Input}
+                <Field
+                  as={Input}
                   id="name"
                   name="name"
                   label="Name"
                   placeholder="sdk-name"
                 />
-                <Field as={Input}
+                <Field
+                  as={Input}
                   id="description"
                   name="description"
                   label="Description"

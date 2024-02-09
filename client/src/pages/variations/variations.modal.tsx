@@ -53,8 +53,14 @@ const CreateVariation = () => {
             <Form className="flex flex-col gap-3">
               <Field as={Input} id="name" name="name" label="Variation name" />
               {/* <KeyInput id="key" name="key" label="Key" /> */}
-              <Field as={Input} id="description" name="description" label="Description" />
-              <Field as={TagInput}
+              <Field
+                as={Input}
+                id="description"
+                name="description"
+                label="Description"
+              />
+              <Field
+                as={TagInput}
                 id="tags"
                 name="tags"
                 label="Tags (separate by comma)"

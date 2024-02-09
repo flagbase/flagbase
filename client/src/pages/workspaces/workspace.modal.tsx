@@ -84,13 +84,20 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
           >
             {({ isValid }) => (
               <Form className="flex flex-col gap-3">
-                <Field as={Input} id="name" name="name" label="Workspace name" />
-                <Field as={Input}
+                <Field
+                  as={Input}
+                  id="name"
+                  name="name"
+                  label="Workspace name"
+                />
+                <Field
+                  as={Input}
                   id="description"
                   name="description"
                   label="Description"
                 />
-                <Field as={TagInput}
+                <Field
+                  as={TagInput}
                   id="tags"
                   name="tags"
                   label="Tags (separate by comma)"

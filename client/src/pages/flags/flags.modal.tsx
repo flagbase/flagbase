@@ -50,8 +50,18 @@ const CreateFlag: React.FC<{
           <Form className="flex flex-col gap-3">
             <Field as={Input} id="name" name="name" label="Flag name" />
             {/* <KeyInput id="key" name="key" label="Key" /> */}
-            <Field as={Input} id="description" name="description" label="Description" />
-            <Field as={TagInput} id="tags" name="tags" label="Tags (separate by comma)" />
+            <Field
+              as={Input}
+              id="description"
+              name="description"
+              label="Description"
+            />
+            <Field
+              as={TagInput}
+              id="tags"
+              name="tags"
+              label="Tags (separate by comma)"
+            />
             <Button
               className="mt-3 justify-center py-2"
               type="submit"

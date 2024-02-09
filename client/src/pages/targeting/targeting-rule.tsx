@@ -28,6 +28,7 @@ const options = [
 
 function getNameFromValue(value: string): string | undefined {
   const option = options.find((option) => option.value === value);
+
   return option ? option.name : undefined;
 }
 
@@ -137,7 +138,7 @@ const TargetingRule = ({ rule }: { rule: TargetingRuleRequest }) => {
                 <Field as={Input} name="traitKey" label="Trait Key" />
                 <Select
                   options={options}
-                  onChange={({value}: {value: string}) => {
+                  onChange={({ value }: { value: string }) => {
                     setFieldValue('operator', value);
                   }}
                   name="operator"
