@@ -37,18 +37,6 @@ const MainWorkspaces = () => {
               setVisible={showCreateWorkspace}
               instance={instance}
             />
-
-            <div className="flex flex-col-reverse items-stretch gap-3 pb-5 md:flex-row">
-              <div className="flex-auto">
-                <Input
-                  name="search"
-                  value={filter}
-                  onChange={(event) => setFilter(event.target.value)}
-                  label="Search"
-                  icon={MagnifyingGlassIcon}
-                />
-              </div>
-            </div>
             <Table
               loading={isFetching || isRefetching || isLoading}
               data={
