@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment } from 'react';
 
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon, CheckIcon } from '@heroicons/react/24/outline';
@@ -24,7 +24,8 @@ export const Select = ({
   const errors = false;
   const isTouched = false;
 
-  console.log('selected', value)
+  console.log('selected', value);
+
   return (
     <div>
       {label && (
@@ -40,7 +41,7 @@ export const Select = ({
               <span className="block truncate">{value.name}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon
-                  className="h-5 w-5 text-gray-400"
+                  className="size-5 text-gray-400"
                   aria-hidden="true"
                 />
               </span>
@@ -83,7 +84,7 @@ export const Select = ({
                               'absolute inset-y-0 left-0 flex items-center pl-1.5',
                             )}
                           >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                            <CheckIcon className="size-5" aria-hidden="true" />
                           </span>
                         ) : null}
                       </>
@@ -120,7 +121,7 @@ export const RawSelect = ({
             <span className="block truncate">{selected.name}</span>
             <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
               <ChevronUpDownIcon
-                className="h-5 w-5 text-gray-400"
+                className="size-5 text-gray-400"
                 aria-hidden="true"
               />
             </span>
@@ -163,7 +164,7 @@ export const RawSelect = ({
                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                           )}
                         >
-                          <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          <CheckIcon className="size-5" aria-hidden="true" />
                         </span>
                       ) : null}
                     </>
