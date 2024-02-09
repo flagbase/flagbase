@@ -29,12 +29,9 @@ export const Default: Story = {
       { name: 'Regex', value: 'regex' },
     ],
   },
-  render: ({options, value}) => {
-    const [selected, setSelected] = useState(value)
+  render: ({ options, value }) => {
+    const [selected, setSelected] = useState(value);
 
-    return (
-        <Select options={options} value={selected} onChange={setSelected} />
-    )
-  }
+    return <Select options={options} value={selected} onChange={setSelected} />;
+  },
 };
-
