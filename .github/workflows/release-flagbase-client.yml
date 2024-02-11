@@ -9,7 +9,7 @@ on:
 
 jobs:
   release:
-    name: "Deploy: client.flagbase.xyz"
+    name: "Deploy: client.flagbase.com"
     runs-on: ubuntu-latest
     steps:
       - name: Repository Dispatch
