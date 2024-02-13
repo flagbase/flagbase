@@ -23,11 +23,11 @@ root.render(
   //   identity={{ identifier: 'USER_ID', traits: { age: 25 } }}
   //   opts={{ pollingIntervalMs: 5000 }} // TODO: add prod key to prod env
   // >
-    <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <RouterProvider router={newRouter} />
-      </NotificationProvider>
-    </QueryClientProvider>
+  <QueryClientProvider client={queryClient}>
+    <NotificationProvider>
+      <RouterProvider router={newRouter} />
+    </NotificationProvider>
+  </QueryClientProvider>,
   // </FlagbaseProvider>,
 );
 

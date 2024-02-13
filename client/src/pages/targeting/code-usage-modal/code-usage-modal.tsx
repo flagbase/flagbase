@@ -176,7 +176,7 @@ const CodeUsageModal = () => {
         How to use my flag in code
       </Button>
     </>
-  )
+  );
 };
 
 export default CodeUsageModal;
