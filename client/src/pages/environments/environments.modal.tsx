@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useFeatureFlag } from '@flagbase/react-client-sdk';
+// import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import {
   Button,
   Input,
@@ -31,7 +31,9 @@ const NewEnvironmentSchema = Yup.object().shape({
 });
 
 const CreateEnvironment = () => {
-  const showFeature = useFeatureFlag('create-environment-button', 'control');
+  // const showFeature = useFeatureFlag('create-environment-button', 'control');
+  const showFeature = 'treatment';
+
   const { addNotification } = useNotification();
   const mutation = useAddEnvironment();
   const [visible, setVisible] = useState(false);
