@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction } from 'react';
 
 import { Button, Input, Modal, Text, Heading } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 
 import { FlagCreateBody } from './api';
 import { useAddFlag } from './flags.hooks';
@@ -48,10 +48,20 @@ const CreateFlag: React.FC<{
           }}
         >
           <Form className="flex flex-col gap-3">
-            <Input id="name" name="name" label="Flag name" />
+            <Field as={Input} id="name" name="name" label="Flag name" />
             {/* <KeyInput id="key" name="key" label="Key" /> */}
-            <Input id="description" name="description" label="Description" />
-            <TagInput id="tags" name="tags" label="Tags (separate by comma)" />
+            <Field
+              as={Input}
+              id="description"
+              name="description"
+              label="Description"
+            />
+            <Field
+              as={TagInput}
+              id="tags"
+              name="tags"
+              label="Tags (separate by comma)"
+            />
             <Button
               className="mt-3 justify-center py-2"
               type="submit"

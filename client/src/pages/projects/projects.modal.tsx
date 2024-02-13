@@ -9,7 +9,7 @@ import {
   useNotification,
 } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 
 import { NewProjectSchema } from './projects.constants';
 import { useAddProject } from './projects.hooks';
@@ -38,6 +38,7 @@ const CreateProjectModal: React.FC<{
         content: mutation.error,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mutation.isError, mutation.isSuccess, setVisible]);
 
   return (
@@ -68,9 +69,15 @@ const CreateProjectModal: React.FC<{
         >
           {({ isValid }) => (
             <Form className="flex flex-col gap-3">
-              <Input id="name" name="name" label="Project name" />
-              <Input id="description" name="description" label="Description" />
-              <TagInput
+              <Field as={Input} id="name" name="name" label="Project name" />
+              <Field
+                as={Input}
+                id="description"
+                name="description"
+                label="Description"
+              />
+              <Field
+                as={TagInput}
                 id="tags"
                 name="tags"
                 label="Tags (separate by comma)"

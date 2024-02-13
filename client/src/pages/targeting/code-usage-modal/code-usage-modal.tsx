@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { useFeatureFlag } from '@flagbase/react-client-sdk';
+// import { useFeatureFlag } from '@flagbase/react-client-sdk';
 import { Button, Modal, Heading, Text } from '@flagbase/ui';
 import { CodeBracketIcon } from '@heroicons/react/20/solid';
 
@@ -162,7 +162,7 @@ const CodeModal: React.FC<ModalProps> = ({ visible, setVisible }) => {
 const CodeUsageModal = () => {
   const [showInCodeModal, setShowInCodeModal] = useState(false);
 
-  return useFeatureFlag('use-in-code-modal', 'control') === 'treatment' ? (
+  return (
     <>
       <CodeModal
         visible={showInCodeModal}
@@ -176,7 +176,7 @@ const CodeUsageModal = () => {
         How to use my flag in code
       </Button>
     </>
-  ) : null;
+  );
 };
 
 export default CodeUsageModal;

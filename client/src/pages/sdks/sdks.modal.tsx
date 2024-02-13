@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button, Input, Notification, Modal, Heading } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useMutation, useQueryClient } from 'react-query';
 
 import { createSdkKey, CreateSdkKeyRequest, deleteSdk, updateSdk } from './api';
@@ -174,20 +174,22 @@ export const CreateSDKModal = ({ visible, setVisible }: ReactState) => {
           >
             {({ errors }) => (
               <Form className="flex flex-col gap-3">
-                <Input
+                <Field
+                  as={Input}
                   id="name"
                   name="name"
                   label="Name"
                   placeholder="sdk-name"
                 />
-                <Input
+                <Field
+                  as={Input}
                   id="description"
                   name="description"
                   label="Description"
                   placeholder="SDK Description"
                 />
 
-                <TagInput id="tags" name="tags" label="Tags" />
+                <Field as={TagInput} id="tags" name="tags" label="Tags" />
                 <Button
                   type="submit"
                   className="mt-3 justify-center py-2"

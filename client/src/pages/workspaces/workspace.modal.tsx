@@ -9,7 +9,7 @@ import {
   useNotification,
 } from '@flagbase/ui';
 import { PlusCircleIcon } from '@heroicons/react/24/outline';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 
 import { NewWorkspaceSchema } from './workspace.constants';
 import { useAddWorkspace } from './workspaces.hooks';
@@ -84,13 +84,20 @@ const CreateWorkspaceModal = ({ visible, setVisible }: WorkspaceModal) => {
           >
             {({ isValid }) => (
               <Form className="flex flex-col gap-3">
-                <Input id="name" name="name" label="Workspace name" />
-                <Input
+                <Field
+                  as={Input}
+                  id="name"
+                  name="name"
+                  label="Workspace name"
+                />
+                <Field
+                  as={Input}
                   id="description"
                   name="description"
                   label="Description"
                 />
-                <TagInput
+                <Field
+                  as={TagInput}
                   id="tags"
                   name="tags"
                   label="Tags (separate by comma)"

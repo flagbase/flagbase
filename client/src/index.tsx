@@ -1,6 +1,6 @@
 import React from 'react';
 
-import FlagbaseProvider from '@flagbase/react-client-sdk';
+// import FlagbaseProvider from '@flagbase/react-client-sdk';
 import { NotificationProvider } from '@flagbase/ui';
 import { debugContextDevtool } from 'react-context-devtool';
 import { createRoot } from 'react-dom/client';
@@ -18,17 +18,17 @@ const container = document.getElementById('root');
 const root = createRoot(container!); // createRoot(container!) if you use TypeScript
 
 root.render(
-  <FlagbaseProvider
-    clientKey="sdk-client_025729af-b5a4-435c-9144-d14ba816d174" // TODO: add prod key to prod env
-    identity={{ identifier: 'USER_ID', traits: { age: 25 } }}
-    opts={{ pollingIntervalMs: 5000 }} // TODO: add prod key to prod env
-  >
-    <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <RouterProvider router={newRouter} />
-      </NotificationProvider>
-    </QueryClientProvider>
-  </FlagbaseProvider>,
+  // <FlagbaseProvider
+  //   clientKey="sdk-client_025729af-b5a4-435c-9144-d14ba816d174" // TODO: add prod key to prod env
+  //   identity={{ identifier: 'USER_ID', traits: { age: 25 } }}
+  //   opts={{ pollingIntervalMs: 5000 }} // TODO: add prod key to prod env
+  // >
+  <QueryClientProvider client={queryClient}>
+    <NotificationProvider>
+      <RouterProvider router={newRouter} />
+    </NotificationProvider>
+  </QueryClientProvider>,
+  // </FlagbaseProvider>,
 );
 
 debugContextDevtool(container, {

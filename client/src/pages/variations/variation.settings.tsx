@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Input, Notification, EditEntityHeading } from '@flagbase/ui';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useQueryClient, useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 
@@ -195,10 +195,10 @@ const VariationSettings = () => {
           }}
         >
           <Form className="mb-14 flex flex-col gap-5">
-            <Input name="name" label="Variation Name" />
-            <Input name="key" label="Key" />
-            <Input name="description" label="Description" />
-            <TagInput name="tags" label="Tags" />
+            <Field as={Input} name="name" label="Variation Name" />
+            <Field as={Input} name="key" label="Key" />
+            <Field as={Input} name="description" label="Description" />
+            <Field as={TagInput} name="tags" label="Tags" />
 
             <div className="flex justify-start gap-3">
               <Button

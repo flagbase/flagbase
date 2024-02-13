@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Button, Input } from '@flagbase/ui';
-import { Form, Formik } from 'formik';
+import { Field, Form, Formik } from 'formik';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { Instance } from './instances.functions';
@@ -61,11 +61,20 @@ export const EditInstance = () => {
           validationSchema={InstanceSchema}
         >
           <Form className="mb-14 flex flex-col gap-5">
-            <Input name="name" label="Instance Name" />
-            <Input name="key" label="Instance Key" />
-            <Input name="connectionString" label="Connection String" />
-            <Input name="accessKey" label="Access Key" />
-            <Input name="accessSecret" label="Access Secret" type="password" />
+            <Field as={Input} name="name" label="Name" />
+            <Field as={Input} name="key" label="Key" />
+            <Field
+              as={Input}
+              name="connectionString"
+              label="Connection String"
+            />
+            <Field as={Input} name="accessKey" label="Access Key" />
+            <Field
+              as={Input}
+              name="accessSecret"
+              label="Access Secret"
+              type="password"
+            />
 
             <div className="flex justify-start gap-3">
               <Button type="submit">Update</Button>
