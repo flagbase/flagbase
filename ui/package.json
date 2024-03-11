@@ -114,7 +114,7 @@
     "tsconfig-paths": "^4.2.0",
     "vite": "^4.5.1",
     "vite-plugin-dts": "^2.3.0",
-    "yup": "^0.32.11"
+    "yup": "^1.4.0"
   },
   "overrides": {
     "react-element-to-jsx-string": "^15.0.0"
